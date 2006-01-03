@@ -9,7 +9,7 @@
 <include href="modules/text.rng"/>
 <include href="modules/hypertext.rng"/>
 <include href="modules/list.rng"/>
-<!--<include href="modules/basic-form.rng"/>-->
+<include href="modules/basic-form.rng"/>
 <include href="modules/basic-table.rng"/>
 <include href="modules/image.rng"/>
 <include href="modules/param.rng"/>

@@ -1,58 +1,231 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="http://www.w3.org/1999/xhtml"
-         xmlns="http://relaxng.org/ns/structure/1.0"
-         xmlns:dc="http://purl.org/dc/elements/1.1/"
-         xmlns:dcterms="http://purl.org/dc/terms/"
-         xmlns:xhtml="http://www.w3.org/1999/xhtml"
-         xmlns:bx="http://bitflux.org/doctypes/bx" 
- 	xmlns:forms="http://bitflux.org/forms" 
-         >
+        xmlns="http://relaxng.org/ns/structure/1.0"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:bx="http://bitflux.org/doctypes/bx"
+        xmlns:forms="http://bitflux.org/forms"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+        xmlns:patForms="http://php-tools.net/patForms/1.0"
+        xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
+        >
 
 
-<include href="xhtml/xhtml-basic.rng"/>
+    <include href="xhtml/xhtml-basic.rng"/>
+ <include href="patforms.rng"/>
+    <define name="bx.lead">
+        <element name="bx:lead">
+            <ref name="Block.model"/>
+        </element>
+    </define>
 
-<define name="bx.lead">
-<element name="bx:lead">
-    <ref name="Block.model"/>
-    </element>
-</define>
+    <define name="forms.formwizard">
+        <element name="forms:formwizard">
+            <attribute name="src"/>
+            <text/>
+        </element>
+    </define>
 
-<define name="forms.formwizard">
-<element name="forms:formwizard">
-	<attribute name="src"/>
-<text/>
-    </element>
-</define>
+    <define name="bx.span">
+        <element name="bx:span">
+            <ref name="Inline.model"/>
+            <optional>
+                <attribute name="cssclass"/>
+            </optional>
+        </element>
+    </define>
 
-<define name="bx.span">
-    <element name="bx:span">
-        <ref name="Inline.model"/>
-        <optional>
-            <attribute name="cssclass"/>
-        </optional>
-    </element>
-</define>
+    <define name="bx.subtitle">
+        <element name="bx:subtitle">
+            <ref name="Inline.model"/>
+        </element>
+    </define>
 
-<define name="bx.subtitle">
-<element name="bx:subtitle">
-    <ref name="Inline.model"/>
-    </element>
-</define>
+    <define name="bx.asset">
+        <element name="bx:asset">
+            <ref name="Inline.model"/>
+            <optional>
 
-<define name="bx.asset">
-<element name="bx:asset">
-    <ref name="Inline.model"/>
-   <optional> 
-    
-    <attribute name="lang"/>
-    <attribute name="src"/>
-    <attribute name="type"/>
-    <attribute name="class"/>
-    <attribute name="target"/>
-    <attribute name="cssclass"/>
+                <attribute name="lang"/>
+                <attribute name="src"/>
+                <attribute name="type"/>
+                <attribute name="class"/>
+                <attribute name="target"/>
+                <attribute name="cssclass"/>
+
+            </optional>
+        </element>
+    </define>
+      
+
+
+
+    <define name="formsform">
+        <choice>
+            <element name="forms:form">
+                <element name="forms:config">
+                    <element name="forms:class">
+                        <attribute name="name">
+                            <data type="NCName"/>
+                        </attribute>
+                        <oneOrMore>
+                            <element name="forms:parameter">
+                                <attribute name="name">
+                                    <data type="NCName"/>
+                                </attribute>
+                                <attribute name="value"/>
+                            </element>
+                        </oneOrMore>
+                    </element>
+                </element>
+                <element name="patForms:Form">
+                    <attribute name="name">
+                        <data type="NCName"/>
+                    </attribute>
+                    <choice>
+                        <ref name="Inline.class"/>
+                        <ref name="Block.class"/>
+                    </choice>
+
+                </element>
+            </element>
+        </choice>
+    </define>
+    <!--
+     <element name="table">
+                        <attribute name="border">
+                            <data type="integer"/>
+                        </attribute>
+                        <oneOrMore>
+                            <element name="tr">
+                                <oneOrMore>
+                                    <element name="td">
+                                        <optional>
+                                            <attribute name="class">
+                                                <data type="NCName"/>
+                                            </attribute>
+                                        </optional>
+                                        <optional>
+                                            <attribute name="colspan">
+                                                <data type="integer"/>
+                                            </attribute>
+                                        </optional>
+                                        <optional>
+                                            <attribute name="forms:fieldErrorID">
+                                                <data type="NCName"/>
+                                            </attribute>
+                                        </optional>
+                                        <oneOrMore>
+                                            <choice>
+                                                <text/>
+                                                <element name="i18n:text">
+                                                    <text/>
+                                                </element>
+                                                <element name="patForms:String">
+                                                    <attribute name="description"/>
+                                                    <attribute name="label"/>
+                                                    <attribute name="name">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="required">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                </element>
+                                                <element name="patForms:Switch">
+                                                    <attribute name="label"/>
+                                                    <attribute name="name">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="required">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="value">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                </element>
+                                                <element name="patForms:Text">
+                                                    <attribute name="accesskey">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="cols">
+                                                        <data type="integer"/>
+                                                    </attribute>
+                                                    <attribute name="label"/>
+                                                    <attribute name="name">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="required">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="rows">
+                                                        <data type="integer"/>
+                                                    </attribute>
+                                                </element>
+                                                <element name="input">
+                                                    <attribute name="accesskey">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="class">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="name">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="type">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="value">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                    <attribute name="i18n:attr">
+                                                        <data type="NCName"/>
+                                                    </attribute>
+                                                </element>
+                                            </choice>
+                                        </oneOrMore>
+                                    </element>
+                                </oneOrMore>
+                            </element>
+                        </oneOrMore>
+                    </element>
+                    -->
+
    
-   </optional>
-</element>
-</define>
+
+
+    <define name="xinclude">
+        <choice>
+            <element name="xi:include">
+                <attribute name="href"/>
+                <attribute name="parse">
+                    <data type="NCName"/>
+                </attribute>
+            </element>
+        </choice>
+    </define>
+
+    <define name="i18ntext">
+        <element name="i18n:text">
+            <text/>
+        </element>
+    </define>
+    
+    <define name="Inline.class" combine="choice">
+        <ref name="formsform"/>
+        <ref name="xinclude"/>
+        <ref name="i18ntext"/>
+    </define>
+  
+
+    <define name="formserrors">
+        <element name="forms:errors"/>
+    </define>
+
+    <define name="Block.class" combine="choice">
+        <ref name="formserrors"/>
+    </define>
+    
+
 
 </grammar>
