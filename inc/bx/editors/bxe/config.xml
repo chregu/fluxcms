@@ -127,6 +127,11 @@
          <element name="ol" ns="http://www.w3.org/1999/xhtml"/>
          <element name="ul" ns="http://www.w3.org/1999/xhtml"/>
          <element name="hr" ns="http://www.w3.org/1999/xhtml"/>
+          <element name="String" ns="http://php-tools.net/patForms/1.0"/>
+          <element name="Switch" ns="http://php-tools.net/patForms/1.0"/>
+          <element name="Text" ns="http://php-tools.net/patForms/1.0"/>
+          <element name="errors" ns="http://bitflux.org/forms"/>
+          <element name="form" ns="http://bitflux.org/forms"/>
          <!-- attributes --> 
          <attribute name="style"/>      
          <attribute name="xml:lang"/>      
@@ -143,7 +148,7 @@
          <attribute name="axis"/>
          <attribute name="headers"/>
          <attribute name="scope"/>
-
+  <attribute name="fieldErrorID"/>
     </context>
     <plugins>  
         <plugin name="Drawer">
