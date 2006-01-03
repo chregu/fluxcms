@@ -2,6 +2,9 @@ BRANCH="trunk"
 DIRS="webinc inc admin install"
 STARTDIR=`pwd`
 
+echo -e "\nUsually this script works without problems, but nevertheles\nPLEASE DO BACKUP BEFORE.\nPress <Enter> to continue or <Ctrl>+<C> to abort."
+read
+
 svn propget svn:externals . > .externals.old
 echo -n "" > .externals
 
