@@ -30,6 +30,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function handlePOST($path, $id, $data) {
+        
         // pass request to a subeditor if required
         if(($subEditor = $this->getSubEditorNameById($id)) !== FALSE) {
             return $this->getSubEditorInstance($subEditor)->handlePOST($path, $id, $data);
@@ -51,6 +52,25 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                    header("Location: ./newpost.xml");
                    die();
             } else {
+                if(!empty($data['newcategory'])) {
+                    $dbwrite = $GLOBALS['POOL']->dbwrite;
+                    $tableprefix = $GLOBALS['POOL']->config->getTablePrefix();
+
+                    $quoted = array();
+                    
+                    $dataN['name'] = $data['newcategory'];
+                    $dataN['uri'] = bx_helpers_string::makeUri($data['newcategory']);
+                    $quoted = bx_helpers_sql::quotePostData($dataN);
+                    $quoted['parentid'] = 1;
+                    $query = bx_helpers_sql::getInsertQuery('blogcategories', $quoted, array('name', 'uri', 'parentid'));
+                    
+                    $res = $dbwrite->query($query);
+                    if($res) {
+                        bx_helpers_sql::updateCategoriesTree();
+                    }
+                    //set checkbox
+                    $data['categories'][$data['newcategory']] = "on";
+                }
                 bx_global::registerStream("blog");
                 
                 // remove  html enitities sometimes sent by fckeditor

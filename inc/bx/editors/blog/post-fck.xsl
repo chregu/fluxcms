@@ -148,6 +148,9 @@
                                         <br/>
                                     </xsl:if>
                                 </xsl:for-each>
+                                <p>New Category</p>
+                                <input id="newcategory" type="text" name="bx[plugins][admin_edit][newcategory]" value=""/>
+                                <br/>
                             </div>
             
 </td>
