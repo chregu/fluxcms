@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bxco:config xmlns:bxco="http://bitflux.org/config/1.0">
+  <bxco:fields table="blogcategories"  onAfterUpdateCallBack="updatetree.php">
+    <bxco:field name="name" type="text" descr="name" updateurifield="uri"></bxco:field>
+    <bxco:field name="uri" type="text" descr="uri" ></bxco:field>
+    
+    <bxco:field name="parentid" descr="Parent-Category" type="foreign" default="1">
+            <bxco:foreign table="blogcategories" field="fullname" orderby="l"/>
+        </bxco:field>
+    
+    
+    <bxco:field name="changed" descr="Changed" type="fixed" subtype="datetime">
+      <bxco:onnew default="sql:now()"/>
+      <bxco:onchange default="sql:now()"/>
+    </bxco:field>
+  </bxco:fields>
+  <bxco:chooser  field="fullname" orderby="l" descr="Choose news"/>
+</bxco:config>

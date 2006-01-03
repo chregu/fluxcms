@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+  <dbform:fields table="blogcomments" >
+    <dbform:field name="comment_author" descr="User" type="text"/>
+  
+    <dbform:field name="comment_author_email" type="text" descr="Email" ></dbform:field>
+    <dbform:field name="comment_author_ip" type="text" descr="IP"></dbform:field>
+    <dbform:field name="comment_author_url" type="text" descr="URL"></dbform:field>
+    <dbform:field name="comment_date" type="date_time" descr="date"></dbform:field>
+    <dbform:field name="comment_status" type="select" descr="status">
+      <dbform:value name="1">Approved</dbform:value>
+      <dbform:value name="2">Moderated</dbform:value>
+      <dbform:value name="3">Rejected</dbform:value>
+      
+    </dbform:field>
+    
+    <!--<dbform:field name="description" type="smalltextarea" descr="teaser"></dbform:field>
+    -->
+    <!--<dbform:field name="dc_creator" type="text" descr="dc_creator"></dbform:field>-->
+    <dbform:field name="comment_content"  type="text_wysiwyg" descr="text" ></dbform:field>
+    
+   
+    <dbform:field name="comment_rejectreason"  type="text_area_small" descr="rejectreason" ></dbform:field>
+    <dbform:field name="changed" descr="Changed" type="fixed_datetime" >
+      <dbform:onnew default="sql:now()"/>
+      <dbform:onchange default="sql:now()"/>
+    </dbform:field>
+    
+    
+  </dbform:fields>
+  
+  <dbform:chooser leftjoin="{tablePrefix}blogposts on (comment_posts_id = {tablePrefix}blogposts.id)"  namefield="concat( post_uri ,' - ', comment_author ,' (',bxcms_blogcomments.id,')')" wherefields="post_uri, comment_author" orderby="comment_date DESC"  limit="35"/>    
+
+  
+  
+</dbform:form>

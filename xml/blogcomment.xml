@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<wizard xmlns="http://bitflux.org/config/1.0">
+    <title lang="de">Email Update</title>
+    <title lang="en">Email Update</title>
+
+    <screen method="emailFields" class="blogcomment" emailBodyID="emailBodyAnfrage" id="1" rang="1" emailFrom="contact@bitflux.ch" emailTo="chregu@bitflux.ch" emailSubject="Kontakt">
+        <prevScreen>1</prevScreen>
+        <nextScreen>thankyou</nextScreen>
+
+        <section id="1">
+            <fields>
+                <field name="formerrors" type="formerrors" cssClass="wizardError"/>
+
+                <group name="anfragen" type="table" cssClass="form" titleWidth="90" width="380">
+                
+                    <field name="name" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="email" type="text"  cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="url" type="text"  cssClass="formurl" titleCssClass="formurl" tdCssClass="formurl"/>
+                    <field name="base" type="text"  cssClass="formgenerell" titleCssClass="base"/>
+                 
+                    <field name="comments" type="longtext" rows="10" cols="40" required="y" titleCssClass="formHeader"/>
+                    <field name="comment_notification" type="checkbox" titleCssClass="formHeader"  titleWidth="100%" cssClass="formcheckbox"/>
+                    <field name="send" type="submit" cssClass="formbutton"/>
+		        </group>
+
+               
+
+            </fields>
+        </section>
+
+    </screen>
+
+    <screen id="thankyou">
+        <field name="danke" type="msg" msg="danke_msg"  titleCssClass="subtitel"/>
+    </screen>
+
+    <lang>
+        <entry ID="send">
+            <text lang="de">Send</text>
+            <text lang="en">Send</text>
+        </entry>
+
+        <entry ID="email">
+            <text lang="de">E-Mail</text>
+            <text lang="en">E-Mail</text>
+        </entry>
+
+        <entry ID="comment_notification">
+            <text lang="de">E-Mail Kommentar Benachrichtigung bei neuen Kommentaren zu diesem Eintrag</text>
+            <text lang="en">Notify me via E-Mail when new comments are made to this entry
+            
+            </text>
+        </entry>
+
+        <entry ID="name">
+            <text lang="de">Name</text>
+            <text lang="en">Name</text>
+        </entry>
+
+        <entry ID="comments">
+            <text lang="de">Kommentar</text>
+            <text lang="en">Comment</text>
+        </entry>
+        
+         <entry ID="base">
+            <text lang="de">URL</text>
+            <text lang="en">URL</text>
+        </entry>
+
+        <entry ID="danke">
+            <text lang="de">Vielen Dank</text>
+            <text lang="en">Thanks</text>
+        </entry>
+
+        
+        <entry ID="danke_msg">
+            <text lang="de"><![CDATA[
+Wir werden Ihre Anfrage/Bestellung so schnell wie möglich bearbeiten.
+]]>
+            </text>
+            <text lang="en">
+            <![CDATA[
+Wir werden Ihre Anfrage/Bestellung so schnell wie möglich bearbeiten. (TOTR)
+]]>
+            </text>
+        </entry>
+
+      
+        
+        <entry ID="formerrors">
+            <text lang="de">Please fill in your name and comment</text>
+            <text lang="en">Please fill in your name and comment</text>
+        </entry>
+
+        <!--
+        <entry ID="">
+            <text lang="de"></text>
+            <text lang="en"></text>
+        </entry>
+        
+        -->
+            <entry ID="url">
+                <text lang="de">For Spammers Only</text>
+                <text lang="en">For Spammers Only</text>
+             </entry>
+        <entry ID="emailBodyAnfrage">
+            <text lang="de"><![CDATA[
+New Blog Comment
+-------------------------------------
+
+Name:      {name}
+E-Mail:    {email}
+URL:       {base}
+Remote IP: {remote_ip}
+Email-Notification: {comment_notification}
+Entry URI: 
+ {uri}
+Edit URI:  
+ {edituri}
+Moderation URI {accepturi}
+     
+Message:
+  
+{comments}
+***
+[1] You can only do this once, afterwards you have to use the edit
+    link to change the comment status again.
+]]>
+            </text>
+        </entry>
+
+    </lang>
+</wizard>

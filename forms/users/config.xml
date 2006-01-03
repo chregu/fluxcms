@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bxco:config xmlns:bxco="http://bitflux.org/config/1.0">
+  <bxco:fields issensitive="true" table="users" downloaddir="../../files/user/">
+    <bxco:field name="user_login" type="text" descr="Username"></bxco:field>
+    <bxco:field name="user_pass" type="password" descr="Password"></bxco:field>
+    
+    <bxco:field name="user_email" type="text" descr="Email"></bxco:field>
+    <bxco:field name="user_fullname" type="text" descr="Fullname"></bxco:field>
+    <bxco:field name="plazes_username" type="text" descr="Plazes Username"></bxco:field>
+    <bxco:field name="plazes_password" type="password" info="PLAZES" descr="Plazes Password"></bxco:field>
+    <bxco:field name="user_adminlang" type="text" descr="Admin Language"></bxco:field>
+
+    <!-- 
+   <bxco:field name="user_gid" type="text" descr="Group ID"></bxco:field>
+    -->
+  </bxco:fields>
+  <bxco:chooser field="user_login" orderby="user_login" descr="Choose user"/>
+</bxco:config>

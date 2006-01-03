@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+  <dbform:fields table="bloglinks" >
+    <dbform:field name="text" type="text" descr="Title" ></dbform:field>
+    <dbform:field name="link" type="text" descr="Link"></dbform:field>
+    <dbform:field name="rss_link" type="text" descr="RSS Link"></dbform:field>
+    <dbform:field name="rel" type="text" descr="Relation"></dbform:field>
+    <dbform:field name="description" type="text_area_small" descr="Description"></dbform:field>
+    <dbform:field name="date" type="date" descr="Date" ></dbform:field>
+    <dbform:field name="bloglinkscategories" descr="Category" type="select">
+            <dbform:datasource type="foreign" table="bloglinkscategories" order="rang" namefield="name" orderby="rang" idfield="id"/>
+        </dbform:field>
+       
+        
+        <dbform:field name="rang" type="text" descr="rang" ></dbform:field>
+    <dbform:field name="changed" descr="Changed" type="fixed_datetime">
+      <dbform:onnew default="sql:now()"/>
+      <dbform:onchange default="sql:now()"/>
+    </dbform:field>
+  </dbform:fields>
+  <dbform:chooser namefield="text" wherefields="text" orderby="text" limit="35"/>    
+
+</dbform:form>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
+        
+    <bxst:section name="news" where="[[lang = '$lang']] [[and link = '$link']] " orderby="dc_date DESC">
+        <bxst:table name="news" fields="id , title , link ,  content_encoded , date_format(dc_date,'%d/%m/%y') as dc_date_format , description"/>
+    </bxst:section>
+
+</bxst:structure>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<bxco:config xmlns:bxco="http://bitflux.org/config/1.0">
+  <bxco:fields table="news" webdavid="link" langfield="lang">
+    <bxco:field name="title" type="text" descr="title" updateurifield="link"></bxco:field>
+    <bxco:field name="link" type="text" descr="uri"></bxco:field>
+    <bxco:field name="lang" type="text" descr="lang">de</bxco:field>
+    <bxco:field name="dc_date" type="datetime" descr="date">
+     <bxco:onnew default="sql:now()"/>
+     </bxco:field>
+    <bxco:field name="description" type="smalltextarea" descr="teaser"></bxco:field>
+    
+    <!--<bxco:field name="dc_creator" type="text" descr="dc_creator"></bxco:field>-->
+    <bxco:field name="content_encoded" subtype="mozile" type="textarea" descr="text" updateteaserfield="description"></bxco:field>
+    
+    
+    <bxco:field name="changed" descr="Changed" type="fixed" subtype="datetime">
+      <bxco:onnew default="sql:now()"/>
+      <bxco:onchange default="sql:now()"/>
+    </bxco:field>
+  </bxco:fields>
+  <bxco:chooser field="title" orderby="title" descr="Choose news"/>
+</bxco:config>

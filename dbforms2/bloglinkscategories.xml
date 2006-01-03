@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+  <dbform:fields table="bloglinkscategories" >
+    <dbform:field name="name" type="text" descr="name" ></dbform:field>
+    <dbform:field name="rang" type="text" descr="rang" ></dbform:field>
+    
+    <dbform:field name="changed" descr="Changed" type="fixed_datetime" subtype="datetime">
+      <dbform:onnew default="sql:now()"/>
+      <dbform:onchange default="sql:now()"/>
+    </dbform:field>
+  </dbform:fields>
+  <dbform:chooser wherefields="name" namefield="name" orderby="name" limit="35"/>
+</dbform:form>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<dbform:form 
+    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>
+
+    <dbform:fields table="shop_article_description">
+
+        <dbform:field name="name" type="text" descr="Title"/>
+
+        <dbform:field name="lang" type="select" descr="Language">
+            <dbform:value name="de">de</dbform:value>
+            <dbform:value name="en">en</dbform:value>
+        </dbform:field>
+
+        <dbform:field name="description_short" type="textarea_small" descr="Description (Short)"/>
+        <dbform:field name="description_long" type="textarea" descr="Description (Long)"/>
+
+        <dbform:field name="image1_href" type="file_image" descr="Image 1"/>
+        <dbform:field name="image2_href" type="file_image" descr="Image 2"/>
+        <dbform:field name="image3_href" type="file_image" descr="Image 3"/>
+        <dbform:field name="image4_href" type="file_image" descr="Image 4"/>
+        
+        <dbform:field name="shop_article_id" descr="article_id" type="foreign">
+            <dbform:foreign table="shop_article" field="concat('soDA #', issue, ' (', id, ')')" orderby="issue"/>
+        </dbform:field>
+
+    </dbform:fields>    
+
+</dbform:form>

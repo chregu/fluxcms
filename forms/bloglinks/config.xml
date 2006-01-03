@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<bxco:config xmlns:bxco="http://bitflux.org/config/1.0">
+  <bxco:fields table="bloglinks" >
+    <bxco:field name="text" type="text" descr="Title" ></bxco:field>
+    <bxco:field name="link" type="text" descr="Link"></bxco:field>
+    <bxco:field name="rss_link" type="text" descr="RSS Link"></bxco:field>
+    <bxco:field name="rel" type="text" descr="Relation"></bxco:field>
+    <bxco:field name="description" type="smalltextarea"></bxco:field>
+    <bxco:field name="date" type="date" descr="Date" ></bxco:field>
+    <bxco:field name="bloglinkscategories" descr="Category" type="foreign">
+            <bxco:foreign table="bloglinkscategories" field="name" orderby="rang"/>
+        </bxco:field>
+       
+        
+        <bxco:field name="rang" type="rang" descr="rang" ></bxco:field>
+    <bxco:field name="changed" descr="Changed" type="fixed" subtype="datetime">
+      <bxco:onnew default="sql:now()"/>
+      <bxco:onchange default="sql:now()"/>
+    </bxco:field>
+  </bxco:fields>
+  <bxco:chooser field="text" rang="rang" orderby="text" descr="Choose news"/>
+</bxco:config>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<bxco:config xmlns:bxco="http://bitflux.org/config/1.0">
+  <bxco:fields table="blogposts" >
+    <bxco:field name="post_author" descr="User" type="foreign">
+            <bxco:foreign thatfield="chooserfield" table="users" field="user_login" />
+        </bxco:field>
+  
+    <bxco:field name="post_title" type="text" descr="title" updateurifield="post_uri"></bxco:field>
+    <bxco:field name="post_uri" type="text" descr="uri"></bxco:field>
+    <bxco:field name="post_date" type="datetime" descr="date">
+     <bxco:onnew default="sql:now()"/>
+     </bxco:field>
+    <!--<bxco:field name="description" type="smalltextarea" descr="teaser"></bxco:field>
+    -->
+    <!--<bxco:field name="dc_creator" type="text" descr="dc_creator"></bxco:field>-->
+    <bxco:field name="post_content"  type="textarea" descr="text" ><![CDATA[<p>&#160;</p>]]></bxco:field>
+    <bxco:field name="post_content_extended"  type="textarea" descr="extended_text" ><![CDATA[<p>&#160;</p>]]></bxco:field>
+    
+    <bxco:field name="blogposts2categories" type="n2m" descr="Categories" >
+            <bxco:n2m thisfield="blogposts_id"  thatfield="blogcategories_id"  />
+            <bxco:foreign>
+                <bxco:table name="blogcategories"
+                  
+                    field="fullname"
+                	orderby="l"
+                    />
+            </bxco:foreign>
+  		</bxco:field>
+    <bxco:field name="post_comment_mode" type="select" default="1">
+    <bxco:options texts="Allow comments for 1 month|Always allow comments|No comments allowed|default|" values="1|2|3|99|"/>
+    
+    </bxco:field>
+    <bxco:field name="post_info" descr="blog_info" type="smalltextarea"/>
+    <bxco:field name="changed" descr="Changed" type="fixed" subtype="datetime">
+      <bxco:onnew default="sql:now()"/>
+      <bxco:onchange default="sql:now()"/>
+    </bxco:field>
+  </bxco:fields>
+  <bxco:chooser field="post_title" orderby="post_date DESC" descr="Choose news"/>
+</bxco:config>

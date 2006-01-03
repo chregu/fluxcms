@@ -1,0 +1,38 @@
+xx xxx xxx, Version 1.3.0
+
+- Blog: Improved spam checker (check against XBL, works with "default" DNS servers)
+   http://devblog.flux-cms.org/archive/2005/06/08/archive/more-spam-checking-with-xbl.html
+   
+- Blog: Tags for entries
+   http://blog.bitflux.ch/archive/2005/05/12/bxcms-supports-tags-and-related-entries.html
+
+- Blog: Added geolocation properties
+   http://devblog.bitflux.org/archive/2005/05/30/geolocation-added.html
+
+- Blog: Added bookmarklet code (JustBlogIt compatible)
+   http://devblog.bitflux.org/archive/2005/06/20/support-for-justblogit.html
+   
+- Editors: liveSave for oneform editor added. With JS based well-formed checker for XML and HTML documents
+   http://devblog.flux-cms.org/archive/2005/07/12/livesave-for-oneform-editor-added.html
+   
+- Editors: Updated Kupu-Code to latest release
+   http://devblog.flux-cms.org/archive/2005/06/08/archive/archive/kupu-updated-to-1-2-1.html
+
+- dbforms2: Replacement for very old dbforms code 
+   http://devblog.flux-cms.org/archive/2005/06/24/dbforms2-approaching-stable.html
+   
+- Imageresizer: Option to use GD instead of imagemagick
+   http://devblog.bitflux.org/archive/2005/06/06/how-to-use-gd2-instead-of-imagemagick.html
+   
+- General: Automatic Language detection option
+   http://devblog.bitflux.org/archive/2005/05/31/automatic-browser-language-detection.html
+   
+- General: MySQL Replication support
+   http://devblog.flux-cms.org/archive/2005/07/08/mysql-replication-support.html
+   
+   
+xx xxx xxx, Version 1.4.0
+
+- General: Versioning, based on mod_svn [not finished]
+- General: metadata handler (tags, indexer, search, etc) [not finished]
+

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<wizard xmlns="http://bitflux.org/config/1.0">
+    <title lang="de">Email Update</title>
+    <title lang="en">Email Update</title>
+
+    <screen method="emailFields" emailBodyID="emailBodyAnfrage" id="1" rang="1" emailFrom="contact@bitflux.ch" emailTo="user@example.org" emailSubject="Kontakt">
+        <prevScreen>1</prevScreen>
+        <nextScreen>thankyou</nextScreen>
+
+        <section id="1">
+            <fields>
+                <field name="formerrors" type="formerrors" cssClass="wizardError"/>
+
+                <group name="anfragen" type="table" cssClass="form" titleWidth="90" width="380">
+                
+                    <field name="company" type="text" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="firstname" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="name" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="address" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="zip" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="city" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="country" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="email" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="phone" type="text" cssClass="formgenerell" titleCssClass="formHeader"/>
+                </group>
+
+                <group name="anfragen" type="table"  cssClass="form" width="380">
+                    <field type="checkbox" name="bitteKontakt" value="kontakt" titleCssClass="formHeader"/>
+                    <field type="checkbox" name="bitteDoku" value="doku" titleCssClass="formHeader"/>
+                </group>
+                <group name="anfragen" type="table" cssClass="form" titleWidth="90" width="380">
+                    <field name="comments" type="longtext" rows="4" cols="40" titleCssClass="formHeader"/>
+                    <field name="send" type="submit" cssClass="formbutton"/>
+                </group>
+
+
+            </fields>
+        </section>
+
+    </screen>
+
+    <screen id="thankyou">
+        <field name="danke" type="msg" msg="danke_msg"  titleCssClass="subtitel"/>
+    </screen>
+
+    <lang>
+        <entry ID="send">
+            <text lang="de">Senden</text>
+            <text lang="en">Send</text>Bemerkungen
+        </entry>
+
+        <entry ID="email">
+            <text lang="de">E-Mail</text>
+            <text lang="en">E-Mail</text>
+        </entry>
+
+        <entry ID="company">
+            <text lang="de">Firma</text>
+            <text lang="en">Company</text>
+        </entry>
+
+        <entry ID="firstname">
+            <text lang="de">Vorname</text>
+            <text lang="en">First name</text>
+        </entry>
+
+        <entry ID="name">
+            <text lang="de">Name</text>
+            <text lang="en">Name</text>
+        </entry>
+
+        <entry ID="address">
+            <text lang="de">Strasse, Nr.</text>
+            <text lang="en">Street, Nr.</text>
+        </entry>
+
+        <entry ID="zip">
+            <text lang="de">PLZ</text>
+            <text lang="en">Zip</text>
+        </entry>
+
+        <entry ID="city">
+            <text lang="de">Ort</text>
+            <text lang="en">City</text> 
+        </entry>
+
+        <entry ID="country">
+            <text lang="de">Land</text>
+            <text lang="en">Country</text>
+        </entry>
+
+        <entry ID="phone">
+            <text lang="de">Telefon</text>
+            <text lang="en">Phone</text>
+        </entry>
+
+      
+
+        <entry ID="comments">
+            <text lang="de">Mitteilung</text>
+            <text lang="en">Message</text>
+        </entry>
+
+        <entry ID="danke">
+            <text lang="de">Vielen Dank</text>
+            <text lang="en">Thanks</text>
+        </entry>
+
+        
+        <entry ID="danke_msg">
+            <text lang="de"><![CDATA[
+Wir werden Ihre Anfrage/Bestellung so schnell wie möglich bearbeiten.
+]]>
+            </text>
+            <text lang="en">
+            <![CDATA[
+Wir werden Ihre Anfrage/Bestellung so schnell wie möglich bearbeiten. (TOTR)
+]]>
+            </text>
+        </entry>
+
+        <entry ID="bitteKontakt">
+            <text lang="de">Bitte nehmen Sie mit uns Kontakt auf</text>
+            <text lang="en">Please get in contact with us (TOTR)</text>
+        </entry>
+        
+        <entry ID="bitteDoku">
+            <text lang="de">Bitte senden Sie mir Ihre Dokumentation und Checklisten</text>
+            <text lang="en">Bitte senden Sie mir Ihre Dokumentation und Checklisten (TOTR)</text>
+        </entry>
+        
+        <entry ID="formerrors">
+            <text lang="de">Bitte füllen Sie alle mit einem Stern gekennzeichneten Felder aus</text>
+            <text lang="en">Bitte füllen Sie alle mit einem Stern gekennzeichneten Felder aus (TOTR)</text>
+        </entry>
+
+        <!--
+        <entry ID="">
+            <text lang="de"></text>
+            <text lang="en"></text>
+        </entry>
+        
+        -->
+
+        <entry ID="emailBodyAnfrage">
+            <text lang="de"><![CDATA[
+
+ Kontaktformular
+-------------------------------------
+
+Angeforderte Unterlagen:
+
+Bitte nehmen Sie mit uns Kontakt auf: {bitteKontakt} 
+Dokumentation und Checklisten senden: {bitteDoku} 
+
+Firma:          {company}
+Vorname:        {firstname}
+Name:           {name}
+Strasse:        {address}
+PLZ:            {zip}
+Ort:            {city}
+Land:           {country}
+E-Mail:         {email}
+Telefon:        {phone}
+
+Mitteilung  :  
+{comments}
+
+
+]]>
+            </text>
+        </entry>
+
+    </lang>
+</wizard>

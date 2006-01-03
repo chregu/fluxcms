@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<bxco:config xmlns:bxco="http://bitflux.org/config/1.0">
+  <bxco:fields table="blogcomments" >
+    <bxco:field name="comment_author" descr="User" type="text"/>
+  
+    <bxco:field name="comment_author_email" type="text" descr="Email" ></bxco:field>
+    <bxco:field name="comment_author_ip" type="text" descr="IP"></bxco:field>
+    <bxco:field name="comment_author_url" type="text" descr="URL"></bxco:field>
+    <bxco:field name="comment_date" type="datetime" descr="date"></bxco:field>
+    <bxco:field name="comment_status" type="select" descr="status">
+      <bxco:options texts="Approved|Moderated|Rejected|" values="1|2|3|"/>
+    </bxco:field>
+    
+    <!--<bxco:field name="description" type="smalltextarea" descr="teaser"></bxco:field>
+    -->
+    <!--<bxco:field name="dc_creator" type="text" descr="dc_creator"></bxco:field>-->
+    <bxco:field name="comment_content" subtype="mozile" type="textarea" descr="text" ></bxco:field>
+    
+   
+    <bxco:field name="comment_rejectreason"  type="smalltextarea" descr="rejectreason" ></bxco:field>
+    <bxco:field name="changed" descr="Changed" type="fixed" subtype="datetime">
+      <bxco:onnew default="sql:now()"/>
+      <bxco:onchange default="sql:now()"/>
+    </bxco:field>
+  </bxco:fields>
+  <bxco:chooser  leftjoin="{tablePrefix}blogposts on (comment_posts_id = {tablePrefix}blogposts.id)"  field="concat(post_uri,', ', comment_author)" orderby="comment_date DESC" descr="Choose news"/>
+</bxco:config>

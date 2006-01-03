@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<dbform:form onsavephp="updatetree.php" xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+    
+    <dbform:fields table="blogcategories" onsavephp="bx_dbforms2_helpers::updateCategoriesTree">
+        <dbform:field name="name" type="text" descr="name" onkeyup="updateUriField('field_name',document.getElementById('field_uri'));"></dbform:field>
+        <dbform:field name="uri" type="text" descr="uri" onkeyup="this.edited = true;"></dbform:field>
+
+        <dbform:field name="parentid" descr="Parent-Category" type="select" default="1">
+            <dbform:datasource type="foreign" namefield="fullname" idfield="id" table="blogcategories" order="l"></dbform:datasource>
+        </dbform:field>
+    
+
+        <dbform:field name="changed" descr="Changed" type="fixed_datetime"></dbform:field>
+    </dbform:fields>
+    <dbform:chooser namefield="concat( fullname ,' (',id,')')" wherefields="fullname" orderby="l" limit="35"/>
+</dbform:form>

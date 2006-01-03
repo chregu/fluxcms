@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<dbform:form 
+    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>
+
+    <dbform:fields table="users">
+
+        <dbform:field name="user_login" type="text" descr="Login Name"/>
+        <dbform:field name="user_pass" type="password_md5" descr="Password"/>
+        <dbform:field name="user_email" type="text" descr="Email"/>
+        <dbform:field name="user_fullname" type="text" descr="Full Name"/>
+        <!--<dbform:field name="user_gupi" type="text" descr="GUPI"/>
+        <dbform:field name="user_gid" type="text" descr="GID"/>-->
+
+    </dbform:fields>    
+    <dbform:chooser namefield="concat(user_login,' (',id,')')" wherefields="user_login,user_email,user_fullname" limit="20"/>    
+
+</dbform:form>

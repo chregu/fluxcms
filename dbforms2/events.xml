@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<dbform:form 
+             xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>-
+-
+<dbform:fields table="events">
+   <dbform:field name="title" type="text" descr="Title" onkeyup="updateUriField('field_title',document.getElementById('field_uri'));"/>
+   <dbform:field name="uri" type="text" descr="URI"  onkeyup="this.edited = true;"/>
+   
+   <dbform:field name="link" type="text" descr="Link"/>
+   <dbform:field name="von" type="date_timeutc" descr="Von"/>
+   <dbform:field name="bis" type="date_timeutc" descr="Bis"/>
+   <dbform:field name="location" type="text" descr="Location"/>
+   <dbform:field name="description" type="text_area" descr="Description"/>
+</dbform:fields>
+
+<dbform:chooser namefield="concat(title)" wherefields="title,link,von,bis,description" limit="5"/>
+</dbform:form>
+
