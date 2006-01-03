@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalogue>
+    <message key="help_uploadfile">Laden Sie ein File zu dem System hoch. Falls 
+    Sie eine ZIP oder TAR Datei entpacken wollen, wählen Sie 'Bilder aus einem 
+    ZIP-Archiv hinzufügen' auf der Linken Seite</message>
+    <message key="help_uploadzip">Laden Sie ein ZIP oder TAR Archiv hoch. Es wird
+    automatisch entpackt und gelöscht</message>
+    <message key="help_removefilepath">Wenn sie alle Dateien in diesem ZIP Archiv
+    in den gleichen Ordner entpacken wollen(anstatt, die vollständige Verzeichnis
+    struktur zu erstellen)</message>
+    <message key="Remove File Paths">Datei Pfade entfernen</message>
+    <message key="help_unlikedfiles">BxCMS mag gewisse Filenamen nicht, diese 
+    Option behebt sie automatisch</message>
+    <message key="Fix invalid filenames">Behebt falsche Filenamen</message>
+    
+    
+    
+    
+</catalogue>

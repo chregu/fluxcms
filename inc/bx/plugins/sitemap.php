@@ -1,0 +1,111 @@
+<?php
+
+Class bx_plugins_sitemap extends bx_plugin {
+
+     
+     static private $instance = array();
+     
+    public static function getInstance($mode) {
+        if (!isset(bx_plugins_sitemap::$instance[$mode])) {
+            bx_plugins_sitemap::$instance[$mode] = new bx_plugins_sitemap($mode);
+        } 
+         
+        return bx_plugins_sitemap::$instance[$mode];
+    } 
+
+    protected function __construct() {
+        return true;
+    }
+    
+    
+    public function getContentById($path, $id) {
+        
+        $dom = new domDocument();
+        $sn  = $dom->createElement('sitemap');
+        $this->getSitemapTree("/", $dom, $sn);
+        $dom->appendChild($sn);
+        return $dom;
+        
+    } 
+    
+    public function getContent() {
+    
+    }
+    
+    
+    public function getSitemapTree($path, $domdoc, $domnode) {
+        $coll = bx_collections::getCollection($path, $this->mode);
+        if (is_object($coll)) {
+            
+           
+           foreach($coll->getChildren($path) as $element => $entry) {
+            
+
+               if ($entry->getDisplayName() == 'Files') {
+                continue;
+               }
+               $isCol=false;
+               switch($entry->getProperty('output-mimetype')) {
+                    
+                   case "httpd/unix-directory":
+                       
+                       $elem = $domdoc->createElement('collection');
+                       $isCol=true;
+                       
+                   break;
+                    
+                   case "text/html":
+                       $elem = $domdoc->createElement('item');
+                   break;
+                    
+               }
+                
+               if (isset($elem)) {
+                    
+                    $dn = $domdoc->createElement('display-name');
+                    $te = $domdoc->createTextNode(html_entity_decode($entry->getDisplayName(),ENT_NOQUOTES,"UTF-8"));
+                    $dn->appendChild($te);
+                    
+                    if (($order = $entry->getProperty('display-order')) !== NULL) {
+                        $do = $domdoc->createElement('display-order');
+                        $te = $domdoc->createTextNode($order);
+                        $do->appendChild($te);
+                        $elem->appendChild($do);
+                    }
+                    
+                    $pa = $domdoc->createElement('path');
+                    $te = $domdoc->createTextNode($path);
+                    $pa->appendChild($te);
+                    
+                    $elem->setAttribute('mimetype',$entry->getProperty("output-mimetype")); 
+                    $localName = $entry->getLocalName();
+                    $elem->setAttribute('uri',$localName); 
+                    
+                    $elem->appendChild($dn);
+                    $elem->appendChild($pa);
+                    
+                    $domnode->appendChild($elem);
+                    
+                    if ($isCol === true && $localName && $localName != $path) {
+                        $this->getSitemapTree($localName, $domdoc, $elem);
+                        
+                    }
+                    
+               }
+             
+           }
+        }
+       
+    }
+
+    public function getIdByRequest($path, $name = NULL, $ext  = NULL) {
+        return $path; 
+    }
+    
+    public function isRealResource($path , $id) {
+        return true;
+    }
+}
+
+
+?>

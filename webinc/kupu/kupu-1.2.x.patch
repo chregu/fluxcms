@@ -1,0 +1,109 @@
+diff -u /opt/svn/kupu-1.2/common/kupueditor.js common/kupueditor.js
+--- /opt/svn/kupu-1.2/common/kupueditor.js	2005-05-27 14:35:27.000000000 +0200
++++ common/kupueditor.js	2005-05-27 17:03:22.000000000 +0200
+@@ -234,10 +234,10 @@
+ 
+         // serialize to a string
+         var contents = this._serializeOutputToString(transform);
+-        
++
+         this.logMessage("Cleanup done, sending document to server");
+         var request = Sarissa.getXmlHttpRequest();
+-    
++        
+         if (!synchronous) {
+             request.onreadystatechange = (new ContextFixer(this._saveCallback, 
+                                                this, request, redirect)).execute;
+@@ -254,7 +254,7 @@
+         };
+     };
+     
+-    this.prepareForm = function(form, id) {
++    this.prepareForm = function(form, id, bodyonly) {
+         /* add a field to the form and place the contents in it
+ 
+             can be used for simple POST support where Kupu is part of a
+@@ -300,20 +300,34 @@
+         // serializer on .xml
+         var contents =  this._serializeOutputToString(transform);
+         
++		if (bodyonly) {
++			var contents = transform.getElementsByTagName("body")[0].xml.replace(/<body[^>]*>/,"").replace(/<\/body>/,"");
++		} else {
++			var contents =  '<html>' 
++			transform.getElementsByTagName("head")[0].xml +
++			transform.getElementsByTagName("body")[0].xml +
++			'</html>';
++			
++		}
++
+         this.logMessage("Cleanup done, sending document to server");
+         
+         // now create the form input, since IE 5.5 doesn't support the 
+         // ownerDocument property we use window.document as a fallback (which
+         // will almost by definition be correct).
+         var document = form.ownerDocument ? form.ownerDocument : window.document;
+-        var ta = document.createElement('textarea');
+-        ta.style.visibility = 'hidden';
+-        var text = document.createTextNode(contents);
+-        ta.appendChild(text);
+-        ta.setAttribute('name', id);
+-        
+-        // and add it to the form
+-        form.appendChild(ta);
++		if (!form[id]) {
++			var ta = document.createElement('textarea');
++			ta.style.visibility = 'hidden';
++			var text = document.createTextNode(contents);
++			ta.appendChild(text);
++			ta.setAttribute('name', id);
++			form.appendChild(ta);
++		} else {
++			form[id].value = contents;
++			
++		}
++		
+ 
+         // let the calling code know we have added the textarea
+         return true;
+@@ -465,6 +479,12 @@
+                 this.reloadSrc();
+             };
+             // we're done so we can start editing again
++			//patch by chregu for making reload tree work
++			if (request.status == '201') {
++				
++				window.parent.navi.Navitree.reload(this.config.dst);
++			}
++			
+             window.status= "Document saved";
+         };
+         this._initialized = true;
+diff -u /opt/svn/kupu-1.2/common/kupuinit_experimental.js common/kupuinit_experimental.js
+--- /opt/svn/kupu-1.2/common/kupuinit_experimental.js	2005-05-27 14:35:27.000000000 +0200
++++ common/kupuinit_experimental.js	2005-05-27 16:59:15.000000000 +0200
+@@ -147,9 +147,9 @@
+     kupu.registerTool('listtool', listtool);
+ 
+     // since we use the inspector we don't need much else ;)
+-    var inspector = new KupuInspector('kupu-inspector-form');
++    /*var inspector = new KupuInspector('kupu-inspector-form');
+     kupu.registerTool('inspector', inspector);
+-    
++    */
+     var linktool = new LinkTool();
+     kupu.registerTool('linktool', linktool);
+ 
+@@ -162,8 +162,9 @@
+     var showpathtool = new ShowPathTool();
+     kupu.registerTool('showpathtool', showpathtool);
+     
+-    var viewsourcetool = new ViewSourceTool();
+-    kupu.registerTool('viewsourcetool', viewsourcetool);
++	var sourceedittool = new SourceEditTool('kupu-source-button',
++                                           'kupu-editor-textarea');
++    kupu.registerTool('sourceedittool', sourceedittool);
+ 
+     // Drawers...
+ 
+

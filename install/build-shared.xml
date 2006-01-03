@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<project name="BxCMS" default="dist" basedir=".">
+   
+   <property name="hasTidy" value="auto"/>
+    <target name="prepare" depends="installThemes">
+        <mkdir dir="${BxHostDir}"/>
+        <!--  for some strange reasons, copy dir does not work 3 levels deep, create the dir first -->
+        <mkdir dir="${BxHostDir}/data/"/>
+        <mkdir dir="${BxHostDir}/tmp/"/>
+        <copy includeemptydirs="true" todir="${BxHostDir}/data/">
+            <fileset dir="${BxRootDir}/install/dist/data/">
+                <exclude name="**/.svn/"/>
+            </fileset>
+        </copy>
+        <phingcall target="replaceEmailInContact"/>
+        <mkdir dir="${BxHostDir}/files/"/>
+        <mkdir dir="${BxHostDir}/files/images/"/>
+        <copy includeemptydirs="true" todir="${BxHostDir}/files/">
+            <fileset dir="${BxRootDir}/install/dist/files/">
+                <exclude name="**/.svn/"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="${BxHostDir}/dynimages/"/>
+        <mkdir dir="${BxHostDir}/lang/"/>
+        <copy includeemptydirs="true" todir="${BxHostDir}/lang/">
+            <fileset dir="${BxRootDir}/install/dist/lang/">
+                <exclude name="**/.svn/"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="replaceEmailInContact">
+        <xslt style="${BxRootDir}/install/replace_email.xsl" overwrite="true" file="${BxRootDir}/install/dist/data/contact/index.en.xhtml" tofile="${BxHostDir}/data/contact/index.en.xhtml">
+            <param name="email" expression="${cms.email}"/>
+            <param name="domain" expression="${cms.domainname}"/>
+
+        </xslt>
+    </target>
+    <target name="copyConfigTemplates" depends="prepare, installTables">
+        <echo message="Copying Config Templates..."/>
+        
+  
+      
+       
+      
+      
+
+    </target>
+
+    <target name="dist" depends="copyConfigTemplates">
+        
+        <echo message="BxCMS installed."/>
+        <echo message="User: ${cms.user}"/>
+        <echo message="Pass: ${cms.password}"/>
+        <echo message="Email: ${cms.email}"/>
+        <exec command="chmod -R g+rw ${BxHostDir}"/>
+        <exec command="chgrp -R www-data ${BxRootDir}"/>
+        <exec command="bash ./updateCheck.sh ../ ${BxHostDir}"/>
+
+    </target>
+    <target name="installTables" depends="setupPrefixedTable, installUser">
+    
+     <mdb2 src="${BxHostDir}/tmp/bxcms.prefixed.sql" url="mysql://${database.user}:${database.password}@${database.host}/${database.name}"></mdb2>
+     <mdb2  url="mysql://${database.user}:${database.password}@${database.host}/${database.name}">
+     INSERT INTO ${database.prefix}users ( user_login, user_email, user_pass) VALUES ('${cms.user}','${cms.email}',md5('${cms.password}'));
+     UPDATE ${database.prefix}options SET value = '${cms.domainname}' where name = 'sitename';
+     UPDATE ${database.prefix}options SET value = 'Welcome to my freeflux site' where name = 'sitedescription';
+     UPDATE ${database.prefix}options SET value = '' where name = 'blogname';
+     </mdb2>
+     <delete file="${BxHostDir}/tmp/bxcms.prefixed.sql"  />
+    </target>
+    
+    <target name="setupPrefixedTable">
+        <copy file="${BxRootDir}/div/db/bxcms.sql" tofile="${BxHostDir}/tmp/bxcms.prefixed.sql" overwrite="true">
+            <filterchain>
+                    <replacetokens begintoken="##" endtoken="##">
+                        <token key="bxcms_" value="${database.prefix}"/>
+                    </replacetokens>
+                </filterchain>
+        </copy>
+    </target>
+
+    <target name="installDB" if="databaseRoot.User" description="Create the Database">
+        <mdb2 onerror="continue" url="mysql://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/"> CREATE DATABASE ${database.name} </mdb2>
+
+    </target>
+    
+    <target name="installThemes" description="Install Themes">
+         <mkdir dir="${BxHostDir}"/>
+         <copy includeemptydirs="true" todir="${BxHostDir}/themes/">
+            <fileset dir="${BxRootDir}/themes/">
+                <exclude name="**/.svn/"/>
+                <exclude name="**/standard/"/>
+            </fileset>
+        </copy>
+        <!--<copy file="${BxRootDir}/install/.lastupdate" overwrite="true" tofile="${BxHostDir}/.lastupdate"/>
+        <touch file=e"${BxHostDir}/.lastupdate"/>-->
+        <php function="makeSymlink" >
+            <param value="../../../themes/standard"/>
+            <param value="${BxHostDir}/themes/standard"/>
+        </php>
+    </target>
+
+    <target name="installUser" depends="installDB" if="databaseRoot.User" description="Create the DB user">
+        <mdb2  url="mysql://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/${database.name}">GRANT ALTER, CREATE, INDEX, INSERT, LOCK TABLES, SELECT, UPDATE, DROP, DELETE ON ${database.name}. * TO ${database.user}@${database.host} IDENTIFIED BY '${database.password}';</mdb2>
+    </target>
+    
+   
+   
+  
+
+</project>

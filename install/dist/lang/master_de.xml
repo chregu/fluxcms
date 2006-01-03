@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<catalogue  xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="contact_de.xml#xpointer(//catalogue/message)" parse="xml"/>
+    <xi:include href="contact.xml#xpointer(//catalogue/message)" parse="xml"/>
+    
+    <!-- gallery stuff -->
+     <message key="next picture">nächstes Bild</message>
+     <message key="previous picture">zurück</message>
+     <message key="next page">nächste Seite</message>
+     <message key="previous page">zurück</message>
+     <message key="of"> von </message>
+     <message key="Back to overview">Übersicht</message>
+    <!-- blog stuff -->
+    
+    <message key="No new comments allowed (anymore) on this post.">Keine (weiteren) neue Kommentare erlaubt.</message>
+</catalogue>
+

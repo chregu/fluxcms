@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+    <map:components>
+        <map:schemes>
+            <map:scheme name="config" path="BX_PROJECT_DIR:///conf/config.inc.php" global="yes" variable="BX_config"/>
+        </map:schemes>
+    </map:components>
+
+    <map:pipelines>
+        <!-- 
+            pipeline for admin theme files 
+            these are mapped to the standard theme for the time being
+        -->
+        <map:pipeline>
+            <map:match matchtype="regex" type="uri" pattern="#themes/admin/*(.*)#">
+                <map:read type="resource" src="BX_PROJECT_DIR://themes/standard/admin/{1}" mime-type="auto"/>
+            </map:match>
+        </map:pipeline>
+        
+        <!-- pipeline for theme files -->
+        <map:pipeline>
+            <map:match type="uri" pattern="admin/*">
+                <map:mount src="admin/sitemap/admin.xml" uri-prefix="admin/"/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="*">
+                <map:act type="bxcms" uri="{1}">
+
+                    <map:select type="any" var="{pipelineName}">
+                        <map:when test="resourceReader">
+                            <map:read type="resource" src="BX_PROJECT_DIR://data/{../1}" mime-type="auto"/>
+                        </map:when>
+
+                        <map:when test="fo">
+                            <map:include label="bxcmsGenerator"/>
+
+                            <map:select type="phpglobalvars" var="GET" key="XML">
+
+                                <map:when test="1">
+
+                                    <map:act type="bxcmsauth">
+                                        <map:serialize type="xml">
+                                            <map:parameter name="trickMozillaDisplay" value="true"/>
+                                        </map:serialize>
+                                    </map:act>
+                                </map:when>
+                                <map:otherwise>
+                                    <map:transform type="xslt" src="BX_PROJECT_DIR://themes/{config://theme}/{xslt}">
+                                        <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                                        <map:parameter name="webrootLang" value="{webrootLang}"/>
+                                        <map:parameter name="requestUri" value="{requestUri}"/>
+                                        <map:parameter name="collectionUri" value="{collectionUri}"/>
+                                        <map:parameter name="lang" value="{lang}"/>
+                                        <map:parameter name="filename" value="{filename}"/>
+                                        <map:parameter name="fileNumber" value="{fileNumber}"/>
+
+                                    </map:transform>
+                                    <map:serialize type="fo2pdf" commandline="{config://foPath}">
+                                        <map:parameter name="configFile" value="{config://foConfig}"/>
+                                    </map:serialize>
+                                </map:otherwise>
+                            </map:select>
+                        </map:when>
+
+                        <map:otherwise>
+                            <map:include label="bxcmsGenerator"/>
+                            <map:include label="standardOutput"/>
+                        </map:otherwise>
+                    </map:select>
+
+                </map:act>
+            </map:match>
+        </map:pipeline>
+        
+
+        <map:handle-errors>
+            <map:select type="exception">
+                <map:when test="BxPageNotFoundException">
+                    <map:aggregate element="bx">
+                        <map:part strip-root="true">
+                            <map:generate type="bxcms" src="{../1}">
+                                <map:parameter name="collection" value="/"/>
+                                <map:parameter name="filename" value="index"/>
+                                <map:parameter name="ext" value="html"/>
+
+
+                            </map:generate>
+                        </map:part>
+                        <map:part>
+                            <map:generate type="error">
+                                <map:parameter name="exception"/>
+                            </map:generate>
+                        </map:part>
+                    </map:aggregate>
+
+                    <map:transform type="xslt" src="BX_PROJECT_DIR://themes/{config://theme}/pagenotfound.xsl">
+                        <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                        <map:parameter name="webrootLang" value="'constant(BX_WEBROOT)'"/>
+
+                    </map:transform>
+                    <map:serialize type="xhtml">
+                        <map:parameter type="header" name="HTTP" value="404 Not Found"/>
+                        <map:parameter name="stripScriptCDATA" value="true"/>
+                    </map:serialize>
+                </map:when>
+
+            </map:select>
+        </map:handle-errors>
+    </map:pipelines>
+
+
+    <map:include-definitions>
+
+        <map:include-definition label="bxcmsGenerator">
+            <map:generate type="bxcms" src="{../1}">
+                <map:parameter name="collection" value="{collection}"/>
+                <map:parameter name="filename" value="{filename}"/>
+                <map:parameter name="ext" value="{ext}"/>
+            </map:generate>
+        </map:include-definition>
+
+        <map:include-definition label="standardOutput">
+            <!-- preHTML filter is applied before debug serializer so we can see its results -->
+            <map:transform type="bxcmsfilter" position="preHTML">
+                <map:parameter name="filters" value="{filters}"/>
+                <map:parameter name="collectionUri" value="{collectionUri}"/>
+                <map:parameter name="filename" value="{filename}"/>
+            </map:transform>
+
+            <map:select type="phpglobalvars" var="GET" key="XML">
+
+                <map:when test="1">
+                    <map:act type="bxcmsauth">
+                        <map:serialize type="xml">
+                            <map:parameter name="trickMozillaDisplay" value="true"/>
+                        </map:serialize>
+                    </map:act>
+                </map:when>
+                <map:otherwise>
+                    <map:select type="any" var="{xslt}">
+                        <map:when test=".tal">
+
+                            <map:transform type="xsltal" src="BX_PROJECT_DIR://themes/{config://theme}/{xslt}">
+                                <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                                <map:parameter name="webrootLang" value="{webrootLang}"/>
+                                <map:parameter name="requestUri" value="{requestUri}"/>
+                                <map:parameter name="collectionUri" value="{collectionUri}"/>
+                                <map:parameter name="mode" value="{mode}"/>
+                                <map:parameter name="lang" value="{lang}"/>
+                                <map:parameter name="admin" value="{popoonmap://admin}"/>
+                                <map:parameter name="filename" value="{filename}"/>
+                                <map:parameter name="pos" value="phpglobals://_GET[pos]" default="1"/>
+                                <map:parameter name="fileNumber" value="{fileNumber}"/>
+
+                            </map:transform>
+                        </map:when>
+                        <map:otherwise>
+                            <map:transform type="xslt" src="BX_PROJECT_DIR://themes/{config://theme}/{xslt}">
+                                <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                                <map:parameter name="webrootLang" value="{webrootLang}"/>
+                                <map:parameter name="requestUri" value="{requestUri}"/>
+                                <map:parameter name="collectionUri" value="{collectionUri}"/>
+                                <map:parameter name="mode" value="{mode}"/>
+                                <map:parameter name="lang" value="{lang}"/>
+                                <map:parameter name="admin" value="{popoonmap://admin}"/>
+                                <map:parameter name="filename" value="{filename}"/>
+                                <map:parameter name="pos" value="phpglobals://_GET[pos]" default="1"/>
+                                <map:parameter name="fileNumber" value="{fileNumber}"/>
+                                <map:parameter type="options" name="registerPhpFunctions" value="true"/>
+
+                            </map:transform>
+                        </map:otherwise>
+                    </map:select>
+                    <map:transform type="bxcmsfilter" position="postHTML">
+                        <map:parameter name="collectionUri" value="{collectionUri}"/>
+                        <map:parameter name="filename" value="{filename}"/>
+                        <map:parameter name="filters" value="{filters}"/>
+                    </map:transform>
+
+                    <map:act type="bxcmsauth">
+                        <map:select type="any" var="phpglobals://_GET[admin]">
+			<map:when test="1"/>
+			<map:otherwise>
+			<!--<map:transform type="xslt" src="BX_PROJECT_DIR://themes/standard/admin/edit.xsl">
+
+                            <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                            <map:parameter name="requestUri" value="{../requestUri}"/>
+                            <map:parameter name="mode" value="{mode}"/>
+                            <map:parameter name="lang" value="{lang}"/>
+                            <map:parameter name="admin" value="{popoonmap://admin}"/>
+
+                        </map:transform>-->
+			</map:otherwise>
+			</map:select>
+                    </map:act>
+
+                    <map:select type="any" var="{output-mimetype}">
+                        <map:when test="text/xml">
+                            <map:serialize type="xml" contentType="text/xml; charset=utf-8"/>
+
+                        </map:when>
+                        <map:otherwise>
+
+                            <map:select type="phpglobalvars" var="GET" key="admin">
+                                <map:when test="1">
+                                    <map:serialize type="xml" contentType="text/xml; charset=utf-8"/>
+                                </map:when>
+
+                                <map:otherwise>
+                                    <!--<map:transform type="tidy">
+                                        <map:parameter name="drop-proprietary-attributes" value="no"/>
+                                        <map:parameter name="drop-empty-paras" value="no"/>
+                                        <map:parameter name="indent" value="no"/>
+                                    </map:transform>-->
+                                     <map:transform type="searchhighlighter">
+                                    </map:transform>
+                                    <map:serialize type="xhtml" contentType="text/html; charset=utf-8">
+                                        <map:parameter name="outputErrors" value="bx_errorhandler"/>
+                                        <map:parameter name="stripScriptCDATA" value="true"/>
+                                        <map:parameter name="stripBxAttributes" value="true"/>
+                                        <map:parameter name="obfuscateMail" value="true"/>
+                                        <map:parameter name="stripXMLDeclaration" value="true"/>
+                                    </map:serialize>
+                                </map:otherwise>
+                            </map:select>
+                        </map:otherwise>
+                    </map:select>
+                </map:otherwise>
+            </map:select>
+        </map:include-definition>
+
+    </map:include-definitions>
+
+</map:sitemap>

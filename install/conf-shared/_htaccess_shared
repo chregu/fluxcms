@@ -1,0 +1,114 @@
+AddDefaultCharset utf-8
+AddType text/xml rng
+Options -Indexes
+# Some people need this (the swiss provider hostpoint for example)
+# the installer should take care of it, if not uncomment it
+#AddHandler foo application/x-httpd-php5 .php
+
+# The following php_* instruction only work, if you're running
+# php as apache-module, not as cgi.
+# They are not really needed, the CMS works also without them,
+# But we added them here to ensure some reasonable default values
+
+php_flag allow_call_time_pass_reference  On 
+#  set this to 2039 for public website.. (or even less)
+#E_STRICT | E_ALL
+php_value error_reporting 4095 
+# E_ALL & ~E_NOTICE
+#php_value error_reporting 2039 
+
+#security stuff
+# If you need to fopen http:// files, use something else than fopen (curl, pear class, whatever)
+#  a lot of remote code injections happens through this php feature
+php_flag register_globals Off
+php_flag allow_fopen_url Off
+php_flag zend.ze1_compatibility_mode Off
+php_flag allow_call_time_pass_reference  On
+
+#Remove the comment, if you're allowed, to set new "Options"
+#Options -Indexes
+RewriteEngine On
+
+RewriteCond     %{REQUEST_URI}  !^/*themes/standard/.*
+RewriteRule ^/*themes/admin/(.+)$ ./themes/standard/admin/$1 [L]
+
+
+RewriteRule ^/*webdav/themes(.*)$  ./index.php?path=/admin/root/themes/$1  [L]
+
+#some readers from the sitemap, it's much faster to do with mod_rewrite
+RewriteRule  ^/*admin/bxe/doctypes/(.*)$   ./inc/bx/doctypes/$1  [L]
+RewriteRule  ^/*livesearch.php  ./inc/bx/php/livesearch.php [L]
+
+RewriteRule ^/*webdav/.*\.cvsignore$ - [F]
+RewriteRule ^/*webdav/.*CVS$ - [F]
+
+
+RewriteRule ^/*webdav(.*)$  ./index.php?path=/admin/content/$1 [QSA]
+RewriteRule ^/*WEBDAV(.*)$  ./index.php?path=/admin/content/$1 [QSA]
+
+
+RewriteRule ^/*admin/content/.*\.hidden$ - [F]
+RewriteRule ^/*admin/content/.*\.DS_Store$ - [F]
+RewriteRule ^/*admin/content/.*\._.*$ - [F]
+RewriteRule ^/*admin/content/.*%23.* - [F]
+
+#prevent prefetch in the admin area
+RewriteCond %{HTTP:x-moz} ^prefetch
+RewriteRule ^/*admin/.* - [F,L]
+
+#prevent some php execution
+RewriteRule ^/*files/.*php$ - [F]
+RewriteRule ^/*themes/.*php$ - [F]
+RewriteRule ^/*files/.*/$ - [F]
+RewriteRule ^/*themes/.*/$ - [F]
+RewriteRule ^/*files/+$ - [F]
+RewriteRule ^/*themes/+$ - [F]
+
+
+
+RewriteCond     %{REQUEST_URI}  !^/*inc/bx/doctypes/.*
+RewriteCond     %{REQUEST_URI}  !^/*themes/.*
+RewriteCond     %{REQUEST_URI}  !^/*webdav/
+RewriteCond     %{REQUEST_URI}  !^/*forms/.*/$
+RewriteCond     %{REQUEST_URI}  !^/*forms/.*/index.php$
+RewriteCond     %{REQUEST_URI}  !^/.*index.php
+RewriteCond     %{REQUEST_URI}  !^/*robots.txt
+RewriteCond     %{REQUEST_URI}  !^/*webalizer
+RewriteCond     %{REQUEST_URI}  !^/*dynimages/
+RewriteCond     %{REQUEST_URI}  !^/*files/
+RewriteCond     %{REQUEST_URI}  !^/*hosts/.*/files/
+RewriteCond     %{REQUEST_URI}  !^/*hosts/.*/themes/
+RewriteCond     %{REQUEST_URI}  !^/*install/
+RewriteCond     %{REQUEST_URI}  !^/*admin/form/
+RewriteCond     %{REQUEST_URI}  !^/*admin/webinc/
+RewriteCond     %{REQUEST_URI}  !^/*favicon
+RewriteCond     %{REQUEST_URI}  !^/*webinc/
+RewriteCond     %{REQUEST_URI}  !^/*inc/bx/php/.*\.php
+RewriteRule ^/*(.*)$ ./index.php?path=$1 [QSA]
+
+
+RewriteCond  %{REQUEST_URI}  ^/*dynimages/
+#RewriteCond ${lc:%{HTTP_HOST}|NONE} ^(.+)$
+#RewriteCond ${hostdir:%1} ^(.*)$   
+RewriteRule ^(.*)$ ./inc/bx/php/ResizeImageDynamic.php
+
+RewriteCond  %{REQUEST_URI}  ^/*admin/webinc/img/icons/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ ./admin/webinc/img/icons/unknown.gif [L]
+
+
+
+RewriteCond %{REQUEST_URI}  /*files/
+RewriteCond ${lc:%{HTTP_HOST}|NONE} ^(.+)$
+RewriteCond ${hostdir:%1} ^(.*)$   
+RewriteRule ^/*files/(.+)$  ./%1/files/$1 [L]
+
+
+RewriteCond %{REQUEST_URI}  /*themes/
+RewriteCond ${lc:%{HTTP_HOST}|NONE} ^(.+)$
+RewriteCond ${hostdir:%1} ^(.*)$
+RewriteRule ^/*themes/(.+)$  ./%1/themes/$1 [L]
+
+
+ErrorDocument 403 /index.php?path=/_forbidden/
+ErrorDocument 404 /index.php?path=/_notfound/

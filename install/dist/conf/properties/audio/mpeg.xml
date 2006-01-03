@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/propertyconfig">
+    <!--
+        propertysets define which properties a resource can have.
+        the default set is used, when a resource with an undefined set is
+        requested. classnames are currently used as the key.
+    -->
+    <propertysets default="default">
+         <propertyset name="audio_mpeg" >
+            <resource name="audio/mpeg"/>
+            <property id="dc_subject"/>
+            <property id="dc_date"/>
+            <property id="kMDItem_AudioBitRate"/>
+            <property id="dc_creator"/>
+            <property id="id3_name"/>
+            <property id="id3_artists"/>
+            <property id="id3_album"/>
+            <property id="id3_year"/>
+            <property id="id3_comment"/>
+            <property id="id3_track"/>
+            <property id="id3_genre"/>
+    </propertyset>
+        
+        
+    </propertysets>
+
+    <!--
+        these are global definitions for properties like name, namespace etc.
+        all ids used above refer to these definitions.
+    -->
+    <properties>
+        <property id="kMDItem_AudioBitRate" name="AudioBitRate" ns="kMDItem">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        
+        </property>
+        
+        <property id="id3_name" name="Name" ns="id3">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
+        <property id="id3_artists" name="Artists" ns="id3">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
+        <property id="id3_album" name="Album" ns="id3">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
+        <property id="id3_year" name="Year" ns="id3">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
+        <property id="id3_comment" name="Comment" ns="id3">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
+        <property id="id3_track" name="Track" ns="id3">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
+        <property id="id3_genre" name="Genre" ns="id3">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
+
+
+        
+    </properties>
+    <xi:include  xmlns:xi="http://www.w3.org/2001/XInclude"
+href="../properties.xml#xmlns(prop=http://bitflux.org/propertyconfig)xpointer(/prop:bxcms/*)"
+parse="xml"/>
+    
+    <categories>
+        <category name="id3">
+            <property id="id3_name"/>
+            <property id="id3_artists"/>
+            <property id="id3_album"/>
+            <property id="id3_year"/>
+            <property id="id3_comment"/>
+            <property id="id3_track"/>
+            <property id="id3_genre"/>
+        </category>
+    </categories>
+     
+</bxcms>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/editorconfig">
+
+    <editors>
+        <editor name="bxe"/>
+        <editor name="kupu"/>
+        <editor name="oneform"/>
+    </editors>
+
+</bxcms>

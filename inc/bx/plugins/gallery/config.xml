@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/config">
+
+    <plugins>
+        <extension type="html"/>
+        <extension type="jpg"/>
+        <extension type="jpeg"/>
+        <extension type="gif"/>
+        <extension type="png"/>
+        <parameter name="xslt" type="pipeline" value="gallery.xsl"/>
+        <plugin type="gallery">
+            <!--<parameter name="virtualDir" value="{path}"/>-->
+        <parameter name="columnsPerPage" value="4"/>
+            <parameter name="rowsPerPage" value="4"/>
+                        
+        </plugin>
+    <plugin type="navitree"/>
+    </plugins>
+    
+    <plugins inGetChildren="false">
+        <extension type="xml"/>
+        <file preg="#preview#"/>
+
+        <plugin type="gallery_preview">
+
+        </plugin>
+    </plugins>
+
+</bxcms>

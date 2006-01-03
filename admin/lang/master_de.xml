@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalogue xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <!-- include plugin language files -->
+    <xi:include href="plugins/blog_de.xml#xpointer(//catalogue/message)" parse="xml"/>
+    <xi:include href="plugins/gallery_de.xml#xpointer(//catalogue/message)" parse="xml"/>
+    <xi:include href="plugins/siteoptions_de.xml#xpointer(//catalogue/message)" parse="xml"/>
+    <xi:include href="plugins/plugin_file_de.xml#xpointer(//catalogue/message)" parse="xml"/>
+     
+    <message key="Collection"></message>
+    <message key="Create/Edit">Erzeugen/Editieren</message>
+    <message key="Configuration">Konfiguration</message>
+    <message key="Properties">Eigenschaften</message>
+
+    <message key="Create new Collection">Neue Collection erzeugen</message>
+    
+    <message key="Add .configxml">.configxml hinzufügen</message>
+    <message key="Add .configxml.children">.configxml.children hinzufügen</message>
+    <message key="Edit .configxml">.configxml editieren</message>
+    <message key="Edit .configxml.children">.configxml.children editieren</message>
+    
+    <message key="Edit">Editieren</message>
+    <message key="Copy">Kopieren</message>
+    <message key="Move/Rename">Verschieben/Umbenennen</message>
+    <message key="Delete">Löschen</message>
+    <message key="Move">Verschieben</message>
+
+    <message key="Edit in {editor}">Mit {editor} editieren</message>
+
+    <!--<message key="Edit in bxe"></message>
+    <message key="Edit in kupu"></message>
+    <message key="Edit in fck"></message>
+    <message key="Edit in oneform"></message>-->
+
+    <message key="Resource {resource}"></message>
+    
+    <message key="Create new {resourcetype}"></message>
+    <message key="Create new xhtml">Neue XHTML-Datei erzeugen</message>
+    <message key="Create new file">Neue Datei hinzufügen</message>
+    <message key="Create new archive">Dateien aus einem ZIP-Archiv hinzufügen</message>
+    <message key="Create new gallery">Neue Galerie erzeugen</message>
+
+    <message key="General Options">Globale Optionen</message>
+    <message key="Edit Site-Options">Seiten-Optionen</message>
+    <message key="Edit Users">Benutzer verwalten</message>
+
+    <!-- create a new collection -->
+    <message key="name">Name</message>
+    <message key="resource">Resource</message>
+    <message key="send">Speichern</message>
+    
+    <!-- create a new resource -->
+    <message key="lang">Sprache</message>
+    <message key="template">Vorlage</message>
+    <message key="editor">Editor</message>
+    
+    <message key="Edit in bxe">Im BXE editieren</message>
+    <message key="Edit in kupu">In Kupu editieren</message>
+    <message key="Edit in fck">Im FCKEditor editieren</message>
+    <message key="Edit in oneform">Als Text editieren</message>
+    <message key="Properties">Eigenschaften</message>
+
+    
+    <message key="bxe">BXE</message>
+    <message key="kupu">Kupu</message>
+    <message key="fck">FCKeditor</message>
+    <message key="oneform">Oneform</message>
+    <message key="de">Deutsch</message>
+    <message key="en">Englisch</message>
+  
+   <message key="Welcome to Flux CMS">Willkommen bei Flux CMS</message>
+   <message key="Username:">Benutzername:</message>
+   <message key="Password:">Passwort:</message>
+   <message key="Lost your password?">Dein Passwort vergessen?</message>
+   <message key="Get a new one.">Ein Neues erhalten</message>
+   
+   <message key="home">Startseite</message>
+   <message key="help">Hilfe</message>
+   <message key="logout">Sitzung beenden</message>
+   <message key="User:">Benutzer:</message>
+   
+   
+    <message key="Site-Options">Seiten Optionen</message>
+    <message key="Post Categories">Post Kategorien</message>
+    <message key="Post Comments">Post Kommentare</message>
+    <message key="Link Categories">Link Kategorien</message>
+    
+    <message key="Edit Properties for {0}.">Bearbeiten der Eigenschaften für {0}.</message>
+    
+</catalogue>

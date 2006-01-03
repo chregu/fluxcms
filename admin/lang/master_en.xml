@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalogue xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <!-- include plugin language files -->
+    <!-- 
+    <xi:include href="plugins/gallery_en.xml#xpointer(//catalogue/message)" parse="xml"/>
+    -->
+    <xi:include href="plugins/blog_en.xml#xpointer(//catalogue/message)" parse="xml"/>
+    <xi:include href="plugins/siteoptions_en.xml#xpointer(//catalogue/message)" parse="xml"/>
+   <xi:include href="plugins/plugin_file_en.xml#xpointer(//catalogue/message)" parse="xml"/>
+
+    
+    <message key="Create new Collection">Create New Collection</message>
+
+    <message key="Edit in bxe">Edit in BXE</message>
+    <message key="Edit in kupu">Edit in Kupu</message>
+    <message key="Edit in fck">Edit in FCKeditor</message>
+    <message key="Edit in oneform">Edit as Text</message>
+    <message key="Properties">Edit Properties</message>
+
+    <message key="Create new xhtml">Create New XHTML</message>
+    <message key="Create new file">Create New File</message>
+    <message key="Create new archive">Create New Archive</message>
+    <message key="Create new gallery">Create New Gallery</message>
+
+    <message key="name">Name</message>
+    <message key="resource">Resource</message>
+    <message key="send">Save</message>
+
+    <message key="bxe">BXE</message>
+    <message key="kupu">Kupu</message>
+    <message key="fck">FCK</message>
+    <message key="oneform">Oneform</message>
+    
+</catalogue>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/config">
+
+    <plugins>
+	    <parameter type="pipeline" name="xslt" value="overview.xsl"/>
+        <plugin type="admin_overview" admin="true"></plugin>
+    </plugins>
+ 
+</bxcms>

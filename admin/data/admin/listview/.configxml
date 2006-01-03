@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/config">
+    <plugins>
+        <plugin type="admin_listview" admin="true"></plugin>
+    </plugins>
+ </bxcms>

@@ -1,0 +1,26 @@
+<html>
+
+<head>
+
+<script type="text/javascript">
+
+function initsubmit() {
+  document.getElementById('sub').setAttribute("disabled","disabled");
+  document.getElementById('sub').value="Uploading ...";
+  return true;
+}
+</script>
+
+
+</head>
+
+<body>
+
+<form name="upload" method="post" enctype="multipart/form-data"  action="./">
+
+<input name="file"  onchange="if (initsubmit()) { document.forms.upload.submit()}" type="file"/>
+<input type="hidden" name="fieldname" id ="fieldname"/>
+<input type="submit" id="sub" name="sub" onclick="initsubmit()"  value="Upload"/>
+</form>
+</body>
+

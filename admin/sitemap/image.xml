@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+    <map:pipelines>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="*">
+                <map:include label="standardPipeline"/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:include label="standardPipeline"/>
+        </map:pipeline>
+
+    </map:pipelines>
+
+    <map:include-definitions>
+        <map:include-definition label="standardPipeline">
+            <!--<map:generate type="xmlfile" src="BX_PROJECT_DIR://xml/empty.xml"/>-->
+            <map:generate type="bxcmsadmin" src="{1}">
+                <map:parameter name="type" value="content"/>
+                <map:parameter name="collection" value="{../collection}"/>
+                <!--<map:parameter name="filename" value="{../filename}"/>
+                <map:parameter name="ext" value="{../ext}"/>-->
+                <map:parameter name="id" value="{../id}"/>
+            </map:generate>
+            <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/image/image.xsl">
+               <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                <map:parameter name="url" value="{1}"/>
+                <map:parameter name="dataUri" value="{../dataUri}"/>
+                <map:parameter name="updateTree" value="phpglobalsclean://_GET[updateTree]"/>
+                <map:parameter type="options" name="registerPhpFunctions" value="true"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:include-definition>
+
+    </map:include-definitions>
+</map:sitemap>

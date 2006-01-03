@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/config">
+
+    <plugins>
+        <plugin type="admin_editpopup" admin="true"></plugin>
+    </plugins>
+ 
+</bxcms>

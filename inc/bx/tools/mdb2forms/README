@@ -1,0 +1,11 @@
+this xsl transforms an MDB xml schema to an old school config.xml (from BXCMS OG)
+
+HOW-TO
+======
+
+- call reverse_engineer_xml_schema.php somewhere in your webbrowser
+- fill in the appropriate values
+- xsltproc mdbschema2forms.xsl /path/to/mdbschema.xml
+- php5 configsinstall.php moves the configs in single dirs..
+
+you should have now an old school forms schema config.xml for all your tables.

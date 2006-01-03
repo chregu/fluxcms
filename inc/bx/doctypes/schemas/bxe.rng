@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="http://www.w3.org/1999/xhtml"
+         xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:bx="http://bitflux.org/doctypes/bx" 
+ 	xmlns:forms="http://bitflux.org/forms" 
+         >
+
+
+<include href="xhtml/xhtml-basic.rng"/>
+
+<define name="bx.lead">
+<element name="bx:lead">
+    <ref name="Block.model"/>
+    </element>
+</define>
+
+<define name="forms.formwizard">
+<element name="forms:formwizard">
+	<attribute name="src"/>
+<text/>
+    </element>
+</define>
+
+<define name="bx.span">
+    <element name="bx:span">
+        <ref name="Inline.model"/>
+        <optional>
+            <attribute name="cssclass"/>
+        </optional>
+    </element>
+</define>
+
+<define name="bx.subtitle">
+<element name="bx:subtitle">
+    <ref name="Inline.model"/>
+    </element>
+</define>
+
+<define name="bx.asset">
+<element name="bx:asset">
+    <ref name="Inline.model"/>
+   <optional> 
+    
+    <attribute name="lang"/>
+    <attribute name="src"/>
+    <attribute name="type"/>
+    <attribute name="class"/>
+    <attribute name="target"/>
+    <attribute name="cssclass"/>
+   
+   </optional>
+</element>
+</define>
+
+</grammar>

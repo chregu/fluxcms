@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalogue>
+
+    <message key="Create/Edit">Erzeugen/Editieren</message>
+    <message key="Configuration">Konfiguration</message>
+    <message key="Properties">Eigenschaften</message>
+
+    <message key="Create New Collection">Neue Collection erzeugen</message>
+    
+    <message key="Add .configxml">.configxml hinzufügen</message>
+    <message key="Add .configxml.children">.configxml.children hinzufügen</message>
+    <message key="Edit .configxml">.configxml editieren</message>
+    <message key="Edit .configxml.children">.configxml.children editieren</message>
+    
+    <message key="Edit">Editieren</message>
+    <message key="Copy">Kopieren</message>
+    <message key="Move/Rename">Verschieben/Umbenennen</message>
+    <message key="Delete">Löschen</message>
+    <message key="Move">Verschieben</message>
+
+    <message key="Edit in {0}">In {0} editieren</message>
+    <message key="Create New {0}">{0} erzeugen</message>
+
+    <message key="Edit in bxe">Im BXE editieren</message>
+    <message key="Edit in kupu">In Kupu editieren</message>
+    <message key="Edit in fck">Im FCKEditor editieren</message>
+    <message key="Edit in oneform">Als Text editieren</message>
+    <message key="Edit in Properties">Eigenschaften</message>
+
+    <message key="Reload">Aktualisieren</message>
+    
+    <message key="Create new {resourcetype}"></message>
+    <message key="Create New xhtml">Neue XHTML-Datei erzeugen</message>
+    <message key="Create New file">Neue Datei hinzufügen</message>
+    <message key="Create New archive">Dateien aus einem ZIP-Archiv hinzufügen</message>
+    <message key="Create New gallery">Neue Galerie erzeugen</message>
+
+    <message key="Move {0} to:">Verschieben von {0} nach:</message>
+    <message key="Copy {0} to:">Kopieren von {0} nach:</message>
+    <message key="Do you really want to delete {0} ?">Wollen sie {0} wirklich löschen?</message>
+    
+    <message key="Do you really want to delete the link &quot;{0}&quot;?">Wollen sie den Link "{0}" wirklich löschen?</message>
+    <message key="Do you really want to delete the category &quot;{0}&quot;?">Wollen sie die Kategorie "{0}" wirklich löschen?</message>
+
+    <message key="Do you really want to delete the file &quot;{0}&quot;?">Wollen sie die Datei "{0}" wirklich löschen?</message>
+    <message key="Do you really want to delete &quot;{0}&quot;?">Wollen sie "{0}" wirklich löschen?</message>
+
+    <message key="Do you really want to delete the image &quot;{0}&quot;?">Wollen sie das Bild "{0}" wirklich löschen?</message>
+    <message key="Do you really want to delete the gallery &quot;{0}&quot;?">Wollen sie die Galerie "{0}" wirklich löschen?</message>
+    
+</catalogue>

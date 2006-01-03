@@ -1,0 +1,121 @@
+<config>
+
+    <constants>
+        <constant name="BX_WEBROOT">auto</constant>
+        
+        <constant name="BX_PROJECT_DIR">auto</constant>
+        
+        <!-- The tmp dir, should be writable by the webserver -->
+        <constant name="BX_TEMP_DIR">{BX_PROJECT_DIR}tmp/</constant>
+
+        <!-- The data dir, where all the content goes -->
+        <constant name="BX_DATA_DIR" >{BX_PROJECT_DIR}data/</constant>
+
+        <!-- The themes dir, where  the themes go -->
+        <constant name="BX_THEMES_DIR" >{BX_PROJECT_DIR}themes/</constant>
+
+        <!-- Some plugins check for this and do not allow access for stuff above that
+            we use that for the shared hosting, so that only files from each users directory
+            can be accessed.
+        -->
+        <constant name="BX_OPEN_BASEDIR" >{BX_PROJECT_DIR}</constant>
+        
+        <!-- this directory is used for admin configuration files -->
+        <constant name="BX_ADMIN_DATA_DIR" >{BX_PROJECT_DIR}admin/data/</constant>
+        
+        <!-- The include dir, this goes into your php include path. --> 
+        <constant name="BX_INCLUDE_DIR" >{BX_PROJECT_DIR}inc/</constant>
+
+        <!-- The local include dir, this goes into your php include path. --> 
+        <constant name="BX_LOCAL_INCLUDE_DIR" >{BX_PROJECT_DIR}localinc/</constant>
+
+        <!-- The bx library path -->
+        <constant name="BX_LIBS_DIR" >{BX_INCLUDE_DIR}bx/</constant>
+
+        <!-- The local bx library path -->
+        <constant name="BX_LOCAL_LIBS_DIR" >{BX_LOCAL_INCLUDE_DIR}bx/</constant>
+
+        <!-- The Popoon path -->
+        <constant name="BX_POPOON_DIR">{BX_INCLUDE_DIR}popoon/</constant>
+
+        <!-- The bx log dir, should be writable by the webserver -->
+        <constant name="BX_LOG_DIR" >{BX_PROJECT_DIR}tmp/</constant>
+
+        <!-- The global log filename. Set this to something to start logging -->
+        <constant name="BX_LOG_FILENAME"></constant>
+
+        <constant name="BX_DEFAULT_LANGUAGE">none</constant>
+
+        <constant name="BX_DEFAULT_ADMIN_LANGUAGE">en</constant>
+        <constant name="BX_ADMIN_LANG_DIR">{BX_PROJECT_DIR}admin/lang/</constant>
+
+        <!-- location of property config file -->
+        <constant name="BX_PROPERTYCONFIG_FILENAME" >{BX_PROJECT_DIR}conf/properties/properties.xml</constant>
+
+        <constant name="BX_CONFIGXML_FILENAME">.configxml</constant>
+    </constants>
+    
+    <connections>
+            <db type="auth_dsn" copy="dsn"></db>
+        
+        <permm type="permm">
+        
+            <authModule>
+                <type>pearauth</type>
+                <auth_table>users</auth_table>
+                <auth_usernamecol>user_login</auth_usernamecol>
+                <auth_passwordcol>user_pass</auth_passwordcol>
+                <cryptType>md5</cryptType>
+                <dsn copy="auth_dsn"/>
+            </authModule>
+            <permModule>
+                 <type>true</type>
+            </permModule>
+        </permm>
+        
+        
+        <permm type="permm_http" copy="permm">
+            <authModule>
+                <type>http</type>
+             </authModule>
+        </permm>
+
+        </connections>
+        
+        <options>
+        	<advancedRedirect>false</advancedRedirect>
+            
+            <adminLanguages>
+                 <item>en</item>
+                 <item>de</item>
+            </adminLanguages>
+            
+            <xslt_allowed_phpfunctions>__all__</xslt_allowed_phpfunctions>
+            <themeCss allowFromDB="true">main.css</themeCss>
+            <i18nAdminSrc>{BX_PROJECT_DIR}/admin/lang/master</i18nAdminSrc>
+            <blogDefaultPostCommentMode allowFromDB="true">1</blogDefaultPostCommentMode>
+            <blogDefaultEditor allowFromDB="true">wysiwyg</blogDefaultEditor>
+            
+            <blogSendRejectedCommentNotification allowFromDB="true">false</blogSendRejectedCommentNotification>
+            
+            <allowHTTPAuthentication>true</allowHTTPAuthentication>
+            <noOutsideConnections>false</noOutsideConnections>
+            <adminOverviewInfoBoxes>
+            <item>null</item>
+            </adminOverviewInfoBoxes>
+            <dynamicHttpExpires>false</dynamicHttpExpires>
+            
+            <blogXssCleanPosts>false</blogXssCleanPosts>
+
+            <themesDownloadUrl>http://www.bitflux.org/download/fluxcms/themes.xml</themesDownloadUrl>
+            
+            
+            <blogWeblogsPing allowFromDB="true" >
+            <item>http://rpc.pingomatic.com/</item>
+            <item>http://ping.bitflux.org/</item>
+             <item>http://rpc.technorati.com/rpc/ping</item>
+            </blogWeblogsPing>
+		<blogWeblogsPingFixed>
+		</blogWeblogsPingFixed>
+        </options>
+</config>

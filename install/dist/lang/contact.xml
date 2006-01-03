@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<catalogue >
+
+<!-- this matches just every field in your patforms contact form
+Not that nicely formatted etc.
+If you want it nicer, just uncomment the message element below
+and customize it...
+
+-->
+
+<message key="contact_body"><![CDATA[
+Contact Form Flux CMS Website
+*****************************
+
+{__allfields__}
+
+]]></message>
+<!--
+    <message key="contact_body"><![CDATA[
+Contact Form Flux CMS Website
+*****************************
+
+Requested Documentation:
+
+Get in contact with us : {pleaseContactMe}
+
+Name:     {name}
+E-mail:   {email}
+
+Comments:
+{comments}
+
+]]></message>
+
+-->
+</catalogue>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalogue>
+
+    <message key="Edit in bxe">Edit in BXE</message>
+    <message key="Edit in kupu">Edit in Kupu</message>
+    <message key="Edit in fck">Edit in FCKeditor</message>
+    <message key="Edit in oneform">Edit as Text</message>
+    <message key="Edit in Properties">Edit Properties</message>
+
+    <message key="Create New xhtml">Create New XHTML</message>
+    <message key="Create New file">Create New File</message>
+    <message key="Create New archive">Create New Archive</message>
+    <message key="Create New gallery">Create New Gallery</message>
+    
+</catalogue>

@@ -1,0 +1,15 @@
+
+<entry xmlns="http://purl.org/atom/ns#" xmlns:atom="http://purl.org/atom/ns#">
+    <created>now()</created>
+    <uri></uri>
+    <title></title>
+    <categories>
+        
+    </categories>
+    <comment_mode>99</comment_mode>
+    <author><name> </name></author>
+    <atom:content xmlns="http://www.w3.org/1999/xhtml" type="application/xhtml+xml"></atom:content>
+    
+    
+</entry>
+

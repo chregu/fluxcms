@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+
+    <map:pipelines>
+    
+        <map:pipeline>
+            <map:match type="uri" pattern="bxe/config.xml*">
+                <map:generate type="xmlfile" src="constant(BX_LIBS_DIR)editors/bxe/config.xml"/>
+                <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/bxe/config.xsl">
+                    <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                    <map:parameter name="dataUri" value="phpglobals://_GET[uri]"/>
+                                       <map:parameter type="options" name="registerPhpFunctions" value="true"/>
+
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+        </map:pipeline>
+        
+        <map:pipeline>
+            <map:match type="uri" pattern="bxe/doctypes/*">
+             <map:read type="resource" src="constant(BX_LIBS_DIR)doctypes/{1}" mime-type="auto"/>
+            </map:match>
+        
+        </map:pipeline>
+        
+        <map:pipeline>
+            <map:match type="uri" pattern="bxe/*">
+             <map:read type="resource" src="constant(BX_LIBS_DIR)editors/bxe/{1}" mime-type="auto"/>
+            </map:match>
+        </map:pipeline>
+        
+        <map:pipeline>
+            <map:match type="uri" pattern="*">
+                <map:include label="standardPipeline"/>
+
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:include label="standardPipeline"/>
+        </map:pipeline>
+    </map:pipelines>
+    
+
+    <map:include-definitions>
+        <map:include-definition label="standardPipeline">
+            <map:generate type="xmlfile" src="BX_PROJECT_DIR://webinc/bxe.html"/>
+            <!--
+            <map:transform type="xslt" src="BX_PROJECT_DIR://themes/{config://theme}/{../xslt}">
+                <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                <map:parameter name="requestUri" value="{../requestUri}"/>
+                <map:parameter name="mode" value="{../mode}"/>
+            </map:transform>                        
+            -->
+            <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/bxe/bxe.xsl">
+                
+                <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                <map:parameter name="url" value="{1}"/>
+                <map:parameter name="template" value="phpglobals://_GET[template]"/>
+		        <map:parameter name="dataUri" value="{../dataUri}"/>
+                <map:parameter name="lang" value="{../lang}"/>
+            
+            </map:transform>
+            
+            <map:serialize type="html"/>
+        </map:include-definition>
+
+    </map:include-definitions>
+</map:sitemap>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+
+    <constants>
+  <constant name="BX_PROJECT_DIR">none</constant>
+     <constant name="BX_DATA_DIR">none</constant>
+     <constant name="BX_THEMES_DIR">none</constant>
+     <constant name="BX_OPEN_BASEDIR">none</constant>
+     <constant name="BX_DEFAULT_LANGUAGE">none</constant>
+        <constant name="BX_WEBROOT">http://{$_SERVER['HTTP_HOST']}/</constant>
+
+        
+    </constants>
+
+    <options cacheDBOptions="false">
+    <!--set your theme
+    // and adjust also the .htaccess file (replace all occurences of themes/bxcms with themes/yourtheme)
+    -->
+    <theme allowFromDB="true">3-cols</theme>
+        <sitename allowFromDB="true">BxCMS Demo</sitename>
+<!--        <blogname allowFromDB="true"></blogname>
+        <blogdescription allowFromDB="true">This is my BxCMS Demo Blog</blogdescription>-->-
+    <outputLanguages allowFromDB="true">
+         <item>de</item>
+         <item>en</item>
+    </outputLanguages>
+
+    <defaultLanguage allowFromDB="true">en</defaultLanguage>
+    <!-- your timezone in seconds (eg. 3600), servertime == timezone from server -->
+    <timezoneSeconds allowFromDB="true">servertime</timezoneSeconds>
+    <!-- your timezone in letters (eg. CET), servertime == timezone from server -->
+    <timezoneString allowFromDB="true">servertime</timezoneString>
+
+    <image_allowed_sizes allowFromDB="true" mergeArray="true">
+        <!-- 60 is needed for the kupu drawer -->
+            <item>60</item>
+            <item>100</item>
+            <item>320</item>
+            <item>370</item>
+            <item>430</item>
+            <item>480</item>
+    </image_allowed_sizes>
+	<ads>1</ads>        
+    <xslt_allowed_phpfunctions>
+        <item>bx_helpers_config::getOption</item>
+        <item>bx_helpers_config::getLangsAvailXML</item>
+        <item>bx_helpers_uri::translateUri</item>
+<item>bx_plugins_blog_gravatar::getLink</item>
+<item>bx_helpers_simplecache::staticHttpReadAsDom</item>
+<item>bx_helpers_file::getFileSize</item>
+<item>bx_helpers_file::getFileMimeType</item>
+<item>popoon_helpers_mimetypes::getFromFileLocation</item>        
+        <item>constant</item>
+    </xslt_allowed_phpfunctions>
+    
+<autodbupdate>true</autodbupdate>
+    </options>
+    
+    <connections>
+        <db type="dsn">
+            <phptype>mysql</phptype>
+            <username>user</username>
+            <password>pass</password>
+            <hostspec>localhost</hostspec>
+            <database>something</database>
+            <tableprefix>bxcms_</tableprefix>
+        </db>
+        
+        <!--
+            Uncomment this, if you want to use the simple perm module
+            -->
+       
+        <permm type="permm">
+        
+            <authModule>
+                <type>freefluxauth</type>
+                <auth_table>users</auth_table>
+                <auth_usernamecol>user_login</auth_usernamecol>
+                <auth_passwordcol>user_pass</auth_passwordcol>
+                 <auth_dbfields>user_gid</auth_dbfields>
+                <cryptType>md5</cryptType>
+                <dsn copy="auth_dsn"/>
+            </authModule>
+            <permModule>
+                 <type>true</type>
+            </permModule>
+        </permm>
+       
+        
+    </connections>
+    
+    
+    <streams>
+        <stream>portlet</stream>
+    </streams>
+
+    <files>
+    
+    <!-- conf/include.php is currently used for cache control. Uncomment the following, if you want to use that.
+        And also adjust conf/include.php        
+        You can also add your own php files here, which should be included on every request...
+        
+        <include>{BX_PROJECT_DIR}conf/include.php</include>
+        -->
+        
+   <before>{BX_INIT_ROOT}conf/before.php</before>
+       <include>{BX_PROJECT_DIR}conf/after.php</include>
+    </files>
+</config>

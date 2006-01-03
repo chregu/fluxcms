@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Small bash script to automatically sync a local copy of a svn project
+# to the repository. Locally deleted files will be removed from the 
+# repository and locally added files will be added to the repository!
+
+svncmd=`which svn`
+#svncmd="echo svn"   # uncomment this line for debugging
+
+dirs="data files"
+modifiedDirs=
+
+uid=`id -u`
+if [ $uid != 0 ]; then
+  echo "You should be root to run this. Otherwise, svn will get confused."
+  exit 1
+fi
+
+for dir in $dirs
+do
+    echo "cheking $dir for modifications ..."
+
+    if [ -d $dir ]; then
+      for svnline in `svn stat $dir/ | sed 's/  */,/g'`
+      do
+          svnfile=`echo $svnline | cut -d "," -f 2`
+          svnstatus=`echo $svnline | cut -d "," -f 1`
+        
+          case "$svnstatus" in
+              "?")
+                echo "adding $svnfile ..." 
+                $svncmd add $svnfile
+              ;;
+              "!")
+                echo "deleting $svnfile ..." 
+                 $svncmd del $svnfile
+              ;;
+              "M")
+                echo "$svnfile has modifications..." 
+              ;;
+          esac
+          modifiedDirs="$dir/ $modifiedDirs"
+      done
+    
+    else
+        echo "$dir could not be found."
+    fi
+
+done
+
+if [ -n "$modifiedDirs" ]; then 
+    echo "commiting all changes..."
+    $svncmd ci -m 'automatic repository sync' $modifiedDirs
+fi
+

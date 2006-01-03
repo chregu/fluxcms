@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<catalogue xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="contact.xml#xpointer(//catalogue/message)" parse="xml"/>
+    
+    <!-- gallery stuff -->
+     <message key="next picture">next picture</message>
+     <message key="previous picture">previous</message>
+     <message key="next page">next page</message>
+     <message key="previous page">previous</message>
+     <message key="of"> of </message>
+     <message key="Back to overview">Overview</message>
+</catalogue>
+

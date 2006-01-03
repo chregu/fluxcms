@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/config">
+    <plugins>
+        <parameter name="xslt" type="pipeline" value="delete.xsl"/>
+        <plugin type="admin_copy" admin="true">
+        <parameter name="to" value="phpglobals://_GET[to]"/>
+        <parameter name="move" value="phpglobals://_GET[move]"/>
+        </plugin>
+    </plugins>
+ </bxcms>

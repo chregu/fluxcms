@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html >
+<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+		
+
+<title>Flux CMS Admin - Login</title> 
+<?php 
+    echo '<link rel="stylesheet" type="text/css" href="'.BX_WEBROOT.'/themes/standard/admin/css/login.css" media="screen"/>';
+    
+    ?>
+
+</head> 
+
+<body onload="document.login.username.focus()">
+<div id="top"><p class="logo">Flux CMS</p><?php print bx_helpers_config::getOption('sitename');?>
+<br class="clr"/></div>
+<div id="container" >
+<?php 
+        $i18n = $GLOBALS['POOL']->i18nadmin;
+        $perm = bx_permm::getInstance();
+        $username = $perm->getUsername();
+      
+        if ($username) {
+        
+            print "You're already logged in as " .$username.".<p/>";
+            print "This almost certainly means, that you're not allowed to view this page.<br/>";
+            print "Use the logout button link below, if you want to login as another user.<br/>";
+            print '<a href="?logout">Logout</a><br/>';
+        } 
+        else {
+            if (isset($_GET['back']) && $_GET['back']) {
+                print '<form method="post" action="'.htmlspecialchars($_GET['back']).'">';
+            } else {
+              print '<form method="post" action="'.str_replace("?logout","",htmlspecialchars(bx_helpers_uri::getRequestUri())).'" name="login">';
+            }
+              
+
+print <<<EOT
+ 
+              <fieldset>
+		<legend>
+EOT;
+       
+    echo '<img alt="" src="';
+    echo BX_WEBROOT;
+    echo '/themes/standard/admin/images/schloss.jpg"/>';
+    $title = $GLOBALS['POOL']->i18nadmin->translate('Welcome to Flux CMS');
+    $user = $GLOBALS['POOL']->i18nadmin->translate('Username:');
+    $pwd = $GLOBALS['POOL']->i18nadmin->translate('Password:');
+    $lost = $GLOBALS['POOL']->i18nadmin->translate('Lost your password?');
+    $newone = $GLOBALS['POOL']->i18nadmin->translate('Get a new one.');
+print <<<EOT
+
+        Admin Login  </legend>
+	   <label>&#160;</label><p>$title</p>
+<label>$user</label> <input name="username" type="text" class="input"/>
+  <br />
+  <label>$pwd</label> <input name="password" type="password" class="input"/>
+  <br />
+    <label>&#160;</label>  <input type="submit" value="Submit"  />
+  <br />  <br /><br />
+      <label>&#160;</label>		<p>$lost <a href="./webinc/lostpw">$newone</a></p>
+	
+	</fieldset>
+      </form>
+EOT;
+     }
+ 
+ 
+?>
+ <p class="version">
+ <a href="http://www.flux-cms.org"><b>Flux CMS</b></a> Version: <?php echo BXCMS_VERSION.'/'.BXCMS_REVISION; ?><br />
+ Free Software released under the GNU/GPL License</p>
+
+</div>
+
+
+
+   
+ </body>
+ </html>
+
+<?php
+function skipize() {
+
+ if (isset($GLOBALS['POOL']->config->sxip_homesite)) {
+    
+    $SXIP_HOMESITE_COOKIE = 'sxip-homesite';
+    $noform = false;
+   $req = new SXIP_Request_LoginX;
+   
+   $homesite_param = array_key_exists($SXIP_HOMESITE_COOKIE, $_POST) ? $_POST[$SXIP_HOMESITE_COOKIE] :
+   (array_key_exists($SXIP_HOMESITE_COOKIE, $_GET) ? $_GET[$SXIP_HOMESITE_COOKIE] : false);
+   
+   $homesite_cookie = array_key_exists($SXIP_HOMESITE_COOKIE, $_COOKIE) ?
+   $_COOKIE[$SXIP_HOMESITE_COOKIE] : false;
+   
+   // Determine the user's Homesite URL.
+   $homesite = ($homesite_param) ? $homesite_param :
+   (($homesite_cookie) ? $homesite_cookie : "");
+   $valid_homesite = false;
+   if ($homesite) {
+        $valid_homesite = SXIP_Request::getHomesiteCommandUri($homesite);
+   }
+   
+ 
+    $req->membersite($GLOBALS['POOL']->config->sxip_homesite);                    # Sets the Membersite
+    $req->uri(BX_WEBROOT."admin/");   # Sets the return-uri.
+    $req->logout("http://example.com/logout.pl?id=12"); # Sets the logout uri.
+    $req->protocol("http");                             # Sets the protocol.
+    $req->explanation("Authenticating to example.com"); # Sets the explanation.
+    $req->version("1.0");                              # Sets the version.
+    
+    $req->addPass(array("name"=>"username","value"=>"__sxip"));
+    $req->addFetch(array(
+                   context=>"verifiedEmail",     
+                   property=>"/sxip/contact/internetAddresses/verifiedEmail"));
+    $GLOBALS['SXIP_BUTTON_SRC']["loginx"] = BX_WEBROOT."themes/standard/admin/images/sxip_in.gif";
+    
+     if (strlen($homesite) && $valid_homesite) {
+        $req->homesite($homesite);
+    }
+    else {
+    // If a Homesite URL was not found, we will need to set the form
+	// action to point to a special cookie handler script.
+        $req->addPass(
+            array(name=>"returnPage",
+                  value=>BX_WEBROOT."admin/"));
+        $req->addPass(array(name=>"force",value=>"1"));
+
+        $req->formMinimal(1);
+        $req->formAction("http://".$GLOBALS['POOL']->config->sxip_homesite.".membersite.sxip.net/admin/webinc/sxip-cookiehandler.php");
+    }
+    
+    
+   if ($homesite_param && $valid_homesite) {    
+        setcookie($SXIP_HOMESITE_COOKIE, $homesite_param);
+        print "<body onLoad='javascript:document.forms[1].submit()'></body>";
+    }
+    echo $req->toForm();
+    
+    }
+    }
+    
+
+    ?>
+
+

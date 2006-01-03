@@ -1,0 +1,61 @@
+READ THIS IF YOU UPGRADE FCKeditor
+==================================
+
+FCKeditor has a bug in its initialization routine. It tries to find out 
+the location of fckeditor within the iframe, but that is sometimes not
+loaded, so document.location returns "about:blank", what FCK can't parse
+correctly.
+
+The actual patch is in fix-init-issue.patch
+
+The main problem with it is that the code, which is actually loaded, is 
+compressed, making a diff quite hard. The original code can be found in
+editor/_source/internals/fckconfig.js
+We changed the else on line 27 to
+
+***
+else
+{
+	if (parent.fckBasePath) {
+		FCKConfig.BasePath = parent.fckBasePath + "editor/";
+		FCKConfig.FullBasePath = parent.fckBasePath + "editor/";
+	} else {
+		FCKConfig.BasePath = document.location.pathname.substring(0,document.location.pathname.lastIndexOf('/')+1) ;
+		FCKConfig.FullBasePath = document.location.protocol + '//' + document.location.host + FCKConfig.BasePath ;
+	}
+}
+
+change also in editor/js/fck_startup.js line 21 (just after "var FCK=new Object();")
+FCK.Name=FCKURLParams['InstanceName']
+to
+FCK.Name=FCKURLParams['InstanceName'] || 'bx[plugins][admin_edit][content]';
+
+
+***
+
+If you upgrade FCKeditor, you have to maybe fix that by hand and not just 
+applying the patch, as it will most likely not work...
+
+
+** Source Mode in Gecko **
+
+By default the source command opens a new window in gecko. To disable this behaviour and re-
+enable the same like in IE we applied the following patch to 
+editor/_source/commandclasses/fck_othercommands.js around line 197:
+(Patch this in editor/js/fckeditorcode_gecko_2.js, search for "FCKDialog_Source")
+
+FCKSourceCommand.prototype.Execute = function()
+{
++/*
+	if ( FCKBrowserInfo.IsGecko )
+	{
+		var iWidth	= screen.width * 0.65 ;
+		var iHeight	= screen.height * 0.65 ;
+		FCKDialog.OpenDialog( 'FCKDialog_Source', FCKLang.Source, 'dialog/fck_source.html', iWidth, iHeight, null, null, true ) ;
+	}
+	else
++*/
+	    FCK.SwitchEditMode() ;
+}
+
+
