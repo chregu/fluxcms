@@ -112,7 +112,7 @@
             
             <blogWeblogsPing allowFromDB="true" >
             <item>http://rpc.pingomatic.com/</item>
-            <item>http://ping.bitflux.org/</item>
+            <item>http://ping.blogug.ch/</item>
              <item>http://rpc.technorati.com/rpc/ping</item>
             </blogWeblogsPing>
 		<blogWeblogsPingFixed>
