@@ -16,7 +16,7 @@ svn switch https://svn.bitflux.ch/repos/public/fluxcms/$BRANCH/$i
 cd $STARTDIR
 echo "$i https://svn.bitflux.ch/repos/public/fluxcms/$BRANCH/$i" >> .externals
 done
-echo "" >> .externals
+#echo "" >> .externals
 
 #themes
 
@@ -35,7 +35,7 @@ svn switch https://svn.bitflux.ch/repos/public/fluxcms/$BRANCH/themes/$i
 cd $STARTDIR2
 echo "$i https://svn.bitflux.ch/repos/public/fluxcms/$BRANCH/themes/$i" >> .externals
 done
-echo "" >> .externals
+#echo "" >> .externals
 #comment out the followin, if you're not using fluxcms_demo, but your own 
 
 svn propset svn:externals . -F .externals 
