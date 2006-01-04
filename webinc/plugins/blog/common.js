@@ -18,6 +18,15 @@ function checkTitle() {
 	return true;
 }
 
+function checkNewCategory() {
+	
+	var form = document.getElementById('newcategory');
+	if (form.value == '') {
+		return false;
+	}
+	return true;
+}
+
 function reallyNew() {
 	if (confirm("Do you really want to make a new post?\n (Any unsaved changes will get lost)")) {
 		window.location.href="./newpost.xml";
@@ -34,13 +43,12 @@ function reallyDelete() {
 
 
 function formCheck() {
-	
 	if (!checkTitle()) {
 		alert("You did not provide a title, but you have to.");
 		return false;
 	}
 	
-	if (!checkCategories()) {
+	if (!checkCategories()  && !checkNewCategory()) {
 		if (confirm("You haven't selected any category.\nAre you sure you want to post this?\n(It won't show up on the blog)")) {
 			fixEntities();
 			return true;
