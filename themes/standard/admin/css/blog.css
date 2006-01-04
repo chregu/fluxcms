@@ -363,6 +363,9 @@ letter-spacing: 0.1em;
 }
 
 #admin_blog_pager_prevnext {
-margin-left:350px;
+    margin-left:350px;
 }
 
+#newcategory {
+    width: 115px;
+}
