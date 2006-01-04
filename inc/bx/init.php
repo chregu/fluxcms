@@ -1,7 +1,7 @@
 <?php
 
 define('BXCMS_VERSION', "1.4.0-dev");
-define('BXCMS_BUILD','200601030830');
+define('BXCMS_BUILD','200601040500');
 define('BXCMS_REVISION',preg_replace('/\$Rev: ([0-9]+) \$/','r$1','$Rev$'));
     
 
