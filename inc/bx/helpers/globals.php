@@ -13,11 +13,11 @@ class bx_helpers_globals {
         
     }
     
-        static function COOKIE($name) {
+        static function COOKIE($name,$default = "") {
         if (isset($_COOKIE[$name])) {
             return popoon_classes_externalinput::basicClean($_COOKIE[$name]);
         } else {
-            return "";
+            return $default;
         }
         
     }
