@@ -321,16 +321,9 @@ class bx_streams_blog extends bx_streams_buffer {
                 throw new PopoonDBException($res);
             }
         }
-
-        if ($post->status == 1) {
-            $this->weblogsPing();
-        }
-        if($post->autodiscovery){
-           $this->getRemotePage($post->title,$post->content,$post->uri);    
-        }
         
-        $this->sendTrackbacks($post->trackbacks,$post->title,$post->content,$post->uri);
         $post->uri  = bx_collections::sanitizeUrl(dirname($this->path)).$post->uri.'.html';
+        
         bx_metaindex::setTags($post->uri,bx_metaindex::implodeTags($post->tags),true);
         bx_resourcemanager::setProperty($post->uri,"subject",bx_metaindex::implodeTags($post->tags),'http://purl.org/dc/elements/1.1/');
         bx_resourcemanager::setProperty($post->uri,"title",$post->title,'bx:');
@@ -338,6 +331,14 @@ class bx_streams_blog extends bx_streams_buffer {
         
         
         $this->updateCategories($post->id);
+        
+        if ($post->status == 1) {
+            $this->weblogsPing();
+        }
+        if($post->autodiscovery){
+           $this->getRemotePage($post->title,$post->content,$post->uri);    
+        }
+        $this->sendTrackbacks($post->trackbacks,$post->title,$post->content,$post->uri);
         
     }
     
