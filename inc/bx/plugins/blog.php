@@ -79,8 +79,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         return array("blog");
     }
 
-
-
     public function getContentUriById ($path, $id) {
         bx_global::registerStream("blog");
 
@@ -396,6 +394,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         unix_timestamp(blogposts.changed) as lastmodified,
         DATE_FORMAT(DATE_ADD(blogposts.post_date, INTERVAL '. self::$timezone .' SECOND), "%d.%m.%Y %H:%i") as post_date,
         unix_timestamp(blogposts.post_date) as unixtime,
+        blogposts.post_expires as expires,
         blogposts.post_comment_mode,
         DATE_FORMAT(blogposts.post_date, "%Y-%m-%dT%H:%i:%SZ") as post_date_iso,
         blogposts.post_author,
@@ -421,6 +420,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= ' blog:post_status="'.$row['post_status'].'" ' ;
             $xml .= ' blog:post_comment_mode="'.$row['post_comment_mode'].'" ' ;
             $xml .= ' blog:post_guid_version="'.$row['post_guid_version'].'" ' ;
+            $xml .= ' blog:post_expires="'.$row['expires'].'" ';
             if ($row['post_comment_mode'] == 99) {
                 $row['post_comment_mode'] = $GLOBALS['POOL']->config->blogDefaultPostCommentMode;
             }

@@ -63,6 +63,7 @@
         <created>
             <xsl:value-of select="@blog:post_date_iso"/>
         </created><xsl:value-of select="$break"/>
+        <expires><xsl:value-of select="@blog:post_expires"/></expires>
         <id>
             <xsl:value-of select="substring-after(@id,'entry')"/>
         </id>

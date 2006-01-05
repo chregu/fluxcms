@@ -76,7 +76,6 @@
             </xsl:otherwise>
             </xsl:choose>
           
-    
                     <xsl:call-template name="displayTabs">
                         <xsl:with-param name="selected" select="'post'"/>
                     </xsl:call-template>
@@ -287,6 +286,21 @@
                             <br/>
                         </td>
                     </tr>
+                    
+                    <tr id="advanced7">
+                    <xsl:call-template name="displayOrNot"/>
+                        <td><i18n:text>Expiration Date</i18n:text>:</td>
+                        <td>
+                            <input id="expires"  name="bx[plugins][admin_edit][expires]" size="40" value="{atom:expires}"/>
+                        </td>
+                        <td>
+                            <a href="#" onClick="cal.select(document.forms.entry.expires,'anchor_post_date','yyyy-MM-ddT00:00'); return false;" name="anchor_post_date" id="anchor_post_date">select</a><div id="caldiv" style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
+                            <br/>
+                        </td>
+                    </tr>
+
+                    
+                    
                     <tr id="advanced5">
                         <xsl:call-template name="displayOrNot"/>
                         <td>Trackback URLs</td>

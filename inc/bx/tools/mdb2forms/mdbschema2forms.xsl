@@ -56,6 +56,15 @@
     </xsl:template>
     
     
+    <xsl:template match="field[name='expires'][type='timestamp']" priority="100">
+        <bxco:field name="expires" descr="Expires" type="fixed" subtype="datetime">
+            <bxco:onnew default=""/> 
+        </bxco:field>
+    </xsl:template>
+    
+
+    
+    
     <xsl:template match="field[name='md5']" priority="100">
     
     <bxco:field name="{name}" type="fixed"  descr="{name}"><xsl:call-template name="defaultValue"/></bxco:field>

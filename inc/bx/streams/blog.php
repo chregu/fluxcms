@@ -75,7 +75,7 @@ class bx_streams_blog extends bx_streams_buffer {
             default:
                 try {
                     $xml = $p->getContentById("$colluri",$parts["name"]);
-                   $appendPostComments = TRUE;
+                    $appendPostComments = TRUE;
                 } catch (BxPageNotFoundException $e) {
                     $xml = new DomDocument();
                     $xml->load(BX_LIBS_DIR."/streams/blog/newentry.xml");
@@ -117,14 +117,14 @@ class bx_streams_blog extends bx_streams_buffer {
                         }
                         
                     }
-                    
+                      
                     return $xml->saveXML();
                 }
                 $xsl = new DomDocument();
                 $xsl->load(BX_LIBS_DIR."/streams/blog/html2xml.xsl");
                 
         }
-
+        
         $proc = new XSltProcessor();
         $proc->importStylesheet($xsl);
         $proc->setParameter("","webroot",BX_WEBROOT);
@@ -208,19 +208,22 @@ class bx_streams_blog extends bx_streams_buffer {
         $query = "delete from ".$this->tablePrefix."blogposts where post_uri = '$id'";
         $GLOBALS['POOL']->dbwrite->query("$query");
     }
-    function fixDate($date) {
+    
+    function fixDate($date, $defNow=1) {
+        
         if (!$date || $date == "now()") {
             return gmdate("Y-m-d H:i:s",time());
         }
+        
         $date =  preg_replace("/([0-9])T([0-9])/","$1 $2",$date);
         $date =  preg_replace("/([\+\-][0-9]{2}):([0-9]{2})/","$1$2",$date);
         $date = strtotime($date);
+        
         if ($date <= 0) {
             return  gmdate("Y-m-d H:i:s",time());
-        }
+        } 
+        
         return  gmdate("Y-m-d H:i:s",$date);
-        
-        
     }
     
     function getPostObject() {
@@ -233,9 +236,11 @@ class bx_streams_blog extends bx_streams_buffer {
         $post->summary = $this->getElement("summary",true);
         $post->status = $this->getElement("status");
         $post->comment_mode = $this->getElement("comment_mode");
+         
         if (!$post->comment_mode) {
              $post->comment_mode = 99;
         }
+         
         $post->uri = $this->getElement("uri");
         $post->tags = bx_metaindex::splitTags(trim($this->getElement("tags")));
         $post->trackbacks = $this->getElement("trackback");
@@ -245,8 +250,8 @@ class bx_streams_blog extends bx_streams_buffer {
             $post->status = 1;
         }
         $post->date = $this->fixDate($this->getElement("created"));
+        $post->expires = $this->fixDate($this->getElement("expires"));
         $post->post_info = "";
-        
         return $post;
     }
     
@@ -271,12 +276,13 @@ class bx_streams_blog extends bx_streams_buffer {
         foreach (self::$adminPlugins as $plugin) {
             $post = call_user_func(array("bx_plugins_blog_".$plugin,"onInsertNewPost"),$post);
         }
-        
+         
         $query = "insert into ".$this->tablePrefix."blogposts 
-            (id, post_author, post_date  , post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode) values 
+            (id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode) values 
             ($post->id, 
             ".$db->quote($post->author,'text').", 
-            '".$post->date."', 
+            '".$post->date."',
+            '".$post->expires."',
             ".$db->quote(bx_helpers_string::utf2entities($post->title),'text').",
             ".$db->quote(bx_helpers_string::utf2entities($post->content),'text').",
             ".$db->quote(bx_helpers_string::utf2entities($post->content_extended),'text').",
@@ -430,11 +436,13 @@ class bx_streams_blog extends bx_streams_buffer {
                 $post = call_user_func($func,$post);
             }
         }
+        
         $query = "update ".$this->tablePrefix."blogposts set post_title = ".$db->quote(bx_helpers_string::utf2entities($post->title)).",".
         "post_content = ".$db->quote(bx_helpers_string::utf2entities($post->content)) .",".
         "post_content_extended = ".$db->quote(bx_helpers_string::utf2entities($post->content_extended)) .",".
         "post_content_summary = ".$db->quote(bx_helpers_string::utf2entities($post->summary)) .",".
         "post_status = ". $db->quote($post->status) .",".
+        "post_expires = ".$db->quote($post->expires).",".
         "post_comment_mode = ". $db->quote($post->comment_mode);
         if ($post->date) {
             $query .= ", post_date = ".$db->quote($post->date);
@@ -569,7 +577,6 @@ class bx_streams_blog extends bx_streams_buffer {
         }
     }
     function getElement($element,$clean = false) {
-        
         $res = $this->xp->query("/atom:entry/atom:$element/*|/atom:entry/atom:$element/text()");
         $xml = "";
         foreach($res as $node) {

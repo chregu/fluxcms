@@ -108,6 +108,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 fwrite($fd, '<id>'.$data['id'].'</id>');
                 fwrite($fd, '<uri>'.$data['uri'].'</uri>');
                 fwrite($fd, '<created>'.$data['created'].'</created>');
+                fwrite($fd, '<expires>'.$data['expires'].'</expires>');
                 fwrite($fd, '<tags>'.trim($data['tags']).'</tags>');
                 fwrite($fd, '<trackback>'.$data['trackback'].'</trackback>');
                 fwrite($fd, '<autodiscovery>'.$data['autodiscovery'].'</autodiscovery>');
