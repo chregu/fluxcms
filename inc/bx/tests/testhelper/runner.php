@@ -18,8 +18,9 @@ class testhelper_runner {
             }
             $ret = $psuite->run($preporter);
             if (function_exists("xdebug_start_code_coverage")) {
-                $cc =  PHPUnit2_Util_CodeCoverage_Renderer::factory('HTML',array('tests' => xdebug_get_code_coverage()));
-                $cc->renderToFile('cov.html');
+                include_once("coverage.php");
+                $cc = testhelper_coverage_HTML::factory(null,array('tests' => xdebug_get_code_coverage()));
+                $cc->renderToFile('coverage.html');
             }
 
         return $ret;
