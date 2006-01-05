@@ -36,6 +36,10 @@
 
     --> 
     <blogSendRejectedCommentNotification allowFromDB="true">false</blogSendRejectedCommentNotification>
+   
+    <!-- Whether to regard post expiration dates -->
+    <blogPostsExpireCatAllOnly allowFromDB="true">false</blogPostsExpireCatAllOnly>
+    <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
     
     <!-- your timezone in seconds (eg. 3600), servertime == timezone from server -->
     <timezoneSeconds allowFromDB="true">servertime</timezoneSeconds>
