@@ -291,7 +291,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
             $doComments = true;
         }
-        var_dump($this->checkExpiry);        
+        
         if ($this->checkExpiry == "true") {
             $query = $this->getPostsQueryExpired($query, $cat, $tablePrefix);
         }
