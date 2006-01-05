@@ -51,10 +51,15 @@ if($szruncase!='all' && $acaselist[$szruncase]=='')
 $aruncaselist = ($szruncase=='all') ? $acaselist : array($acaselist[$szruncase]);
 
 include_once("testhelper/runner.php");
+
+
 if(!testhelper_runner::main(new TextReporter(), $aruncaselist)) {
     
     die(1);
 }
+
+
+
 die(0);
 
 
