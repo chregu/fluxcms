@@ -102,6 +102,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $this->singlePostPerm = 1;
             $this->overviewPerm = 1;
         }
+        
+        $this->checkExpiry = $GLOBALS['POOL']->config->getConfProperty('blogPostsCheckExpiry');
+         
         if (strpos($id,"plugin=") === 0) {
             $plugin = substr($id,7);
             if ($pos = strpos($plugin,"(")) {
@@ -150,7 +153,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if ($mode == "rss") {
             $id = "index";
         }
-
+        
         $query = "SELECT ".$tablePrefix."blogposts.id from ".$tablePrefix."blogposts ";
         $archivepath = "";
         $archivewhere = "";
@@ -288,6 +291,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
             $doComments = true;
         }
+        var_dump($this->checkExpiry);        
+        if ($this->checkExpiry == "true") {
+            $query = $this->getPostsQueryExpired($query, $cat, $tablePrefix);
+        }
+
         $res = $GLOBALS['POOL']->db->query($query);
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
@@ -350,7 +358,33 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
         return $dom;
     }
+    
 
+    /**
+    * getPostsQueryExpired: checks expiration date of posts
+    * @param    query       string  mysql query
+    * @param    cat         string  category
+    * @param    tableprefx  string  table prefix
+    * @return   string
+    * @access   private
+    */
+    private function getPostsQueryExpired($query, $cat, $tableprefx) {
+        $catAllOnly = $GLOBALS['POOL']->config->getConfProperty('blogPostsExpireCatAllOnly');
+        if (stripos($query, "where") > 0 ) {
+            if ($cat == "" || $catAllOnly == "false") {
+                $qparts = explode("where", $query);
+                if (sizeof($qparts) == 2) {
+                    $w = $tableprefx."blogposts.post_date < ".$tableprefx."blogposts.post_expires AND ";
+                    $w.= "unix_timestamp(".$tableprefx."blogposts.post_expires) >= ".time();
+            
+                    $q = $qparts[0]." WHERE ".$w." AND ".$qparts[1];
+                    return $q;
+                }
+            }
+        }
+        
+        return $query; 
+    }
 
     public function getNewPermaLink($uri, $path, $isId = false) {
         $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
@@ -363,6 +397,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
        }   else {
             $query .= "post_uri = ". $db->quote($uri);
        }
+       
        $res = $db->query($query);
 
        if ( !$res || $db->isError($res) ) {
@@ -375,7 +410,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
    }
     protected function getBlogPostData($id,$path,$doComments = false) {
         if (self::$timezone === NULL) {
-             self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
+               self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
         }
          if (!self::$timezoneString) {
              self::$timezoneString = bx_helpers_config::getTimezoneAsString();
