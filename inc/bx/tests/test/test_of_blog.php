@@ -3,6 +3,38 @@
 
 class Test_of_blog extends BxWebTestCase {
     
+    function test_makeNewPost() {
+        $this->loginAdmin();
+        $this->setFrameFocus("edit");
+        $this->clickLink("Make new Blog Entry");
+        $fix = substr(md5(time()),0,6);
+        $this->setField("bx[plugins][admin_edit][title]","title $fix");
+        $this->setField("bx[plugins][admin_edit][uri]","title $fix");
+        $this->setField("bx[plugins][admin_edit][content]","content");
+        
+        $this->setField("bx[plugins][admin_edit][categories][General]","on");
+        
+        $this->clickSubmit("Save");
+        
+        $this->get($this->host."blog/");
+        $this->assertWantedText("title $fix","New post not found error. \n %s");
+        
+        $this->get($this->host."admin/");
+        $this->setFrameFocus("edit");
+        $this->clickLink("Blog Posts Overview / Latest Comments");
+        
+        $this->assertWantedText("title $fix","Post not found. \n %s");
+        
+        $this->get($this->host."/admin/edit//blog/title-$fix.html");
+        $id = $this->_browser->getField("bx[plugins][admin_edit][id]");
+        
+        $this->post($this->host."/admin/edit//blog/title-$fix.html", array("bx[plugins][admin_edit][uri]" => "/admin/edit//blog/title-$fix.html", "bx[plugins][admin_edit][delete]" => 1, "bx[plugins][admin_edit][id]" => $id));
+        
+        $this->get($this->host."blog/");
+        $this->assertNoUnwantedText("title $fix","Post not deleted error. \n %s");
+        
+    }
+    
     function test_startpage() {
         
         $this->get($this->host."blog/");
