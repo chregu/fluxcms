@@ -155,19 +155,9 @@ abstract class PHPUnit2_Util_CodeCoverage_Renderer {
      */
     protected function getSummary() {
         $summary = array();
+
         foreach ($this->codeCoverageInformation as $testCaseName => $sourceFiles) {
             foreach ($sourceFiles as $sourceFile => $executedLines) {
-                if (strpos($sourceFile,"inc/bx/") === false) {
-                    continue;
-                }
-                if (strpos($sourceFile,"inc/bx/tests") !== false) {
-                    continue;
-                }
-                
-                if (strpos($sourceFile,"inc/bx/autoload.php") !== false) {
-                    continue;
-                }
-                
                 foreach ($executedLines as $lineNumber => $flag) {
                     if (!isset($summary[$sourceFile][$lineNumber])) {
                         $summary[$sourceFile][$lineNumber] = $flag;
