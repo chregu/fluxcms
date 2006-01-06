@@ -33,7 +33,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     /*** magic methods and functions ***/
 
     public static function getInstance($mode) {
-
         if (!isset(bx_plugins_blog::$instance[$mode])) {
             bx_plugins_blog::$instance[$mode] = new bx_plugins_blog($mode);
         }
@@ -260,8 +259,17 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
             $archivewhere .= $tablePrefix.'blogposts.id > 0 and ' . $tablePrefix.'blogposts.post_status & ' . $this->overviewPerm ;
             if ($this->overviewPerm != 7) {
+                
                 $archivewhere .= " and post_date < '".$gmnow."'";
+                
+                $catAllOnly = $GLOBALS['POOL']->config->getConfProperty('blogPostsExpireCatAllOnly');
+                if ($cat == "" || $catAllOnly == "false") {
+                    $archivewhere .= " AND ";
+                    $archivewhere .= $tablePrefix."blogposts.post_expires = '0000-00-00 00:00:00' OR ";
+                    $archivewhere .= "unix_timestamp(".$tablePrefix."blogposts.post_expires) >= ".time();
+                }
             }
+            
             $res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
             
             if (MDB2::isError($res)) {
@@ -292,10 +300,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $doComments = true;
         }
         
-        if ($this->checkExpiry == "true") {
-            $query = $this->getPostsQueryExpired($query, $cat, $tablePrefix);
-        }
-
         $res = $GLOBALS['POOL']->db->query($query);
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
@@ -359,32 +363,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         return $dom;
     }
     
-
-    /**
-    * getPostsQueryExpired: checks expiration date of posts
-    * @param    query       string  mysql query
-    * @param    cat         string  category
-    * @param    tableprefx  string  table prefix
-    * @return   string
-    * @access   private
-    */
-    private function getPostsQueryExpired($query, $cat, $tableprefx) {
-        $catAllOnly = $GLOBALS['POOL']->config->getConfProperty('blogPostsExpireCatAllOnly');
-        if (stripos($query, "where") > 0 ) {
-            if ($cat == "" || $catAllOnly == "false") {
-                $qparts = explode("where", $query);
-                if (sizeof($qparts) == 2) {
-                    $w = $tableprefx."blogposts.post_date < ".$tableprefx."blogposts.post_expires AND ";
-                    $w.= "unix_timestamp(".$tableprefx."blogposts.post_expires) >= ".time();
-            
-                    $q = $qparts[0]." WHERE ".$w." AND ".$qparts[1];
-                    return $q;
-                }
-            }
-        }
-        
-        return $query; 
-    }
 
     public function getNewPermaLink($uri, $path, $isId = false) {
         $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
