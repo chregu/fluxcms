@@ -488,8 +488,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '</span>';
 
             // author
-
-            $xml .= '<span class="post_author"><a href="'.BX_WEBROOT_W.$path.'archive/author/'.$row['post_author'].'/">'.$row['post_author'].'</a></span>';
+            $post_author_fullname =  bx_helpers_users::getFullnameByUsername($row['post_author']);
+            if ($post_author_fullname) {
+                
+                $xml .= '<span class="post_author"><a href="'.BX_WEBROOT_W.$path.'archive/author/'.$row['post_author'].'/">'.$post_author_fullname.'</a></span>';
+            } else {
+                $xml .= '<span class="post_author"><a href="'.BX_WEBROOT_W.$path.'archive/author/'.$row['post_author'].'/">'.$row['post_author'].'</a></span>';
+            }
             //post date
             $xml .= '<span class="post_date">'.$row['post_date'].' ' . self::$timezoneString . '</span>';
             $xml .= '</div>';
