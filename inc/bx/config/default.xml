@@ -115,7 +115,10 @@
             <item>http://ping.blogug.ch/</item>
              <item>http://rpc.technorati.com/rpc/ping</item>
             </blogWeblogsPing>
-		<blogWeblogsPingFixed>
-		</blogWeblogsPingFixed>
+		<blogWeblogsPingFixed></blogWeblogsPingFixed>
+        <blogPostsExpireCatAllOnly allowFromDB="true">false</blogPostsExpireCatAllOnly>
+        <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
+        
+        
         </options>
 </config>

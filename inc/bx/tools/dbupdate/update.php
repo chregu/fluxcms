@@ -222,6 +222,12 @@ if ($lastVersion < 5849) {
   doQuery("update `{tablePrefix}blogposts` set post_guid_version = 1, changed = changed");
   updateLastVersion(5849);
 }
+
+if ($lastVersion < 6247) {
+    addCol('blogposts','post_expires',"DATETIME NULL");
+    updateLastVersion(6247);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
