@@ -142,6 +142,7 @@ CREATE TABLE `##bxcms_##blogposts` (
   `id` int(10) NOT NULL auto_increment,
   `post_author` varchar(40) NOT NULL default 'unknown',
   `post_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `post_expires` datetime default NULL,
   `post_content` longtext NOT NULL,
   `post_content_extended` longtext NOT NULL,
   `post_content_summary` text NOT NULL,
@@ -233,7 +234,7 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('outp
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('image_allowed_sizes','',1,5);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('defaultLanguage','',0,6);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitedescription','',0,7);
-INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','5849',0,8);
+INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6247',0,8);
 
 --
 -- Table structure for table `##bxcms_##properties`
