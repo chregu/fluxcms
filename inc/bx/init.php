@@ -1,6 +1,6 @@
 <?php
 
-define('BXCMS_VERSION', "1.4.0-dev");
+define('BXCMS_VERSION', "1.4-dev");
 define('BXCMS_BUILD','200601060500');
 define('BXCMS_REVISION',preg_replace('/\$Rev: ([0-9]+) \$/','r$1','$Rev$'));
     
@@ -9,7 +9,7 @@ class bx_init {
     
     static $tmpdir = "./tmp/";
     static $bxdir = "./inc/bx/";
-    static $lastdbversion = 5849;
+    static $lastdbversion = 6247;
     static $configCachedFile = '' ;
     
     
