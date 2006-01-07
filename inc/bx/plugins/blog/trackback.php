@@ -41,6 +41,7 @@ class bx_plugins_blog_trackback {
             $row['post_comment_mode'] = $GLOBALS['POOL']->config->blogDefaultPostCommentMode;
         }
         
+        $onemonthago = time() - 2678800; 
         if ($GLOBALS['POOL']->config->blogTrackbacksTimeLimit == 'true' && $onemonthago > $row['unixtime']) {
             return '<error/>';
         }
