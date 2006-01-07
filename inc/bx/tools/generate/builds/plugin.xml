@@ -3,7 +3,7 @@
 <project name="Flux CMS Plugin generator" default="dist" basedir=".">
 
     <property name="pname" value="test"/>
-    <property name="tablename" value=""/>
+    <property name="tablename" value="users"/>
     <property name="theme" value="3-cols"/>
 
     <target name="dist" depends="copyPhp, createCollection, copyXsl">
@@ -14,7 +14,7 @@
             <filterchain>
                 <replacetokens begintoken="##" endtoken="##">
                     <token key="pname" value="${pname}"/>
-                    <token key="tablename" value="${tablename}"/>
+                    
 
                 </replacetokens>
             </filterchain>
@@ -39,6 +39,7 @@
             <filterchain>
                 <replacetokens begintoken="##" endtoken="##">
                     <token key="pname" value="${pname}"/>
+                    <token key="tablename" value="${tablename}"/>
                 </replacetokens>
             </filterchain>
         </copy>

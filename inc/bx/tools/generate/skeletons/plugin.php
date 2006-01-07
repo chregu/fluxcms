@@ -17,15 +17,15 @@
 /** 
 * To use this plugin in a collection, put the following into .configxml
 *** 
-    <bxcms xmlns="http://bitflux.org/config">
-        <plugins>
-            <parameter name="xslt" type="pipeline" value="##pname##.xsl"/>
-            <extension type="html"/>
-            <plugin type="##pname##" >
-            </plugin>
-            <plugin type="navitree"></plugin>
-        </plugins>
-    </bxcms>
+<bxcms xmlns="http://bitflux.org/config">
+<plugins>
+<parameter name="xslt" type="pipeline" value="##pname##.xsl"/>
+<extension type="html"/>
+<plugin type="##pname##" >
+</plugin>
+<plugin type="navitree"></plugin>
+</plugins>
+</bxcms>
 ***
 * See also the ##pname##.xsl in your themes folder for the actual output
 */
@@ -42,7 +42,7 @@ class bx_plugins_##pname## extends bx_plugin implements bxIplugin {
     /**
     The table names
     */
-    public $tablename = "##tablename##";
+    public $tablename = null;
     
     protected $db = null;
     protected $tablePrefix = null;
@@ -65,7 +65,7 @@ class bx_plugins_##pname## extends bx_plugin implements bxIplugin {
     *  it's protected. You have to use getInstance()
     */
     protected function __construct($mode) {
-         // Get the global table prefix
+        // Get the global table prefix
         $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         // get the db object
         $this->db = $GLOBALS['POOL']->db;
@@ -73,9 +73,9 @@ class bx_plugins_##pname## extends bx_plugin implements bxIplugin {
     }
     
     /*** 
-        Action methods. 
-        This are called from the bxcms popoon action 
-     ***/
+    Action methods. 
+    This are called from the bxcms popoon action 
+    ***/
     
     /**
     * This function is called by the action to check, if it's a "RealResource"
@@ -116,15 +116,15 @@ class bx_plugins_##pname## extends bx_plugin implements bxIplugin {
     */
     
     public function getIdByRequest($path, $name = NULL, $ext = NULL) {
-       
-       return $name.'.'.$this->name;
-       
+        
+        return $name.'.'.$this->name;
+        
     } 
     
     /***
-        Content methods
-        The actual content getting methods
-     ***/
+    Content methods
+    The actual content getting methods
+    ***/
     
     /**
     * The actual "pulling the content" method
@@ -140,53 +140,35 @@ class bx_plugins_##pname## extends bx_plugin implements bxIplugin {
     
     public function getContentById($path, $id) {
         
-        // get the dirname and check, if we have one
-        // this helps finding links like category/3.html
-        $dirname = dirname($id);
-        
-        switch ($dirname) {
-            case "category":
-                //get the cat id out of $id
-                $catid = preg_replace("#category/([0-9]+)\.links#","$1",$id);
-                // and put a where restriction for getLinks
-                return $this->getLinks($path," categories.id  = " .(int) $catid);
-                break;
-            case "tag":
-                //get the tag name out of $id
-                $tagname = preg_replace("#tag/(.+)\.links#","$1",$id);
-                //get all ids with that tag within this path
-                $taglinks = bx_metaindex::getRelatedIdsByTags(array($tagname),null,$path.'%');
-                // and now create a "funny" query for getting only the links with that tag.
-                $where = "concat('$path',links.id,'.links') in ('".implode("','",array_keys($taglinks))."')";
-                return $this->getLinks($path,$where);
-                break;
-            default:
-                // show all links if id = index.links
-                if ($id == "index.##pname##") {
-                    if ($this->tablename) {
-                        return $this->getLinks($path);
-                    } else {
-                        return $this->getEmptyPage($id);
-                    }
-                } else {
-                    //otherwise show only a single link
-                    // casting to (int) will get rid of .links
-                    return $this->getLinks($path, " links.id = ". (int) $id);
-                }
+        $this->tablename = $this->getParameter($path,"tablename");
+        if ($this->tablename) {
+            // show all links if id = index.links
+            if ($id == "index.##pname##") {
+                $xml =  $this->getData($path);
+                
+            } else {
+                //otherwise show only a single link
+                // casting to (int) will get rid of .links
+                $xml = $this->getData($path, " id = ". (int) substr($id,2));
+            }
+        } else {
+            $xml = $this->getEmptyPage($id);
         }
         
+        $xml = '<div xmlns="http://www.w3.org/1999/xhtml"  xmlns:i18n="http://apache.org/cocoon/i18n/2.1">'.$xml.'</div>';
         
+        return domdocument::loadXML($xml);
     }
     
     /***
-       UNTIL HERE IS ALL WHAT IT NEEDS FOR A BASIC IMPLEMENTATION
-       (to just output a page with all links)
-        What follows is additional juice.
-     ***/
+    UNTIL HERE IS ALL WHAT IT NEEDS FOR A BASIC IMPLEMENTATION
+    (to just output a page with all links)
+    What follows is additional juice.
+    ***/
     
     
     public function getResourceById($path, $id, $mock = false) {
-        $pathid = $path.$id;
+        /*$pathid = $path.$id;
         if (!isset($this->res[$pathid])) {
             $res = new bx_resources_simple($pathid);
             $id = (int) $id;
@@ -196,12 +178,13 @@ class bx_plugins_##pname## extends bx_plugin implements bxIplugin {
             $this->res[$pathid] = $res;
         }
         return $this->res[$pathid];
+        */
     }
     
     /***
-       admin methods
-     ***/  
-     
+    admin methods
+    ***/  
+    
     /**
     * to actually being able to edit links in the admin, we have to return
     *  true here, if the admin actions asks us for that.
@@ -216,100 +199,65 @@ class bx_plugins_##pname## extends bx_plugin implements bxIplugin {
     */
     
     public function getEditorsById($path, $id) {
-        return array("##pname##");
+        // return array("##pname##");
+        return null;
     }
     
     /***
-        Internal Methods, only needed by that class
+    Internal Methods, only needed by that class
     ***/
     
     
     protected function getEmptyPage($id) {
         
-        $xml = '<p xmlns="http://www.w3.org/1999/xhtml"  xmlns:i18n="http://apache.org/cocoon/i18n/2.1">
+        $xml = '<p>
         <i18n:text>Called ##pname## plugin with id: '.$id.'</i18n:text></p>';
         
-        return domdocument::loadXML($xml);
-        }
+        return $xml;
+    }
     
     /**
     * Returns all links as XML
     */
     
-    protected function getLinks($path, $where = null) {
-       
+    protected function getData($path, $where = null) {
+        $query = "select * from ".$this->tablePrefix.$this->tablename;
         
-        /* for the sake of simplicity, we use XML_db2xml,
-            which makes it quite easy to get an XML out of a DB query
-            even, if it's not that nice to look at
-            */
-        $db2xml = new XML_db2xml($this->db,"links");
-         $style = $this->getParameter($path,"style");
-         
-        if ($style == "delicious") {
-         $query = "select links.link, links.text, links.id, links.description, links.date from ".$this->tablePrefix.$this->linksTable." as links ";
-                    
-        } else {
-        
-        $query = "select categories.id, categories.name, links.id, links.text, links.link, links.description, links.date from ".$this->tablePrefix.$this->categoryTable." as categories
-                    left join ".$this->tablePrefix.$this->linksTable." as links
-                    on links.bloglinkscategories  = 
-                       categories.id";
-        }
         if ($where) {
             $query .= " where $where ";
         }
         
-       
-        if ($style == "delicious") {
-              $query .= " order by links.date DESC";
-              $idxpath = "/links/result/row/id";
-        } else {
-            $query .= " order by categories.rang, links.rang";
-            $idxpath = "/links/result/row/row/id";
-        }
+        
         $res = $this->db->query($query);
         
-        //get ids from the 3rd col for the later tags retrieval
-        $_ids = $res->fetchCol(2);
+        $xml = "<table>";
+        $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
+        $overview = ($res->numRows() > 1) ? true : false;
         
-        //seek back to the start of the result set
-        $res->seek(0);
-        //and make a domdocument out of that resultset
-        $dom = $db2xml->getXMLObject($res);
-
-        $linksids = array();
-        //create the path to the $ids
-        foreach ($_ids as $id) {
-            $linksids[] = $path.$id.".links";
+        if ($overview) {
+            array_splice($row,4);
         }
-        // get tags from metaindex with the found linkids from above
-        $tags = bx_metaindex::getTagsByIds($linksids);
         
-        //create a xpath object
-        $xp = new domxpath($dom);
-        //loop through all link ids
-        foreach ($xp->query($idxpath) as $link) {
-            $id = $link->nodeValue;
-            // if we have tags, create elements for each one and append them to the link node
-            $linkid = $path.$id.'.links';
-            if (isset($tags[$linkid])) {
-                foreach($tags[$linkid] as $tag) {
-                    $tagnode = $dom->createElement("tag",$tag);
-                    $link->parentNode->appendChild($tagnode);
-                }
-                //get related links
-                $related = bx_metaindex::getRelatedInfoByTags($tags[$linkid],$linkid);
-                foreach ($related as $id => $value) {
-                    $tagnode = $dom->createElement("related",$value['title']);
-                    $tagnode->setAttribute("href",$value['outputUri']);
-                    $tagnode->setAttribute("title",$value['resourceDescription']);
-                    $link->parentNode->appendChild($tagnode);
-                }
+        $xml .= "<tr>";
+        foreach ($row as $key => $value) {
+                $xml .="<th>".htmlspecialchars($key)."</th>";   
             }
-        }
-        //add the style to the document element for using it in the xslt
-        $dom->documentElement->setAttribute("style",$style);
-        return $dom;           
+        $xml .= "</tr>";
+        
+        do {
+            $xml .="<tr>";
+            if ($overview) {
+                array_splice($row,4);
+            }
+            foreach ($row as $key => $value) {
+                $xml .="<td>".htmlspecialchars($value)."</td>";   
+            }
+            $xml .="</tr>";
+        } while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC));
+        
+        $xml .= "</table>";
+        return $xml;            
+        
     }
-}
+    
+  }
