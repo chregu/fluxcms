@@ -21,8 +21,10 @@ class bx_streams_blog extends bx_streams_buffer {
     "numeric-entities" => true,
     "drop-proprietary-attributes" => true
     );
+
+
+    
     function contentOnRead($path) {
-        
         $parts =  bx_collections::getCollectionAndFileParts($path, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
@@ -209,18 +211,17 @@ class bx_streams_blog extends bx_streams_buffer {
         $GLOBALS['POOL']->dbwrite->query("$query");
     }
     
-    function fixDate($date, $defNow=1) {
-        
-        if (!$date || $date == "now()") {
-            return gmdate("Y-m-d H:i:s",time());
-        }
-        
+    function fixDate($date, $defNow=true) {
+        if ((!$date || $date == "now()")) {
+            return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : "0000-00-00 00:00:00";
+        } 
+         
         $date =  preg_replace("/([0-9])T([0-9])/","$1 $2",$date);
         $date =  preg_replace("/([\+\-][0-9]{2}):([0-9]{2})/","$1$2",$date);
         $date = strtotime($date);
         
         if ($date <= 0) {
-            return  gmdate("Y-m-d H:i:s",time());
+            return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : "0000-00-00 00:00:00";
         } 
         
         return  gmdate("Y-m-d H:i:s",$date);
@@ -250,7 +251,8 @@ class bx_streams_blog extends bx_streams_buffer {
             $post->status = 1;
         }
         $post->date = $this->fixDate($this->getElement("created"));
-        $post->expires = $this->fixDate($this->getElement("expires"));
+        $post->expires = $this->fixDate($this->getElement("expires"),false);
+        bx_log::log("expires: ".$post->expires);
         $post->post_info = "";
         return $post;
     }
@@ -291,6 +293,8 @@ class bx_streams_blog extends bx_streams_buffer {
             ".$db->quote($post->status).",
             ".$db->quote($post->comment_mode)."
             )";
+        
+        bx_log::log("INSERT: $query");
         $res = $dbwrite->query($query);
         if (MDB2::isError($res)) {
             
