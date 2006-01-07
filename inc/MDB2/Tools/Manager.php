@@ -258,7 +258,6 @@ class MDB2_Tools_Manager extends PEAR
         if (is_array($options)) {
             $this->options = array_merge($options, $this->options);
         }
-        bx_helpers_debug::webdump($this->options);
         $this->db->loadModule('manager');
         return MDB2_OK;
     }
@@ -447,7 +446,7 @@ class MDB2_Tools_Manager extends PEAR
                                 && $choice_default['notnull']
                                 && !isset($choice_default['default'])
                             ) {
-                                $table_field_definition[$field_set_default_name]['choices'][$choices_name]['default'] = '';
+                                $table_field_definition[$field_set_default_name]['choices'][$choice_name]['default'] = '';
                                 if (isset($this->default_values[$choice_default['type']])) {
                                     $table_field_definition[$field_set_default_name]['choices'][$choice_name]['default']
                                         = $this->default_values[$choice_default['type']];
