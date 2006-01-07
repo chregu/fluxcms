@@ -212,7 +212,7 @@ class bx_streams_blog extends bx_streams_buffer {
     }
     
     function fixDate($date, $defNow=true) {
-        if ((!$date || $date == "now()")) {
+        if ((!$date || $date == "now()" || $date == "0000-00-00 00:00:00")) {
             return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : "0000-00-00 00:00:00";
         } 
          
