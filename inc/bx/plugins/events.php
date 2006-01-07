@@ -107,8 +107,13 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
                 $bis = date($this->getParameter($path,"dateformat"), $time);
                 $child->setAttribute("bis", $bis);
                 $dom->documentElement->appendChild($child);
-                $child->setAttribute("description", $row['description']);
-                $dom->documentElement->appendChild($child);
+                //$child->setAttribute("description", $row['description']);
+                //$dom->documentElement->appendChild($child);
+                
+                $desc = $dom->createElement("description", $row['description']);
+                $child->appendChild($desc);     
+                $child->setAttribute("uri", $row['uri']);
+                $dom->documentElement->appendChild($child);  
             }
             return $dom;
         } 
@@ -134,8 +139,15 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
                 $bis = date($this->getParameter($path,"dateformat"), $time);
                 $child->setAttribute("bis", $bis);
                 $dom->documentElement->appendChild($child);
-                $child->setAttribute("description", $row['description']);
-                $dom->documentElement->appendChild($child);        
+                
+                //$child->setAttribute("description", $row['description']);
+                //$dom->documentElement->appendChild($child);
+                
+                $desc = $dom->createElement("description", $row['description']);
+                $child->appendChild($desc);    
+                
+                $child->setAttribute("uri", $row['uri']);
+                $dom->documentElement->appendChild($child);                  
                 return $dom;
                 }
         }
