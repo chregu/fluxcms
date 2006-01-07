@@ -3,19 +3,28 @@
 <project name="Flux CMS Plugin generator" default="dist" basedir=".">
 
     <property name="pname" value="test"/>
-    <property name="tablename" value="users"/>
+    <property name="tablename" value="blogposts"/>
     <property name="theme" value="3-cols"/>
 
-    <target name="dist" depends="copyPhp, createCollection, copyXsl">
+    <target name="init">
+    <input propertyname="pname" defaultValue="test"  promptChar="?">Plugin Name </input>
+<input propertyname="tablename" defaultValue="" promptChar="?">Table to read dbforms2 definitions from </input>
+
+    </target>
+    
+    <target name="dist" depends="init, copyPhp, createCollection, copyXsl, createDbForms2">
         <echo message="Plugin installed."/>
+        <echo message="You can see the output at http://example.org/${pname}/"/>
+        <echo message="If you defined a table name, the form is available at http://example.org/admin/dbforms2/${tablename}/" />
+        <echo message="The plugin itself can be found at inc/bx/plugins/${pname}.php" />
+        
+        
     </target>
     <target name="copyPhp">
         <copy overwrite="true" file="${BxRootDir}/inc/bx/tools/generate/skeletons/plugin.php" tofile="${BxRootDir}/inc/bx/plugins/${pname}.php">
             <filterchain>
                 <replacetokens begintoken="##" endtoken="##">
                     <token key="pname" value="${pname}"/>
-                    
-
                 </replacetokens>
             </filterchain>
         </copy>
@@ -43,5 +52,9 @@
                 </replacetokens>
             </filterchain>
         </copy>
+    </target>
+    
+    <target name="createDbForms2">
+    <php expression="db2forms('${tablename}');"/>
     </target>
 </project>
