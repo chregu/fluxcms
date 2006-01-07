@@ -117,6 +117,8 @@ and adjust the delicious template itself
     <xsl:template name="blogSinglePost">
         <xsl:for-each select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']">
             <xsl:apply-templates select="." mode="xhtml"/>
+            
+            <xsl:if test="@blog:post_trackbacks_allowed = 1">
             <xsl:comment>
 
 &lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -129,6 +131,7 @@ and adjust the delicious template itself
     trackback:ping="<xsl:value-of select="concat($webrootW,$collectionUri,'plugin=trackback(',substring-after(@id,'entry'),').xml')"/>" />
 &lt;/rdf:RDF>
 </xsl:comment>
+</xsl:if>
         </xsl:for-each>
     </xsl:template>
 
@@ -157,12 +160,15 @@ and adjust the delicious template itself
         <xsl:if test="not(../xhtml:div[@class='comments_not'])">
         
         <h3 class="blog">add a comment</h3>
+        <xsl:if test="../@blog:post_trackbacks_allowed = 1">
+        
         <p> The Trackback URL to this comment is:<br/>
             <xsl:value-of select="concat($webrootW,$collectionUri,'plugin=trackback(',substring-after(../@id,'entry'),').xml')"/>
             <br/>
             Trackbacks are moderated.
         </p>
-            <p>  This blog is <a href="http://www.gravatar.com/">gravatar</a> enabled.<br/>
+        </xsl:if>
+        <p>  This blog is <a href="http://www.gravatar.com/">gravatar</a> enabled.<br/>
             Your email adress will never be published.<br/>
             Comment spam will be deleted!</p>
         </xsl:if>
