@@ -22,7 +22,7 @@ class bx_streams_blog extends bx_streams_buffer {
     "drop-proprietary-attributes" => true
     );
 
-
+    private $zeroDate = "0000-00-00 00:00:00";
     
     function contentOnRead($path) {
         $parts =  bx_collections::getCollectionAndFileParts($path, "output");
@@ -212,8 +212,8 @@ class bx_streams_blog extends bx_streams_buffer {
     }
     
     function fixDate($date, $defNow=true) {
-        if ((!$date || $date == "now()" || $date == "0000-00-00 00:00:00")) {
-            return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : "0000-00-00 00:00:00";
+        if ((!$date || $date == "now()" || $date == $this->zeroDate)) {
+            return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : $this->zeroDate;
         } 
          
         $date =  preg_replace("/([0-9])T([0-9])/","$1 $2",$date);
@@ -221,7 +221,7 @@ class bx_streams_blog extends bx_streams_buffer {
         $date = strtotime($date);
         
         if ($date <= 0) {
-            return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : "0000-00-00 00:00:00";
+            return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : $this->zeroDate;
         } 
         
         return  gmdate("Y-m-d H:i:s",$date);
