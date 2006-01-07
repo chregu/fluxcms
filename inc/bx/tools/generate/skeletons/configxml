@@ -1,0 +1,9 @@
+    <bxcms xmlns="http://bitflux.org/config">
+        <plugins>
+            <parameter name="xslt" type="pipeline" value="##pname##.xsl"/>
+            <extension type="html"/>
+            <plugin type="##pname##" >
+            </plugin>
+            <plugin type="navitree"></plugin>
+        </plugins>
+    </bxcms>
