@@ -252,7 +252,6 @@ class bx_streams_blog extends bx_streams_buffer {
         }
         $post->date = $this->fixDate($this->getElement("created"));
         $post->expires = $this->fixDate($this->getElement("expires"),false);
-        bx_log::log("expires: ".$post->expires);
         $post->post_info = "";
         return $post;
     }
@@ -294,7 +293,6 @@ class bx_streams_blog extends bx_streams_buffer {
             ".$db->quote($post->comment_mode)."
             )";
         
-        bx_log::log("INSERT: $query");
         $res = $dbwrite->query($query);
         if (MDB2::isError($res)) {
             
