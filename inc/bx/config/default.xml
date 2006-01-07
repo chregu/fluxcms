@@ -95,6 +95,8 @@
             <i18nAdminSrc>{BX_PROJECT_DIR}/admin/lang/master</i18nAdminSrc>
             <blogDefaultPostCommentMode allowFromDB="true">1</blogDefaultPostCommentMode>
             <blogDefaultEditor allowFromDB="true">wysiwyg</blogDefaultEditor>
+        
+            <blogTrackbacksTimeLimit>true</blogTrackbacksTimeLimit>
             
             <blogSendRejectedCommentNotification allowFromDB="true">false</blogSendRejectedCommentNotification>
             
@@ -118,6 +120,7 @@
 		<blogWeblogsPingFixed></blogWeblogsPingFixed>
         <blogPostsExpireCatAllOnly allowFromDB="true">false</blogPostsExpireCatAllOnly>
         <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
+        
         
         
         </options>

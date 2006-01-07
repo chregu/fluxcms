@@ -41,7 +41,7 @@ class bx_plugins_blog_trackback {
             $row['post_comment_mode'] = $GLOBALS['POOL']->config->blogDefaultPostCommentMode;
         }
         
-        if (!($row['post_comment_mode'] == 2 || ($row['post_comment_mode'] == 1 && (time() - 2678800) < $row['unixtime']))) {
+        if (!($row['post_comment_mode'] == 2 || ( ($GLOBALS['POOL']->config->blogTrackbacksTimeLimit == 'true' || $row['post_comment_mode'] == 1) && (time() - 2678800) < $row['unixtime']))) {
             return '<error/>';
         }
         
