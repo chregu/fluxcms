@@ -36,7 +36,7 @@ include_once 'phing/util/StringHelper.php';
  *
  * @author    Andreas Aderhold <andi@binarycloud.com>
  * @author    Hans Lellelid <hans@xmpl.org>
- * @copyright © 2001,2002 THYRELL. All rights reserved
+ * @copyright ï¿½ 2001,2002 THYRELL. All rights reserved
  * @version   $Revision: 1.17 $
  * @package   phing
  */
@@ -194,7 +194,7 @@ class IntrospectionHelper {
                     // exception messages, etc.
                                 
                     preg_match('/@return[\s]+([\w]+)/', $method->getDocComment(), $matches);
-                    if (!empty($matches[1]) && class_exists($matches[1])) {
+                    if (!empty($matches[1]) && $matches[1] != "object" && class_exists($matches[1])) {
                         $this->nestedTypes[$name] = $matches[1];
                     } else {                    
                         // assume that method createEquals() creates object of type "Equals"
