@@ -25,19 +25,19 @@
     <tr>
         <td>
         <xsl:value-of select="@title" />
-        </td>w
+        </td>
         <td>
         <xsl:value-of select="@von" />
         <xsl:choose>
             <xsl:when test = "string-length(@bis) &gt; 0 and @bis  != '0000-00-00'">
-                <xsl:value-of select="@bis" />
+                - <xsl:value-of select="@bis" />
             </xsl:when>
             <xsl:otherwise>
                     
             </xsl:otherwise>
         </xsl:choose>
         </td>
-        <td><a href="./{@title}.html">[read more here]</a></td>   
+        <td><a href="./{@uri}.html">[read more here]</a></td>   
     </tr>
     </xsl:for-each>
     </table>
@@ -50,7 +50,10 @@
         <p>Link: <a href="http://{@link}"><xsl:value-of select="@link" /></a></p>
         <p>vom: <xsl:value-of select="@von" /></p>
         <p>bis am: <xsl:value-of select="@bis" /></p>
-        <p><xsl:value-of select="@description" /></p>
+        <p>
+        <xsl:value-of select="description" />
+        
+        </p>
      </xsl:for-each>
 </xsl:template>
 
