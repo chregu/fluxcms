@@ -224,8 +224,13 @@ if ($lastVersion < 5849) {
 }
 
 if ($lastVersion < 6247) {
-    addCol('blogposts','post_expires',"DATETIME NULL");
-    updateLastVersion(6247);
+    addCol('blogposts','post_expires',"DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
+    updateLastVersion(6286);
+}
+
+if ($lastVersion < 6286) {
+    doQuery("ALTER TABLE `{tablePrefix}blogposts` CHANGE `post_expires` `post_expires` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'",false);
+    updateLastVersion(6286);
 }
 
 // delete config files
