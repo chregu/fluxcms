@@ -250,7 +250,7 @@ class bx_plugins_##pname## extends bx_plugin implements bxIplugin {
                 array_splice($row,4);
             }
             foreach ($row as $key => $value) {
-                $xml .="<td>".htmlspecialchars($value)."</td>";   
+                $xml .="<td>".$value."</td>";   
             }
             $xml .="</tr>";
         } while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC));

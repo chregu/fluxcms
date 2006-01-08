@@ -8,7 +8,7 @@
 
     <target name="init">
     <input propertyname="pname" defaultValue="test"  promptChar="?">Plugin Name </input>
-<input propertyname="tablename" defaultValue="" promptChar="?">Table to read dbforms2 definitions from </input>
+<input propertyname="tablename" defaultValue="" promptChar="?">Table to read dbforms2 definitions from (optional)</input>
 
     </target>
     
