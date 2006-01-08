@@ -62,11 +62,11 @@ class bx_helpers_uri {
     }
 
     static function getTopLevelCollectionUri($colluri,$default = '') {
-	 $parts = explode("/", $colluri);
-if (!isset($parts[1])) {
-return $default;
-}
-return $parts[1];
+        $parts = explode("/", $colluri);
+        if (!isset($parts[1]) || !$parts[1]) {
+            return $default;
+        }
+        return $parts[1];
     }
 
     static function getCollectionUriPart($colluri, $part=null) {
