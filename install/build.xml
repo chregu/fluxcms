@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="BxCMS" default="dist" basedir=".">
+<project name="Flux CMS" default="dist" basedir=".">
    
    <property name="hasTidy" value="auto"/>
     <target name="prepare" depends="prereq">

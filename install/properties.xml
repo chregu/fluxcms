@@ -17,11 +17,11 @@
     <text>
     These are the parameters for connection to your database in MySQL. 
     </text>
-    <property name="database.name" value="bxcms">Name of the database for the cms</property>
-    <property name="database.user" value="bxcms">Name of the database user</property>
+    <property name="database.name" value="fluxcms">Name of the database for the cms</property>
+    <property name="database.user" value="fluxcms">Name of the database user</property>
     <property name="database.password" value="">Password of the database user </property>
     <property name="database.host" value="localhost">Name of the database host</property>
-    <property name="database.prefix" value="bxcms_" canBeEmpty="true" >prefix for db tables</property>
+    <property name="database.prefix" value="fluxcms_" canBeEmpty="true" >prefix for db tables</property>
     
     <title>MySQL  Root Properties</title>
     <text>
