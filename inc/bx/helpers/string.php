@@ -52,8 +52,10 @@ class bx_helpers_string {
     * @return string of unicode entities [STRING]
     * @access public
     */
-    static function utf2entities($source) {
-        
+    static function utf2entities($source,$force = false) {
+        if (!$force && $GLOBALS['POOL']->dbIsUtf8) {
+            return $source;
+        }
         // array used to figure what number to decrement from character order value
         // according to number of characters used to map unicode to ascii by utf-8
         $decrement[4] = 240;
