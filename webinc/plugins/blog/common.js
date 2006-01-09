@@ -42,7 +42,7 @@ function reallyDelete() {
 }
 
 
-function formCheck() {
+function formCheck(form) {
 	if (!checkTitle()) {
 		alert("You did not provide a title, but you have to.");
 		return false;
@@ -55,9 +55,9 @@ function formCheck() {
 		}
 		return false;
 	}
-
 	fixEntities();
-	return true;
+	return checkValidXML(form);
+	
 }
 
 function fixEntities() {

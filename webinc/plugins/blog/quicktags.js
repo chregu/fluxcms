@@ -734,3 +734,34 @@ function edShowExtraCookie() {
 	}
 	return false;
 }
+
+function checkValidXML(form) {
+	
+		try {
+		
+		for (var i = 0; i < form.elements.length; i++) {
+			var xml = form.elements[i].value;
+			
+			if ( (form.elements[i].type == "textarea" || form.elements[i].type == "text") &&  xml.replace(/\s*/g,"").length > 0 )
+			{
+				var name = form.elements[i].name.replace(/.*\[([^\]]+)\]/,"$1");
+				xml = '<'+name+'>'+xml+'</'+name+'>';
+				var oDomDoc = Sarissa.getDomDocument();
+				oDomDoc.async = false;
+				
+				oDomDoc.loadXML(xml);
+				if(oDomDoc.parseError != 0) {
+					alert(Sarissa.getParseErrorText(oDomDoc));
+					return false;
+				}
+			}
+		}
+		
+		
+		return true;
+	}
+	catch(e)
+	{
+		return true;
+	}
+}

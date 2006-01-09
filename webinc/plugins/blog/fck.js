@@ -59,3 +59,7 @@ function insertImageForKupu(url) {
 	
 }
 
+function checkValidXML() {
+	return true;
+}
+
