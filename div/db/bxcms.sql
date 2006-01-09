@@ -243,8 +243,8 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('last
 DROP TABLE IF EXISTS `##bxcms_##properties`;
 CREATE TABLE `##bxcms_##properties` (
   `path` varchar(255) NOT NULL default '',
-  `name` varchar(120) NOT NULL default '',
-  `ns` varchar(120) NOT NULL default 'DAV:',
+  `name` varchar(40) NOT NULL default '',
+  `ns` varchar(36) NOT NULL default 'DAV:',
   `value` text,
   `value_date` datetime default NULL,
   `value_int` int(11) default NULL,
