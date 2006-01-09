@@ -45,6 +45,8 @@
         <xsl:otherwise>
         <script type="text/javascript" src="{$webroot}webinc/plugins/blog/quicktags.js">
                 </script>
+        <script type="text/javascript" src="{$webroot}webinc/js/sarissa_dbform.js">
+                </script>
         </xsl:otherwise>
         </xsl:choose>
                
@@ -102,7 +104,7 @@
     </xsl:template>
 
     <xsl:template match="atom:entry">
-        <form onsubmit="return formCheck();"  method="post" name="entry" action="{php:functionString('bx_helpers_uri::getRequestUri')}">
+        <form onsubmit="return formCheck(this);"  method="post" name="entry" action="{php:functionString('bx_helpers_uri::getRequestUri')}">
          <xsl:call-template name="buttons">
          <xsl:with-param name="accesskeys" select="'true'"/>
          </xsl:call-template>
