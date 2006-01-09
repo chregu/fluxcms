@@ -82,6 +82,8 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
         
         $filename=preg_replace("#\.events$#","",$id);
         $prefix =  $GLOBALS['POOL']->config->getTablePrefix();
+        $dateformat = $this->getParameter($path,"dateformat",BX_PARAMETER_TYPE_DEFAULT,"d/m/Y H:i");
+                
         if($filename == "index"){
             $query="select * from ".$prefix."events order by von asc";
             $res =  $GLOBALS['POOL']->db->query($query);
@@ -99,12 +101,12 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
                 $dom->documentElement->appendChild($child);
                 
                 $time = strtotime($row['von']);
-                $von = date($this->getParameter($path,"dateformat"), $time);
+                $von = date($dateformat, $time);
                 $child->setAttribute("von", $von);
                 $dom->documentElement->appendChild($child);
                 
                 $time = strtotime($row['bis']);
-                $bis = date($this->getParameter($path,"dateformat"), $time);
+                $bis = date($dateformat, $time);
                 $child->setAttribute("bis", $bis);
                 $dom->documentElement->appendChild($child);
                 //$child->setAttribute("description", $row['description']);
@@ -116,14 +118,13 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
                 $dom->documentElement->appendChild($child);  
             }
             return $dom;
-        } 
-        else{
+        } else {
                 $query="select * from ".$prefix."events where uri = '".$filename."'";
                 $res =  $GLOBALS['POOL']->db->query($query);
                 $dom = new DomDocument();
                 $root=$dom->createElement("events");
                 $dom->appendChild($root); // root 
-                $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);{
+                $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
                 $child = $dom->createElement("event");
                 $child->setAttribute("title", $row['title']);
                 $dom->documentElement->appendChild($child);
@@ -131,12 +132,12 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
                 $dom->documentElement->appendChild($child);
                 
                 $time = strtotime($row['von']);
-                $von = date($this->getParameter($path,"dateformat"), $time);
+                $von = date($dateformat, $time);
                 $child->setAttribute("von", $von);
                 $dom->documentElement->appendChild($child);
                 
                 $time = strtotime($row['bis']);
-                $bis = date($this->getParameter($path,"dateformat"), $time);
+                $bis = date($dateformat, $time);
                 $child->setAttribute("bis", $bis);
                 $dom->documentElement->appendChild($child);
                 
@@ -149,7 +150,6 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
                 $child->setAttribute("uri", $row['uri']);
                 $dom->documentElement->appendChild($child);                  
                 return $dom;
-                }
         }
     }
 

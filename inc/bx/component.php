@@ -30,11 +30,11 @@ class bx_component {
         $this->parameters[$collUri][$type][$name] = $value;
     }
     
-    public function getParameter($collUri, $name = NULL, $type = BX_PARAMETER_TYPE_DEFAULT) {
+    public function getParameter($collUri, $name = NULL, $type = BX_PARAMETER_TYPE_DEFAULT, $default = NULL) {
         if(isset($this->parameters[$collUri][$type][$name])) {
             return $this->translateScheme($this->parameters[$collUri][$type][$name]);
         }
-        return NULL;
+        return $default;
     }
     
     public function getParameterAll($collUri, $type = BX_PARAMETER_TYPE_DEFAULT) {
