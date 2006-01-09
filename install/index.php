@@ -131,8 +131,16 @@ function startPhing() {
             Phing::setProperty($key,$value);
         }
     }
+    
+     
     Phing::setProperty("BxRootDir",rootDir()."/");
     Phing::setProperty("replacePhpInHtaccess", function_exists("apache_get_modules") ? "php_" : "#php_");
+    
+    $mysql_version = getMysqlVersion();
+        
+    if ( version_compare($mysql_version,"4.1",">=")) {
+        Phing::setProperty("DbHasUTF8","true");
+    }
     /* polish CLI arguments */
 
     $args = array("-logger","phing.listener.HtmlLogger","-buildfile",getcwd().DIRECTORY_SEPARATOR."build.xml");
@@ -210,11 +218,11 @@ function prereq() {
     print "Checking for MySQL Support ...\n";
     if (function_exists("mysql_query")) {
         $mysql_version = getMysqlVersion();
-        print "<font color='red'>Wrong version.<br/>";
         if (! version_compare($mysql_version,"4.0",">=")) {
+            print "<font color='red'>Wrong version.<br/>";
             return "MySQL too old. Should be >= 4.0, is $mysql_version";   
         }
-        print "Fount $mysql_version. OK.<br/> \n";
+        print "Found $mysql_version. OK.<br/> \n";
         
         if (! version_compare($mysql_version,"4.1",">=")) {
             print "<font color='red'>We highly recommend MySQL >= 4.1 for better UTF-8 support.</font><br/>";

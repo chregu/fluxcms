@@ -96,12 +96,18 @@
         </copy>
     </target>
 
-    <target name="installDB" if="databaseRoot.User" description="Create the Database">
+    <target name="installDB" if="databaseRoot.User" unless="DbHasUTF8" description="Create the Database">
         <mdb2 onerror="continue" url="mysql://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/"> CREATE DATABASE ${database.name} </mdb2>
 
     </target>
+    
+    <target name="installDBUTF8" if="databaseRoot.User" description="Create the Database">
+        <mdb2 onerror="continue" url="mysql://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/"> CREATE DATABASE ${database.name} DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;</mdb2>
 
-    <target name="installUser" depends="installDB" if="databaseRoot.User" description="Create the DB user">
+    </target>
+  
+
+    <target name="installUser" depends="installDB, installDBUTF8" if="databaseRoot.User" description="Create the DB user">
         <mdb2  url="mysql://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/${database.name}">GRANT ALTER, CREATE, INDEX, INSERT, LOCK TABLES, SELECT, UPDATE, DROP, DELETE ON ${database.name}. * TO ${database.user}@${database.host} IDENTIFIED BY '${database.password}';</mdb2>
     </target>
     
