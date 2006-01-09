@@ -206,6 +206,25 @@ function prereq() {
         print "<font color='red'>Not found!<br/>";
         return "No XSLT Support Found";
     }
+    
+    print "Checking for MySQL Support ...\n";
+    if (function_exists("mysql_query")) {
+        $mysql_version = getMysqlVersion();
+        print "<font color='red'>Wrong version.<br/>";
+        if (! version_compare($mysql_version,"4.0",">=")) {
+            return "MySQL too old. Should be >= 4.0, is $mysql_version";   
+        }
+        print "Fount $mysql_version. OK.<br/> \n";
+        
+        if (! version_compare($mysql_version,"4.1",">=")) {
+            print "<font color='red'>We highly recommend MySQL >= 4.1 for better UTF-8 support.</font><br/>";
+        }
+        
+    }  else {
+        print "<font color='red'>Not Found!</font><br/>";
+        print "<font color='red'>Flux CMS is based on MDB2, so it may work with another DB than MySQL, but this is not tested and the installer most presumably won't work.</font><br/>";
+    }
+    
 
     print "Check if Root (".rootDir().") directory is writable ...\n";
     if(is_writeable(rootDir())) {
@@ -219,6 +238,13 @@ function prereq() {
     return true;
 }
 
+function getMysqlVersion() {
+        $mysql_version = @mysql_get_server_info();
+        if (!$mysql_version) {
+            $mysql_version = @mysql_get_client_info();
+        }
+        return $mysql_version;
+}
 
 function readProperties($dom = null) {
     $dom = new DomDocument();
