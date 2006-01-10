@@ -3,7 +3,7 @@
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
 xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:php="http://php.net/xsl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rss="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" exclude-result-prefixes="xhtml">
-<xsl:variable name="voteWidth" select="'250'"/>
+<xsl:variable name="voteWidth" select="'220'"/>
                             
     <xsl:template match="plugin[@name='vote']" mode="vote">
 
@@ -23,6 +23,7 @@ xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" 
                                 <xsl:variable name="balkenwidth">
                                     <xsl:choose>
                                         <xsl:when test="not(@count)">0</xsl:when>
+<!--                                        <xsl:when test="floor($voteWidth * (number(@count) div $total))= 100">99</xsl:when>-->
                                         <xsl:otherwise>
                                             <xsl:value-of select="floor($voteWidth * (number(@count) div $total))"/>
                                             <br/>
@@ -33,7 +34,7 @@ xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" 
                                 
 
                                 <div class="speicher">
-                                    <div class="balken" style="position: relative; width: {($voteWidth - $balkenwidth)}px; left:{$balkenwidth}px;">
+                                    <div class="balken" style="position: relative; width: {($voteWidth - $balkenwidth )}px; left:{$balkenwidth  }px;">
                                     <xsl:choose>
                                     <xsl:when test="number(@count)">
                                       <xsl:value-of select="@count"/>%
@@ -60,10 +61,10 @@ xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" 
                         <table>
                         <xsl:for-each select="vote/answer">
                                 <tr>
-                                  <td  valign="top">
+                                  <td  valign="top" >
                                         <input type="radio" name="selection" value="{@key}"/>
                                     </td>
-                                    <td>
+                                    <td >
                                         <xsl:value-of select="text()"/>
                                     </td>
                                   
@@ -71,7 +72,7 @@ xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" 
                         </xsl:for-each>
                         </table>
                             <input type="submit" class="votesubmit" value="votesubmit" i18n:attr="value" name="votesubmit" />
-                        </form>
+                        </form><br/>
                         <a href="#" onclick="voteSubmit();"><i18n:text>View results</i18n:text></a>
                     </div>
                     
