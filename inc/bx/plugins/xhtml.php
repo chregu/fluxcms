@@ -345,6 +345,13 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     
     }
     
+    public function getLastModifiedById($path, $id) {
+        if ($this->getParameter($path, "lastmodified") == "now") {
+            return time();
+        }
+        return parent::getLastModifiedById($path,$id);
+    }
+    
     
 }
 ?>
