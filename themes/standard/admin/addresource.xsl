@@ -16,6 +16,12 @@
             <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/formedit.css"/>
             <script type="text/javascript" src="{$webroot}admin/webinc/js/adminfields.js"/>
 			<script type="text/javascript" src="{$webroot}admin/webinc/js/showhidelayers.js"/>
+            <script type="text/javascript" >
+            var requiredFields = new Array();
+            <xsl:for-each select="/bx/plugin[@name='admin_addresource']/fields/field[@required='yes']">
+            requiredFields.push("<xsl:value-of select="@name"/>");
+            </xsl:for-each>
+            </script>
             </head>
             <body>
                 <xsl:apply-templates/>            
@@ -25,10 +31,10 @@
      
      
     <xsl:template match="plugin[@name='admin_addresource'] | plugin[@name='admin_siteoptions']">
-        <form name="adminform" action="" method="POST" enctype="multipart/form-data" onsubmit="MM_showHideLayers('wait_layer','','show');">
+        <form name="adminform" action="" method="POST" enctype="multipart/form-data" onsubmit="return checkForRequired(this);">
             <xsl:apply-templates select="/bx/plugin/fields/field"/>
             <p>
-                <input accesskey="s" type="submit" name="send" value="send" onclick="this.disabled;this.value='wait...';"/>
+                <input accesskey="s" type="submit" name="send" value="send" />
             </p>
         </form>
 		<div id="wait_layer" style="background-color: #ffffff; text-align:center; border:#000000 solid 1px; position:absolute; width:300px; height:115px; z-index:1; left: 200px; top: 200px; visibility: hidden">

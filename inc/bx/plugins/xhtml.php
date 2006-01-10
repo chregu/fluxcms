@@ -186,6 +186,8 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
         
         $nameNode = $dom->createElement('field');
         $nameNode->setAttribute('name', 'name');
+        $nameNode->setAttribute('required', 'yes');
+        
         $nameNode->setAttribute('type', 'text');
         
         if(!empty($_REQUEST['name'])) {

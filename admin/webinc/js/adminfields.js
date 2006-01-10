@@ -51,3 +51,19 @@ function changePicture(theme, css) {
     img.src = "/themes/"+ theme + "/preview/"+css.replace(/\.css$/,".jpg");
     
 }
+
+function checkForRequired(form) {
+	if (requiredFields) {
+		
+		for (var i = 0; i < requiredFields.length; i++) {
+			if (form.elements["bx[plugins][admin_addresource]["+requiredFields[i]+"]"].value.length == 0) {
+				alert("The field '" + requiredFields[i] + "' is required!\n Please fill in a value.");
+				return false;
+			}
+		}
+	}
+    form.send.disabled;
+	form.value='wait...';
+	MM_showHideLayers('wait_layer','','show');
+	return true;
+}
