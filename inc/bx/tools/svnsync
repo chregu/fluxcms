@@ -7,8 +7,12 @@
 svncmd=`which svn`
 #svncmd="echo svn"   # uncomment this line for debugging
 
+cd div/db/
+./dbexport.sh
+cd ../..
+
 dirs="data files"
-modifiedDirs=
+modifiedDirs="div/db/ "
 
 uid=`id -u`
 if [ $uid != 0 ]; then
