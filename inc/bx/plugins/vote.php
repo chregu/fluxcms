@@ -104,9 +104,11 @@ class bx_plugins_vote extends bx_plugin implements bxIplugin {
         $cookiemd5 = md5($_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$magickey.$date1);
         $cookiemd52 = md5($_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$magickey.$date2);
         $showResults = false;
-
+        $thanks = false;
         // do i want to vote?
-        if (isset($_POST['votesubmit']) && isset($_COOKIE[$cookiename])) {
+        if (isset($_POST['votesubmit']) && isset($_POST['selection']) && (!$_POST['selection'] || $_POST['selection'] == 'null')) {
+            $showResults = true;
+        } else if (isset($_POST['votesubmit']) && isset($_COOKIE[$cookiename])) {
             // Am I allowed to vote?
             if ($_COOKIE[$cookiename] == $cookiemd5 || $_COOKIE[$cookiename] == $cookiemd52) {
                 // vote
@@ -114,9 +116,10 @@ class bx_plugins_vote extends bx_plugin implements bxIplugin {
                 $GLOBALS['POOL']->db->query($query);
                 setcookie($cookiename, "voted", time()+60480,'/');
             } else {
-                print "you already voted or tried to cheat.";
+                print "Sorry, you already voted.";
             }
             $showResults = true;
+            $thanks = true;
 
         } else if (isset($_COOKIE[$cookiename]) && $_COOKIE[$cookiename] == 'voted') {
             $showResults = true;
@@ -144,6 +147,9 @@ class bx_plugins_vote extends bx_plugin implements bxIplugin {
                 
             }
             $dom->documentElement->setAttribute("results","true") ;
+            if ($thanks) {
+                $dom->documentElement->setAttribute("thanks","true") ;
+            }
             return $dom;
         } else {
             return $dom;
