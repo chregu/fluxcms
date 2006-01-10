@@ -234,7 +234,7 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('outp
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('image_allowed_sizes','',1,5);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('defaultLanguage','',0,6);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitedescription','',0,7);
-INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6286',0,8);
+INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6328',0,8);
 
 --
 -- Table structure for table `##bxcms_##properties`
@@ -243,8 +243,8 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('last
 DROP TABLE IF EXISTS `##bxcms_##properties`;
 CREATE TABLE `##bxcms_##properties` (
   `path` varchar(255) NOT NULL default '',
-  `name` varchar(40) NOT NULL default '',
-  `ns` varchar(36) NOT NULL default 'DAV:',
+  `name` varchar(36) NOT NULL default '',
+  `ns` varchar(40) NOT NULL default 'DAV:',
   `value` text,
   `value_date` datetime default NULL,
   `value_int` int(11) default NULL,
