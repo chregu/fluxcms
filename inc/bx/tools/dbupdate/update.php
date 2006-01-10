@@ -233,6 +233,12 @@ if ($lastVersion < 6286) {
     updateLastVersion(6286);
 }
 
+if ($lastVersion < 6328) {
+
+    doQuery("ALTER TABLE `{tablePrefix}properties` CHANGE `name` `name` VARCHAR( 36 ) NOT NULL",false);
+    doQuery("ALTER TABLE `{tablePrefix}properties` CHANGE `ns` `ns` VARCHAR( 40 ) DEFAULT 'DAV:' NOT NULL",false);
+    updateLastVersion(6328);
+}
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
