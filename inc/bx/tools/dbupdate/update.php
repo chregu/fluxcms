@@ -251,7 +251,7 @@ print "DB up-to-date \n";
 function doQueryTable($query,$tableName) {
     $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
     $res = doQuery($query,false);
-    if (MDB2::isError($res)) {
+    if ($GLOBALS['POOL']->db->isError($res)) {
         if ($res->code == -5) {
             print $tablePrefix.$tableName ." already exists, moving forward \n";
             
