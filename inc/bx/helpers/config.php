@@ -84,7 +84,7 @@ class bx_helpers_config {
         
         return bx_helpers_config::getProperty('theme');
     }
-    static public function getThemeCss($themecss) {
+    static public function getThemeCss() {
         if (isset($_COOKIE['bx_themecss']) ) {
             if ( isset($_COOKIE['bx_theme']) && file_exists(BX_THEMES_DIR.$_COOKIE['bx_theme']."/css/".$_COOKIE['bx_themecss'])) {
                 return $_COOKIE['bx_themecss'];
