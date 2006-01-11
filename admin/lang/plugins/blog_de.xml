@@ -24,6 +24,7 @@
     <message key="Default  (currently:">Standard: </message>
     <message key="Author">Autor</message>
     <message key="Date">Datum</message>
+    <message key="Expiration Date">Ablaufdatum</message>
     <message key="Auto Discovery">Automatische Ermittlung</message>
     <message key="Upload Picture">Bild hochladen</message>
     <message key="Content">Inhalt</message>
