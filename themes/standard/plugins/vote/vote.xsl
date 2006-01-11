@@ -18,7 +18,7 @@ xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" 
                             <xsl:if test="vote/@thanks"> 
                             <b><xsl:value-of select="/bx/plugin[@name='vote']/vote/response"/></b><br/><br/>
                             </xsl:if>
-                            <xsl:value-of select="/bx/plugin[@name='vote']/vote/question"/><br/><br/>
+<b>                            <xsl:value-of select="/bx/plugin[@name='vote']/vote/question"/></b><br/><br/>
                             <xsl:for-each select="/bx/plugin[@name='vote']/vote/answer">
                                 <xsl:variable name="balkenwidth">
                                     <xsl:choose>
@@ -55,7 +55,7 @@ xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" 
                   
                     <div class="votesubdiv">
                         <form onsubmit="return voteSubmit();" name="voteform" method="post" action="{vote/@collectionUri}index.html">
-                        <xsl:value-of select="vote/question"/>
+<b>                        <xsl:value-of select="vote/question"/></b>
                         <br/>
                         <br/>
                         <table>
@@ -65,7 +65,7 @@ xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" 
                                         <input type="radio" name="selection" value="{@key}"/>
                                     </td>
                                     <td >
-                                        <xsl:value-of select="text()"/>
+                                        <xsl:value-of select="text()"/>.
                                     </td>
                                   
                                 </tr>
