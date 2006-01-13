@@ -55,6 +55,8 @@
                 
                 <meta name="keywords" content=""/> 
                 <meta name="description" content="{$sitedescription}"/>
+                <meta http-equiv="imagetoolbar" content="no"/>
+                
                 <link rel="openid.server" href="{$webroot}admin/webinc/openid/" />
                 <link type="text/css" href="{$webroot}themes/{$theme}/css/mobile.css" rel="stylesheet" media="handheld"/>
                 <link type="text/css" href="{$webroot}themes/{$theme}/css/{$themeCss}" rel="stylesheet" media="screen"/>
