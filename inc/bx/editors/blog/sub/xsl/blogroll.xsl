@@ -97,10 +97,10 @@
             <div id="subeditorright">
                 <ul>
                 <xsl:for-each select="//bloglinkscategories/bloglinkscategories">
-                    <li><h4><a href="#" onclick="confirmCategoryDelete({id}, '{name}');">x</a>&#160;<a href="?category={id}"><xsl:value-of select="name"/></a></h4></li>
+                    <li><h4><a href="#" onclick="confirmCategoryDelete({id}, '{name}');"><img border="0" alt="delete" src="{$webroot}admin/webinc/img/icons/delete.gif"/></a><a href="?category={id}"><xsl:value-of select="name"/></a></h4></li>
                     <ul class="level2">
                         <xsl:for-each select="bloglinks[id != '']">
-                            <li><a href="#" onclick="confirmLinkDelete({id}, '{text}');">x</a>&#160;<a href="?link={id}"><xsl:value-of select="text"/></a></li>
+                            <li><a href="#" onclick="confirmLinkDelete({id}, '{text}');"><img border="0" alt="delete" src="{$webroot}admin/webinc/img/icons/delete.gif"/></a><a href="?link={id}"><xsl:value-of select="text"/></a></li>
                         </xsl:for-each>
                     </ul>
                 </xsl:for-each>

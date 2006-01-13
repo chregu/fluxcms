@@ -93,7 +93,7 @@
                     <xsl:for-each select="/bx/plugin/images/collection">
                         <xsl:variable name="collectionId" select="substring-after(@id, concat($baseCollection, $galleryId))"/>
                         <li>
-                            <a href="#" onclick="confirmGalleryDelete('{@id}');">x</a><a href="{$collectionId}"><img border="0" src="{$webroot}admin/webinc/img/icons/fileicon_folder.gif"/><xsl:value-of select="$collectionId"/></a><br/>
+                            <a href="#" onclick="confirmGalleryDelete('{@id}');"><img border="0" alt="delete" src="{$webroot}admin/webinc/img/icons/delete.gif"/></a><a href="{$collectionId}"><img border="0" src="{$webroot}admin/webinc/img/icons/fileicon_folder.gif"/><xsl:value-of select="$collectionId"/></a><br/>
                         </li>
                     </xsl:for-each>
                 </ul>
@@ -102,7 +102,7 @@
                         <li>
                             &#160;
                             <a href=".?id={@id}"><img border="0" src="{$webroot}dynimages/{$imgSmallWidth}/{@id}" alt="{@description}"/></a><br/>
-                            <a href="#" onclick="confirmDelete('{@id}');"><i18n:text>Delete this image</i18n:text></a>
+                            <a href="#" onclick="confirmDelete('{@id}');"><img border="0" alt="delete" src="{$webroot}admin/webinc/img/icons/delete.gif"/><i18n:text>Delete this image</i18n:text></a>
                         </li>
                     </xsl:for-each>
                 </ul>

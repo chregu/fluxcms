@@ -60,8 +60,8 @@
                 <ul>
                 <xsl:for-each select="//blogcategories/blogcategories">
                     <li>
-                        <xsl:if test="parentid != 0"><a href="#" onclick="confirmDelete({id},'{fullname}');">x</a></xsl:if>
-                        &#160;<a href="?id={id}"><xsl:value-of select="fullname"/></a>
+                        <xsl:if test="parentid != 0"><a href="#" onclick="confirmDelete({id},'{fullname}');"><img border="0" alt="delete" src="{$webroot}admin/webinc/img/icons/delete.gif"/></a></xsl:if>
+                        <a href="?id={id}"><xsl:value-of select="fullname"/></a>
                     </li>
                 </xsl:for-each>
                 </ul>

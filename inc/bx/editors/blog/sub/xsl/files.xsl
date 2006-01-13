@@ -110,12 +110,12 @@
     
     <xsl:template match="resource">
         <xsl:variable name="displayName" select="substring-after(@id, concat($filesRoot, $collectionId))"/>
-        <li><a href="#" onclick="confirmResourceDelete('{@id}', '{$displayName}');">x</a>&#160;<a href="{@id}" target="_blank"><xsl:value-of select="$displayName"/></a></li>
+        <li><a href="#" onclick="confirmResourceDelete('{@id}', '{$displayName}');"><img border="0" alt="delete" src="{$webroot}admin/webinc/img/icons/delete.gif"/></a><a href="{@id}" target="_blank"><xsl:value-of select="$displayName"/></a></li>
     </xsl:template>
     
     <xsl:template match="resource" mode="collection">
         <xsl:variable name="displayName" select="substring-after(@id, concat($filesRoot, $collectionId))"/>
-        <li><a href="#" onclick="confirmCollectionDelete('{@id}', '{$displayName}');">x</a><a href="{$displayName}"><img border="0" src="{$webroot}admin/webinc/img/icons/fileicon_folder.gif"/><xsl:value-of select="@displayName"/></a></li>
+        <li><a href="#" onclick="confirmCollectionDelete('{@id}', '{$displayName}');"><img border="0" alt="delete" src="{$webroot}admin/webinc/img/icons/delete.gif"/></a><a href="{$displayName}"><img border="0" src="{$webroot}admin/webinc/img/icons/fileicon_folder.gif"/><xsl:value-of select="@displayName"/></a></li>
     </xsl:template>
     
 

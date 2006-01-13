@@ -272,8 +272,8 @@ background-color: #ffffff;
 
 #subeditor ul.collectionlist li img {
     vertical-align: middle;
-    padding-right: 3px;
-    padding-left: 5px;
+    padding-right: 1px;
+    /*padding-left: 5px;*/
 }
 
 #subeditor ul.collectionlist li.first, #subeditor ul.gallerylist li.first {
@@ -302,7 +302,7 @@ background-color: #ffffff;
 }
 
 #subeditor ul.level2 {
-    padding: 0px 0px 0px 30px;
+    padding: 0px 0px 0px 15px;
     width: 200px;
 }
 
