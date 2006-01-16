@@ -31,9 +31,6 @@ function bx_scroller() {
     this.buttonDownNode = null;
     
     this.init = function(scrollNode) {
-        dbforms2_log.init();
-        dbforms2_log.log('--');
-
         this.scrollNode = scrollNode;
     }
     
@@ -96,8 +93,6 @@ function bx_scroller() {
     }
     
     this.startScrolling = function(direction) {
-        dbforms2_log.log('scrolling = ' + this.scrolling);
-        dbforms2_log.log('ppi = ' + this.currentPpi);
 
         // stop any running interval
         this.clearInterval();
@@ -125,8 +120,6 @@ function bx_scroller() {
     }
 
     this._stepInterval = function() {
-        dbforms2_log.log('scrolling = ' + this.scrolling);
-        dbforms2_log.log('ppi = ' + this.currentPpi);
         
         if(this.scrolling & BX_SCROLLER_SCROLLING) {
             
