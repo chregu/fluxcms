@@ -1,24 +1,39 @@
 // looks like I doesn't support const, so we use var here.
 
-var BX_SCROLL_UP = 0;
-var BX_SCROLL_DOWN = 1;
+var BX_SCROLLER_SCROLL_UP = 0;
+var BX_SCROLLER_SCROLL_DOWN = 1;
+var BX_SCROLLER_SCROLL_RIGHT = 2;
+var BX_SCROLLER_SCROLL_LEFT = 3;
+
+var BX_SCROLLER_STOPPED = 0;
+var BX_SCROLLER_SCROLLING = 1;
+var BX_SCROLLER_STARTING = 4;
+var BX_SCROLLER_STOPPING = 8;
 
 function bx_scroller() {
     
     // scroll interval in ms
     this.stepInterval = 20;
     
-    // pixels to move per interval
-    this.stepPixels = 4;
+    // pixels to move per interval (horizontal and vertical)
+    this.ppiHorizontal = 6;
+    this.ppiVertical = 8;
+
+    // used for acceleration during start and stop
+    this.startAcceleration = 0.7;
+    this.stopAcceleration = 0.3;
+    this.currentPpi = 0;
     
-    this.scrolling = false;
-    this.scrollDirection = BX_SCROLL_DOWN;
+    this.scrolling = BX_SCROLLER_STOPPED;
+    this.scrollDirection = BX_SCROLLER_SCROLL_DOWN;
 
     this.scrollNode = null;
     this.buttonUpNode = null;
     this.buttonDownNode = null;
     
     this.init = function(scrollNode, buttonUpNode, buttonDownNode) {
+        dbforms2_log.init();
+        dbforms2_log.log('--');
 
         this.scrollNode = scrollNode;
         this.buttonUpNode = buttonUpNode;
@@ -42,43 +57,91 @@ function bx_scroller() {
         
     }
     
-    this.scrollUp = function() {
-        this.scrollNode.scrollTop = this.scrollNode.scrollTop - this.stepPixels;
+    this.scrollUp = function(ppi) {
+        this.scrollNode.scrollTop = this.scrollNode.scrollTop - ppi;
     }
     
-    this.scrollDown = function() {
-        this.scrollNode.scrollTop = this.scrollNode.scrollTop + this.stepPixels;
+    this.scrollDown = function(ppi) {
+        this.scrollNode.scrollTop = this.scrollNode.scrollTop + ppi;
+    }
+    
+    this.scrollLeft = function(ppi) {
+        this.scrollNode.scrollLeft = this.scrollNode.scrollLeft - ppi;
+    }
+    
+    this.scrollRight = function(ppi) {
+        this.scrollNode.scrollLeft = this.scrollNode.scrollLeft + ppi;
     }
     
     this.startScrolling = function(direction) {
-        if(!this.scrolling) {
-            this.direction = direction;
-            this.scrolling = true;
-    
-            // start the interval
-            var wrappedCallback = new bx_helpers_contextfixer(this._stepInterval, this);
-            this.interval_stepInterval = window.setInterval(wrappedCallback.execute, this.stepInterval);
-        }
+        dbforms2_log.log('scrolling = ' + this.scrolling);
+        dbforms2_log.log('ppi = ' + this.currentPpi);
+
+        this.direction = direction;
+        this.scrolling = BX_SCROLLER_SCROLLING | BX_SCROLLER_STARTING;
+        this.currentPpi = 0;
+
+        // start the interval
+        this.clearInterval();
+        this.startInterval();
     }
     
     this.stopScrolling = function() {
-        this.scrolling = false;
-        window.clearTimeout(this.interval_stepInterval);
+        this.scrolling = BX_SCROLLER_SCROLLING | BX_SCROLLER_STOPPING;
+        //window.clearTimeout(this.interval_stepInterval);
     }
     
+    this.startInterval = function() {
+        var wrappedCallback = new bx_helpers_contextfixer(this._stepInterval, this);
+        this.interval_stepInterval = window.setInterval(wrappedCallback.execute, this.stepInterval);
+    }
+    
+    this.clearInterval = function() {
+        window.clearTimeout(this.interval_stepInterval);
+    }
+
     this._stepInterval = function() {
-        if(this.scrolling ) {
-            if(this.direction == BX_SCROLL_UP) {
-                this.scrollUp();
-            } else {
-                this.scrollDown();
+        dbforms2_log.log('scrolling = ' + this.scrolling);
+        dbforms2_log.log('ppi = ' + this.currentPpi);
+        if(this.scrolling & BX_SCROLLER_SCROLLING) {
+            
+            if(this.scrolling & BX_SCROLLER_SCROLLING) {
+                
+                if(this.direction == BX_SCROLLER_SCROLL_UP) {
+                    this.calcVerticalAcceleration();
+                    this.scrollUp(this.currentPpi);
+
+                } else if(this.direction == BX_SCROLLER_SCROLL_DOWN) {
+                    this.calcVerticalAcceleration();
+                    this.scrollDown(this.currentPpi);
+                }
+                
+            }
+        }
+    }
+    
+    this.calcVerticalAcceleration = function() {
+        
+        if(this.scrolling & BX_SCROLLER_STARTING) {
+            this.currentPpi = this.currentPpi + this.startAcceleration;
+            if(this.currentPpi >= this.ppiVertical) {
+                // stop accelerating
+                this.scrolling = BX_SCROLLER_SCROLLING;
+                this.currentPpi = this.ppiVertical;
+            }
+        } else if(this.scrolling & BX_SCROLLER_STOPPING) {
+            this.currentPpi = this.currentPpi - this.stopAcceleration;
+            if(this.currentPpi <= 0) {
+                // stop accelerating
+                this.scrolling = BX_SCROLLER_STOPPED;
+                this.clearInterval();
             }
         }
     }
     
     // button up
     this.e_buttonUpOnMouseDown = function() {
-        this.startScrolling(BX_SCROLL_UP);
+        this.startScrolling(BX_SCROLLER_SCROLL_UP);
     }
     
     this.e_buttonUpOnMouseUp = function() {
@@ -87,7 +150,7 @@ function bx_scroller() {
     
     // button down
     this.e_buttonDownOnMouseDown = function() {
-        this.startScrolling(BX_SCROLL_DOWN);
+        this.startScrolling(BX_SCROLLER_SCROLL_DOWN);
     }
     
     this.e_buttonDownOnMouseUp = function() {
