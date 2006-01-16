@@ -1,13 +1,19 @@
+// looks like I doesn't support const, so we use var here.
 
-const BX_SCROLL_UP = 0;
-const BX_SCROLL_DOWN = 1;
+var BX_SCROLL_UP = 0;
+var BX_SCROLL_DOWN = 1;
 
 function bx_scroller() {
     
+    // scroll interval in ms
     this.stepInterval = 20;
+    
+    // pixels to move per interval
     this.stepPixels = 4;
+    
     this.scrolling = false;
-    this.scrollDirection = null; // 0 = up, 1 = down
+    this.scrollDirection = BX_SCROLL_DOWN;
+
     this.scrollNode = null;
     this.buttonUpNode = null;
     this.buttonDownNode = null;
@@ -70,7 +76,6 @@ function bx_scroller() {
         }
     }
     
-    
     // button up
     this.e_buttonUpOnMouseDown = function() {
         this.startScrolling(BX_SCROLL_UP);
@@ -82,7 +87,6 @@ function bx_scroller() {
     
     // button down
     this.e_buttonDownOnMouseDown = function() {
-        //alert('down/down');
         this.startScrolling(BX_SCROLL_DOWN);
     }
     
