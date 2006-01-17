@@ -38,42 +38,50 @@ function bx_scroller() {
         this.buttonUpNode = buttonUpNode;
         this.buttonDownNode = buttonDownNode;
 
-        // button up, mouse down
-        var wev_buttonUpOnMouseDown = new bx_helpers_contextfixer(this.e_buttonUpOnMouseDown, this);
-        bx_helpers.addEventListener(this.buttonUpNode, 'mousedown', wev_buttonUpOnMouseDown.execute);
+        if(this.buttonUpNode) {
+            // button up, mouse down
+            var wev_buttonUpOnMouseDown = new bx_helpers_contextfixer(this.e_buttonUpOnMouseDown, this);
+            bx_helpers.addEventListener(this.buttonUpNode, 'mousedown', wev_buttonUpOnMouseDown.execute);
+            
+            // button up, mouse up
+            var wev_buttonUpOnMouseUp = new bx_helpers_contextfixer(this.e_buttonUpOnMouseUp, this);
+            bx_helpers.addEventListener(this.buttonUpNode, 'mouseup', wev_buttonUpOnMouseUp.execute);
+        }
         
-        // button up, mouse up
-        var wev_buttonUpOnMouseUp = new bx_helpers_contextfixer(this.e_buttonUpOnMouseUp, this);
-        bx_helpers.addEventListener(this.buttonUpNode, 'mouseup', wev_buttonUpOnMouseUp.execute);
-        
-        // button down, mouse down
-        var wev_buttonDownOnMouseDown = new bx_helpers_contextfixer(this.e_buttonDownOnMouseDown, this);
-        bx_helpers.addEventListener(this.buttonDownNode, 'mousedown', wev_buttonDownOnMouseDown.execute);
-
-        // button down, mouse up
-        var wev_buttonDownOnMouseUp = new bx_helpers_contextfixer(this.e_buttonDownOnMouseUp, this);
-        bx_helpers.addEventListener(this.buttonDownNode, 'mouseup', wev_buttonDownOnMouseUp.execute);
+        if(this.buttonDownNode) {
+            // button down, mouse down
+            var wev_buttonDownOnMouseDown = new bx_helpers_contextfixer(this.e_buttonDownOnMouseDown, this);
+            bx_helpers.addEventListener(this.buttonDownNode, 'mousedown', wev_buttonDownOnMouseDown.execute);
+    
+            // button down, mouse up
+            var wev_buttonDownOnMouseUp = new bx_helpers_contextfixer(this.e_buttonDownOnMouseUp, this);
+            bx_helpers.addEventListener(this.buttonDownNode, 'mouseup', wev_buttonDownOnMouseUp.execute);
+        }
     }
 
     this.attachHorizontalButtons = function(buttonLeftNode, buttonRightNode) {
         this.buttonLeftNode = buttonLeftNode;
         this.buttonRightNode = buttonRightNode;
         
-        // button left, mouse down
-        var wev_buttonLeftOnMouseDown = new bx_helpers_contextfixer(this.e_buttonLeftOnMouseDown, this);
-        bx_helpers.addEventListener(this.buttonLeftNode, 'mousedown', wev_buttonLeftOnMouseDown.execute);
-
-        // button left, mouse up
-        var wev_buttonLeftOnMouseUp = new bx_helpers_contextfixer(this.e_buttonLeftOnMouseUp, this);
-        bx_helpers.addEventListener(this.buttonLeftNode, 'mouseup', wev_buttonLeftOnMouseUp.execute);
+        if(this.buttonLeftNode) {
+            // button left, mouse down
+            var wev_buttonLeftOnMouseDown = new bx_helpers_contextfixer(this.e_buttonLeftOnMouseDown, this);
+            bx_helpers.addEventListener(this.buttonLeftNode, 'mousedown', wev_buttonLeftOnMouseDown.execute);
+    
+            // button left, mouse up
+            var wev_buttonLeftOnMouseUp = new bx_helpers_contextfixer(this.e_buttonLeftOnMouseUp, this);
+            bx_helpers.addEventListener(this.buttonLeftNode, 'mouseup', wev_buttonLeftOnMouseUp.execute);
+        }
         
-        // button right, mouse down
-        var wev_buttonRightOnMouseDown = new bx_helpers_contextfixer(this.e_buttonRightOnMouseDown, this);
-        bx_helpers.addEventListener(this.buttonRightNode, 'mousedown', wev_buttonRightOnMouseDown.execute);
-
-        // button right, mouse up
-        var wev_buttonRightOnMouseUp = new bx_helpers_contextfixer(this.e_buttonRightOnMouseUp, this);
-        bx_helpers.addEventListener(this.buttonRightNode, 'mouseup', wev_buttonRightOnMouseUp.execute);
+        if(this.buttonRightNode) {
+            // button right, mouse down
+            var wev_buttonRightOnMouseDown = new bx_helpers_contextfixer(this.e_buttonRightOnMouseDown, this);
+            bx_helpers.addEventListener(this.buttonRightNode, 'mousedown', wev_buttonRightOnMouseDown.execute);
+    
+            // button right, mouse up
+            var wev_buttonRightOnMouseUp = new bx_helpers_contextfixer(this.e_buttonRightOnMouseUp, this);
+            bx_helpers.addEventListener(this.buttonRightNode, 'mouseup', wev_buttonRightOnMouseUp.execute);
+        }
     }
     
     this.scrollUp = function(ppi) {
@@ -124,20 +132,19 @@ function bx_scroller() {
         if(this.scrolling & BX_SCROLLER_SCROLLING) {
             
             if(this.scrolling & BX_SCROLLER_SCROLLING) {
+
+                this.calcAcceleration();
                 
                 if(this.direction == BX_SCROLLER_SCROLL_UP) {
-                    this.calcAcceleration();
                     this.scrollUp(this.currentPpi);
                 } else if(this.direction == BX_SCROLLER_SCROLL_DOWN) {
-                    this.calcAcceleration();
                     this.scrollDown(this.currentPpi);
                 } else if(this.direction == BX_SCROLLER_SCROLL_LEFT) {
-                    this.calcAcceleration();
                     this.scrollLeft(this.currentPpi);
                 } else if(this.direction == BX_SCROLLER_SCROLL_RIGHT) {
-                    this.calcAcceleration();
                     this.scrollRight(this.currentPpi);
                 }
+                
             }
         }
     }
