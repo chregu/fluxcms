@@ -57,6 +57,7 @@ RewriteRule ^/*##DIR##admin/.* - [F,L]
 #prevent some php execution
 RewriteRule ^/*##DIR##files/.*php$ - [F]
 RewriteRule ^/*##DIR##themes/.*php$ - [F]
+RewriteRule ^/*##DIR##themes/.*xsl$ - [F]
 RewriteRule ^/*##DIR##files/.*/$ - [F]           
 RewriteRule ^/*##DIR##themes/.*/$ - [F]  
 RewriteRule ^/*##DIR##files/+$ - [F]

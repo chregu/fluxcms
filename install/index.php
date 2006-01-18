@@ -180,13 +180,15 @@ function prereq() {
         print "<font color='red'>Not Ok!<br/>";
         return ("Wrong PHP Version");
     }
-	print "Checking for Apache Config (AllowOverride is not None) ...\n";
+	/*
+    has to be discussed, doesn't work this way :)
+    print "Checking for Apache Config (AllowOverride is not None) ...\n";
 	if (isAllowOverrideAll()) {
 	        print "OK.<br/> \n";
     }  else {
         print "<font color='red'>Not Ok!<br/>";
         return ("Check your Apache Config if AllowOverride is not set to none");
-	}	
+	}*/	
 	print "Checking for Apache Module ...\n";
     if (stripos(PHP_OS,"Win") === 0) {
     	print "<br/>You are using Windows. We can't reliably check for installed apache modules here (some systems crash)<br/>
