@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
+        
+    <bxst:section name="konzerts" orderby="date ASC" limit="1" where="band.name = '$section'">
+        <bxst:table name="konzert" fields="id , date , members , location  , city">
+            <bxst:table name="band" thatfield="band_id" fields="id , name"/> 
+        </bxst:table>
+    </bxst:section>
+
+    <bxst:section name="cds" orderby="release ASC" limit="1" where="band.name = '$section'">
+        <bxst:table name="cd" fields="id , cdname">
+            <bxst:table name="band" thatfield="band_id" fields="id , name"/> 
+        </bxst:table>
+    </bxst:section>
+    
+    <bxst:section name="news" orderby="date DESC" limit="1" where="band.name = '$section'">
+        <bxst:table name="news" fields="id , title , content , date">
+            <bxst:table name="band" thatfield="band_id" fields="id , name"/> 
+        </bxst:table>
+    </bxst:section>
+    
+    <!--bxst:section name="cds" orderby="release ASC" limit="1" where="band = '$section' " >
+        <bxst:table name="cd" fields="id , cdname"/>
+    </bxst:section>
+    
+    <bxst:section name="news" orderby="date DESC" limit="1" where="band.name = '$section' " >
+        <bxst:table name="news" fields="id , title , content , date"/>
+    </bxst:section-->
+
+</bxst:structure>

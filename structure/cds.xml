@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
-
-    <bxst:section name="news" orderby="date ASC" where="date &gt; now()">
-        <bxst:table name="news" fields="id , date , title , content">
+    
+    <bxst:section name="cds" orderby="release ASC">
+        <bxst:table name="cd" fields="id , cdname , members , description , release , picuri">
             <bxst:table name="band" thatfield="band_id" fields="id , name"/> 
         </bxst:table>
     </bxst:section>
-
+    
 </bxst:structure>

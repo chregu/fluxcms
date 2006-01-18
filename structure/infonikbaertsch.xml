@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
+        
+    <bxst:section name="konzerts" orderby="date ASC" limit="1" where="band = ronin">
+        <bxst:table name="konzert" fields="id , date , members , location , band , city"/>
+    </bxst:section>
+
+    <bxst:section name="cds" orderby="date ASC" limit="1" where="band = ronin" >
+        <bxst:table name="cd" fields="id , date , members , location , band , city"/>
+    </bxst:section>
+
+</bxst:structure>
