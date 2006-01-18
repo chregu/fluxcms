@@ -113,6 +113,9 @@
 
 <content type="html">
 <xsl:apply-templates select="xhtml:div[@class='post_content']/*|xhtml:div[@class='post_content']/text()" mode="xhtml"/>
+   <xsl:if test="xhtml:div[@class='post_links']/xhtml:span[@class='post_more']">
+                            <xsl:call-template name="extended"/>
+                            </xsl:if>
 </content>
 
                         <!--content:encoded xmlns="http://www.w3.org/1999/xhtml">
@@ -177,8 +180,24 @@
         <xsl:value-of select="local-name()"/>="<xsl:value-of select="."/>"
     </xsl:template>
     
+    <xsl:template match="@src|@href" mode="xhtml">
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="local-name()"/>="<xsl:choose>
+        <xsl:when test="starts-with(.,'/')"><xsl:value-of select="$webroot" /><xsl:value-of select="." />
+        </xsl:when>
+        <xsl:otherwise><xsl:value-of select="." /></xsl:otherwise>
+        </xsl:choose>"
+    </xsl:template>
+    
      <xsl:template match="text()" mode="xhtml">
      <xsl:value-of select="php:functionString('htmlspecialchars',.,0,'UTF-8')"  />
     </xsl:template>
-
+    
+    <xsl:template name="extended">
+        <![CDATA[<br/><br/>
+        <a href="]]><xsl:value-of select="xhtml:div[@class='post_links']/xhtml:span[@class='post_more']/xhtml:a[@class='post_more']/@href"/>"&gt;
+            <xsl:value-of select="xhtml:div[@class='post_links']/xhtml:span[@class='post_more']/xhtml:a[@class='post_more']/*"/>
+        <![CDATA[</a>]]>
+        
+    </xsl:template>
 </xsl:stylesheet>

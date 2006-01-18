@@ -90,7 +90,9 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
 
                         <content:encoded xmlns="http://www.w3.org/1999/xhtml">
                             <xsl:apply-templates select="xhtml:div[@class='post_content']/*|xhtml:div[@class='post_content']/text()" mode="xhtml"/>
+                            <xsl:if test="xhtml:div[@class='post_links']/xhtml:span[@class='post_more']">
                             <xsl:call-template name="extended"/>
+                            </xsl:if>
                         </content:encoded>  
                         
                         <xsl:for-each select="xhtml:div[@class='post_meta_data']/xhtml:span[@class='post_categories']/xhtml:span[@class='post_category']">
@@ -161,6 +163,15 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
     <xsl:template match="@*" mode="xhtml">
         <xsl:text> </xsl:text>
         <xsl:value-of select="local-name()"/>="<xsl:value-of select="." />"
+    </xsl:template>
+    
+      <xsl:template match="@src|@href" mode="xhtml">
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="local-name()"/>="<xsl:choose>
+        <xsl:when test="starts-with(.,'/')"><xsl:value-of select="$webroot" /><xsl:value-of select="." />
+        </xsl:when>
+        <xsl:otherwise><xsl:value-of select="." /></xsl:otherwise>
+        </xsl:choose>"
     </xsl:template>
     
     <xsl:template match="text()" mode="xhtml">
