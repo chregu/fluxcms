@@ -17,7 +17,8 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
     <xsl:variable name="blogdescription" select="php:functionString('bx_helpers_config::getOption','blogdescription')"/>
     <xsl:variable name="blogname" select="php:functionString('bx_helpers_config::getOption','blogname')"/>
     <xsl:variable name="sitename" select="php:functionString('bx_helpers_config::getOption','sitename')"/>
-<xsl:variable name="sitedescription" select="php:functionString('bx_helpers_config::getOption','sitedescription')"/>
+    <xsl:variable name="sitedescription" select="php:functionString('bx_helpers_config::getOption','sitedescription')"/>
+    <xsl:variable name="ICBM" select="php:functionString('bx_helpers_config::getOption','ICBM')"/>
 
 
     <xsl:template match="/">
@@ -56,6 +57,11 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
                 <xsl:if test="string-length($cc) > 0">
                 <creativeCommons:license><xsl:value-of select="$cc"/></creativeCommons:license>
                 </xsl:if>
+                
+                <xsl:if test="string-length($ICBM) &gt; 0">
+                <geo:lat><xsl:value-of select="substring-before($ICBM,',')"/></geo:lat>
+                <geo:long><xsl:value-of select="normalize-space(substring-after($ICBM,','))"/></geo:long>
+                </xsl:if>  
                 
                 <xsl:for-each select="/bx/plugin[@name='blog']/xhtml:html/xhtml:body/xhtml:div[@class = 'entry']">
                     <item>
