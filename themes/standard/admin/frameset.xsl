@@ -14,7 +14,7 @@
 <xsl:param name="edit" select="''"/>
 <xsl:template match="/">
 <xsl:choose>
-<xsl:when test="php:functionString('bx_helpers_globals::isSessionCookieSet') = 'true'">
+<xsl:when test="php:functionString('bx_helpers_globals::isSessionCookieSet') != 'false'">
     <xsl:apply-templates />
     </xsl:when>
     <xsl:otherwise>
