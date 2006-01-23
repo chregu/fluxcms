@@ -5,6 +5,7 @@
         <bxst:table name="bloglinkscategories" fields="id , name"> 
             <bxst:table name="bloglinks"  thisfield="bloglinkscategories"/>
         </bxst:table>
+            
     </bxst:section>
 
 </bxst:structure>
