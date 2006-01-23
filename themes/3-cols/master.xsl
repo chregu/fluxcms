@@ -40,6 +40,9 @@
                         <xsl:value-of select="php:functionString('bx_helpers_uri::getUriPart',$webroot,'host')"/>
                     </xsl:attribute>
                 </meta>
+                
+                <meta http-equiv="Content-Language" content="{$lang}"/>
+                <!--
                 <meta name="DC.language" content="{$lang}" />
                 <meta name="DC.creator">
                     <xsl:attribute name="content">
@@ -51,7 +54,7 @@
                         <xsl:call-template name="html_head_title"/>
                     </xsl:attribute>
                 </meta>
-                
+                -->
                 <meta name="keywords" content=""/> 
                 <meta name="description" content="{$sitedescription}"/>
                 <meta http-equiv="imagetoolbar" content="no"/>
