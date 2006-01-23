@@ -137,6 +137,7 @@ class bx_plugins_blog_trackback {
          
         $err = $db->query($query);
         
+        $db->loadModule('extended'); 
         $lastID = $db->getAfterID(null,$tablePrefix.'blogcomments');       
          
         $emailBody .= "Edit URI:\n ".  BX_WEBROOT.'admin/?edit=/forms/blogcomments/?id='.$lastID ."\n";
