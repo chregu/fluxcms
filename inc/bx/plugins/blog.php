@@ -154,6 +154,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         }
         
         $query = "SELECT ".$tablePrefix."blogposts.id from ".$tablePrefix."blogposts ";
+        
         $archivepath = "";
         $archivewhere = "";
         $total = 0;
@@ -269,7 +270,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $archivewhere .= "unix_timestamp(".$tablePrefix."blogposts.post_expires) >= ".time();
                 }
             }
-            
             $res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
             
             if (MDB2::isError($res)) {
@@ -306,7 +306,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         }
         $xml = '<html xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns="http://www.w3.org/1999/xhtml"><head><title>';
         if ($cat) {
-            $_r = $GLOBALS['POOL']->db->query("select fullname from ".$tablePrefix."blogcategories where fulluri = '$cat'");
+            $_r = $GLOBALS['POOL']->db->prepare("select fullname from ".$tablePrefix."blogcategories where fulluri = ?",array('text'),array('text'));
+            $_r = $_r->execute( array($cat));
+            
             if (MDB2::isError($_r)) {
                 throw new PopoonDBException($_r);
             }
