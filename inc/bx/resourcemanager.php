@@ -13,6 +13,10 @@
 class bx_resourcemanager {
 
     
+    private static $getPropertyStm = null;
+    private static $getAllPropertiesStm = null;
+    private static $getAllPropertiesStmNs = null;
+    private static $props = array();
     /**
     * constructor.
     * should not be called from public
@@ -77,12 +81,22 @@ class bx_resourcemanager {
     
     
     public static function getAllProperties ($path ,$namespace =  NULL) {
-         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select ns as namespace, value, name from ".$prefix."properties where path = ".$GLOBALS['POOL']->db->quote($path)." ";
         if ($namespace) {
-            $query .= " and ns = '$namespace'";
+            if (!self::$getAllPropertiesStmNs) {
+                $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+                $query = "select ns as namespace, value, name from ".$prefix."properties where path = :path and ns = :ns";
+                self::$getAllPropertiesStmNs = $GLOBALS['POOL']->db->prepare($query,array('text','text'));
+            }
+            $res = self::$getAllPropertiesStmNs->execute(array('path' => $path,'ns'=>$namespace));
+        } else {
+            if (!self::$getAllPropertiesStm) {
+                $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+                $query = "select ns as namespace, value, name from ".$prefix."properties where path = :path";
+                self::$getAllPropertiesStm = $GLOBALS['POOL']->db->prepare($query,array('text'));
+            }
+            $res = self::$getAllPropertiesStm->execute(array('path' => $path));
         }
-        $res = $GLOBALS['POOL']->db->query($query);
+        
         if ($GLOBALS['POOL']->db->isError($res)) {
             throw new PopoonDBException($res);
         }
@@ -92,14 +106,6 @@ class bx_resourcemanager {
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $props[$row['namespace'].":".$row['name']] = $row;
         }
-        //FIXME hardcoded admin xslt names... not nice ;)
-     /*   if ($namespace == BX_PROPERTY_PIPELINE_NAMESPACE && strpos($path,"/admin/") === 0 ) {
-                $props[$namespace.":xslt"] = array (
-                                                "namespace" => BX_PROPERTY_PIPELINE_NAMESPACE,
-                                                "name" => "xslt",
-                                                "value" => substr($path,7,-1).".xsl"
-                                                );
-        }*/
         return $props;
         
     }
@@ -118,9 +124,12 @@ class bx_resourcemanager {
     
     
     public static function getProperty($path, $name, $namespace = BX_PROPERTY_DEFAULT_NAMESPACE) {
-        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select value from ".$prefix."properties where path = '$path' and name = '$name' and ns = '$namespace'"; 
-        $res = $GLOBALS['POOL']->db->query($query);
+        if (!self::$getPropertyStm) {
+            $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+            $query = "select value from ".$prefix."properties where path = :path and name = :name and ns = :namespace"; 
+            self::$getPropertyStm = $GLOBALS['POOL']->db->prepare($query,array('text','text','text'),array('text'));
+        }
+        $res = self::$getPropertyStm->execute(array('path' => $path, 'name' => $name, 'namespace' => $namespace));
         if ($GLOBALS['POOL']->db->isError($res)) {
             throw new PopoonDBException($res);
         }
