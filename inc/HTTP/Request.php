@@ -62,7 +62,7 @@ class HTTP_Request {
 
     /**
     * Instance of Net_URL
-    * @var object    
+    * @var object Net_URL
     */
     var $_url;
 
@@ -98,7 +98,7 @@ class HTTP_Request {
 
     /**
     * Socket object
-    * @var object
+    * @var object Net_Socket
     */
     var $_sock;
     
@@ -128,9 +128,21 @@ class HTTP_Request {
 
     /**
     * Post data
-    * @var mixed
+    * @var array
     */
     var $_postData;
+
+   /**
+    * Request body  
+    * @var string
+    */
+    var $_body;
+
+   /**
+    * A list of methods that MUST NOT have a request body, per RFC 2616
+    * @var array
+    */
+    var $_bodyDisallowed = array('TRACE');
 
    /**
     * Files to post 
@@ -140,13 +152,13 @@ class HTTP_Request {
 
     /**
     * Connection timeout.
-    * @var integer
+    * @var float
     */
     var $_timeout;
     
     /**
     * HTTP_Response object
-    * @var object
+    * @var object HTTP_Response
     */
     var $_response;
     
@@ -202,21 +214,25 @@ class HTTP_Request {
     * Constructor
     *
     * Sets up the object
-    * @param $url The url to fetch/access
-    * @param $params Associative array of parameters which can be:
-    *                  method         - Method to use, GET, POST etc
-    *                  http           - HTTP Version to use, 1.0 or 1.1
-    *                  user           - Basic Auth username
-    *                  pass           - Basic Auth password
-    *                  proxy_host     - Proxy server host
-    *                  proxy_port     - Proxy server port
-    *                  proxy_user     - Proxy auth username
-    *                  proxy_pass     - Proxy auth password
-    *                  timeout        - Connection timeout in seconds.
-    *                  allowRedirects - Whether to follow redirects or not
-    *                  maxRedirects   - Max number of redirects to follow
-    *                  useBrackets    - Whether to append [] to array variable names
-    *                  saveBody       - Whether to save response body in response object property
+    * @param    string  The url to fetch/access
+    * @param    array   Associative array of parameters which can have the following keys:
+    * <ul>
+    *   <li>method         - Method to use, GET, POST etc (string)</li>
+    *   <li>http           - HTTP Version to use, 1.0 or 1.1 (string)</li>
+    *   <li>user           - Basic Auth username (string)</li>
+    *   <li>pass           - Basic Auth password (string)</li>
+    *   <li>proxy_host     - Proxy server host (string)</li>
+    *   <li>proxy_port     - Proxy server port (integer)</li>
+    *   <li>proxy_user     - Proxy auth username (string)</li>
+    *   <li>proxy_pass     - Proxy auth password (string)</li>
+    *   <li>timeout        - Connection timeout in seconds (float)</li>
+    *   <li>allowRedirects - Whether to follow redirects or not (bool)</li>
+    *   <li>maxRedirects   - Max number of redirects to follow (integer)</li>
+    *   <li>useBrackets    - Whether to append [] to array variable names (bool)</li>
+    *   <li>saveBody       - Whether to save response body in response object property (bool)</li>
+    *   <li>readTimeout    - Timeout for reading / writing data over the socket (array (seconds, microseconds))</li>
+    *   <li>socketOptions  - Options to pass to Net_Socket object (array)</li>
+    * </ul>
     * @access public
     */
     function HTTP_Request($url = '', $params = array())
@@ -225,7 +241,8 @@ class HTTP_Request {
         $this->_method         =  HTTP_REQUEST_METHOD_GET;
         $this->_http           =  HTTP_REQUEST_HTTP_VER_1_1;
         $this->_requestHeaders = array();
-        $this->_postData       = null;
+        $this->_postData       = array();
+        $this->_body           = null;
 
         $this->_user = null;
         $this->_pass = null;
@@ -258,7 +275,7 @@ class HTTP_Request {
 
         // Basic authentication
         if (!empty($this->_user)) {
-            $this->_requestHeaders['Authorization'] = 'Basic ' . base64_encode($this->_user . ':' . $this->_pass);
+            $this->addHeader('Authorization', 'Basic ' . base64_encode($this->_user . ':' . $this->_pass));
         }
 
         // Use gzip encoding if possible
@@ -394,7 +411,7 @@ class HTTP_Request {
     */
     function addHeader($name, $value)
     {
-        $this->_requestHeaders[$name] = $value;
+        $this->_requestHeaders[strtolower($name)] = $value;
     }
 
     /**
@@ -405,8 +422,8 @@ class HTTP_Request {
     */
     function removeHeader($name)
     {
-        if (isset($this->_requestHeaders[$name])) {
-            unset($this->_requestHeaders[$name]);
+        if (isset($this->_requestHeaders[strtolower($name)])) {
+            unset($this->_requestHeaders[strtolower($name)]);
         }
     }
 
@@ -505,15 +522,27 @@ class HTTP_Request {
     }
 
     /**
-    * Adds raw postdata
+    * Adds raw postdata (DEPRECATED)
     *
     * @param string     The data
     * @param bool       Whether data is preencoded or not, default = already encoded
     * @access public
+    * @deprecated       deprecated since 1.3.0, method addBody() should be used instead
     */
     function addRawPostData($postdata, $preencoded = true)
     {
-        $this->_postData = $preencoded ? $postdata : urlencode($postdata);
+        $this->_body = $preencoded ? $postdata : urlencode($postdata);
+    }
+
+   /**
+    * Sets the request body (for POST, PUT and similar requests)
+    *
+    * @param    string  Request body
+    * @access   public
+    */
+    function setBody($body)
+    {
+        $this->_body = $body;
     }
 
     /**
@@ -538,7 +567,7 @@ class HTTP_Request {
     */
     function addCookie($name, $value)
     {
-        $cookies = isset($this->_requestHeaders['Cookie']) ? $this->_requestHeaders['Cookie']. '; ' : '';
+        $cookies = isset($this->_requestHeaders['cookie']) ? $this->_requestHeaders['cookie']. '; ' : '';
         $this->addHeader('Cookie', $cookies . $name . '=' . $value);
     }
     
@@ -581,28 +610,35 @@ class HTTP_Request {
             $host = 'ssl://' . $host;
         }
 
+        // magic quotes may fuck up file uploads and chunked response processing
+        $magicQuotes = ini_get('magic_quotes_runtime');
+        ini_set('magic_quotes_runtime', false);
+
         // If this is a second request, we may get away without
         // re-connecting if they're on the same server
-        if (PEAR::isError($err = $this->_sock->connect($host, $port, null, $this->_timeout, $this->_socketOptions)) ||
-            PEAR::isError($err = $this->_sock->write($this->_buildRequest()))) {
+        $err = $this->_sock->connect($host, $port, null, $this->_timeout, $this->_socketOptions);
+        PEAR::isError($err) or $err = $this->_sock->write($this->_buildRequest());
 
+        if (!PEAR::isError($err)) {
+            if (!empty($this->_readTimeout)) {
+                $this->_sock->setTimeout($this->_readTimeout[0], $this->_readTimeout[1]);
+            }
+
+            $this->_notify('sentRequest');
+
+            // Read the response
+            $this->_response = &new HTTP_Response($this->_sock, $this->_listeners);
+            $err = $this->_response->process($this->_saveBody && $saveBody);
+        }
+
+        ini_set('magic_quotes_runtime', $magicQuotes);
+
+        if (PEAR::isError($err)) {
             return $err;
         }
-        if (!empty($this->_readTimeout)) {
-            $this->_sock->setTimeout($this->_readTimeout[0], $this->_readTimeout[1]);
-        }
 
-        $this->_notify('sentRequest');
-
-        // Read the response
-        $this->_response = &new HTTP_Response($this->_sock, $this->_listeners);
-        if (PEAR::isError($err = $this->_response->process($this->_saveBody && $saveBody)) ) {
-            return $err;
-        }
 
         // Check for redirection
-        // Bugfix (PEAR) bug #18, 6 oct 2003 by Dave Mertens (headers are also stored lowercase, so we're gonna use them here)
-        // some non RFC2616 compliant servers (scripts) are returning lowercase headers ('location: xxx')
         if (    $this->_allowRedirects
             AND $this->_redirects <= $this->_maxRedirects
             AND $this->getResponseCode() > 300
@@ -677,6 +713,7 @@ class HTTP_Request {
         if (!isset($headername)) {
             return isset($this->_response->_headers)? $this->_response->_headers: array();
         } else {
+            $headername = strtolower($headername);
             return isset($this->_response->_headers[$headername]) ? $this->_response->_headers[$headername] : false;
         }
     }
@@ -723,13 +760,16 @@ class HTTP_Request {
 
         $request = $this->_method . ' ' . $url . ' HTTP/' . $this->_http . "\r\n";
 
-        if (HTTP_REQUEST_METHOD_POST != $this->_method && HTTP_REQUEST_METHOD_PUT != $this->_method) {
+        if (in_array($this->_method, $this->_bodyDisallowed) ||
+            (HTTP_REQUEST_METHOD_POST != $this->_method && empty($this->_body)) ||
+            (HTTP_REQUEST_METHOD_POST != $this->_method && empty($this->_postData) && empty($this->_postFiles))) {
+
             $this->removeHeader('Content-Type');
         } else {
-            if (empty($this->_requestHeaders['Content-Type'])) {
+            if (empty($this->_requestHeaders['content-type'])) {
                 // Add default content-type
                 $this->addHeader('Content-Type', 'application/x-www-form-urlencoded');
-            } elseif ('multipart/form-data' == $this->_requestHeaders['Content-Type']) {
+            } elseif ('multipart/form-data' == $this->_requestHeaders['content-type']) {
                 $boundary = 'HTTP_Request_' . md5(uniqid('request') . microtime());
                 $this->addHeader('Content-Type', 'multipart/form-data; boundary=' . $boundary);
             }
@@ -738,17 +778,21 @@ class HTTP_Request {
         // Request Headers
         if (!empty($this->_requestHeaders)) {
             foreach ($this->_requestHeaders as $name => $value) {
-                $request .= $name . ': ' . $value . "\r\n";
+                $canonicalName = implode('-', array_map('ucfirst', explode('-', $name)));
+                $request      .= $canonicalName . ': ' . $value . "\r\n";
             }
         }
 
         // No post data or wrong method, so simply add a final CRLF
-        if ((HTTP_REQUEST_METHOD_POST != $this->_method && HTTP_REQUEST_METHOD_PUT != $this->_method) ||
-            (empty($this->_postData) && empty($this->_postFiles))) {
+        if (in_array($this->_method, $this->_bodyDisallowed) || 
+            (HTTP_REQUEST_METHOD_POST != $this->_method && empty($this->_body))) {
 
             $request .= "\r\n";
+
         // Post data if it's an array
-        } elseif ((!empty($this->_postData) && is_array($this->_postData)) || !empty($this->_postFiles)) {
+        } elseif (HTTP_REQUEST_METHOD_POST == $this->_method && 
+                  (!empty($this->_postData) || !empty($this->_postFiles))) {
+
             // "normal" POST request
             if (!isset($boundary)) {
                 $postdata = implode('&', array_map(
@@ -787,15 +831,16 @@ class HTTP_Request {
                         $postdata .= "\r\n\r\n" . $data . "\r\n";
                     }
                 }
-                $postdata .= '--' . $boundary . "\r\n";
+                $postdata .= '--' . $boundary . "--\r\n";
             }
             $request .= 'Content-Length: ' . strlen($postdata) . "\r\n\r\n";
             $request .= $postdata;
 
-        // Post data if it's raw
-        } elseif(!empty($this->_postData)) {
-            $request .= 'Content-Length: ' . strlen($this->_postData) . "\r\n\r\n";
-            $request .= $this->_postData;
+        // Explicitly set request body
+        } elseif (!empty($this->_body)) {
+
+            $request .= 'Content-Length: ' . strlen($this->_body) . "\r\n\r\n";
+            $request .= $this->_body;
         }
         
         return $request;
@@ -991,18 +1036,22 @@ class HTTP_Response
         $chunked = isset($this->_headers['transfer-encoding']) && ('chunked' == $this->_headers['transfer-encoding']);
         $gzipped = isset($this->_headers['content-encoding']) && ('gzip' == $this->_headers['content-encoding']);
         $hasBody = false;
-        while (!$this->_sock->eof()) {
-            if ($chunked) {
-                $data = $this->_readChunked();
-            } else {
-                $data = $this->_sock->read(4096);
-            }
-            if ('' != $data) {
-                $hasBody = true;
-                if ($saveBody || $gzipped) {
-                    $this->_body .= $data;
+        if (!isset($this->_headers['content-length']) || 0 != $this->_headers['content-length']) {
+            while (!$this->_sock->eof()) {
+                if ($chunked) {
+                    $data = $this->_readChunked();
+                } else {
+                    $data = $this->_sock->read(4096);
                 }
-                $this->_notify($gzipped? 'gzTick': 'tick', $data);
+                if ('' == $data) {
+                    break;
+                } else {
+                    $hasBody = true;
+                    if ($saveBody || $gzipped) {
+                        $this->_body .= $data;
+                    }
+                    $this->_notify($gzipped? 'gzTick': 'tick', $data);
+                }
             }
         }
         if ($hasBody) {
@@ -1027,12 +1076,15 @@ class HTTP_Response
     function _processHeader($header)
     {
         list($headername, $headervalue) = explode(':', $header, 2);
-        $headername_i = strtolower($headername);
-        $headervalue  = ltrim($headervalue);
+        $headername  = strtolower($headername);
+        $headervalue = ltrim($headervalue);
         
-        if ('set-cookie' != $headername_i) {
-            $this->_headers[$headername]   = $headervalue;
-            $this->_headers[$headername_i] = $headervalue;
+        if ('set-cookie' != $headername) {
+            if (isset($this->_headers[$headername])) {
+                $this->_headers[$headername] .= ',' . $headervalue;
+            } else {
+                $this->_headers[$headername]  = $headervalue;
+            }
         } else {
             $this->_parseCookie($headervalue);
         }
@@ -1068,7 +1120,12 @@ class HTTP_Response
             $cookie['value'] = trim(substr($elements[0], $pos + 1));
 
             for ($i = 1; $i < count($elements); $i++) {
-                list ($elName, $elValue) = array_map('trim', explode('=', $elements[$i]));
+                if (false === strpos($elements[$i], '=')) {
+                    $elName  = trim($elements[$i]);
+                    $elValue = null;
+                } else {
+                    list ($elName, $elValue) = array_map('trim', explode('=', $elements[$i]));
+                }
                 $elName = strtolower($elName);
                 if ('secure' == $elName) {
                     $cookie['secure'] = true;
@@ -1100,9 +1157,11 @@ class HTTP_Response
                 $this->_chunkLength = hexdec($matches[1]); 
                 // Chunk with zero length indicates the end
                 if (0 == $this->_chunkLength) {
-                    $this->_sock->readAll(); // make this an eof()
+                    $this->_sock->readLine(); // make this an eof()
                     return '';
                 }
+            } else {
+                return '';
             }
         }
         $data = $this->_sock->read($this->_chunkLength);
