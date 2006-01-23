@@ -446,10 +446,13 @@ function XML_RPC_ee($parser_resource, $name)
         break;
 
     case 'VALUE':
-        // deal with a string value
-        if (strlen($XML_RPC_xh[$parser]['ac']) > 0 &&
-            $XML_RPC_xh[$parser]['vt'] == $XML_RPC_String) {
-            $XML_RPC_xh[$parser]['value'] = $XML_RPC_xh[$parser]['ac'];
+        if ($XML_RPC_xh[$parser]['vt'] == $XML_RPC_String) {
+            if (strlen($XML_RPC_xh[$parser]['ac']) > 0) {
+                $XML_RPC_xh[$parser]['value'] = $XML_RPC_xh[$parser]['ac'];
+            } elseif ($XML_RPC_xh[$parser]['lv'] == 1) {
+                // The <value> element was empty.
+                $XML_RPC_xh[$parser]['value'] = '';
+            }
         }
 
         $temp = new XML_RPC_Value($XML_RPC_xh[$parser]['value'], $XML_RPC_xh[$parser]['vt']);
@@ -543,7 +546,7 @@ function XML_RPC_cd($parser_resource, $data)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Base {
@@ -588,7 +591,7 @@ class XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Client extends XML_RPC_Base {
@@ -829,7 +832,7 @@ class XML_RPC_Client extends XML_RPC_Base {
      */
     function send($msg, $timeout = 0)
     {
-        if (strtolower(get_class($msg)) != 'xml_rpc_message') {
+        if (!is_a($msg, 'XML_RPC_Message')) {
             $this->errstr = 'send()\'s $msg parameter must be an'
                           . ' XML_RPC_Message object.';
             $this->raiseError($this->errstr, XML_RPC_ERROR_PROGRAMMING);
@@ -1010,7 +1013,7 @@ class XML_RPC_Client extends XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Response extends XML_RPC_Base
@@ -1101,7 +1104,7 @@ class XML_RPC_Response extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Message extends XML_RPC_Base
@@ -1447,7 +1450,7 @@ class XML_RPC_Message extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Value extends XML_RPC_Base
@@ -1883,7 +1886,7 @@ function XML_RPC_decode($XML_RPC_val)
 function XML_RPC_encode($php_val)
 {
     global $XML_RPC_Boolean, $XML_RPC_Int, $XML_RPC_Double, $XML_RPC_String,
-           $XML_RPC_Array, $XML_RPC_Struct;
+           $XML_RPC_Array, $XML_RPC_Struct, $XML_RPC_DateTime;
 
     $type = gettype($php_val);
     $XML_RPC_val = new XML_RPC_Value;
@@ -1923,7 +1926,11 @@ function XML_RPC_encode($php_val)
 
     case 'string':
     case 'NULL':
-        $XML_RPC_val->addScalar($php_val, $XML_RPC_String);
+        if(ereg('^[0-9]{8}\T{1}[0-9]{2}\:[0-9]{2}\:[0-9]{2}$', $php_val)) {
+            $XML_RPC_val->addScalar($php_val, $XML_RPC_DateTime);
+        } else {
+            $XML_RPC_val->addScalar($php_val, $XML_RPC_String);
+        }
         break;
 
     case 'boolean':
