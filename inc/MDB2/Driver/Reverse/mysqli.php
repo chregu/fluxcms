@@ -42,7 +42,7 @@
 // | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: mysqli.php,v 1.27 2006/01/05 12:05:12 lsmith Exp $
 //
 
 require_once 'MDB2/Driver/Reverse/Common.php';
@@ -54,8 +54,64 @@ require_once 'MDB2/Driver/Reverse/Common.php';
  * @category Database
  * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
+class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
 {
+    /**
+     * Array for converting MYSQLI_*_FLAG constants to text values
+     * @var    array
+     * @access public
+     * @since  Property available since Release 1.6.5
+     */
+    var $flags = array(
+        MYSQLI_NOT_NULL_FLAG        => 'not_null',
+        MYSQLI_PRI_KEY_FLAG         => 'primary_key',
+        MYSQLI_UNIQUE_KEY_FLAG      => 'unique_key',
+        MYSQLI_MULTIPLE_KEY_FLAG    => 'multiple_key',
+        MYSQLI_BLOB_FLAG            => 'blob',
+        MYSQLI_UNSIGNED_FLAG        => 'unsigned',
+        MYSQLI_ZEROFILL_FLAG        => 'zerofill',
+        MYSQLI_AUTO_INCREMENT_FLAG  => 'auto_increment',
+        MYSQLI_TIMESTAMP_FLAG       => 'timestamp',
+        MYSQLI_SET_FLAG             => 'set',
+        // MYSQLI_NUM_FLAG             => 'numeric',  // unnecessary
+        // MYSQLI_PART_KEY_FLAG        => 'multiple_key',  // duplicatvie
+        MYSQLI_GROUP_FLAG           => 'group_by'
+    );
+
+    /**
+     * Array for converting MYSQLI_TYPE_* constants to text values
+     * @var    array
+     * @access public
+     * @since  Property available since Release 1.6.5
+     */
+    var $types = array(
+        MYSQLI_TYPE_DECIMAL     => 'decimal',
+        246                     => 'decimal',
+        MYSQLI_TYPE_TINY        => 'tinyint',
+        MYSQLI_TYPE_SHORT       => 'int',
+        MYSQLI_TYPE_LONG        => 'int',
+        MYSQLI_TYPE_FLOAT       => 'float',
+        MYSQLI_TYPE_DOUBLE      => 'double',
+        // MYSQLI_TYPE_NULL        => 'DEFAULT NULL',  // let flags handle it
+        MYSQLI_TYPE_TIMESTAMP   => 'timestamp',
+        MYSQLI_TYPE_LONGLONG    => 'bigint',
+        MYSQLI_TYPE_INT24       => 'mediumint',
+        MYSQLI_TYPE_DATE        => 'date',
+        MYSQLI_TYPE_TIME        => 'time',
+        MYSQLI_TYPE_DATETIME    => 'datetime',
+        MYSQLI_TYPE_YEAR        => 'year',
+        MYSQLI_TYPE_NEWDATE     => 'date',
+        MYSQLI_TYPE_ENUM        => 'enum',
+        MYSQLI_TYPE_SET         => 'set',
+        MYSQLI_TYPE_TINY_BLOB   => 'tinyblob',
+        MYSQLI_TYPE_MEDIUM_BLOB => 'mediumblob',
+        MYSQLI_TYPE_LONG_BLOB   => 'longblob',
+        MYSQLI_TYPE_BLOB        => 'blob',
+        MYSQLI_TYPE_VAR_STRING  => 'varchar',
+        MYSQLI_TYPE_STRING      => 'char',
+        MYSQLI_TYPE_GEOMETRY    => 'geometry',
+    );
+
     // {{{ getTableFieldDefinition()
 
     /**
@@ -94,7 +150,7 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                 $column = array_change_key_case($column, $db->options['field_case']);
             }
             if ($field_name == $column['name']) {
-                list($types, $length, $unsigned) = $db->datatype->mapNativeDatatype($column);
+                list($types, $length) = $db->datatype->mapNativeDatatype($column);
                 $notnull = false;
                 if (array_key_exists('null', $column) && $column['null'] != 'YES') {
                     $notnull = true;
@@ -118,9 +174,6 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                     );
                     if ($length > 0) {
                         $definition[$key]['length'] = $length;
-                    }
-                    if ($unsigned) {
-                        $definition[$key]['unsigned'] = true;
                     }
                     if ($default !== false) {
                         $definition[$key]['default'] = $default;
@@ -244,7 +297,7 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                 }
             }
             if ($index_name == $key_name) {
-                if ($row['non_unique']) {
+                if (!$row['non_unique']) {
                     return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
                         'getTableConstraintDefinition: it was not specified an existing table constraint');
                 }
@@ -306,11 +359,10 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
              * Probably received a table name.
              * Create a result resource identifier.
              */
-            $connection = $db->getConnection();
-            if (PEAR::isError($connection)) {
-                return $connection;
+            $id = $db->_doQuery("SELECT * FROM $result LIMIT 0", false);
+            if (PEAR::isError($id)) {
+                return $id;
             }
-            $id = @mysql_list_fields($db->database_name, $result, $connection);
             $got_string = true;
         } elseif (MDB2::isResultCommon($result)) {
             /*
@@ -329,7 +381,7 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
             $got_string = false;
         }
 
-        if (!is_resource($id)) {
+        if (!is_a($id, 'mysqli_result')) {
             return $db->raiseError(MDB2_ERROR_NEED_MORE_DATA);
         }
 
@@ -343,7 +395,7 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
             $case_func = 'strval';
         }
 
-        $count = @mysql_num_fields($id);
+        $count = @mysqli_num_fields($id);
         $res   = array();
 
         if ($mode) {
@@ -352,18 +404,28 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
 
         $db->loadModule('Datatype', null, true);
         for ($i = 0; $i < $count; $i++) {
-            $res[$i] = array(
-                'table' => $case_func(@mysql_field_table($id, $i)),
-                'name'  => $case_func(@mysql_field_name($id, $i)),
-                'type'  => @mysql_field_type($id, $i),
-                'length'   => @mysql_field_len($id, $i),
-                'flags' => @mysql_field_flags($id, $i),
-            );
-            if ($res[$i]['type'] == 'string') {
-                $res[$i]['type'] = 'char';
-            } elseif ($res[$i]['type'] == 'unknown') {
-                $res[$i]['type'] = 'decimal';
+            $tmp = @mysqli_fetch_field($id);
+
+            $flags = '';
+            foreach ($this->flags as $const => $means) {
+                if ($tmp->flags & $const) {
+                    $flags.= $means . ' ';
+                }
             }
+            if ($tmp->def) {
+                $flags.= 'default_' . rawurlencode($tmp->def);
+            }
+            $flags = trim($flags);
+
+            $res[$i] = array(
+                'table' => $case_func($tmp->table),
+                'name'  => $case_func($tmp->name),
+                'type'  => isset($this->types[$tmp->type])
+                                    ? $this->types[$tmp->type]
+                                    : 'unknown',
+                'length'   => $tmp->max_length,
+                'flags' => $flags,
+            );
             $mdb2type_info = $db->datatype->mapNativeDatatype($res[$i]);
             $res[$i]['mdb2type'] = $mdb2type_info[0][0];
             if ($mode & MDB2_TABLEINFO_ORDER) {
@@ -376,7 +438,7 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
 
         // free the result only if we were called on a table
         if ($got_string) {
-            @mysql_free_result($id);
+            @mysqli_free_result($id);
         }
         return $res;
     }

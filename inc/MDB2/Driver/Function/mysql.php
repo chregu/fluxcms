@@ -3,7 +3,7 @@
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
-// | Stig. S. Bakken, Lukas Smith, Frank M. Kromann                       |
+// | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
 // | MDB2 is a merge of PEAR DB and Metabases that provides a unified DB  |
@@ -39,44 +39,62 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: mysql.php,v 1.5 2006/01/12 16:47:15 lsmith Exp $
 //
 
+require_once 'MDB2/Driver/Function/Common.php';
+
 /**
- * MDB2 InterbaseBase driver for the native module
+ * MDB2 MySQL driver for the function modules
  *
  * @package MDB2
  * @category Database
- * @author  Lukas Smith <smith@dybnet.de>
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Native_ibase
+class MDB2_Driver_Function_mysql extends MDB2_Driver_Function_Common
 {
-    var $db_index;
-
-    // {{{ constructor
+     // }}}
+    // {{{ executeStoredProc()
 
     /**
-     * Constructor
+     * Execute a stored procedure and return any results
+     *
+     * @param string $name string that identifies the function to execute
+     * @param mixed  $params  array that contains the paramaters to pass the stored proc
+     * @param mixed   $types  array that contains the types of the columns in
+     *                        the result set
+     * @param mixed $result_class string which specifies which result class to use
+     * @param mixed $result_wrap_class string which specifies which class to wrap results in
+     * @return mixed a result handle or MDB2_OK on success, a MDB2 error on failure
+     * @access public
      */
-    function __construct($db_index)
+    function &executeStoredProc($name, $params = null, $types = null, $result_class = true, $result_wrap_class = false)
     {
-        $this->db_index = $db_index;
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $query = 'CALL '.$name;
+        $query .= $params ? '('.implode(', ', $params).')' : '()';
+        return $db->query($query, $types, $result_class, $result_wrap_class);
     }
 
     // }}}
-    // {{{ constructor
+    // {{{ concat()
 
     /**
-     * PHP4 Constructor
-     */
-    function MDB2_Driver_Native_ibase($db_index)
+     * return string to caoncatenate two strings
+     *
+     * @return string to caoncatenate two strings
+     * @access public
+     **/
+    function concat($value1, $value2)
     {
-        $this->__construct($db_index);
+        return "CONCAT($value1, $value2)";
     }
-
-    // }}}
 }
 ?>

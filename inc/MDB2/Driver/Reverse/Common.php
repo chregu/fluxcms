@@ -39,7 +39,7 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -65,27 +65,10 @@ define('MDB2_TABLEINFO_FULL',       3);
  *
  * @package MDB2
  * @category Database
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Reverse_Common
+class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
 {
-    var $db_index;
-
-    // {{{ constructor
-
-    /**
-     * Constructor
-     */
-    function __construct($db_index)
-    {
-        $this->db_index = $db_index;
-    }
-
-    function MDB2_Driver_Reverse_Common($db_index)
-    {
-        $this->__construct($db_index);
-    }
-
     // }}}
     // {{{ getTableFieldDefinition()
 
@@ -99,7 +82,11 @@ class MDB2_Driver_Reverse_Common
      */
     function getTableFieldDefinition($table, $field)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
             'getTableFieldDefinition: table field definition is not supported');
     }
@@ -117,9 +104,35 @@ class MDB2_Driver_Reverse_Common
      */
     function getTableIndexDefinition($table, $index)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
             'getTableIndexDefinition: getting index definition is not supported');
+    }
+
+    // }}}
+    // {{{ getTableConstraintDefinition()
+
+    /**
+     * get the stucture of an constraints into an array
+     *
+     * @param string    $table      name of table that should be used in method
+     * @param string    $index      name of index that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     * @access public
+     */
+    function getTableConstraintDefinition($table, $index)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+            'getTableConstraintDefinition: getting index definition is not supported');
     }
 
     // }}}
@@ -134,9 +147,13 @@ class MDB2_Driver_Reverse_Common
      */
     function getSequenceDefinition($sequence)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         $start = $db->currId($sequence);
-        if (MDB2::isError($start)) {
+        if (PEAR::isError($start)) {
             return $start;
         }
         if ($db->supports('current_id')) {
@@ -151,7 +168,6 @@ class MDB2_Driver_Reverse_Common
         }
         return $definition;
     }
-
 
     // }}}
     // {{{ tableInfo()
@@ -256,8 +272,8 @@ class MDB2_Driver_Reverse_Common
      *   + fbsql
      *   + mysql
      *
-     * If the 'portability' option has <samp>MDB2_PORTABILITY_LOWERCASE</samp>
-     * turned on, the names of tables and fields will be lowercased.
+     * If the 'portability' option has <samp>MDB2_PORTABILITY_FIX_CASE</samp>
+     * turned on, the names of tables and fields will be lower or upper cased.
      *
      * @param object|string  $result  MDB2_result object from a query or a
      *                                string containing the name of a table.
@@ -270,20 +286,19 @@ class MDB2_Driver_Reverse_Common
      *                     <kbd>MDB2_TABLEINFO_FULL</kbd> (which does both).
      *                     These are bitwise, so the first two can be
      *                     combined using <kbd>|</kbd>.
+     *
      * @return array  an associative array with the information requested.
-     *                If something goes wrong an error object is returned.
+     *                 A MDB2_Error object on failure.
      *
      * @see MDB2_Driver_Common::setOption()
-     * @access public
      */
     function tableInfo($result, $mode = null)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        /*
-         * If the MDB2_Driver_Reverse_<driver> class has a tableInfo() method,
-         * that one overrides this one.  But, if the driver doesn't have one,
-         * this method runs and tells users about that fact.
-         */
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
             'tableInfo: method not implemented');
     }

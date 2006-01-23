@@ -39,7 +39,7 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -52,10 +52,63 @@ require_once 'MDB2/Driver/Reverse/Common.php';
  *
  * @package MDB2
  * @category Database
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
 class MDB2_Driver_Reverse_sqlite extends MDB2_Driver_Reverse_Common
 {
+    function _getTableColumns($sql)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $start_pos = strpos($sql, '(');
+        $end_pos = strrpos($sql, ')');
+        $column_def = substr($sql, $start_pos+1, $end_pos-$start_pos-1);
+        $column_sql = split(',', $column_def);
+        $columns = array();
+        $count = count($column_sql);
+        if ($count == 0) {
+            return $db->raiseError('unexpected empty table column definition list');
+        }
+        $regexp = '/^([^ ]+) (CHAR|VARCHAR|VARCHAR2|TEXT|BOOLEAN|INT|INTEGER|BIGINT|DOUBLE|FLOAT|DATETIME|DATE|TIME|LONGTEXT|LONGBLOB)( UNSIGNED)?( PRIMARY KEY)?( \(([1-9][0-9]*)(,([1-9][0-9]*))?\))?( DEFAULT (\'[^\']*\'|[^ ]+))?( NOT NULL)?$/i';
+        for ($i=0, $j=0; $i<$count; ++$i) {
+            if (!preg_match($regexp, trim($column_sql[$i]), $matches)) {
+                return $db->raiseError('unexpected table column SQL definition: "'.$column_sql[$i].'"');
+            }
+            $columns[$j]['name'] = $matches[1];
+            $columns[$j]['type'] = strtolower($matches[2]);
+            if (isset($matches[3]) && strlen($matches[3])) {
+                $columns[$j]['unsigned'] = true;
+            }
+            if (isset($matches[4]) && strlen($matches[4])) {
+                $columns[$j]['autoincrement'] = true;
+            }
+            if (isset($matches[6]) && strlen($matches[6])) {
+                $columns[$j]['length'] = $matches[6];
+            }
+            if (isset($matches[8]) && strlen($matches[8])) {
+                $columns[$j]['decimal'] = $matches[8];
+            }
+            if (isset($matches[10]) && strlen($matches[10])) {
+                $default = $matches[10];
+                if (strlen($default) && $default[0]=="'") {
+                    $default = str_replace("''", "'", substr($default, 1, strlen($default)-2));
+                }
+                if ($default === 'NULL') {
+                    $default = null;
+                }
+                $columns[$j]['default'] = $default;
+            }
+            if (isset($matches[11]) && strlen($matches[11])) {
+                $columns[$j]['notnull'] = true;
+            }
+            ++$j;
+        }
+        return $columns;
+    }
+
     // {{{ getTableFieldDefinition()
 
     /**
@@ -68,173 +121,71 @@ class MDB2_Driver_Reverse_sqlite extends MDB2_Driver_Reverse_Common
      */
     function getTableFieldDefinition($table, $field_name)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $query = "SELECT sql FROM sqlite_master WHERE type='table' AND name='$table'";
-        $result = $db->query($query);
-        if (MDB2::isError($result)) {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $result = $db->loadModule('Datatype', null, true);
+        if (PEAR::isError($result)) {
             return $result;
         }
-        $columns = $result->getColumnNames();
-        if (MDB2::isError($columns)) {
-            return $columns;
+        $query = "SELECT sql FROM sqlite_master WHERE type='table' AND name='$table'";
+        $sql = $db->queryOne($query);
+        if (PEAR::isError($sql)) {
+            return $sql;
         }
-        if (!isset($columns[$column = 'sql'])) {
-            return $db->raiseError(MDB2_ERROR, null, null,
-                'getTableFieldDefinition: show columns does not return the column '.$column);
-        }
-        $query = $result->fetchOne();
-        if (MDB2::isError($columns = $this->_getTableColumns($query))) {
-            return $columns;
-        }
-        $count = count($columns);
-
-        for ($i=0; $i<$count; ++$i) {
-            if ($field_name == $columns[$i]['name']) {
-                $db_type = $columns[$i]['type'];
-                $type = array();
-                switch ($db_type) {
-                case 'tinyint':
-                case 'smallint':
-                case 'mediumint':
-                case 'int':
-                case 'integer':
-                case 'bigint':
-                    $type[0] = 'integer';
-                    if ($columns[$i]['length'] && $columns[$i]['length'] == '1') {
-                        $type[1] = 'boolean';
-                        if (preg_match('/^[is|has]/', $field_name)) {
-                            $type = array_reverse($type);
-                        }
-                    }
-                    break;
-                case 'tinytext':
-                case 'mediumtext':
-                case 'longtext':
-                case 'text':
-                case 'char':
-                case 'varchar':
-                case "varchar2":
-                    $type[0] = 'text';
-                    if (isset($columns[$i]['length']) && $columns[$i]['length'] == '1') {
-                        $type[1] = 'boolean';
-                        if (preg_match('/[is|has]/', $field_name)) {
-                            $type = array_reverse($type);
-                        }
-                    } elseif (strstr($db_type, 'text'))
-                        $type[1] = 'clob';
-                    break;
-                case 'enum':
-                    preg_match_all('/\'.+\'/U',$row[$type_column], $matches);
-                    $length = 0;
-                    if (is_array($matches)) {
-                        foreach ($matches[0] as $value) {
-                            $length = max($length, strlen($value)-2);
-                        }
-                    }
-                    unset($decimal);
-                case 'set':
-                    $type[0] = 'text';
-                    $type[1] = 'integer';
-                    break;
-                case 'date':
-                    $type[0] = 'date';
-                    break;
-                case 'datetime':
-                case 'timestamp':
-                    $type[0] = 'timestamp';
-                    break;
-                case 'time':
-                    $type[0] = 'time';
-                    break;
-                case 'float':
-                case 'double':
-                case 'real':
-                    $type[0] = 'float';
-                    break;
-                case 'decimal':
-                case 'numeric':
-                    $type[0] = 'decimal';
-                    break;
-                case 'tinyblob':
-                case 'mediumblob':
-                case 'longblob':
-                case 'blob':
-                    $type[0] = 'text';
-                    break;
-                case 'year':
-                    $type[0] = 'integer';
-                    $type[1] = 'date';
-                    break;
-                default:
-                    return $db->raiseError(MDB2_ERROR, null, null,
-                        'getTableFieldDefinition: unknown database attribute type');
+        $columns = $this->_getTableColumns($sql);
+        foreach ($columns as $column) {
+            if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+                if ($db->options['field_case'] == CASE_LOWER) {
+                    $column['name'] = strtolower($column['name']);
+                } else {
+                    $column['name'] = strtoupper($column['name']);
                 }
-                for ($field_choices = array(), $datatype = 0;
-                    $datatype < count($type);
-                    $datatype++
-                ) {
-                    $field_choices[$datatype] = array('type' => $type[$datatype]);
-                    if (isset($columns[$i]['notnull'])) {
-                        $field_choices[$datatype]['notnull'] = true;
-                    }
-                    if (isset($columns[$i]['default'])) {
-                        $field_choices[$datatype]["default"]=$columns[$i]['default'];
-                    }
-                    if ($type[$datatype] != 'boolean'
-                        && $type[$datatype] != 'time'
-                        && $type[$datatype] != 'date'
-                        && $type[$datatype] != 'timestamp'
-                    ) {
-                        if (isset($columns[$i]['length'])) {
-                            $field_choices[$datatype]['length'] = $columns[$i]['length'];
-                        }
+            } else {
+                $column = array_change_key_case($column, $db->options['field_case']);
+            }
+            if ($field_name == $column['name']) {
+                list($types, $length, $unsigned) = $db->datatype->mapNativeDatatype($column);
+                $notnull = false;
+                if (array_key_exists('notnull', $column)) {
+                    $notnull = $column['notnull'];
+                }
+                $default = false;
+                if (array_key_exists('default', $column)) {
+                    $default = $column['default'];
+                    if (is_null($default) && $notnull) {
+                        $default = '';
                     }
                 }
-                $definition[0] = $field_choices;
-/*
-                if (isset($columns['extra'])
-                    && isset($row[$columns['extra']])
-                    && $row[$columns['extra']] == 'auto_increment'
-                ) {
-                    $implicit_sequence = array();
-                    $implicit_sequence['on'] = array();
-                    $implicit_sequence['on']['table'] = $table;
-                    $implicit_sequence['on']['field'] = $field_name;
-                    $definition[1]['name'] = $table.'_'.$field_name;
-                    $definition[1]['definition'] = $implicit_sequence;
+                $autoincrement = false;
+                if (array_key_exists('autoincrement', $column) && $column['autoincrement']) {
+                    $autoincrement = true;
                 }
-                if (isset($columns['key'])
-                    && isset($row[$columns['key']])
-                    && $row[$columns['key']] == 'PRI'
-                ) {
-                    // check that its not just a unique field
-                    if (MDB2::isError($indexes = $db->query("SHOW INDEX FROM $table", null, MDB2_FETCHMODE_ASSOC))) {
-                        return $indexes;
+                $definition = array();
+                foreach ($types as $key => $type) {
+                    $definition[$key] = array(
+                        'type' => $type,
+                        'notnull' => $notnull,
+                    );
+                    if ($length > 0) {
+                        $definition[$key]['length'] = $length;
                     }
-                    $is_primary = false;
-                    foreach ($indexes as $index) {
-                        if ($index['key_name'] == 'PRIMARY' && $index['column_name'] == $field_name) {
-                            $is_primary = true;
-                            break;
-                        }
+                    if ($unsigned) {
+                        $definition[$key]['unsigned'] = true;
                     }
-                    if ($is_primary) {
-                        $implicit_index = array();
-                        $implicit_index['unique'] = true;
-                        $implicit_index['fields'][$field_name] = '';
-                        $definition[2]['name'] = $field_name;
-                        $definition[2]['definition'] = $implicit_index;
+                    if ($default !== false) {
+                        $definition[$key]['default'] = $default;
+                    }
+                    if ($autoincrement !== false) {
+                        $definition[$key]['autoincrement'] = $autoincrement;
                     }
                 }
-*/
                 return $definition;
             }
         }
-        $result->free();
 
-        if (MDB2::isError($row)) {
-            return $row;
-        }
         return $db->raiseError(MDB2_ERROR, null, null,
             'getTableFieldDefinition: it was not specified an existing table column');
     }
@@ -252,180 +203,209 @@ class MDB2_Driver_Reverse_sqlite extends MDB2_Driver_Reverse_Common
      */
     function getTableIndexDefinition($table, $index_name)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        if ($index_name == 'PRIMARY') {
-            return $db->raiseError(MDB2_ERROR, null, null,
-                'getTableIndexDefinition: PRIMARY is an hidden index');
-        }
-        $query = "SELECT sql FROM sqlite_master WHERE type='index' AND name='$index' AND tbl_name='$table' AND sql NOT NULL ORDER BY name";
-        $result = $db->query($query);
-        if (MDB2::isError($result)) {
-            return $result;
-        }
-        $columns = $result->getColumnNames();
-        $column = 'sql';
-        if (!isset($columns[$column])) {
-            $result->free();
-            return $db->raiseError('getTableIndexDefinition: show index does not return the table creation sql');
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
         }
 
-        $query = strtolower($result->fetchOne());
-        $unique = strstr($query, ' unique ');
-        $key_name = $index;
-        $start_pos = strpos($query, '(');
-        $end_pos = strrpos($query, ')');
-        $column_names = substr($query, $start_pos+1, $end_pos-$start_pos-1);
+        $index_name = $db->getIndexName($index_name);
+        $query = "SELECT sql FROM sqlite_master WHERE type='index' AND name='$index_name' AND tbl_name='$table' AND sql NOT NULL ORDER BY name";
+        $sql = $db->queryOne($query, 'text');
+        if (PEAR::isError($sql)) {
+            return $sql;
+        }
+        if (!$sql) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+                'getTableIndexDefinition: it was not specified an existing table index');
+        }
+
+        $sql = strtolower($sql);
+        $start_pos = strpos($sql, '(');
+        $end_pos = strrpos($sql, ')');
+        $column_names = substr($sql, $start_pos+1, $end_pos-$start_pos-1);
         $column_names = split(',', $column_names);
 
-        $definition = array();
-        if ($unique) {
-            $definition['unique'] = true;
+        if (preg_match("/^create unique/", $sql)) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+                'getTableIndexDefinition: it was not specified an existing table index');
         }
+
+        $definition = array();
         $count = count($column_names);
         for ($i=0; $i<$count; ++$i) {
             $column_name = strtok($column_names[$i]," ");
             $collation = strtok(" ");
             $definition['fields'][$column_name] = array();
             if (!empty($collation)) {
-                $definition['fields'][$column_name]['sorting'] = ($collation=='ASC' ? 'ascending' : 'descending');
+                $definition['fields'][$column_name]['sorting'] =
+                    ($collation=='ASC' ? 'ascending' : 'descending');
             }
         }
 
-        $result->free();
-        if (!isset($definition['fields'])) {
-            return $db->raiseError(MDB2_ERROR, null, null,
+        if (!array_key_exists('fields', $definition)) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
                 'getTableIndexDefinition: it was not specified an existing table index');
         }
         return $definition;
     }
 
+    // }}}
+    // {{{ getTableConstraintDefinition()
+
+    /**
+     * get the stucture of a constraint into an array
+     *
+     * @param string    $table      name of table that should be used in method
+     * @param string    $index_name name of index that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     * @access public
+     */
+    function getTableConstraintDefinition($table, $index_name)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $index_name = $db->getIndexName($index_name);
+        $query = "SELECT sql FROM sqlite_master WHERE type='index' AND name='$index_name' AND tbl_name='$table' AND sql NOT NULL ORDER BY name";
+        $sql = $db->queryOne($query, 'text');
+        if (PEAR::isError($sql)) {
+            return $sql;
+        }
+        if (!$sql) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+                'getTableIndexDefinition: it was not specified an existing table index');
+        }
+
+        $sql = strtolower($sql);
+        $start_pos = strpos($sql, '(');
+        $end_pos = strrpos($sql, ')');
+        $column_names = substr($sql, $start_pos+1, $end_pos-$start_pos-1);
+        $column_names = split(',', $column_names);
+
+        if (!preg_match("/^create unique/", $sql)) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+                'getTableConstraintDefinition: it was not specified an existing table constraint');
+        }
+
+        $definition = array();
+        $definition['unique'] = true;
+        $count = count($column_names);
+        for ($i=0; $i<$count; ++$i) {
+            $column_name = strtok($column_names[$i]," ");
+            $collation = strtok(" ");
+            $definition['fields'][$column_name] = array();
+            if (!empty($collation)) {
+                $definition['fields'][$column_name]['sorting'] =
+                    ($collation=='ASC' ? 'ascending' : 'descending');
+            }
+        }
+
+        $result->free();
+        if (!array_key_exists('fields', $definition)) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+                'getTableConstraintDefinition: it was not specified an existing table constraint');
+        }
+        return $definition;
+    }
 
     // }}}
     // {{{ tableInfo()
 
     /**
-     * Returns information about a table.
+     * Returns information about a table
      *
      * @param string         $result  a string containing the name of a table
      * @param int            $mode    a valid tableInfo mode
-     * @return array  an associative array with the information requested
-     *                or an error object if something is wrong
-     * @access public
-     * @internal
-     * @see DB_common::tableInfo()
+     *
+     * @return array  an associative array with the information requested.
+     *                 A MDB2_Error object on failure.
+     *
+     * @see MDB2_Driver_Common::tableInfo()
      * @since Method available since Release 1.7.0
      */
     function tableInfo($result, $mode = null)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        if ($db->options['portability'] & MDB2_PORTABILITY_LOWERCASE) {
-            $case_func = 'strtolower';
-        } else {
-            $case_func = 'strval';
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
         }
 
-        if (MDB2::isResult($result)) {
-            /*
-             * Probably received a result object.
-             * Extract the result resource identifier.
-             */
-            $db->last_query = '';
-            return $db->raiseError(MDB2_ERROR_NOT_CAPABLE, null, null, null,
-                'This DBMS can not obtain tableInfo from result sets');
-        } elseif (is_string($result)) {
+        if (is_string($result)) {
             /*
              * Probably received a table name.
              * Create a result resource identifier.
              */
-            if (MDB2::isError($connect = $db->connect())) {
-                return $connect;
-            }
-            $query = "PRAGMA table_info('$result');";
-            $id = sqlite_array_query($db->connection, $query, SQLITE_ASSOC);
+            $id = $db->queryAll("PRAGMA table_info('$result');", null, MDB2_FETCHMODE_ASSOC);
             $got_string = true;
         } else {
-            /*
-             * Probably received a result resource identifier.
-             * Copy it.
-             * Deprecated.  Here for compatibility only.
-             */
-            $db->last_query = '';
-            return $db->raiseError(MDB2_ERROR_NOT_CAPABLE, null, null, null,
-                'This DBMS can not obtain tableInfo from result sets');
+            return $db->raiseError(MDB2_ERROR_NOT_CAPABLE, null, null,
+                                     'This DBMS can not obtain tableInfo' .
+                                     ' from result sets');
+        }
+
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            if ($db->options['field_case'] == CASE_LOWER) {
+                $case_func = 'strtolower';
+            } else {
+                $case_func = 'strtoupper';
+            }
+        } else {
+            $case_func = 'strval';
         }
 
         $count = count($id);
+        $res   = array();
 
-        // made this IF due to performance (one if is faster than $count if's)
-        if (!$mode) {
-            // partial
-            for ($i=0; $i<$count; $i++) {
-                $res[$i]['table'] = $case_func($result);
-                $res[$i]['name']  = $case_func($id[$i]['name']);
-                if (strpos($id[$i]['type'], '(') !== false) {
-                    $bits = explode('(', $id[$i]['type']);
-                    $res[$i]['type'] = $bits[0];
-                    $res[$i]['len'] = rtrim($bits[1],')');
-                } else {
-                    $res[$i]['type'] = $id[$i]['type'];
-                    $res[$i]['len'] = 0;
-                }
-
-                $res[$i]['flags'] = '';
-                if ($id[$i]['pk']) {
-                    $res[$i]['flags'] .= 'primary_key ';
-                }
-                if ($id[$i]['notnull']) {
-                    $res[$i]['flags'] .= 'not_null ';
-                }
-                if ($id[$i]['dflt_value'] !== null) {
-                    $res[$i]['flags'] .= 'default_'
-                                      . rawurlencode($id[$i]['dflt_value']);
-                }
-                $res[$i]['flags'] = trim($res[$i]['flags']);
-            }
-
-        } else {
-            // full
+        if ($mode) {
             $res['num_fields'] = $count;
+        }
 
-            for ($i=0; $i<$count; $i++) {
-                $res[$i]['table'] = $case_func($result);
-                $res[$i]['name']  = $case_func($id[$i]['name']);
-                if (strpos($id[$i]['type'], '(') !== false) {
-                    $bits = explode('(', $id[$i]['type']);
-                    $res[$i]['type'] = $bits[0];
-                    $res[$i]['len'] = rtrim($bits[1],')');
-                } else {
-                    $res[$i]['type'] = $id[$i]['type'];
-                    $res[$i]['len'] = 0;
-                }
+        $db->loadModule('Datatype', null, true);
+        for ($i = 0; $i < $count; $i++) {
+            if (strpos($id[$i]['type'], '(') !== false) {
+                $bits = explode('(', $id[$i]['type']);
+                $type = $bits[0];
+                $len  = rtrim($bits[1],')');
+            } else {
+                $type = $id[$i]['type'];
+                $len  = 0;
+            }
 
-                $res[$i]['flags'] = '';
-                if ($id[$i]['pk']) {
-                    $res[$i]['flags'] .= 'primary_key ';
-                }
-                if ($id[$i]['notnull']) {
-                    $res[$i]['flags'] .= 'not_null ';
-                }
-                if ($id[$i]['dflt_value'] !== null) {
-                    $res[$i]['flags'] .= 'default_'
-                                      . rawurlencode($id[$i]['dflt_value']);
-                }
-                $res[$i]['flags'] = trim($res[$i]['flags']);
+            $flags = '';
+            if ($id[$i]['pk']) {
+                $flags.= 'primary_key ';
+            }
+            if ($id[$i]['notnull']) {
+                $flags.= 'not_null ';
+            }
+            if ($id[$i]['dflt_value'] !== null) {
+                $flags.= 'default_' . rawurlencode($id[$i]['dflt_value']);
+            }
+            $flags = trim($flags);
 
-                if ($mode & MDB2_TABLEINFO_ORDER) {
-                    $res['order'][$res[$i]['name']] = $i;
-                }
-                if ($mode & MDB2_TABLEINFO_ORDERTABLE) {
-                    $res['ordertable'][$res[$i]['table']][$res[$i]['name']] = $i;
-                }
+            $res[$i] = array(
+                'table' => $case_func($result),
+                'name'  => $case_func($id[$i]['name']),
+                'type'  => $type,
+                'length'   => $len,
+                'flags' => $flags,
+            );
+            $mdb2type_info = $db->datatype->mapNativeDatatype($res[$i]);
+            $res[$i]['mdb2type'] = $mdb2type_info[0][0];
+            if ($mode & MDB2_PORTABILITY_FIX_ASSOC_FIELD_NAMES) {
+                $res[$i]['name'] = preg_replace('/^(?:.*\.)?([^.]+)$/', '\\1', $res[$i]['name']);
+            }
+
+            if ($mode & MDB2_TABLEINFO_ORDER) {
+                $res['order'][$res[$i]['name']] = $i;
+            }
+            if ($mode & MDB2_TABLEINFO_ORDERTABLE) {
+                $res['ordertable'][$res[$i]['table']][$res[$i]['name']] = $i;
             }
         }
 
-        if (!isset($res)) {
-            return $db->raiseError();
-        }
         return $res;
     }
 }

@@ -39,7 +39,7 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -47,266 +47,204 @@
 /**
  * @package  MDB2
  * @category Database
- * @author   Lukas Smith <smith@backendmedia.com>
+ * @author   Lukas Smith <smith@pooteeweet.org>
  */
-
-class MDB2_Iterator extends MDB2_Result implements Iterator
+class MDB2_Iterator implements Iterator
 {
-    private $result;
-    private $row;
-    private $buffer;
+    protected $fetchmode;
+    protected $result;
+    protected $row;
 
     // {{{ constructor
 
     /**
      * Constructor
      */
-    function __construct(&$result)
+    public function __construct($result, $fetchmode = MDB2_FETCHMODE_DEFAULT)
     {
-        $this->result =& $result;
+        $this->result = $result;
+        $this->fetchmode = $fetchmode;
     }
-
     // }}}
+
     // {{{ seek()
 
     /**
-    * seek forward to a specific row in a result set
-    *
-    * @param int    $rownum    number of the row where the data can be found
-    * @return mixed MDB2_OK on success, a MDB2 error on failure
-    * @access public
-    */
-    function seek($rownum = 0)
+     * seek forward to a specific row in a result set
+     *
+     * @param int number of the row where the data can be found
+     *
+     * @return void
+     * @access public
+     */
+    public function seek($rownum)
     {
-        if ($this->result->rownum == $rownum) {
-            return true;
-        }
-        if ($this->result->rownum < $rownum) {
-            return false;
-        }
         $this->row = null;
-        $this->buffer = null;
-        return $this->result->seek($rownum);
+        if ($this->result) {
+            $this->result->seek($rownum);
+        }
     }
-
     // }}}
+
     // {{{ next()
 
     /**
-    * Fetch next row of data
-    *
-    * @return mixed data array on success, a MDB2 error on failure
-    * @access public
-    */
-    function next()
+     * Fetch next row of data
+     *
+     * @return void
+     * @access public
+     */
+    public function next()
     {
-        if ($this->buffer) {
-            $this->row = $this->buffer;
-            $this->buffer = null;
-            return true;
-        }
-        $row = $this->result->fetchRow();
-        if (MDB2::isError($row)) {
-            $this->row = null;
-            return false;
-        }
-        $this->row = $row;
-        return true;
+        $this->row = null;
     }
-
     // }}}
+
     // {{{ current()
 
     /**
      * return a row of data
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return void
      * @access public
-    */
-    function current()
+     */
+    public function current()
     {
+        if (is_null($this->row)) {
+            $row = $this->result->fetchRow($this->fetchmode);
+            if (PEAR::isError($row)) {
+                $row = false;
+            }
+            $this->row = $row;
+        }
         return $this->row;
     }
-
     // }}}
+
     // {{{ valid()
 
     /**
-    * check if the end of the result set has been reached
-    *
-    * @return mixed true or false on sucess, a MDB2 error on failure
-    * @access public
-    */
-    function valid()
+     * check if the end of the result set has been reached
+     *
+     * @return bool true/false, false is also returned on failure
+     * @access public
+     */
+    public function valid()
     {
-        return $this->result->valid();
+        return (bool)$this->current();
     }
-
     // }}}
+
     // {{{ free()
 
     /**
      * Free the internal resources associated with result.
      *
-     * @return boolean true on success, false if result is invalid
+     * @return bool|MDB2_Error true on success, false|MDB2_Error if result is invalid
      * @access public
      */
-    function free()
+    public function free()
     {
-        return $this->result->free();
+        if ($this->result) {
+            return $this->result->free();
+        }
+        $this->result = null;
+        $this->row = null;
+        return false;
     }
-
     // }}}
+
+    // {{{ key()
+
+    /**
+     * returns the row number
+     *
+     * @return int|bool|MDB2_Error true on success, false|MDB2_Error if result is invalid
+     * @access public
+     */
+    public function key()
+    {
+        if ($this->result) {
+            return $this->result->rowCount();
+        }
+        return false;
+    }
+    // }}}
+
+    // {{{ rewind()
+
+    /**
+     * seek to the first row in a result set
+     *
+     * @return void
+     * @access public
+     */
+    public function rewind()
+    {
+    }
+    // }}}
+
     // {{{ destructor
 
     /**
      * Destructor
      */
-    function __destruct()
+    public function __destruct()
     {
         $this->free();
     }
-
     // }}}
-    // {{{ key()
-
-    /**
-    * nothing, but Iterator wants to implement this.
-    *
-    * @return void
-    * @access public
-    */
-    function key()
-    {
-        $this->result->getRowCount();
-    }
-
-    // }}}
-    // {{{ rewind()
-
-    /**
-    * seek to the first row in a result set
-    *
-    * @return mixed MDB2_OK on success, a MDB2 error on failure
-    * @access public
-    */
-    function rewind()
-    {
-    }
 }
 
-class MDB2_BufferedIterator extends MDB2_Iterator implements Iterator
+class MDB2_BufferedIterator extends MDB2_Iterator implements SeekableIterator
 {
-    // {{{ seek()
-
-    /**
-    * seek to a specific row in a result set
-    *
-    * @param int    $rownum    number of the row where the data can be found
-    * @return mixed MDB2_OK on success, a MDB2 error on failure
-    * @access public
-    */
-    function seek($rownum = 0)
-    {
-        $this->row = null;
-        return $this->result->seek($rownum);
-    }
-
-    // }}}
     // {{{ valid()
 
     /**
-    * check if the end of the result set has been reached
-    *
-    * @return mixed true or false on sucess, a MDB2 error on failure
-    * @access public
-    */
-    function valid()
+     * check if the end of the result set has been reached
+     *
+     * @return bool|MDB2_Error true on success, false|MDB2_Error if result is invalid
+     * @access public
+     */
+    public function valid()
     {
-        return $this->result->valid();
-    }
-
-    // }}}
-    // {{{ next()
-
-    /**
-    * Fetch next row of data
-    *
-    * @return mixed data array on success, a MDB2 error on failure
-    * @access public
-    */
-    function next()
-    {
-        $row = $this->result->fetchRow();
-        if (MDB2::isError($row)) {
-            $this->row = null;
-            return false;
+        if ($this->result) {
+            return $this->result->valid();
         }
-        $this->row = $row;
-        return true;
+        return false;
     }
-
     // }}}
-    // {{{ size()
+
+    // {{{count()
 
     /**
      * returns the number of rows in a result object
      *
-     * @return mixed MDB2 Error Object or the number of rows
+     * @return int|MDB2_Error number of rows, false|MDB2_Error if result is invalid
      * @access public
      */
-    function size()
+    public function count()
     {
-        return $this->result->numRows();
+        if ($this->result) {
+            return $this->result->numRows();
+        }
+        return false;
     }
-
     // }}}
-    // {{{ hasPrev()
 
-    /**
-    * check if there is a previous row
-    *
-    * @return mixed true or false on sucess, a MDB2 error on failure
-    * @access public
-    */
-    function hasPrev()
-    {
-        return $this->result->rownum > - 1;
-    }
-
-    // }}}
     // {{{ rewind()
 
     /**
-    * seek to the first row in a result set
-    *
-    * @return mixed MDB2_OK on success, a MDB2 error on failure
-    * @access public
-    */
-    function rewind()
+     * seek to the first row in a result set
+     *
+     * @return void
+     * @access public
+     */
+    public function rewind()
     {
-        return $this->seek(0);
+        $this->seek(0);
     }
-
     // }}}
-    // {{{ prev()
-
-    /**
-    * move internal row point to the previous row
-    * Fetch and return a row of data
-    *
-    * @return mixed data array on success, a MDB2 error on failure
-    * @access public
-    */
-    function prev()
-    {
-        if ($this->hasPrev()) {
-            $this->seek($this->result->rownum - 1);
-        } else {
-            return false;
-        }
-        return $this->next();
-    }
 }
 
 ?>

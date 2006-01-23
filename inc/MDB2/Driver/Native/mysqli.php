@@ -39,55 +39,20 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Paul Cooper <pgc@ucecom.com>                                 |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: mysqli.php,v 1.5 2005/08/14 09:05:39 lsmith Exp $
+//
 
 /**
- * MDB2 PostGreSQL driver for the native module
+ * MDB2 MySQL driver for the native module
  *
  * @package MDB2
  * @category Database
- * @author  Paul Cooper <pgc@ucecom.com>
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Native_pgsql
+class MDB2_Driver_Native_mysqli extends MDB2_Module_Common
 {
-    var $db_index;
-
-    // {{{ constructor
-
-    /**
-     * Constructor
-     */
-    function __construct($db_index)
-    {
-        $this->db_index = $db_index;
-    }
-
-    function MDB2_Driver_Native_pgsql($db_index)
-    {
-        $this->__construct($db_index);
-    }
-
-    // }}}
-    // {{{ deleteOID()
-
-    /**
-     * delete an OID
-     *
-     * @param integer    $OID
-     * @return mixed MDB2_OK on success or MDB2 Error Object on failure
-     * @access public
-     */
-    function deleteOID($OID)
-    {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        if (!@pg_lounlink($db->connection, $OID)) {
-            return $db->raiseError();
-        }
-        return MDB2_OK;
-    }
-
 }
 ?>

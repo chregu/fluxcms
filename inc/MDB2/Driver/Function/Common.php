@@ -3,7 +3,7 @@
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
-// | Stig. S. Bakken, Lukas Smith, Frank M. Kromann                       |
+// | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
 // | MDB2 is a merge of PEAR DB and Metabases that provides a unified DB  |
@@ -39,51 +39,124 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: Common.php,v 1.7 2006/01/12 16:47:15 lsmith Exp $
 //
 
 /**
- * MDB2 FrontBase driver for the native module
+ * @package  MDB2
+ * @category Database
+ * @author   Lukas Smith <smith@pooteeweet.org>
+ */
+
+/**
+ * Base class for the function modules that is extended by each MDB2 driver
  *
  * @package MDB2
  * @category Database
- * @author  Lukas Smith <smith@dybnet.de>
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Native_fbsql
+class MDB2_Driver_Function_Common extends MDB2_Module_Common
 {
-    var $db_index;
-
-    // {{{ constructor
+    // {{{ executeStoredProc()
 
     /**
-     * Constructor
+     * Execute a stored procedure and return any results
+     *
+     * @param string $name string that identifies the function to execute
+     * @param mixed  $params  array that contains the paramaters to pass the stored proc
+     * @param mixed   $types  array that contains the types of the columns in
+     *                        the result set
+     * @param mixed $result_class string which specifies which result class to use
+     * @param mixed $result_wrap_class string which specifies which class to wrap results in
+     * @return mixed a result handle or MDB2_OK on success, a MDB2 error on failure
+     * @access public
      */
-    function __construct($db_index)
+    function &executeStoredProc($name, $params = null, $types = null, $result_class = true, $result_wrap_class = false)
     {
-        $this->db_index = $db_index;
-    }
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
 
-    function MDB2_Driver_Native_fbsql($db_index)
-    {
-        $this->__construct($db_index);
+        $error =& $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+            'query: method not implemented');
+        return $error;
     }
 
     // }}}
-    // {{{ getInsertID()
+    // {{{ functionTable()
 
     /**
-     * get last insert ID
+     * return string for internal table used when calling only a function
      *
-     * @return mixed MDB2 Error Object or id
+     * @return string for internal table used when calling only a function
      * @access public
      */
-    function getInsertID()
+    function functionTable()
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        return fbsql_insert_id($db->connection);
+        return '';
     }
+
+    // }}}
+    // {{{ now()
+
+    /**
+     * Return string to call a variable with the current timestamp inside an SQL statement
+     * There are three special variables for current date and time:
+     * - CURRENT_TIMESTAMP (date and time, TIMESTAMP type)
+     * - CURRENT_DATE (date, DATE type)
+     * - CURRENT_TIME (time, TIME type)
+     *
+     * @return string to call a variable with the current timestamp
+     * @access public
+     */
+    function now($type = 'timestamp')
+    {
+        switch ($type) {
+        case 'time':
+            return 'CURRENT_TIME';
+        case 'date':
+            return 'CURRENT_DATE';
+        case 'timestamp':
+        default:
+            return 'CURRENT_TIMESTAMP';
+        }
+    }
+
+    // }}}
+    // {{{ substring()
+
+    /**
+     * return string to call a function to get a substring inside an SQL statement
+     *
+     * @return string to call a function to get a substring
+     * @access public
+     */
+    function substring($value, $position = 1, $length = null)
+    {
+        if (!is_null($length)) {
+            return "SUBSTRING($value FROM $position FOR $length)";
+        }
+        return "SUBSTRING($value FROM $position)";
+    }
+
+    // }}}
+    // {{{ concat()
+
+    /**
+     * return string to caoncatenate two strings
+     *
+     * @return string to caoncatenate two strings
+     * @access public
+     */
+    function concat($value1, $value2)
+    {
+        return "$value1 || $value2";
+    }
+
+    // }}}
 }
 ?>

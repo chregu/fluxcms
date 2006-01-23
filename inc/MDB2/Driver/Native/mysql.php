@@ -39,7 +39,7 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -50,41 +50,9 @@
  *
  * @package MDB2
  * @category Database
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Native_mysql
+class MDB2_Driver_Native_mysql extends MDB2_Module_Common
 {
-    var $db_index;
-
-    // {{{ constructor
-
-    /**
-     * Constructor
-     */
-    function __construct($db_index)
-    {
-        $this->db_index = $db_index;
-    }
-
-    function MDB2_Driver_Native_mysql($db_index)
-    {
-        $this->__construct($db_index);
-    }
-
-    // }}}
-    // {{{ getInsertID()
-
-    /**
-     * get last insert ID
-     *
-     * @return mixed MDB2 Error Object or id
-     * @access public
-     */
-    function getInsertID()
-    {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $value = $db->queryOne('SELECT LAST_INSERT_ID()', 'integer');
-        return $value;
-    }
 }
 ?>

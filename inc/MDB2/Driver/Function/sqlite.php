@@ -3,7 +3,7 @@
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
-// | Stig. S. Bakken, Lukas Smith, Frank M. Kromann                       |
+// | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
 // | MDB2 is a merge of PEAR DB and Metabases that provides a unified DB  |
@@ -39,23 +39,23 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: sqlite.php,v 1.4 2005/12/24 09:29:46 lsmith Exp $
 //
 
+require_once 'MDB2/Driver/Function/Common.php';
+
 /**
- * MDB2 Oracle driver for the native module
+ * MDB2 SQLite driver for the function modules
  *
  * @package MDB2
  * @category Database
- * @author  Lukas Smith <smith@dybnet.de>
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Native_oci8
+class MDB2_Driver_Function_sqlite extends MDB2_Driver_Function_Common
 {
-    var $db_index;
-
     // {{{ constructor
 
     /**
@@ -63,12 +63,47 @@ class MDB2_Driver_Native_oci8
      */
     function __construct($db_index)
     {
-        $this->db_index = $db_index;
+        parent::__construct($db_index);
+        // create all sorts of UDFs
     }
 
-    function MDB2_Driver_Native_oci8($db_index)
+    // {{{ now()
+
+    /**
+     * Return string to call a variable with the current timestamp inside an SQL statement
+     * There are three special variables for current date and time.
+     *
+     * @return string to call a variable with the current timestamp
+     * @access public
+     */
+    function now($type = 'timestamp')
     {
-        $this->__construct($db_index);
+        switch ($type) {
+        case 'time':
+            return 'time(\'now\')';
+        case 'date':
+            return 'date(\'now\')';
+        case 'timestamp':
+        default:
+            return 'datetime(\'now\')';
+        }
+    }
+
+    // }}}
+    // {{{ substring()
+
+    /**
+     * return string to call a function to get a substring inside an SQL statement
+     *
+     * @return string to call a function to get a substring
+     * @access public
+     */
+    function substring($value, $position = 1, $length = null)
+    {
+        if (!is_null($length)) {
+            return "substr($value,$position,$length)";
+        }
+        return "substr($value,$position,length($value))";
     }
 }
 ?>

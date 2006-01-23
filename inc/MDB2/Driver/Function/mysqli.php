@@ -42,17 +42,67 @@
 // | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: mysqli.php,v 1.6 2006/01/12 16:47:15 lsmith Exp $
 //
 
+require_once 'MDB2/Driver/Function/Common.php';
+
 /**
- * MDB2 SQLite driver for the native module
+ * MDB2 MySQL driver for the function modules
  *
  * @package MDB2
  * @category Database
  * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Native_sqlite extends MDB2_Module_Common
+class MDB2_Driver_Function_mysqli extends MDB2_Driver_Function_Common
 {
+     // }}}
+    // {{{ executeStoredProc()
+
+    /**
+     * Execute a stored procedure and return any results
+     *
+     * @param string $name string that identifies the function to execute
+     * @param mixed  $params  array that contains the paramaters to pass the stored proc
+     * @param mixed   $types  array that contains the types of the columns in
+     *                        the result set
+     * @param mixed $result_class string which specifies which result class to use
+     * @param mixed $result_wrap_class string which specifies which class to wrap results in
+     * @return mixed a result handle or MDB2_OK on success, a MDB2 error on failure
+     * @access public
+     */
+    function &executeStoredProc($name, $params = null, $types = null, $result_class = true, $result_wrap_class = false)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $multi_query = $db->getOption('multi_query');
+        if (!$multi_query) {
+            $db->setOption('multi_query', true);
+        }
+        $query = 'CALL '.$name;
+        $query .= $params ? '('.implode(', ', $params).')' : '()';
+        $result =& $db->query($query, $types, $result_class, $result_wrap_class);
+        if (!$multi_query) {
+            $db->setOption('multi_query', false);
+        }
+        return $result;
+    }
+
+    // }}}
+    // {{{ concat()
+
+    /**
+     * return string to caoncatenate two strings
+     *
+     * @return string to caoncatenate two strings
+     * @access public
+     **/
+    function concat($value1, $value2)
+    {
+        return "CONCAT($value1, $value2)";
+    }
 }
 ?>

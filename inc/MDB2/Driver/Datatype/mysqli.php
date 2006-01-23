@@ -43,7 +43,7 @@
 // | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: mysqli.php,v 1.24 2005/12/26 15:40:31 lsmith Exp $
 //
 
 require_once 'MDB2/Driver/Datatype/Common.php';
@@ -55,7 +55,7 @@ require_once 'MDB2/Driver/Datatype/Common.php';
  * @category Database
  * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Datatype_mysql extends MDB2_Driver_Datatype_Common
+class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
 {
     // }}}
     // {{{ getTypeDeclaration()
@@ -378,6 +378,31 @@ class MDB2_Driver_Datatype_mysql extends MDB2_Driver_Datatype_Common
         }
 
         return array($type, $length, $unsigned);
+    }
+
+    // }}}
+    // {{{ mapPrepareDatatype()
+
+    /**
+     * Maps an mdb2 datatype to mysqli prepare type
+     *
+     * @param string $type
+     * @return string
+     * @access public
+     */
+    function mapPrepareDatatype($type)
+    {
+        switch ($type) {
+            case 'integer':
+                return 'i';
+            case 'float':
+                return 'd';
+            case 'blob':
+                return 'b';
+            default:
+                break;
+        }
+        return 's';
     }
 }
 

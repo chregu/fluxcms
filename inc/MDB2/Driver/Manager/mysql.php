@@ -39,7 +39,7 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -52,7 +52,7 @@ require_once 'MDB2/Driver/Manager/Common.php';
  *
  * @package MDB2
  * @category Database
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
 class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
 {
@@ -68,11 +68,15 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      *
      * @param string $table_type name of the table handler
      * @return mixed MDB2_OK on success, a MDB2 error on failure
-     * @access private
+     * @access protected
      */
     function _verifyTableType($table_type)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         switch (strtoupper($table_type)) {
         case 'BERKELEYDB':
         case 'BDB':
@@ -95,22 +99,26 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
             return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
                 $table_type.' is not a supported table type');
         }
+        $connection = $db->getConnection();
+        if (PEAR::isError($connection)) {
+            return $connection;
+        }
         if (isset($this->verified_table_types[$table_type])
-            && $this->verified_table_types[$table_type] == $db->connection
+            && $this->verified_table_types[$table_type] == $connection
         ) {
             return MDB2_OK;
         }
         $not_supported = false;
-        for ($i=0, $j=count($check); $i<$j; ++$i) {
+        for ($i = 0, $j = count($check); $i < $j; ++$i) {
             $query = 'SHOW VARIABLES LIKE '.$db->quote($check[$i], 'text');
             $has = $db->queryRow($query, null, MDB2_FETCHMODE_ORDERED);
-            if (MDB2::isError($has)) {
+            if (PEAR::isError($has)) {
                 return $has;
             }
             if (is_array($has)) {
                 $not_supported = true;
                 if ($has[1] == 'YES') {
-                    $this->verified_table_types[$table_type] = $db->connection;
+                    $this->verified_table_types[$table_type] = $connection;
                     return MDB2_OK;
                 }
             }
@@ -135,10 +143,15 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function createDatabase($name)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $query = 'CREATE DATABASE '.$name;
-        $result = $db->query($query);
-        if (MDB2::isError($result)) {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $name = $db->quoteIdentifier($name, true);
+        $query = "CREATE DATABASE $name";
+        $result = $db->exec($query);
+        if (PEAR::isError($result)) {
             return $result;
         }
         return MDB2_OK;
@@ -156,10 +169,15 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function dropDatabase($name)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $query = 'DROP DATABASE '.$name;
-        $result = $db->query($query);
-        if (MDB2::isError($result)) {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $name = $db->quoteIdentifier($name, true);
+        $query = "DROP DATABASE $name";
+        $result = $db->exec($query);
+        if (PEAR::isError($result)) {
             return $result;
         }
         return MDB2_OK;
@@ -200,30 +218,33 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function createTable($name, $fields)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         if (!$name) {
             return $db->raiseError(MDB2_ERROR_CANNOT_CREATE, null, null,
                 'createTable: no valid table name specified');
         }
-        if (!count($fields)) {
+        if (empty($fields)) {
             return $db->raiseError(MDB2_ERROR_CANNOT_CREATE, null, null,
                 'createTable: no fields specified for table "'.$name.'"');
         }
-        if (MDB2::isError($verify = $this->_verifyTableType($db->options['default_table_type']))) {
+        $verify = $this->_verifyTableType($db->options['default_table_type']);
+        if (PEAR::isError($verify)) {
             return $verify;
         }
-        if (MDB2::isError($query_fields = $this->getFieldDeclarationList($fields))) {
+        $query_fields = $this->getFieldDeclarationList($fields);
+        if (PEAR::isError($query_fields)) {
             return $db->raiseError(MDB2_ERROR_CANNOT_CREATE, null, null,
-                'createTable: unkown error');
+                'createTable: '.$this->getUserinfo());
         }
-        if (isset($db->supported['transactions'])
-            && ($db->options['default_table_type'] == 'BDB' || $db->options['default_table_type'] == 'BERKELEYDB')
-        ) {
-            $query_fields .= ', dummy_primary_key INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (dummy_primary_key)';
-        }
-        $query = "CREATE TABLE $name ($query_fields)".(strlen($db->options['default_table_type']) ? ' TYPE='.$db->options['default_table_type'] : '');
+        $name = $db->quoteIdentifier($name, true);
+        $query = "CREATE TABLE $name ($query_fields)".(strlen($db->options['default_table_type'])
+            ? ' TYPE='.$db->options['default_table_type'] : '');
 
-        return $db->query($query);
+        return $db->exec($query);
     }
 
     // }}}
@@ -241,7 +262,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      *
      *                                New name for the table.
      *
-     *                            added_fields
+     *                            add
      *
      *                                Associative array with the names of fields to be added as
      *                                 indexes of the array. The value of each entry of the array
@@ -249,17 +270,14 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      *                                 of the fields to be added. The properties of the fields should
      *                                 be the same as defined by the Metabase parser.
      *
-     *                                Additionally, there should be an entry named Declaration that
-     *                                 is expected to contain the portion of the field declaration already
-     *                                 in DBMS specific SQL code as it is used in the CREATE TABLE statement.
      *
-     *                            removed_fields
+     *                            remove
      *
      *                                Associative array with the names of fields to be removed as indexes
      *                                 of the array. Currently the values assigned to each entry are ignored.
      *                                 An empty array should be used for future compatibility.
      *
-     *                            renamed_fields
+     *                            rename
      *
      *                                Associative array with the names of fields to be renamed as indexes
      *                                 of the array. The value of each entry of the array should be set to
@@ -268,11 +286,11 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      *                                 the portion of the field declaration already in DBMS specific SQL code
      *                                 as it is used in the CREATE TABLE statement.
      *
-     *                            changed_fields
+     *                            change
      *
      *                                Associative array with the names of the fields to be changed as indexes
      *                                 of the array. Keep in mind that if it is intended to change either the
-     *                                 name of a field and any other properties, the changed_fields array entries
+     *                                 name of a field and any other properties, the change array entries
      *                                 should have the new names of the fields as array indexes.
      *
      *                                The value of each entry of the array should be set to another associative
@@ -281,39 +299,36 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      *                                 respective properties. The properties of the fields should be the same
      *                                 as defined by the Metabase parser.
      *
-     *                                If the default property is meant to be added, removed or changed, there
-     *                                 should also be an entry with index ChangedDefault assigned to 1. Similarly,
-     *                                 if the notnull constraint is to be added or removed, there should also be
-     *                                 an entry with index ChangedNotNull assigned to 1.
-     *
-     *                                Additionally, there should be an entry named Declaration that is expected
-     *                                 to contain the portion of the field changed declaration already in DBMS
-     *                                 specific SQL code as it is used in the CREATE TABLE statement.
      *                            Example
      *                                array(
      *                                    'name' => 'userlist',
-     *                                    'added_fields' => array(
+     *                                    'add' => array(
      *                                        'quota' => array(
      *                                            'type' => 'integer',
      *                                            'unsigned' => 1
-     *                                            'declaration' => 'quota INT'
      *                                        )
      *                                    ),
-     *                                    'removed_fields' => array(
+     *                                    'remove' => array(
      *                                        'file_limit' => array(),
      *                                        'time_limit' => array()
-     *                                        ),
-     *                                    'changed_fields' => array(
-     *                                        'gender' => array(
-     *                                            'default' => 'M',
-     *                                            'change_default' => 1,
-     *                                            'declaration' => "gender CHAR(1) DEFAULT 'M'"
+     *                                    ),
+     *                                    'change' => array(
+     *                                        'name' => array(
+     *                                            'length' => '20',
+     *                                            'definition' => array(
+     *                                                'type' => 'text',
+     *                                                'length' => 20,
+     *                                            ),
      *                                        )
      *                                    ),
-     *                                    'renamed_fields' => array(
+     *                                    'rename' => array(
      *                                        'sex' => array(
      *                                            'name' => 'gender',
-     *                                            'declaration' => "gender CHAR(1) DEFAULT 'M'"
+     *                                            'definition' => array(
+     *                                                'type' => 'text',
+     *                                                'length' => 1,
+     *                                                'default' => 'M',
+     *                                            ),
      *                                        )
      *                                    )
      *                                )
@@ -327,75 +342,94 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function alterTable($name, $changes, $check)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        if ($check) {
-            foreach ($changes as $change_name => $change) {
-                switch ($change_name) {
-                case 'added_fields':
-                case 'removed_fields':
-                case 'changed_fields':
-                case 'renamed_fields':
-                case 'name':
-                    break;
-                default:
-                    return $db->raiseError(MDB2_ERROR_CANNOT_ALTER, null, null,
-                        'alterTable: change type "'.$change_name.'" not yet supported');
-                }
-            }
-            return MDB2_OK;
-        } else {
-            $query = (isset($changes['name']) ? 'RENAME AS '.$changes['name'] : '');
-            if (isset($changes['added_fields'])) {
-                $fields = $changes['added_fields'];
-                foreach ($fields as $field) {
-                    if ($query) {
-                        $query .= ',';
-                    }
-                    $query .= 'ADD '.$field['declaration'];
-                }
-            }
-            if (isset($changes['removed_fields'])) {
-                $fields = $changes['removed_fields'];
-                foreach ($fields as $field_name => $field) {
-                    if ($query) {
-                        $query .= ',';
-                    }
-                    $query .= 'DROP '.$field_name;
-                }
-            }
-            $renamed_fields = array();
-            if (isset($changes['renamed_fields'])) {
-                $fields = $changes['renamed_fields'];
-                foreach ($fields as $field_name => $field) {
-                    $renamed_fields[$field['name']] = $field_name;
-                }
-            }
-            if (isset($changes['changed_fields'])) {
-                $fields = $changes['changed_fields'];
-                foreach ($fields as $field_name => $field) {
-                    if ($query) {
-                        $query .= ',';
-                    }
-                    if (isset($renamed_fields[$field_name])) {
-                        $old_field_name = $renamed_fields[$field_name];
-                        unset($renamed_fields[$field_name]);
-                    } else {
-                        $old_field_name = $field_name;
-                    }
-                    $query .= "CHANGE $old_field_name ".$field['declaration'];
-                }
-            }
-            if (count($renamed_fields)) {
-                foreach ($renamed_fields as $renamed_fields_name => $renamed_field) {
-                    if ($query) {
-                        $query .= ',';
-                    }
-                    $old_field_name = $renamed_field;
-                    $query .= "CHANGE $old_field_name ".$changes['renamed_fields'][$old_field_name]['declaration'];
-                }
-            }
-            return $db->query("ALTER TABLE $name $query");
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
         }
+
+        foreach ($changes as $change_name => $change) {
+            switch ($change_name) {
+            case 'add':
+            case 'remove':
+            case 'change':
+            case 'rename':
+            case 'name':
+                break;
+            default:
+                return $db->raiseError(MDB2_ERROR_CANNOT_ALTER, null, null,
+                    'alterTable: change type "'.$change_name.'" not yet supported');
+            }
+        }
+
+        if ($check) {
+            return MDB2_OK;
+        }
+
+        $query = '';
+        if (array_key_exists('name', $changes)) {
+            $change_name = $db->quoteIdentifier($changes['name'], true);
+            $query .= 'RENAME TO ' . $change_name;
+        }
+
+        if (array_key_exists('add', $changes)) {
+            foreach ($changes['add'] as $field_name => $field) {
+                if ($query) {
+                    $query.= ', ';
+                }
+                $query.= 'ADD ' . $db->getDeclaration($field['type'], $field_name, $field);
+            }
+        }
+
+        if (array_key_exists('remove', $changes)) {
+            foreach ($changes['remove'] as $field_name => $field) {
+                if ($query) {
+                    $query.= ', ';
+                }
+                $field_name = $db->quoteIdentifier($field_name, true);
+                $query.= 'DROP ' . $field_name;
+            }
+        }
+
+        $rename = array();
+        if (array_key_exists('rename', $changes)) {
+            foreach ($changes['rename'] as $field_name => $field) {
+                $rename[$field['name']] = $field_name;
+            }
+        }
+
+        if (array_key_exists('change', $changes)) {
+            foreach ($changes['change'] as $field_name => $field) {
+                if ($query) {
+                    $query.= ', ';
+                }
+                if (isset($rename[$field_name])) {
+                    $old_field_name = $rename[$field_name];
+                    unset($rename[$field_name]);
+                } else {
+                    $old_field_name = $field_name;
+                }
+                $old_field_name = $db->quoteIdentifier($old_field_name, true);
+                $query.= "CHANGE $old_field_name " . $db->getDeclaration($field['definition']['type'], $field_name, $field['definition']);
+            }
+        }
+
+        if (!empty($rename)) {
+            foreach ($rename as $rename_name => $renamed_field) {
+                if ($query) {
+                    $query.= ', ';
+                }
+                $field = $changes['rename'][$renamed_field];
+                $renamed_field = $db->quoteIdentifier($renamed_field, true);
+                $query.= 'CHANGE ' . $renamed_field . ' ' . $db->getDeclaration($field['definition']['type'], $field['name'], $field['definition']);
+            }
+        }
+
+        if (!$query) {
+            return MDB2_OK;
+        }
+
+        $name = $db->quoteIdentifier($name, true);
+        return $db->exec("ALTER TABLE $name $query");
     }
 
     // }}}
@@ -409,9 +443,19 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function listDatabases()
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $databases = $db->queryCol('SHOW DATABASES');
-        return $databases;
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $result = $db->queryCol('SHOW DATABASES');
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
+        }
+        return $result;
     }
 
     // }}}
@@ -425,9 +469,12 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function listUsers()
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $users = $db->queryCol('SELECT DISTINCT USER FROM USER');
-        return $users;
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        return $db->queryCol('SELECT DISTINCT USER FROM USER');
     }
 
     // }}}
@@ -441,20 +488,26 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function listTables()
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         $table_names = $db->queryCol('SHOW TABLES');
-        if (MDB2::isError($table_names)) {
+        if (PEAR::isError($table_names)) {
             return $table_names;
         }
-        $tables = array();
-        for ($i = 0, $j = count($table_names); $i < $j; ++$i) {
-            if (!$this->_isSequenceName($table_names[$i]))
-                $tables[] = $table_names[$i];
+
+        $result = array();
+        foreach ($table_names as $table_name) {
+            if (!$this->_fixSequenceName($table_name, true)) {
+                $result[] = $table_name;
+            }
         }
-        if ($db->options['portability'] & MDB2_PORTABILITY_LOWERCASE) {
-            $tables = array_flip(array_change_key_case(array_flip($tables), CASE_LOWER));
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
         }
-        return $tables;
+        return $result;
     }
 
     // }}}
@@ -469,18 +522,20 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function listTableFields($table)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $fields = $db->queryCol("SHOW COLUMNS FROM $table");
-        if (MDB2::isError($fields)) {
-            return $fields;
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
         }
-        if ($db->options['portability'] & MDB2_PORTABILITY_LOWERCASE) {
-            $fields = array_flip(array_change_key_case(array_flip($fields), CASE_LOWER));
+
+        $table = $db->quoteIdentifier($table, true);
+        $result = $db->queryCol("SHOW COLUMNS FROM $table");
+        if (PEAR::isError($result)) {
+            return $result;
         }
-        if (is_array($fields)) {
-            return array_diff($fields, array($db->dummy_primary_key));
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
         }
-        return array();
+        return $result;
     }
 
     // }}}
@@ -489,6 +544,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * get the stucture of a field into an array
      *
+     * @author Leoncx
      * @param string    $table         name of the table on which the index is to be created
      * @param string    $name         name of the index to be created
      * @param array     $definition        associative array that defines properties of the index to be created.
@@ -505,12 +561,13 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      *                                Not all DBMS support index sorting direction configuration. The DBMS
      *                                 drivers of those that do not support it ignore this property. Use the
      *                                 function supports() to determine whether the DBMS driver can manage indexes.
-
+     *
      *                                 Example
      *                                    array(
      *                                        'fields' => array(
      *                                            'user_name' => array(
      *                                                'sorting' => 'ascending'
+     *                                                'length' => 10
      *                                            ),
      *                                            'last_login' => array()
      *                                        )
@@ -520,18 +577,24 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function createIndex($table, $name, $definition)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $query = "ALTER TABLE $table ADD ".(isset($definition['unique']) ? 'UNIQUE' : 'INDEX')." $name (";
-        $skipped_first = false;
-        foreach ($definition['fields'] as $field_name => $field) {
-            if ($skipped_first) {
-                $query .= ',';
-            }
-            $query .= $field_name;
-            $skipped_first = true;
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
         }
-        $query .= ')';
-        return $db->query($query);
+
+        $table = $db->quoteIdentifier($table, true);
+        $name = $db->quoteIdentifier($db->getIndexName($name), true);
+        $query = "CREATE INDEX $name ON $table";
+        $fields = array();
+        foreach ($definition['fields'] as $field => $fieldinfo) {
+            if (array_key_exists('length', $fieldinfo)) {
+                $fields[] = $db->quoteIdentifier($field, true) . '(' . $fieldinfo['length'] . ')';
+            } else {
+                $fields[] = $db->quoteIdentifier($field, true);
+            }
+        }
+        $query .= ' ('. implode(', ', $fields) . ')';
+        return $db->exec($query);
     }
 
     // }}}
@@ -547,8 +610,14 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function dropIndex($table, $name)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        return $db->query("ALTER TABLE $table DROP INDEX $name");
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $table = $db->quoteIdentifier($table, true);
+        $name = $db->quoteIdentifier($db->getIndexName($name), true);
+        return $db->exec("DROP INDEX $name ON $table");
     }
 
     // }}}
@@ -563,29 +632,180 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function listTableIndexes($table)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         $key_name = 'Key_name';
-        if ($db->options['portability'] & MDB2_PORTABILITY_LOWERCASE) {
-            $key_name = strtolower($key_name);
-        }
-        $query = "SHOW INDEX FROM $table";
-        $indexes_all = $db->queryCol($query, 'text', $key_name);
-        if (MDB2::isError($indexes_all)) {
-            return $indexes_all;
-        }
-        $found = $indexes = array();
-        for ($index = 0, $j = count($indexes_all); $index < $j; ++$index) {
-            if ($indexes_all[$index] != 'PRIMARY'
-                && !isset($found[$indexes_all[$index]])
-            ) {
-                $indexes[] = $indexes_all[$index];
-                $found[$indexes_all[$index]] = true;
+        $non_unique = 'Non_unique';
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            if ($db->options['field_case'] == CASE_LOWER) {
+                $key_name = strtolower($key_name);
+                $non_unique = strtolower($non_unique);
+            } else {
+                $key_name = strtoupper($key_name);
+                $non_unique = strtoupper($non_unique);
             }
         }
-        if ($db->options['portability'] & MDB2_PORTABILITY_LOWERCASE) {
-            $indexes = array_flip(array_change_key_case(array_flip($indexes), CASE_LOWER));
+
+        $table = $db->quoteIdentifier($table, true);
+        $query = "SHOW INDEX FROM $table";
+        $indexes = $db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+        if (PEAR::isError($indexes)) {
+            return $indexes;
         }
-        return $indexes;
+
+        $result = array();
+        foreach ($indexes as $index_data) {
+            if ($index_data[$non_unique]) {
+                $result[$this->_fixIndexName($index_data[$key_name])] = true;
+            }
+        }
+
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_change_key_case($result, $db->options['field_case']);
+        }
+        return array_keys($result);
+    }
+
+    // }}}
+    // {{{ createConstraint()
+
+    /**
+     * create a constraint on a table
+     *
+     * @param string    $table         name of the table on which the constraint is to be created
+     * @param string    $name         name of the constraint to be created
+     * @param array     $definition        associative array that defines properties of the constraint to be created.
+     *                                 Currently, only one property named FIELDS is supported. This property
+     *                                 is also an associative with the names of the constraint fields as array
+     *                                 constraints. Each entry of this array is set to another type of associative
+     *                                 array that specifies properties of the constraint that are specific to
+     *                                 each field.
+     *
+     *                                 Example
+     *                                    array(
+     *                                        'fields' => array(
+     *                                            'user_name' => array(),
+     *                                            'last_login' => array()
+     *                                        )
+     *                                    )
+     * @return mixed MDB2_OK on success, a MDB2 error on failure
+     * @access public
+     */
+    function createConstraint($table, $name, $definition)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $type = '';
+        if (array_key_exists('primary', $definition) && $definition['primary']) {
+            if (strtolower($name) != 'primary') {
+                return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+                    'Primary Key may must be named primary');
+            }
+            $type = 'PRIMARY';
+            $name = 'KEY';
+        } else {
+            $name = $db->quoteIdentifier($db->getIndexName($name), true);
+            if (array_key_exists('unique', $definition) && $definition['unique']) {
+                $type = ' UNIQUE';
+            }
+        }
+
+        $table = $db->quoteIdentifier($table, true);
+        $query = "ALTER TABLE $table ADD $type $name";
+        $fields = array();
+        foreach (array_keys($definition['fields']) as $field) {
+            $fields[] = $db->quoteIdentifier($field, true);
+        }
+        $query .= ' ('. implode(', ', $fields) . ')';
+        return $db->exec($query);
+    }
+
+    // }}}
+    // {{{ dropConstraint()
+
+    /**
+     * drop existing constraint
+     *
+     * @param string    $table         name of table that should be used in method
+     * @param string    $name         name of the constraint to be dropped
+     * @return mixed MDB2_OK on success, a MDB2 error on failure
+     * @access public
+     */
+    function dropConstraint($table, $name)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $table = $db->quoteIdentifier($table, true);
+        if (strtolower($name) == 'primary') {
+            $query = "ALTER TABLE $table DROP PRIMARY KEY";
+        } else {
+            $name = $db->quoteIdentifier($db->getIndexName($name), true);
+            $query = "ALTER TABLE $table DROP INDEX $name";
+        }
+        return $db->exec($query);
+    }
+
+    // }}}
+    // {{{ listTableConstraints()
+
+    /**
+     * list all sonstraints in a table
+     *
+     * @param string    $table      name of table that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     * @access public
+     */
+    function listTableConstraints($table)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $key_name = 'Key_name';
+        $non_unique = 'Non_unique';
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            if ($db->options['field_case'] == CASE_LOWER) {
+                $key_name = strtolower($key_name);
+                $non_unique = strtolower($non_unique);
+            } else {
+                $key_name = strtoupper($key_name);
+                $non_unique = strtoupper($non_unique);
+            }
+        }
+
+        $table = $db->quoteIdentifier($table, true);
+        $query = "SHOW INDEX FROM $table";
+        $indexes = $db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+        if (PEAR::isError($indexes)) {
+            return $indexes;
+        }
+
+        $result = array();
+        foreach ($indexes as $index_data) {
+            if (!$index_data[$non_unique]) {
+                if ($index_data[$key_name] !== 'PRIMARY') {
+                    $index = $this->_fixIndexName($index_data[$key_name]);
+                } else {
+                    $index = 'PRIMARY';
+                }
+                $result[$index] = true;
+            }
+        }
+
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_change_key_case($result, $db->options['field_case']);
+        }
+        return array_keys($result);
     }
 
     // }}}
@@ -601,34 +821,44 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function createSequence($seq_name, $start = 1)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $sequence_name = $db->getSequenceName($seq_name);
-        $seqname_col_name = $db->options['seqname_col_name'];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $sequence_name = $db->quoteIdentifier($db->getSequenceName($seq_name), true);
+        $seqcol_name = $db->quoteIdentifier($db->options['seqcol_name'], true);
         $result = $this->_verifyTableType($db->options['default_table_type']);
-        if (MDB2::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
-        $res = $db->query("CREATE TABLE $sequence_name".
-            "($seqname_col_name INT NOT NULL AUTO_INCREMENT, PRIMARY KEY ($seqname_col_name))".
+
+        $res = $db->exec("CREATE TABLE $sequence_name".
+            "($seqcol_name INT NOT NULL AUTO_INCREMENT, PRIMARY KEY ($seqcol_name))".
             (strlen($db->options['default_table_type']) ? ' TYPE='.$db->options['default_table_type'] : '')
         );
-        if (MDB2::isError($res)) {
+
+        if (PEAR::isError($res)) {
             return $res;
         }
+
         if ($start == 1) {
             return MDB2_OK;
         }
-        $res = $db->query("INSERT INTO $sequence_name ($seqname_col_name) VALUES (".($start-1).')');
-        if (!MDB2::isError($res)) {
+
+        $res = $db->exec("INSERT INTO $sequence_name ($seqcol_name) VALUES (".($start-1).')');
+        if (!PEAR::isError($res)) {
             return MDB2_OK;
         }
+
         // Handle error
-        $result = $db->query("DROP TABLE $sequence_name");
-        if (MDB2::isError($result)) {
+        $result = $db->exec("DROP TABLE $sequence_name");
+        if (PEAR::isError($result)) {
             return $db->raiseError(MDB2_ERROR, null, null,
                 'createSequence: could not drop inconsistent sequence table ('.
                 $result->getMessage().' ('.$result->getUserinfo().'))');
         }
+
         return $db->raiseError(MDB2_ERROR, null, null,
             'createSequence: could not create sequence table ('.
             $res->getMessage().' ('.$res->getUserinfo().'))');
@@ -646,9 +876,13 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function dropSequence($seq_name)
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
-        $sequence_name = $db->getSequenceName($seq_name);
-        return $db->query("DROP TABLE $sequence_name");
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $sequence_name = $db->quoteIdentifier($db->getSequenceName($seq_name), true);
+        return $db->exec("DROP TABLE $sequence_name");
     }
 
     // }}}
@@ -662,17 +896,26 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      */
     function listSequences()
     {
-        $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         $table_names = $db->queryCol('SHOW TABLES');
-        if (MDB2::isError($table_names)) {
+        if (PEAR::isError($table_names)) {
             return $table_names;
         }
-        $sequences = array();
-        for ($i = 0, $j = count($table_names); $i < $j; ++$i) {
-            if ($sqn = $this->_isSequenceName($table_names[$i]))
-                $sequences[] = $sqn;
+
+        $result = array();
+        foreach ($table_names as $table_name) {
+            if ($sqn = $this->_fixSequenceName($table_name, true)) {
+                $result[] = $sqn;
+            }
         }
-        return $sequences;
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
+        }
+        return $result;
     }
 
     // }}}
