@@ -34,6 +34,7 @@
         <copy file="${BxRootDir}/install/dist/conf/config.xml" tofile="${BxRootDir}/conf/config.xml">
             <filterchain>
                 <replacetokens begintoken="##" endtoken="##">
+                    <token key="dbtype" value="${database.type}"/>
                     <token key="dbuser" value="${database.user}"/>
                     <token key="dbpass" value="${database.password}"/>
                     <token key="dbdatabase" value="${database.name}"/>
@@ -79,8 +80,8 @@
     </target>
     <target name="installTables" depends="setupPrefixedTable, installUser">
     
-     <mdb2 src="${BxRootDir}/tmp/bxcms.prefixed.sql" url="mysql://${database.user}:${database.password}@${database.host}/${database.name}"></mdb2>
-     <mdb2  url="mysql://${database.user}:${database.password}@${database.host}/${database.name}">
+     <mdb2 src="${BxRootDir}/tmp/bxcms.prefixed.sql" url="${database.type}://${database.user}:${database.password}@${database.host}/${database.name}"></mdb2>
+     <mdb2  url="${database.type}://${database.user}:${database.password}@${database.host}/${database.name}">
      INSERT INTO ${database.prefix}users ( user_login, user_pass) VALUES ('${cms.user}',md5('${cms.password}'));
      </mdb2>
      <delete file="bxcms.prefixed.sql" dir="${BxRootDir}/tmp/" />
@@ -97,18 +98,18 @@
     </target>
 
     <target name="installDB" if="databaseRoot.User" unless="DbHasUTF8" description="Create the Database">
-        <mdb2 onerror="continue" url="mysql://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/"> CREATE DATABASE ${database.name} </mdb2>
+        <mdb2 onerror="continue" url="${database.type}://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/"> CREATE DATABASE ${database.name} </mdb2>
 
     </target>
     
     <target name="installDBUTF8" if="databaseRoot.User" description="Create the Database">
-        <mdb2 onerror="continue" url="mysql://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/"> CREATE DATABASE ${database.name} DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;</mdb2>
+        <mdb2 onerror="continue" url="${database.type}://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/"> CREATE DATABASE ${database.name} DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;</mdb2>
 
     </target>
   
 
     <target name="installUser" depends="installDB, installDBUTF8" if="databaseRoot.User" description="Create the DB user">
-        <mdb2  url="mysql://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/${database.name}">GRANT ALTER, CREATE, INDEX, INSERT, LOCK TABLES, SELECT, UPDATE, DROP, DELETE ON ${database.name}. * TO ${database.user}@${database.host} IDENTIFIED BY '${database.password}';</mdb2>
+        <mdb2  url="${database.type}://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/${database.name}">GRANT ALTER, CREATE, INDEX, INSERT, LOCK TABLES, SELECT, UPDATE, DROP, DELETE ON ${database.name}. * TO ${database.user}@${database.host} IDENTIFIED BY '${database.password}';</mdb2>
     </target>
     
     

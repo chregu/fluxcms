@@ -134,6 +134,11 @@ function startPhing() {
     
      
     Phing::setProperty("BxRootDir",rootDir()."/");
+    if (extension_loaded("mysqli")) {
+        Phing::setProperty("database.type","mysqli");
+    } else {
+        Phing::setProperty("database.type","mysql");
+    }
     Phing::setProperty("replacePhpInHtaccess", function_exists("apache_get_modules") ? "php_" : "#php_");
     
     $mysql_version = getMysqlVersion();
@@ -233,7 +238,7 @@ function prereq() {
     }
     
     print "Checking for MySQL Support ...\n";
-    if (function_exists("mysql_query")) {
+    if (extension_loaded("mysql") || extension_loaded("mysqli")) {
         $mysql_version = getMysqlVersion();
         if (! version_compare($mysql_version,"4.0",">=")) {
             print "<font color='red'>Wrong version.<br/>";
@@ -264,11 +269,18 @@ function prereq() {
 }
 
 function getMysqlVersion() {
+    if (extension_loaded("mysqli")) {
+        $mysql_version = @mysqli_get_server_info();
+        if (!$mysql_version) {
+            $mysql_version = @mysqli_get_client_info();
+        }
+    } else {
         $mysql_version = @mysql_get_server_info();
         if (!$mysql_version) {
             $mysql_version = @mysql_get_client_info();
         }
-        return $mysql_version;
+    }
+    return $mysql_version;
 }
 
 function readProperties($dom = null) {
