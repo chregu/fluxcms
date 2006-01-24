@@ -339,7 +339,7 @@ class MDB2_Tools_Manager extends PEAR
      */
     function getDefinitionFromDatabase()
     {
-        $this->db->loadModule('reverse');
+        $this->db->loadModule('Reverse');
         $database = $this->db->database_name;
         if (strlen($database) == 0) {
             return $this->raiseError('it was not specified a valid database name');

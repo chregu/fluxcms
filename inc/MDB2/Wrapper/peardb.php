@@ -296,7 +296,7 @@ class DB_result extends MDB2_Result_Common
 
     function tableInfo($mode = null)
     {
-        $this->result->db->loadModule('reverse');
+        $this->result->db->loadModule('Reverse');
         return $this->result->db->reverse->tableInfo($this->result, $mode);
     }
 
@@ -723,7 +723,7 @@ class MDB2_PEARProxy extends PEAR
     {
         $result = $this->_wrapResource($result);
         if (is_string($result) || MDB2::isResultCommon($result)) {
-            $this->db_object->loadModule('reverse');
+            $this->db_object->loadModule('Reverse');
             return $this->db_object->reverse->tableInfo($result, $mode);
         }
         return $result->tableInfo($mode);

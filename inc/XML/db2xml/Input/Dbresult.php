@@ -64,7 +64,7 @@ Class XML_db2xml_Input_Dbresult {
         // BE CAREFUL: if you have fields with the same name in different tables, you will get errors
         // later, since MDB2_FETCHMODE_ASSOC doesn't differentiate that stuff.
         $this->LastResult = &$result;
-        $result->db->loadModule('reverse');
+        $result->db->loadModule('Reverse');
   
         if ( ! ($tableInfo = $result->db->reverse->tableInfo($result, False)))
         {
