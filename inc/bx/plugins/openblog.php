@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | Bx                                                                   |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+// | Copyright (c) 2001-2005 Bitflux GmbH                                 |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -42,13 +42,13 @@ class bx_plugins_openblog extends bx_plugin implements bxIplugin {
     public function getContentById($path, $id) {
         $dom = new domDocument();
         bx_global::registerStream("blog");
-        
+        $collUri = dirname($path);
         @session_start();
         if ($id !== "" && $id !== "index") {
             if (isset($_SESSION['newpost']) && $_SESSION['newpost'] == $id) {
                 $p = $id;
             } else {
-                header("Location: /post/");
+                header("Location: $collUri/");
             }
         } else {
             if (isset($_SESSION['newpost'])) {
@@ -57,8 +57,7 @@ class bx_plugins_openblog extends bx_plugin implements bxIplugin {
             
             $p = 'newpost';
         }
-         
-        $dom->load(sprintf("blog://%s.xml",$p));
+        $dom->load(sprintf("blog://".dirname($path)."/%s.xml",$p));
         return $dom;
     }
     
@@ -76,7 +75,7 @@ class bx_plugins_openblog extends bx_plugin implements bxIplugin {
 	    }
             
             
-            $allowedTags = array('<h1>','<h2>','<h3>','<span>','<sub>','<div>','<sup>','<b>','<i>','<a>','<ul>','<li>','<ol>','<pre>','<blockquote>','<br/>','<p>');
+            $allowedTags = array('<img>','<h1>','<h2>','<h3>','<span>','<sub>','<div>','<sup>','<b>','<i>','<a>','<ul>','<li>','<ol>','<pre>','<blockquote>','<br/>','<p>');
             $data['content'] = strip_tags($data['content'],implode("", $allowedTags));       
 
             if (isset($data['nl2br']) && $data['nl2br'] == 1) {
@@ -90,8 +89,8 @@ class bx_plugins_openblog extends bx_plugin implements bxIplugin {
             $data['content'] = bx_helpers_string::tidyfy($data['content']);
             
             fwrite($fd, '<entry xmlns="http://purl.org/atom/ns#">');
-            fwrite($fd, '<author>'.$data['author'].'</author>');
-            fwrite($fd, '<title>'.$data['title'].'</title>');
+            fwrite($fd, '<author>'.$data['post_author'].'</author>');
+            fwrite($fd, '<title>'.$data['post_title'].'</title>');
             fwrite($fd, '<id>'.$data['id'].'</id>');
             fwrite($fd, '<uri>'.$data['uri'].'</uri>');
             fwrite($fd, '<created>'.$data['created'].'</created>');
