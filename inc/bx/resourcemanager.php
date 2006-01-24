@@ -195,16 +195,16 @@ class bx_resourcemanager {
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
         //clean path
         $path = preg_replace("#\/{2,}#","/",$path);
-        $query = "DELETE FROM ".$prefix."properties WHERE path = '$path' AND name = '$name' AND ns = '$namespace'";
+        
+        $query = "DELETE FROM ".$prefix."properties WHERE path = :path AND name = :name AND ns = :namespace";
         $db = $GLOBALS['POOL']->dbwrite;
-        $db->query($query);
+        $stm = $db->prepare($query);
+        $stm->execute(array('path' => $path,'name' => $name,'namespace' => $namespace));
         if(isset($value)) {
-            $query = 'INSERT INTO '.$prefix.'properties  (path,name,ns,value) VALUES (';
-            $query .= $db->quote($path) .',';
-            $query .= $db->quote($name) .',';
-            $query .= $db->quote($namespace) .',';
-            $query .= $db->quote($value) .')';
-            if ($db->isError($res = $db->query($query),true)) {
+            $query = 'INSERT INTO '.$prefix.'properties  (path,name,ns,value) VALUES (:path,:name,:namespace,:value)';
+            $stm = $db->prepare($query);
+            $stm->execute(array('path' => $path,'name' => $name,'namespace' => $namespace,'value' => $value));
+            if ($db->isError($res = $stm->execute(array('path' => $path,'name' => $name,'namespace' => $namespace,'value' => $value)),true)) {
                 bx_log::log("MDB2 error:". $res->getMessage() . $res->getUserInfo(), PEAR_LOG_ERR);
                 return false;
             }
