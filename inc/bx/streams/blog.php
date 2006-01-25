@@ -357,6 +357,9 @@ class bx_streams_blog extends bx_streams_buffer {
         $servicesOld = array("http://rpc.technorati.com/rpc/ping");*/
         
         $servicesExtended = bx_helpers_config::getProperty("blogWeblogsPing",true);
+        if (! is_array($servicesExtended)) {
+		 $servicesExtended = array( $servicesExtended);
+	}
         if ($fixed =  trim(bx_helpers_config::getProperty("blogWeblogsPingFixed",true))) {
             $servicesExtended[] = $fixed;
         }
