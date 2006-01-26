@@ -39,20 +39,21 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@backendmedia.com>                         |
+// | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Writer.php,v 1.4 2005/01/02 21:44:25 lsmith Exp $
+// $Id: Writer.php,v 1.18 2005/10/10 08:36:28 lsmith Exp $
 //
 
-
 /**
+ * Writes an XML schema file
  *
- * @package MDB2
+ * @package MDB2_Schema
  * @category Database
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @access protected
+ * @author  Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Tools_Manager_Writer
+class MDB2_Schema_Writer
 {
     // }}}
     // {{{ raiseError()
@@ -80,24 +81,26 @@ class MDB2_Tools_Manager_Writer
      */
     function &raiseError($code = null, $mode = null, $options = null, $userinfo = null)
     {
-        return MDB2_Driver_Common::raiseError($code, $mode, $options, $userinfo);
+        $error =& MDB2_Schema::raiseError($code, $mode, $options, $userinfo);
+        return $error;
     }
 
     // }}}
-    // {{{ _escapeSpecialCharacters()
+    // {{{ _escapeSpecialChars()
 
     /**
      * add escapecharacters to all special characters in a string
      *
      * @param string $string string that should be escaped
      * @return string escaped string
-     * @access private
+     * @access protected
      */
-    function _escapeSpecialCharacters($string)
+    function _escapeSpecialChars($string)
     {
         if (!is_string($string)) {
             $string = strval($string);
         }
+
         $escaped = '';
         for ($char = 0, $count = strlen($string); $char < $count; $char++) {
             switch ($string[$char]) {
@@ -140,21 +143,24 @@ class MDB2_Tools_Manager_Writer
      * @return mixed string with xml seqeunce definition on success, or a MDB2 error object
      * @access public
      */
-    function dumpSequence($sequence_definition, $sequence_name, $eol, $dump = MDB2_MANAGER_DUMP_ALL)
+    function dumpSequence($sequence_definition, $sequence_name, $eol, $dump = MDB2_SCHEMA_DUMP_ALL)
     {
         $buffer = "$eol <sequence>$eol  <name>$sequence_name</name>$eol";
-        if ($dump == MDB2_MANAGER_DUMP_ALL || $dump == MDB2_MANAGER_DUMP_CONTENT) {
-            if (isset($sequence_definition['start'])) {
+        if ($dump == MDB2_SCHEMA_DUMP_ALL || $dump == MDB2_SCHEMA_DUMP_CONTENT) {
+            if (array_key_exists('start', $sequence_definition)) {
                 $start = $sequence_definition['start'];
                 $buffer .= "  <start>$start</start>$eol";
             }
         }
-        if (isset($sequence_definition['on'])) {
-            $buffer .= "  <on>$eol   <table>".$sequence_definition['on']['table'].
+
+        if (array_key_exists('on', $sequence_definition)) {
+            $buffer .= "  <on>$eol";
+            $buffer .= "   <table>".$sequence_definition['on']['table'].
                 "</table>$eol   <field>".$sequence_definition['on']['field'].
                 "</field>$eol  </on>$eol";
         }
         $buffer .= " </sequence>$eol";
+
         return $buffer;
     }
 
@@ -182,40 +188,45 @@ class MDB2_Tools_Manager_Writer
      *                         default: "\n"
      *                 );
      * @param integer $dump constant that determines what data to dump
-     *                      MDB2_MANAGER_DUMP_ALL       : the entire db
-     *                      MDB2_MANAGER_DUMP_STRUCTURE : only the structure of the db
-     *                      MDB2_MANAGER_DUMP_CONTENT   : only the content of the db
+     *                      MDB2_SCHEMA_DUMP_ALL       : the entire db
+     *                      MDB2_SCHEMA_DUMP_STRUCTURE : only the structure of the db
+     *                      MDB2_SCHEMA_DUMP_CONTENT   : only the content of the db
      * @return mixed MDB2_OK on success, or a MDB2 error object
      * @access public
      */
-    function dumpDatabase($database_definition, $arguments, $dump = MDB2_MANAGER_DUMP_ALL)
+    function dumpDatabase($database_definition, $arguments, $dump = MDB2_SCHEMA_DUMP_ALL)
     {
-        if (isset($arguments['output'])) {
-            if (isset($arguments['output_mode']) && $arguments['output_mode'] == 'file') {
+        if (array_key_exists('definition', $arguments) && $arguments['definition']) {
+            $database_definition = $arguments['definition'];
+        }
+
+        if (array_key_exists('output', $arguments)) {
+            if (array_key_exists('output_mode', $arguments) && $arguments['output_mode'] == 'file') {
                 $fp = fopen($arguments['output'], 'w');
                 $output = false;
             } elseif (function_exists($arguments['output'])) {
                 $output = $arguments['output'];
             } else {
-                return $this->raiseError(MDB2_ERROR_MANAGER, null, null,
-                        'no valid output function specified');
+                return $this->raiseError(MDB2_SCHEMA_ERROR, null, null,
+                    'no valid output function specified');
             }
         } else {
-            return $this->raiseError(MDB2_ERROR_MANAGER, null, null,
+            return $this->raiseError(MDB2_SCHEMA_ERROR, null, null,
                 'no output method specified');
         }
-        if (isset($arguments['end_of_line'])) {
+
+        if (array_key_exists('end_of_line', $arguments)) {
             $eol = $arguments['end_of_line'];
         } else {
             $eol = "\n";
         }
 
         $sequences = array();
-        if (isset($database_definition['sequences'])
+        if (array_key_exists('sequences', $database_definition)
             && is_array($database_definition['sequences'])
         ) {
             foreach ($database_definition['sequences'] as $sequence_name => $sequence) {
-                if (isset($sequence['on'])) {
+                if (array_key_exists('on', $sequence)) {
                     $table = $sequence['on']['table'];
                 } else {
                     $table = '';
@@ -225,39 +236,41 @@ class MDB2_Tools_Manager_Writer
         }
 
         $buffer = ('<?xml version="1.0" encoding="ISO-8859-1" ?>'.$eol);
-        $buffer .= ("<database>$eol$eol <name>".$database_definition['name']."</name>$eol <create>".$database_definition['create']."</create>$eol");
+        $buffer .= ("<database>$eol$eol <name>".$database_definition['name']."</name>$eol <create>"
+            .$database_definition['create']."</create>$eol");
 
         if ($output) {
             $output($buffer);
         } else {
             fwrite($fp, $buffer);
         }
+
         $buffer = '';
-        if (isset($database_definition['tables']) && is_array($database_definition['tables'])) {
+        if (array_key_exists('tables', $database_definition) && is_array($database_definition['tables'])) {
             foreach ($database_definition['tables'] as $table_name => $table) {
                 $buffer = ("$eol <table>$eol$eol  <name>$table_name</name>$eol");
-                if ($dump == MDB2_MANAGER_DUMP_ALL || $dump == MDB2_MANAGER_DUMP_STRUCTURE) {
+                if ($dump == MDB2_SCHEMA_DUMP_ALL || $dump == MDB2_SCHEMA_DUMP_STRUCTURE) {
                     $buffer .= ("$eol  <declaration>$eol");
-                    if (isset($table['fields']) && is_array($table['fields'])) {
+                    if (array_key_exists('fields', $table) && is_array($table['fields'])) {
                         foreach ($table['fields'] as $field_name => $field) {
-                            if (!isset($field['type'])) {
-                                return $this->raiseError(MDB2_ERROR_MANAGER, null, null,
+                            if (!array_key_exists('type', $field)) {
+                                return $this->raiseError(MDB2_SCHEMA_ERROR, null, null,
                                     'it was not specified the type of the field "'.
                                     $field_name.'" of the table "'.$table_name);
                             }
-                            $buffer .=("$eol   <field>$eol    <name>$field_name</name>$eol    <type>".$field['type']."</type>$eol");
+                            $buffer .=("$eol   <field>$eol    <name>$field_name</name>$eol    <type>"
+                                .$field['type']."</type>$eol");
                             switch ($field['type']) {
                             case 'integer':
-                                if (isset($field['unsigned'])) {
-                                    $buffer .=("    <unsigned>1</unsigned>$eol");
+                                if (array_key_exists('unsigned', $field)) {
+                                    $buffer .=("    <unsigned>true</unsigned>$eol");
                                 }
                                 break;
                             case 'text':
                             case 'clob':
                             case 'blob':
-                                if (isset($field['length'])) {
-                                    $buffer .=('    <length>'.$field['length'].
-                                        "</length>$eol");
+                                if (array_key_exists('length', $field)) {
+                                    $buffer .=('    <length>'.$field['length']."</length>$eol");
                                 }
                                 break;
                             case 'boolean':
@@ -271,24 +284,41 @@ class MDB2_Tools_Manager_Writer
                                 return $this->raiseError('type "'.$field['type'].
                                     '" is not yet supported');
                             }
-                            if (isset($field['notnull']) && $field['notnull']) {
-                                $buffer .=("    <notnull>1</notnull>$eol");
+                            if (array_key_exists('notnull', $field) && $field['notnull']) {
+                                $buffer .=("    <notnull>true</notnull>$eol");
+                            } else {
+                                $buffer .=("    <notnull>false</notnull>$eol");
                             }
-                            if (isset($field['default'])) {
-                                $buffer .=('    <default>'.$this->_escapeSpecialCharacters($field['default'])."</default>$eol");
+                            if (array_key_exists('default', $field)
+                                && $field['type'] != 'clob' && $field['type'] != 'blob'
+                            ) {
+                                $buffer .=('    <default>'.$this->_escapeSpecialChars($field['default'])
+                                    ."</default>$eol");
                             }
+
+                            if (array_key_exists('autoincrement', $field)) {
+                                $buffer .= "    <autoincrement>" . $field['autoincrement'] .
+                                    "</autoincrement>$eol";
+                            }
+
                             $buffer .=("   </field>$eol");
                         }
                     }
-                    if (isset($table['indexes']) && is_array($table['indexes'])) {
+
+                    if (array_key_exists('indexes', $table) && is_array($table['indexes'])) {
                         foreach ($table['indexes'] as $index_name => $index) {
                             $buffer .=("$eol   <index>$eol    <name>$index_name</name>$eol");
-                            if (isset($index['unique'])) {
-                                $buffer .=("    <unique>1</unique>$eol");
+                            if (array_key_exists('unique', $index)) {
+                                $buffer .=("    <unique>true</unique>$eol");
                             }
+
+                            if (array_key_exists('primary', $index)) {
+                                $buffer .=("    <primary>true</primary>$eol");
+                            }
+
                             foreach ($index['fields'] as $field_name => $field) {
                                 $buffer .=("    <field>$eol     <name>$field_name</name>$eol");
-                                if (is_array($field) && isset($field['sorting'])) {
+                                if (is_array($field) && array_key_exists('sorting', $field)) {
                                     $buffer .=('     <sorting>'.$field['sorting']."</sorting>$eol");
                                 }
                                 $buffer .=("    </field>$eol");
@@ -298,21 +328,24 @@ class MDB2_Tools_Manager_Writer
                     }
                     $buffer .= ("$eol  </declaration>$eol");
                 }
+
                 if ($output) {
                     $output($buffer);
                 } else {
                     fwrite($fp, $buffer);
                 }
+
                 $buffer = '';
-                if ($dump == MDB2_MANAGER_DUMP_ALL || $dump == MDB2_MANAGER_DUMP_CONTENT) {
-                    if (isset($table['initialization']) && is_array($table['initialization'])) {
+                if ($dump == MDB2_SCHEMA_DUMP_ALL || $dump == MDB2_SCHEMA_DUMP_CONTENT) {
+                    if (array_key_exists('initialization', $table) && !empty($table['initialization']) && is_array($table['initialization'])) {
                         $buffer = ("$eol  <initialization>$eol");
                         foreach ($table['initialization'] as $instruction) {
                             switch ($instruction['type']) {
                             case 'insert':
                                 $buffer .= ("$eol   <insert>$eol");
                                 foreach ($instruction['fields'] as $field_name => $field) {
-                                    $buffer .= ("$eol    <field>$eol     <name>$field_name</name>$eol     <value>".$this->_escapeSpecialCharacters($field)."</value>$eol   </field>$eol");
+                                    $buffer .= ("$eol    <field>$eol     <name>$field_name</name>$eol     <value>"
+                                        .$this->_escapeSpecialChars($field)."</value>$eol   </field>$eol");
                                 }
                                 $buffer .= ("$eol   </insert>$eol");
                                 break;
@@ -327,15 +360,19 @@ class MDB2_Tools_Manager_Writer
                 } else {
                     fwrite($fp, $buffer);
                 }
+
                 if (isset($sequences[$table_name])) {
-                    for ($sequence = 0, $j = count($sequences[$table_name]);
-                        $sequence < $j;
-                        $sequence++
-                    ) {
-                        $result = $this->dumpSequence($database_definition['sequences'], $sequences[$table_name][$sequence], $eol, $dump);
-                        if (MDB2::isError($result)) {
+                    foreach ($sequences[$table_name] as $sequence) {
+                        $result = $this->dumpSequence(
+                            $database_definition['sequences'][$sequence],
+                            $sequence,
+                            $eol,
+                            $dump
+                        );
+                        if (PEAR::isError($result)) {
                             return $result;
                         }
+
                         if ($output) {
                             $output($result);
                         } else {
@@ -345,16 +382,23 @@ class MDB2_Tools_Manager_Writer
                 }
             }
         }
+
         if (isset($sequences[''])) {
-            for ($sequence = 0; $sequence < count($sequences['']); $sequence++) {
-                $result = $this->dumpSequence($database_definition['sequences'], $sequences[''][$sequence], $eol, $dump);
-                if (MDB2::isError($result)) {
+            foreach ($sequences[''] as $sequence) {
+                $result = $this->dumpSequence(
+                    $database_definition['sequences'][$sequence],
+                    $sequence,
+                    $eol,
+                    $dump
+                );
+                if (PEAR::isError($result)) {
                     return $result;
                 }
+
                 if ($output) {
-                       $output($result);
-                   } else {
-                       fwrite($fp, $result);
+                    $output($result);
+                } else {
+                    fwrite($fp, $result);
                 }
             }
         }

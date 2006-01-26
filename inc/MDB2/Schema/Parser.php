@@ -42,7 +42,7 @@
 // | Author: Christian Dickmann <dickmann@php.net>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: Parser.php,v 1.4 2005/01/12 12:28:09 lsmith Exp $
+// $Id: Parser.php,v 1.25 2006/01/04 20:10:35 lsmith Exp $
 //
 
 require_once 'XML/Parser.php';
@@ -50,12 +50,12 @@ require_once 'XML/Parser.php';
 /**
  * Parses an XML schema file
  *
- * @package MDB2
+ * @package MDB2_Schema
  * @category Database
- * @access private
+ * @access protected
  * @author  Christian Dickmann <dickmann@php.net>
  */
-class MDB2_Tools_Parser extends XML_Parser
+class MDB2_Schema_Parser extends XML_Parser
 {
     var $database_definition = array();
     var $elements = array();
@@ -74,8 +74,7 @@ class MDB2_Tools_Parser extends XML_Parser
     var $variables = array();
     var $seq = array();
     var $seq_name = '';
-    var $error = null;
-
+    var $error;
     var $invalid_names = array(
         'user' => array(),
         'is' => array(),
@@ -94,12 +93,19 @@ class MDB2_Tools_Parser extends XML_Parser
         )
     );
     var $fail_on_invalid_names = true;
+    var $structure = false;
 
-    function MDB2_Tools_Parser($variables, $fail_on_invalid_names = true)
+    function __construct($variables, $fail_on_invalid_names = true, $structure = false)
     {
-        $this->XML_Parser();
+        parent::XML_Parser();
         $this->variables = $variables;
         $this->fail_on_invalid_names = $fail_on_invalid_names;
+        $this->structure = $structure;
+    }
+
+    function MDB2_Schema_Parser($variables, $fail_on_invalid_names = true, $structure = false)
+    {
+        $this->__construct($variables, $fail_on_invalid_names, $structure);
     }
 
     function startHandler($xp, $element, $attribs)
@@ -163,7 +169,7 @@ class MDB2_Tools_Parser extends XML_Parser
                 $this->raiseError('field "'.$this->init_name.'" already filled', null, $xp);
             }
             if (!isset($this->table['fields'][$this->init_name])) {
-                $this->raiseError('unkown field "'.$this->init_name.'"', null, $xp);
+                $this->raiseError('unknown field "'.$this->init_name.'"', null, $xp);
             }
             if ($this->init_value !== ''
                 && !$this->validateFieldValue($this->init_name, $this->init_value, $xp)
@@ -178,30 +184,74 @@ class MDB2_Tools_Parser extends XML_Parser
 
         /* Table definition */
         case 'database-table':
-            if (!isset($this->table['was'])) {
+            if (!array_key_exists('was', $this->table)) {
                 $this->table['was'] = $this->table_name;
             }
+
             if (!$this->table_name) {
                 $this->raiseError('tables need names', null, $xp);
             }
+
             if (isset($this->database_definition['tables'][$this->table_name])) {
                 $this->raiseError('table "'.$this->table_name.'" already exists', null, $xp);
             }
-            if (!isset($this->table['fields'])) {
+
+            $autoinc = $primary = false;
+            if (!array_key_exists('fields', $this->table)) {
                 $this->raiseError('tables need one or more fields', null, $xp);
+            } else {
+                foreach ($this->table['fields'] as $field_name => $field) {
+                    if (array_key_exists('autoincrement', $field) && $field['autoincrement']) {
+                        if ($primary) {
+                            $this->raiseError('there was already an autoincrement field in "'.$this->table_name.'" before "'.$field_name.'"', null, $xp);
+                        } else {
+                            $autoinc = $primary = true;
+                        }
+
+                        if (!$this->table['fields'][$field_name]['notnull']) {
+                            $this->raiseError('all autoincrement fields must be defined notnull in "'.$this->table_name.'"', null, $xp);
+                        }
+
+                        if (!array_key_exists('default', $field)) {
+                            $this->table['fields'][$field_name]['default'] = '0';
+                        } elseif ($field['default'] !== '0' && $field['default'] !== 0) {
+                            $this->raiseError('all autoincrement fields must be defined default "0" in "'.$this->table_name.'"', null, $xp);
+                        }
+                    }
+                }
             }
-            if (isset($this->table['indexes'])) {
-                foreach ($this->table['indexes'] as $index) {
-                    foreach ($index['fields'] as $field_name => $field) {
-                        if (!isset($this->table['fields'][$field_name])) {
-                            $this->raiseError('index field "'.$field_name.'" does not exist', null, $xp);
+            if (array_key_exists('indexes', $this->table)) {
+                foreach ($this->table['indexes'] as $name => $index) {
+                    $skip_index = false;
+                    if (array_key_exists('primary', $index) && $index['primary']) {
+                        /*
+                         * Lets see if we should skip this index since there is
+                         * already a auto increment on this field this implying
+                         * a primary key index.
+                         */
+                        if ($autoinc && count($index['fields']) == '1') {
+                            $skip_index = true;
+                        } else {
+                            if ($primary) {
+                                $this->raiseError('there was already an primary index or autoincrement field in "'.$this->table_name.'" before "'.$name.'"', null, $xp);
+                            } else {
+                                $primary = true;
+                            }
                         }
-                        if (!(isset($this->table['fields'][$field_name]['notnull'])
-                            && $this->table['fields'][$field_name]['notnull'] == true)
-                        ) {
-                            $this->raiseError('index field "'.$field_name.
-                                '" has to be "notnull"', null, $xp);
+                    }
+
+                    if (!$skip_index) {
+                        foreach ($index['fields'] as $field_name => $field) {
+                            if (!isset($this->table['fields'][$field_name])) {
+                                $this->raiseError('index field "'.$field_name.'" does not exist', null, $xp);
+                            } elseif (array_key_exists('primary', $index) && $index['primary']) {
+                                if (!$this->table['fields'][$field_name]['notnull']) {
+                                    $this->raiseError('all primary key fields must be defined notnull in "'.$this->table_name.'"', null, $xp);
+                                }
+                            }
                         }
+                    } else {
+                        unset($this->table['indexes'][$name]);
                     }
                 }
             }
@@ -210,7 +260,7 @@ class MDB2_Tools_Parser extends XML_Parser
 
         /* Field declaration */
         case 'database-table-declaration-field':
-            if (!$this->field_name || !isset($this->field['type'])) {
+            if (!$this->field_name || !array_key_exists('type', $this->field)) {
                 $this->raiseError('field "'.$this->field_name.'" was not properly specified', null, $xp);
             }
             if (isset($this->table['fields'][$this->field_name])) {
@@ -223,16 +273,13 @@ class MDB2_Tools_Parser extends XML_Parser
             /* Type check */
             switch ($this->field['type']) {
             case 'integer':
-                if (isset($this->field['unsigned'])
-                    && $this->field['unsigned'] !== '1' && $this->field['unsigned'] !== '0'
-                ) {
-                    $this->raiseError('unsigned has to be 1 or 0', null, $xp);
+                if (array_key_exists('unsigned', $this->field) && !$this->isBoolean($this->field['unsigned'])) {
+                    $this->raiseError('unsigned has to be a boolean value', null, $xp);
                 }
-                break;
             case 'text':
             case 'clob':
             case 'blob':
-                if (isset($this->field['length']) && ((int)$this->field['length']) <= 0) {
+                if (array_key_exists('length', $this->field) && ((int)$this->field['length']) <= 0) {
                     $this->raiseError('length has to be an integer greater 0', null, $xp);
                 }
                 break;
@@ -246,29 +293,46 @@ class MDB2_Tools_Parser extends XML_Parser
             default:
                 $this->raiseError('no valid field type ("'.$this->field['type'].'") specified', null, $xp);
             }
-            if (!isset($this->field['was'])) {
+            if (!array_key_exists('was', $this->field)) {
                 $this->field['was'] = $this->field_name;
             }
-            if (isset($this->field['notnull']) && !$this->is_boolean($this->field['notnull'])) {
-                $this->raiseError('field  "notnull" has to be 1 or 0', null, $xp);
+
+            if (!array_key_exists('notnull', $this->field)) {
+                $this->field['notnull'] = false;
             }
-            if (isset($this->field['notnull']) && !isset($this->field['default'])) {
-                $this->raiseError('if field is "notnull", it needs a default value', null, $xp);
+
+            if (!$this->isBoolean($this->field['notnull'])) {
+                $this->raiseError('field "notnull" has to be a boolean value', null, $xp);
             }
-            if (isset($this->field['unsigned']) && !$this->is_boolean($this->field['unsigned'])) {
-                $this->raiseError('field  "notnull" has to be 1 or 0', null, $xp);
+            if (!array_key_exists('default', $this->field)
+                && $this->field['type'] != 'clob' && $this->field['type'] != 'blob'
+            ) {
+                $this->field['default'] = '';
             }
-            $this->table['fields'][$this->field_name] = $this->field;
-            if (isset($this->field['default'])) {
+            if (array_key_exists('unsigned', $this->field) && !$this->isBoolean($this->field['unsigned'])) {
+                $this->raiseError('field "unsigned" has to be a boolean value', null, $xp);
+            }
+
+            if (array_key_exists('default', $this->field)) {
                 if ($this->field['type'] == 'clob' || $this->field['type'] == 'blob') {
                     $this->raiseError('"'.$this->field['type'].
                         '"-fields are not allowed to have a default value', null, $xp);
                 }
-                if ($this->field['default'] !== ''
-                    && !$this->validateFieldValue($this->field_name, $this->field['default'], $xp)
-                ) {
-                    $this->raiseError('default value of "'.$this->field_name.'" is of wrong type', null, $xp);
+                if ($this->field['default'] === '') {
+                    if (!$this->field['notnull']) {
+                        $this->field['default'] = null;
+                    }
                 }
+            }
+
+            $this->table['fields'][$this->field_name] = $this->field;
+
+            if (array_key_exists('default', $this->field) && isset($this->field['default'])
+                && !$this->validateFieldValue($this->field_name,
+                    $this->table['fields'][$this->field_name]['default'], $xp
+                )
+            ) {
+                $this->raiseError('default value of "'.$this->field_name.'" is of wrong type', null, $xp);
             }
             break;
 
@@ -280,10 +344,14 @@ class MDB2_Tools_Parser extends XML_Parser
             if (isset($this->table['indexes'][$this->index_name])) {
                 $this->raiseError('index "'.$this->index_name.'" already exists', null, $xp);
             }
-            if (isset($this->index['unique']) && !$this->is_boolean($this->index['unique'])) {
-                $this->raiseError('field  "unique" has to be 1 or 0', null, $xp);
+            if (array_key_exists('unique', $this->index) && !$this->isBoolean($this->index['unique'])) {
+                $this->raiseError('field "unique" has to be a boolean value', null, $xp);
             }
-            if (!isset($this->index['was'])) {
+            if (array_key_exists('primary', $this->index) && !$this->isBoolean($this->index['primary'])) {
+                $this->raiseError('field "primary" has to be a boolean value', null, $xp);
+            }
+
+            if (!array_key_exists('was', $this->index)) {
                 $this->index['was'] = $this->index_name;
             }
             $this->table['indexes'][$this->index_name] = $this->index;
@@ -292,11 +360,18 @@ class MDB2_Tools_Parser extends XML_Parser
             if (!$this->field_name) {
                 $this->raiseError('the index-field-name is required', null, $xp);
             }
-            if (isset($this->field['sorting'])
+            if (array_key_exists('sorting', $this->field)
                 && $this->field['sorting'] !== 'ascending' && $this->field['sorting'] !== 'descending') {
                 $this->raiseError('sorting type unknown', null, $xp);
+            } else {
+                $this->field['sorting'] = 'ascending';
             }
             $this->index['fields'][$this->field_name] = $this->field;
+            break;
+        case 'database-table-name':
+            if (isset($this->structure['tables'][$this->table_name])) {
+                $this->table = $this->structure['tables'][$this->table_name];
+            }
             break;
 
         /* Sequence declaration */
@@ -307,10 +382,12 @@ class MDB2_Tools_Parser extends XML_Parser
             if (isset($this->database_definition['sequences'][$this->seq_name])) {
                 $this->raiseError('sequence "'.$this->seq_name.'" already exists', null, $xp);
             }
-            if (!isset($this->seq['was'])) {
+
+            if (!array_key_exists('was', $this->seq)) {
                 $this->seq['was'] = $this->seq_name;
             }
-            if (isset($this->seq['on'])) {
+
+            if (array_key_exists('on', $this->seq)) {
                 if ((!isset($this->seq['on']['table']) || !$this->seq['on']['table'])
                     || (!isset($this->seq['on']['field']) || !$this->seq['on']['field'])
                 ) {
@@ -324,14 +401,14 @@ class MDB2_Tools_Parser extends XML_Parser
         /* End of File */
         case 'database':
             if (isset($this->database_definition['create'])
-                && !$this->is_boolean($this->database_definition['create'])
+                && !$this->isBoolean($this->database_definition['create'])
             ) {
-                $this->raiseError('field "create" has to be 1 or 0', null, $xp);
+                $this->raiseError('field "create" has to be a boolean value', null, $xp);
             }
             if (isset($this->database_definition['overwrite'])
-                && !$this->is_boolean($this->database_definition['overwrite'])
+                && !$this->isBoolean($this->database_definition['overwrite'])
             ) {
-                $this->raiseError('field "overwrite" has to be 1 or 0', null, $xp);
+                $this->raiseError('field "overwrite" has to be a boolean value', null, $xp);
             }
             if (!isset($this->database_definition['name'])
                 || !$this->database_definition['name']
@@ -340,7 +417,7 @@ class MDB2_Tools_Parser extends XML_Parser
             }
             if (isset($this->database_definition['sequences'])) {
                 foreach ($this->database_definition['sequences'] as $seq_name => $seq) {
-                    if (isset($seq['on'])
+                    if (array_key_exists('on', $seq)
                         && !isset($this->database_definition['tables'][$seq['on']['table']]['fields'][$seq['on']['field']])
                     ) {
                         $this->raiseError('sequence "'.$seq_name.
@@ -348,7 +425,7 @@ class MDB2_Tools_Parser extends XML_Parser
                     }
                 }
             }
-            if (MDB2::isError($this->error)) {
+            if (PEAR::isError($this->error)) {
                 $this->database_definition = $this->error;
             }
             break;
@@ -362,13 +439,12 @@ class MDB2_Tools_Parser extends XML_Parser
     {
         if (!isset($this->table['fields'][$field_name])) {
             return $this->raiseError('"'.$field_name.'" is not defined', null, $xp);
-
         }
         $field_def = $this->table['fields'][$field_name];
         switch ($field_def['type']) {
         case 'text':
         case 'clob':
-            if (isset($field_def['length']) && strlen($field_value) > $field_def['length']) {
+            if (array_key_exists('length', $field_def) && strlen($field_value) > $field_def['length']) {
                 return $this->raiseError('"'.$field_value.'" is not of type "'.
                     $field_def['type'].'"', null, $xp);
             }
@@ -381,7 +457,7 @@ class MDB2_Tools_Parser extends XML_Parser
             }
             */
             $field_value = pack('H*', $field_value);
-            if (isset($field_def['length']) && strlen($field_value) > $field_def['length']) {
+            if (array_key_exists('length', $field_def) && strlen($field_value) > $field_def['length']) {
                 return $this->raiseError('"'.$field_value.'" is not of type "'.
                     $field_def['type'].'"', null, $xp);
             }
@@ -392,13 +468,13 @@ class MDB2_Tools_Parser extends XML_Parser
                     $field_def['type'].'"', null, $xp);
             }
             $field_value = (int) $field_value;
-            if (isset($field_def['unsigned']) && $field_def['unsigned'] && $field_value < 0) {
+            if (array_key_exists('unsigned', $field_def) && $field_def['unsigned'] && $field_value < 0) {
                 return $this->raiseError('"'.$field_value.'" is not of type "'.
                     $field_def['type'].'"', null, $xp);
             }
             break;
         case 'boolean':
-            if (!$this->is_boolean($field_value)) {
+            if (!$this->isBoolean($field_value)) {
                 return $this->raiseError('"'.$field_value.'" is not of type "'.
                     $field_def['type'].'"', null, $xp);
             }
@@ -433,7 +509,7 @@ class MDB2_Tools_Parser extends XML_Parser
         return true;
     }
 
-    function raiseError($msg = null, $ecode = 0, $xp = null)
+    function &raiseError($msg = null, $ecode = 0, $xp = null)
     {
         if (is_null($this->error)) {
             $error = '';
@@ -446,7 +522,7 @@ class MDB2_Tools_Parser extends XML_Parser
                     $xp = $this->parser;
                 }
             }
-            if (($error_string = xml_error_string($ecode))) {
+            if ($error_string = xml_error_string($ecode)) {
                 $error .= ' - '.$error_string;
             }
             if (is_resource($xp)) {
@@ -456,32 +532,37 @@ class MDB2_Tools_Parser extends XML_Parser
                 $error .= " - Byte: $byte; Line: $line; Col: $column";
             }
             $error .= "\n";
-            $this->error = MDB2_Driver_Common::raiseError(MDB2_ERROR_MANAGER_PARSE, null, null, $error);
+            $this->error =& MDB2::raiseError(MDB2_SCHEMA_ERROR_PARSE, null, null, $error);
         }
         return $this->error;
     }
 
-    function is_boolean(&$value)
+    function isBoolean(&$value)
     {
-        if (is_int($value) && ($value == 0 || $value == 1)) {
+        if (is_bool($value)) {
             return true;
         }
-        if ($value === '1' || $value === '0') {
-            $value = (int) $value;
+        if ($value === 0 || $value === 1) {
+            $value = (bool)$value;
             return true;
+        }
+        if (!is_string($value)) {
+            return false;
         }
         switch ($value) {
+        case '0':
         case 'N':
         case 'n':
         case 'no':
         case 'false':
-            $value = 0;
+            $value = false;
             break;
+        case '1':
         case 'Y':
         case 'y':
         case 'yes':
         case 'true':
-            $value = 1;
+            $value = true;
             break;
         default:
             return false;
@@ -546,7 +627,7 @@ class MDB2_Tools_Parser extends XML_Parser
             }
             break;
         case 'database-table-was':
-            if (isset($this->table['was'])) {
+            if (array_key_exists('was', $this->table)) {
                 $this->table['was'] .= $data;
             } else {
                 $this->table['was'] = $data;
@@ -562,42 +643,49 @@ class MDB2_Tools_Parser extends XML_Parser
             }
             break;
         case 'database-table-declaration-field-type':
-            if (isset($this->field['type'])) {
+            if (array_key_exists('type', $this->field)) {
                 $this->field['type'] .= $data;
             } else {
                 $this->field['type'] = $data;
             }
             break;
         case 'database-table-declaration-field-was':
-            if (isset($this->field['was'])) {
+            if (array_key_exists('was', $this->field)) {
                 $this->field['was'] .= $data;
             } else {
                 $this->field['was'] = $data;
             }
             break;
         case 'database-table-declaration-field-notnull':
-            if (isset($this->field['notnull'])) {
+            if (array_key_exists('notnull', $this->field)) {
                 $this->field['notnull'] .= $data;
             } else {
                 $this->field['notnull'] = $data;
             }
             break;
         case 'database-table-declaration-field-unsigned':
-            if (isset($this->field['unsigned'])) {
+            if (array_key_exists('unsigned', $this->field)) {
                 $this->field['unsigned'] .= $data;
             } else {
                 $this->field['unsigned'] = $data;
             }
             break;
+        case 'database-table-declaration-field-autoincrement':
+            if (array_key_exists('autoincrement', $this->field)) {
+                $this->field['autoincrement'] .= $data;
+            } else {
+                $this->field['autoincrement'] = $data;
+            }
+            break;
         case 'database-table-declaration-field-default':
-            if (isset($this->field['default'])) {
+            if (array_key_exists('default', $this->field)) {
                 $this->field['default'] .= $data;
             } else {
                 $this->field['default'] = $data;
             }
             break;
         case 'database-table-declaration-field-length':
-            if (isset($this->field['length'])) {
+            if (array_key_exists('length', $this->field)) {
                 $this->field['length'] .= $data;
             } else {
                 $this->field['length'] = $data;
@@ -612,15 +700,22 @@ class MDB2_Tools_Parser extends XML_Parser
                 $this->index_name = $data;
             }
             break;
+        case 'database-table-declaration-index-primary':
+            if (array_key_exists('primary', $this->index)) {
+                $this->index['primary'] .= $data;
+            } else {
+                $this->index['primary'] = $data;
+            }
+            break;
         case 'database-table-declaration-index-unique':
-            if (isset($this->index['unique'])) {
+            if (array_key_exists('unique', $this->index)) {
                 $this->index['unique'] .= $data;
             } else {
                 $this->index['unique'] = $data;
             }
             break;
         case 'database-table-declaration-index-was':
-            if (isset($this->index['was'])) {
+            if (array_key_exists('was', $this->index)) {
                 $this->index['was'] .= $data;
             } else {
                 $this->index['was'] = $data;
@@ -634,10 +729,18 @@ class MDB2_Tools_Parser extends XML_Parser
             }
             break;
         case 'database-table-declaration-index-field-sorting':
-            if (isset($this->field['sorting'])) {
+            if (array_key_exists('sorting', $this->field)) {
                 $this->field['sorting'] .= $data;
             } else {
                 $this->field['sorting'] = $data;
+            }
+            break;
+        /* Add by Leoncx */
+        case 'database-table-declaration-index-field-length':
+            if (array_key_exists('length', $this->field)) {
+                $this->field['length'] .= $data;
+            } else {
+                $this->field['length'] = $data;
             }
             break;
 
@@ -650,14 +753,14 @@ class MDB2_Tools_Parser extends XML_Parser
             }
             break;
         case 'database-sequence-was':
-            if (isset($this->seq['was'])) {
+            if (array_key_exists('was', $this->seq)) {
                 $this->seq['was'] .= $data;
             } else {
                 $this->seq['was'] = $data;
             }
             break;
         case 'database-sequence-start':
-            if (isset($this->seq['start'])) {
+            if (array_key_exists('start', $this->seq)) {
                 $this->seq['start'] .= $data;
             } else {
                 $this->seq['start'] = $data;
