@@ -28,23 +28,4 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 <xsl:copy/>
 </xsl:template>
 
-<xsl:template match="map:transform[@type='tidy']">
-<!-- <xsl:if test="$tidy != 1">-->
-<xsl:text disable-output-escaping="yes">&lt;!--
-</xsl:text>
-<!-- </xsl:if>-->
-<xsl:copy>    
-    <xsl:for-each select="@*">
-            <xsl:copy/>
-        </xsl:for-each>
-        <xsl:apply-templates />
-        </xsl:copy>
-        <!--
-<xsl:if test="$tidy != 1">
--->
-        <xsl:text disable-output-escaping="yes">
---&gt;</xsl:text>
-<!-- </xsl:if>-->
-</xsl:template>
-
 </xsl:stylesheet>

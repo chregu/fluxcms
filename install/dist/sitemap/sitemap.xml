@@ -241,12 +241,13 @@
                                 </map:when>
 
                                 <map:otherwise>
-
+<!--
                                     <map:transform type="tidy">
                                         <map:parameter name="drop-proprietary-attributes" value="no"/>
                                         <map:parameter name="drop-empty-paras" value="no"/>
                                         <map:parameter name="indent" value="no"/>
                                     </map:transform>
+                                    -->
                                     <map:serialize type="xhtml" contentType="text/html; charset=utf-8" httpExpires="{config://expires}">
                                         <map:parameter name="outputErrors" value="bx_errorhandler"/>
                                         <map:parameter name="stripScriptCDATA" value="true"/>
