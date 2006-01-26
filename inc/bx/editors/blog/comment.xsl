@@ -10,6 +10,7 @@
     xmlns:rss="http://purl.org/rss/1.0/" 
     xmlns:blog="http://bitflux.org/doctypes/blog"
     exclude-result-prefixes="rdf dc xhtml rss bxf blog"
+xmlns:php="http://php.net/xsl"
 >
 
    <xsl:template match="atom:comment">
@@ -22,7 +23,7 @@
             <td valign="top"><input class="checkbox" type="checkbox" name="bx[plugins][admin_edit][deletecomments][{@id}]" value="{@id}"/></td>
             <td valign="top">
                 <xsl:variable name="title">
-                    <xsl:value-of select="substring(atom:content, 1, 50)"/><xsl:if test="string-length(atom:content) > 50"> ...</xsl:if>
+                    <xsl:value-of select="substring(php:functionString('strip_tags',atom:content), 1, 50)"/><xsl:if test="string-length(atom:content) > 50"> ...</xsl:if>
                 </xsl:variable>
                 <xsl:choose>
                     <xsl:when test="atom:post_uri != ''">
