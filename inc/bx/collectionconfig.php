@@ -262,13 +262,17 @@ class bx_collectionconfig {
 
             $pName = $parameterNode->getAttribute('name');
             $pValue = $parameterNode->getAttribute('value');
-
+            $pKey = $parameterNode->getAttribute('key');
             $pType == '' ? $pType = BX_PARAMETER_TYPE_DEFAULT : $pType;
             if(!empty($pName)) {
                 if ($pPrefix = $parameterNode->getAttribute('valuePrefix')) {
                     $pValue = constant($pPrefix).$pValue;
                 }
-                $params[$pType][$pName] = $pValue;
+                if ($pKey) {
+                    $params[$pType][$pName][$pKey] = $pValue;
+                } else {
+                    $params[$pType][$pName] = $pValue;
+                }
             }
         }
         return $params;
