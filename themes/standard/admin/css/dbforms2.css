@@ -23,8 +23,10 @@ td.formInput {
 }
 
 #form {
-    padding: 50px 5px 5px 5px;
-    z-index: 0;
+    padding: 0px 5px 5px 5px;
+    margin-top: 50px;
+    //margin-top: 0px;
+    z-index: 1;
 }
 
 #form input, iframe, #form textarea, #form select {
@@ -97,6 +99,9 @@ td.formInput {
     width: 420px;
     z-index: 2000;
     cursor: pointer;
+    max-height: 500px;
+    overflow: auto;
+
 }
 
 .liveselectResultsShadow {
@@ -125,8 +130,8 @@ td.formInput {
 }
 
 .liveselectResults li.hasfocus {
-    background-color: #006486;
-    color: #fff;
+    background-color: #006486 !important;
+    color: #fff; 
     list-style-type: none;
     border-top: 1px solid #006486;
     border-bottom: 1px solid #006486;

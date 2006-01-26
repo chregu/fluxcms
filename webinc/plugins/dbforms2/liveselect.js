@@ -284,7 +284,9 @@ function dbforms2_liveselect_results(DOMNode, chooser) {
     
     this.focusEntryByID = function(entry) {
         if(this.entries[entry] != null) {
-            this.entries[this.entryFocus].unsetFocus();
+	    if (this.entries[this.entryFocus]) {
+               this.entries[this.entryFocus].unsetFocus();
+	    }
             this.entryFocus = entry;
             this.entries[entry].setFocus();
         }
