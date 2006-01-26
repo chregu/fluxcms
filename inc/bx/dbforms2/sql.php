@@ -168,10 +168,11 @@ class bx_dbforms2_sql {
         $table = $ls->tablePrefix.$ls->tableName;
         
         $whereFields = explode(',', $ls->whereFields);
-        $where = '0 ';
+        $where = '(0 ';
         foreach($whereFields as $field) {
             $where.= "OR $field like '%$q%' ";
         }
+        $where .=" ) ";
 
         $notNullFields = explode(',', $ls->notNullFields);
         foreach($notNullFields as $field) {
@@ -180,13 +181,16 @@ class bx_dbforms2_sql {
 			}
         }
         
+        if ($ls->where) {
+            $where .=" AND ". $ls->where;
+        }
         $orderby = !empty($ls->orderBy) ? $ls->orderBy : $ls->idField;
 		
 		$matcher = ( !empty($ls->getMatcher) AND isset($_GET[$ls->getMatcher]) )? ' AND '.$ls->getMatcher.' = "'.$_GET[$ls->getMatcher].'" ' : '';
         
         $query = 'SELECT '.$table.'.'.$ls->idField.' AS _id, '.$ls->nameField.' AS _title FROM '.$table.' '. $ls->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby.' LIMIT '.$ls->limit;
         bx_log::log($query);
-		return $query;
+        return $query;
     }
     
 }

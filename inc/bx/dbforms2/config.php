@@ -150,6 +150,7 @@ class bx_dbforms2_config {
                         
                         $liveSelect->nameField = $lsNode->getAttribute('namefield');
                         $liveSelect->whereFields = $lsNode->getAttribute('wherefields');
+                        $liveSelect->where = $lsNode->getAttribute('where');
                         $liveSelect->idField = $lsNode->getAttribute('idfield');
                         $liveSelect->tableName = $lsNode->getAttribute('table');
                         $liveSelect->orderBy = $lsNode->getAttribute('orderby');
@@ -293,6 +294,7 @@ class bx_dbforms2_config {
 
         $chooser->nameField = $chooserNode->getAttribute('namefield');
         $chooser->whereFields = $chooserNode->getAttribute('wherefields');
+        $chooser->where = $chooserNode->getAttribute('where');
         $chooser->limit = $chooserNode->getAttribute('limit');
 
         if(!$chooser->limit)
