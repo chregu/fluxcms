@@ -28,7 +28,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     static public $instance = array();
     static private $idMapper = null;
     static protected $tree = null;
-    public $maxPosts = 10;
 
     /*** magic methods and functions ***/
 
@@ -88,6 +87,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
 
     public function getContentById($path, $id) {
+        $maxposts_param = $this->getParameter($path,'maxposts');
+        if ($maxposts_param ) { 
+            $maxPosts = $maxposts_param;
+        } else {
+            $maxPosts = 10;
+        }
+        
         $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
         $perm = bx_permm::getInstance();
         if ($perm->isLoggedIn()) {
@@ -167,7 +173,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $doComments = false;
             $total = $GLOBALS['POOL']->db->query($query)->fetchOne(0);
 
-            $query .= " order by post_date desc limit ".$startEntry . ",10";
+            $query .= " order by post_date desc limit ".$startEntry . "," . $maxPosts;
         } else if ($id == "index" ) {
             // category...
              if (strpos($cat,"archive") === 0) {
@@ -280,7 +286,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $query .= $leftjoin . $archivewhere ;
             $query .= ' group by '.$tablePrefix.'blogposts.id ';
 
-            $query .= 'order by post_date DESC limit '.$startEntry . ','.$this->maxPosts;
+            $query .= 'order by post_date DESC limit '.$startEntry . ','.$maxPosts;
             
         } else {
             if (strpos($id,"_id") === 0 ) {
@@ -320,7 +326,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if ($res->numRows() > 0 ) {
             $xml .= $this->getBlogPosts($res, $path, $doComments );
             if (!$doComments || ($doComments == 2 && $total >0)) {
-                $end =   (($startEntry + 10) > $total) ? $total : $startEntry + 10;
+                $end =   (($startEntry + $maxPosts) > $total) ? $total : $startEntry + $maxPosts;
                 $xml .= '<div class="blog_pager" blog:start="'.($startEntry + 1).'" blog:end="'.$end.'" blog:total="'.$total.'">';
 
                 $xml .= '<span class="blog_pager_prevnext">';
@@ -332,11 +338,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 } else {
                     $searchAdd = "";
                 }
-                if ($startEntry >= 10) {
-                    $xml .='<a href="./?start='.($startEntry -10).$searchAdd.'"><i18n:text>Prev</i18n:text></a>';
+                if ($startEntry >= $maxPosts) {
+                                    $xml .='<a class="blog_pager_prev" href="./?start='.($startEntry -$maxPosts).$searchAdd.'"><i18n:text>Prev</i18n:text></a>';
                 }
-                if ($startEntry < ($total - 10)) {
-                    $xml .=' <a href="./?start='.($startEntry + 10).$searchAdd.'"><i18n:text>Next</i18n:text></a>';
+                if ($startEntry < ($total - $maxPosts)) {
+                    $xml .=' <a class="blog_pager_next" href="./?start='.($startEntry + $maxPosts).$searchAdd.'"><i18n:text>Next</i18n:text></a>';
                 }
                 $xml .= '</span>';
 
