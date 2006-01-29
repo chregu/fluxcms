@@ -43,7 +43,10 @@ class bx_plugins_xmlfile extends bx_plugin implements bxIplugin {
         }
         $lang = $GLOBALS['POOL']->config->getOutputLanguage();
         $name = "$name.$lang";
-        
+        $w = $this->getParameter($path,"src");
+	if ($w) {
+		return "$w";
+	}
         if (file_exists(BX_DATA_DIR.$path.$name.".xml")) {
             return "$name.xml";   
         }
@@ -53,6 +56,7 @@ class bx_plugins_xmlfile extends bx_plugin implements bxIplugin {
      public function getContentById($path, $id) {
        
         $dom = new domDocument();
+	
         if (!$dom->load(BX_DATA_DIR.$path.$id)) {
             $src = BX_DATA_DIR.$path.$id;
              if (!file_exists($src) ) {
