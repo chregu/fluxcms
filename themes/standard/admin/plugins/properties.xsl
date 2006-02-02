@@ -113,6 +113,7 @@
             </td>
         </tr>
     </xsl:template>
+
     <xsl:template match="*[@type='textfield']" mode="propertyfields">
         <tr>
             <td><div class="blackH5" title="{concat(../@namespace, ':', ../@name)}">
@@ -127,6 +128,27 @@
             </div></td>
             <td class="blackH5">
             <input type="text" name="bx[plugins][{../../../@name}][{../../@path}][{../@fieldname}]" size="{@size}" maxlength="{@maxLength}" value="{../@value}" />
+            </td>
+        </tr>
+    </xsl:template>
+
+    <xsl:template match="*[@type='textarea']" mode="propertyfields">
+        <tr valign="top">
+            <td><div class="blackH5" title="{concat(../@namespace, ':', ../@name)}">
+            <xsl:choose>
+                <xsl:when test="../@niceName">
+                    <xsl:value-of select="../@niceName"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="concat(../@namespace, ':', ../@name)"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            </div></td>
+            <td class="blackH5">
+                <textarea name="bx[plugins][{../../../@name}][{../../@path}][{../@fieldname}]" rows="6" cols="80">
+                    <xsl:value-of select="../@value"/>
+                </textarea>
+                <!--<input type="text" name="bx[plugins][{../../../@name}][{../../@path}][{../@fieldname}]" size="{@size}" maxlength="{@maxLength}" value="{../@value}" />-->
             </td>
         </tr>
     </xsl:template>
