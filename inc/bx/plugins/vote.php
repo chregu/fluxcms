@@ -8,6 +8,7 @@
         <plugin type="vote">
         <parameter name="configfile" value="files/vote/vote.xml"/>
         <parameter name="magickey" value="jflsjflkluoirjj"/>
+        <parameter name="currentVoteId" value="1" />
         </plugin>
     </plugins>
 
@@ -36,6 +37,41 @@ CREATE TABLE IF NOT EXISTS `bxcms_vote` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=78 ;
 
+
+
+----------------------------------------------------------------------------------
+
+save to "/files/vote/vote.xml"
+
+<votes>
+<vote collectionUri="/vote" id="1">
+    <question>Your first question</question>
+    <answer key="1">Answer One</answer>
+    <answer key="2">Answer Two</answer>
+    <answer key="3">Answer Three</answer>
+    <response>Thanks for your response</response>
+</vote>
+<vote collectionUri="/vote" id="2">
+    <question>Your second question</question>
+    <answer key="1">Answer One</answer>
+    <answer key="2">Answer Two</answer>
+    <answer key="3">Answer Three</answer>
+    <response>Thanks for your response</response>
+</vote>
+<!--
+
+copy the following for new questions:
+
+<vote collectionUri="/vote" id="">
+    <question></question>
+    <answer key="1"></answer>
+    <answer key="2"></answer>
+    <answer key="3"></answer>
+    <response>T</response>
+</vote>
+
+-->
+</votes>
 
 
 */
@@ -74,27 +110,69 @@ class bx_plugins_vote extends bx_plugin implements bxIplugin {
     }
     
     public function getContentById($path, $id){
-        /*$votexml = "<vote collectionUri='".$path."'>";
-        $votexml .= "<question> Finden Sie el fnord gnarf gut? </question>";
-        $votexml .= "<answer key='1'>yes</answer>";
-        $votexml .= "<answer key='2'>no</answer>";
-        $votexml .= "<answer key='3'>nevermind</answer>";
-        $votexml .= "<response>Danke für Ihre Teilnahme!</response>";
-        $votexml .= "</vote>";*/
+
         $countall = null;
         
         $file = $this->getParameter($path,"configfile");
         $votexml = file_get_contents(BX_OPEN_BASEDIR.$file);
-        
+ 
         $date1 = floor(time()/1800);
         $date2 = floor((time()/1800))-1;
        
         $dom = new domDocument();
         $dom->loadXML($votexml);
-        $voteId = $dom->documentElement->getAttribute("id");
-        $dom->documentElement->setAttribute("collectionUri",$path);
+        $rootVoteNode = $dom->documentElement;
+ 
+        $xp = new domxpath($dom);
         
-       
+        //
+        // for backward-compatibility her we check if the root-node is
+        // called "votes" (means more then one vote per file)
+        //
+
+        if ($rootVoteNode->nodeName == "votes") {
+        
+            $voteId = $this->getParameter($path, "currentVoteId");
+
+            if (empty($voteId)) throw new Exception('you have to set parameter "currentVoteId" for the vote-plugin in your configxml');
+            
+            $votePath = '/votes/vote';
+            $query = $votePath . '[@id = '.$voteId.']';
+            
+            $result = $xp->query($query);
+           
+            if ($result->length == 1) {
+                $voteNode = $result->item(0);                    
+                
+            }else {
+                throw new Exception('no vote with voteId: '.$voteId.' found in: '. $file);
+            }
+            
+            $singleVote = false;
+            
+        }else {
+            $voteNode = $rootVoteNode;
+            $voteId = $voteNode->getAttribute("id");
+            
+            $singleVote = true;
+            
+            $votePath = '/vote';
+        }
+
+        $voteNode->setAttribute("collectionUri",$path);
+
+        
+        $magickey =  $this->getParameter($path,"magickey");
+        if (!$magickey) {
+            $magickey = __FILE__. __LINE__.$voteId;
+        }
+        
+        $cookiename = "VoteFluxcms".$voteId;
+        $cookiemd5 = md5($_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$magickey.$date1);
+        $cookiemd52 = md5($_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$magickey.$date2);
+        $showResults = false;
+
+        // do i want to vote?
         $magickey =  $this->getParameter($path,"magickey");
         if (!$magickey) {
             $magickey = __FILE__. __LINE__.$voteId;
@@ -105,12 +183,14 @@ class bx_plugins_vote extends bx_plugin implements bxIplugin {
         $cookiemd52 = md5($_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR'].$magickey.$date2);
         $showResults = false;
         $thanks = false;
+
         // do i want to vote?
-        if (isset($_POST['votesubmit']) && isset($_POST['selection']) && (!$_POST['selection'] || $_POST['selection'] == 'null')) {
+       if (isset($_POST['votesubmit']) && isset($_POST['selection']) && (!$_POST['selection']  || $_POST['selection'] == 'null')) {
             $showResults = true;
         } else if (isset($_POST['votesubmit']) && isset($_COOKIE[$cookiename])) {
+       
             // Am I allowed to vote?
-            if ($_COOKIE[$cookiename] == $cookiemd5 || $_COOKIE[$cookiename] == $cookiemd52) {
+            if (($_COOKIE[$cookiename] == $cookiemd5 || $_COOKIE[$cookiename] == $cookiemd52) && isset($_POST['selection'])) {
                 // vote
                 $query = "insert into ".$GLOBALS['POOL']->config->getTablePrefix()."vote (voteid, useragent, ip, datum, antw) values($voteId, ".$GLOBALS['POOL']->db->quote($_SERVER['HTTP_USER_AGENT']).", ".$GLOBALS['POOL']->db->quote($_SERVER['REMOTE_ADDR']).", now(), '". (int) $_POST['selection']."')" or die("no way");
                 $GLOBALS['POOL']->db->query($query);
@@ -128,8 +208,8 @@ class bx_plugins_vote extends bx_plugin implements bxIplugin {
         }
         
         if ($showResults) {
+     
             $query = "select antw , count(*) as c from ".$GLOBALS['POOL']->config->getTablePrefix()."vote where voteid = ".$voteId." group by antw;";
-            
             
             $res = $GLOBALS['POOL']->db->query($query);
             $rslts = $res->fetchAll(MDB2_FETCHMODE_ASSOC);
@@ -138,22 +218,33 @@ class bx_plugins_vote extends bx_plugin implements bxIplugin {
             foreach ($rslts as $key => $value) {
                 @$countall += $value['c'];
             }
-            $xp = new domxpath($dom);
+          
             foreach($rslts as $rslt) {
-                $results = $xp->query("/vote/answer[@key = '".$rslt['antw']."']");
+            $path = $votePath . "/answer[@key = '".$rslt['antw']."']";
+
+                $results = $xp->query($path);
                 if ($results->length > 0 ) {
                     $results->item(0)->setAttribute('count',floor($rslt['c']/$countall*100));
+                    $results->item(0)->setAttribute('quantity',$rslt['c']);
                 }
-                
             }
-            $dom->documentElement->setAttribute("results","true") ;
+            $voteNode->setAttribute("results","true") ;
             if ($thanks) {
-                $dom->documentElement->setAttribute("thanks","true") ;
+                $voteNode->setAttribute("thanks","true") ;
             }
-            return $dom;
-        } else {
-            return $dom;
         }
+        
+        if (!$singleVote) {
+            $dom2 = new domDocument;
+            $domNode = $dom2->importNode($voteNode, true);
+            $dom2->appendChild($domNode);
+            
+            $dom = $dom2;
+        }else {
+            $dom->appendChild($voteNode);
+        }
+        
+        return $dom;
         
     }
     
