@@ -168,7 +168,12 @@ class XML_db2xml {
             $FormatClass = "XML_db2xml_Format_$Format";
         }
         $this->dsn = $dsn;
-
+        
+        if (is_object($dsn) && $dsn->isUtf8) {
+            $this->encoding_from = "UTF-8";
+            $this->use_iconv = true;
+        }
+        
         $this->Format = new $FormatClass($this);
         $this->InputClasses = $InputClasses;
 
@@ -324,7 +329,7 @@ class XML_db2xml {
     {
         if ($this->use_iconv)
         {
-//			 Notice: iconv(): Unknown error (0) in /home/bitlib2/php/XML/db2xml.php on line 327
+            // Notice: iconv(): Unknown error (0) in /home/bitlib2/php/XML/db2xml.php on line 327
 // strange messaages as in 4.3.0-dev, turn them off
              $text = @iconv($this->encoding_from,$this->encoding_to,preg_replace('/\&amp;([#a-z0-9A-Z]+);/','&$1;',str_replace('&','&amp;',$text)));
              if ($stringReplace) {
