@@ -227,7 +227,7 @@ function toggleAdvanced() {
 function showAdvanced() {
     var img = document.getElementById("advanced_triangle");
     img.src = img.src.replace(/\/[^\/]*_klein.gif/,"/open_klein.gif");
-    for(var x = 1;x<=6;x++){
+    for(var x = 1;x<=7;x++){
         var tr = document.getElementById("advanced"+x);
         tr.style.display = "";
     }
