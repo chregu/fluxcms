@@ -67,8 +67,24 @@ function dbforms2_formData() {
 			} 
 		}
 		if (tagNS[0] && tagNS[0].childNodes[0]) {
-			return tagNS[0].childNodes[0].data;
-		} else {
+            if (tagNS[0].childNodes[0].nextSibling) {
+                str = '';
+                nd = tagNS[0].childNodes[0];
+                while(true) {
+                    str+= nd.nodeValue;
+                    nd = nd.nextSibling;
+                    if (!nd) {
+                        break;
+                    }
+                }
+                
+                return str;
+            }
+            
+            return tagNS[0].childNodes[0].data;
+		
+        
+        } else {
 			return null;
 		}
     }
