@@ -371,6 +371,25 @@
         </tr>
     </xsl:template>
 
+    <xsl:template match="input[@type='file_browser']" mode="xhtml">
+        <tr class="formRow">
+            <td class="formHeader">
+                <label for="field_{@name}">
+                    <xsl:value-of select="@descr"/>
+                </label>
+            </td>
+            <td class="formInput">
+                <input xsl:use-attribute-sets="standardInputElement" disabled="true" id="field_{@name}">
+                    <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+                    <xsl:apply-templates mode="xhtml"/>
+                </input>
+                <xsl:text> </xsl:text>
+
+                <input type="button" onclick="dbforms2_common.openFileBrowser('{@name}')" value="..."/>
+            </td>
+        </tr>
+    </xsl:template>
+
     <xsl:template match="default|script" mode="xhtml"></xsl:template>
 
     <xsl:template match="*" mode="xhtml">
