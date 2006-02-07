@@ -29,6 +29,18 @@ var sActiveFolder ;
 var bIsLoaded = false ;
 var iIntervalId ;
 
+// copied from browser.html
+function GetUrlParam( paramName )
+{
+	var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' ) ;
+	var oMatch = oRegex.exec( window.top.location.search ) ;
+	
+	if ( oMatch && oMatch.length > 1 )
+		return oMatch[1] ;
+	else
+		return '' ;
+}
+
 var oListManager = new Object() ;
 
 oListManager.Init = function()
@@ -143,9 +155,9 @@ function LoadFolders( folderPath )
 		sActiveFolder = folderPath ;
 		oConnector.CurrentFolder = sParentFolderPath
 		oConnector.SendCommand( 'GetFolders', null, GetFoldersCallBack ) ;
-	}
-	else
-		OpenFolder( '/' ) ;
+	} else {
+		OpenFolder('/') ;
+    }
 }
 
 function GetFoldersCallBack( fckXml )
@@ -177,7 +189,12 @@ function SetResourceType( type )
 window.onload = function()
 {
 	oListManager.Init() ;
-	LoadFolders( '/' ) ;
+    var folder = '/';
+    var sRootPath = GetUrlParam('RootPath') ;
+    if ( sRootPath.length > 0 )
+            folder = sRootPath;
+
+	LoadFolders(folder) ;
 }
 		</script>
 	</head>
