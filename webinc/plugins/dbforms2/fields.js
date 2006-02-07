@@ -411,8 +411,16 @@ function dbforms2_field_file(DOMNode) {
 	
 }
 	
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_file.prototype = new dbforms2_field();
+ 
+
+function dbforms2_field_file_browser(DOMNode) {
+    this.init(DOMNode);
+    
+}
+
+// dbforms2_field_filebrowser inherits from dbforms2_field
+dbforms2_field_file_browser.prototype = new dbforms2_field();
  
 
 
