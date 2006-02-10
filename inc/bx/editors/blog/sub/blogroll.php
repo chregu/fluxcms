@@ -36,11 +36,11 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
             $data = $data['category'];
             $id = (int) $data['id'];
             $quoted = $this->quotePostData($data);
-            
+            $quoted['changed'] = 'now()';
             if($id != 0) {
-                $query = $this->getUpdateQuery('bloglinkscategories', $quoted, array('name', 'rang'), $id);
+                $query = $this->getUpdateQuery('bloglinkscategories', $quoted, array('name', 'rang','changed'), $id);
             } else {
-                $query = $this->getInsertQuery('bloglinkscategories', $quoted, array('name', 'rang'));
+                $query = $this->getInsertQuery('bloglinkscategories', $quoted, array('name', 'rang','changed'));
                 $id = $this->lastInsertId;
             }
             $res = $this->dbwrite->query($query);
@@ -50,11 +50,11 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
             $data = $data['link'];
             $id = (int) $data['id'];
             $quoted = $this->quotePostData($data);
-            
+            $quoted['changed'] = 'now()';
             if($id != 0) {
-                $query = $this->getUpdateQuery('bloglinks', $quoted, array('bloglinkscategories', 'text', 'link','rang'), $id);
+                $query = $this->getUpdateQuery('bloglinks', $quoted, array('bloglinkscategories', 'text', 'link','rang','changed'), $id);
             } else {
-                $query = $this->getInsertQuery('bloglinks', $quoted, array('bloglinkscategories', 'text', 'link','rang'));
+                $query = $this->getInsertQuery('bloglinks', $quoted, array('bloglinkscategories', 'text', 'link','rang','changed'));
                 $id = $this->lastInsertId;
             }
             $res = $this->dbwrite->query($query);
