@@ -20,7 +20,7 @@ class bx_plugins_basket extends bx_plugin {
     private $storage = null;    
     private $idprefx = '';
     
-    public function __construct($mode) { 
+    protected function __construct($mode) { 
         @session_start();
         if (!isset($_SESSION['basket'])) {
             $_SESSION['basket'] = array();
@@ -31,7 +31,7 @@ class bx_plugins_basket extends bx_plugin {
         
     }
     
-    public static function getInstance($mode) {
+    public static function getInstance($mode='') {
         if (!isset(bx_plugins_basket::$instance[$mode])) {
             bx_plugins_basket::$instance[$mode] = new bx_plugins_basket($mode);
         }
@@ -70,22 +70,39 @@ class bx_plugins_basket extends bx_plugin {
         
             $db2xml = new XML_db2xml(null, $this->basketname);
             $domdoc->loadXML('<basket/>');
+            
+           
             if (isset($this->storage[$this->basketname]['basket'])) { 
                 foreach($this->storage[$this->basketname]['basket'] as $idfield => $opts) {
+                    
                     $e = $domdoc->createElement('entry');
                     if ($e) {
                         $e->setAttribute('idfield', $idfield);
+                        
                         if ($opts && sizeof($opts) > 0) {
-                            bx_helpers_eb::array2Dom($opts, $domdoc, $e);
-                        } elseif (method_exists($this->baskethandler, 'getItemInfo')) {
+                            bx_helpers_xml::array2Dom($opts, $domdoc, $e);
+                        } 
+                        
+                        if (method_exists($this->baskethandler, 'getItemInfo')) {
                             $dbprms = $this->baskethandler->getItemInfo($idfield, $this->basketname);
-                            bx_helpers_eb::array2Dom($dbprms, $domdoc, $e);
+                            bx_helpers_xml::array2Dom($dbprms, $domdoc, $e);
                         }
                     }
                     
                     $domdoc->documentElement->appendChild($e);
                 }
             }
+            
+            /*FIXME: Not really what we want ;) */
+            if (isset($this->storage[$this->basketname]['checkout'])) {
+                $c = $domdoc->createElement('checkout');
+                if ($c) {
+                    bx_helpers_xml::array2Dom($this->storage[$this->basketname]['checkout'], $domdoc, $c);
+                    $domdoc->documentElement->appendChild($c);
+                }
+            }
+            
+            
         }
 
         return $domdoc;
@@ -93,7 +110,7 @@ class bx_plugins_basket extends bx_plugin {
     }
     
 
-    public function getBasket($basketname) {
+    public function &getBasket($basketname) {
         $bn = ($basketname!=null) ? $basketname : $this->basketname;
         if (isset($this->storage[$bn])) {
             return $this->storage[$bn];
@@ -131,9 +148,11 @@ class bx_plugins_basket extends bx_plugin {
     
     
     private function removeHandler($path, $id) {
+        
         if (isset($_REQUEST[$this->basketname]['remove'])) {
             foreach($_REQUEST[$this->basketname]['remove'] as $idfield=>$value) {
                 if (isset($this->storage[$this->basketname]['basket'][$idfield])) {
+                    
                     unset($this->storage[$this->basketname]['basket'][$idfield]);
                 }
             }
@@ -141,10 +160,23 @@ class bx_plugins_basket extends bx_plugin {
     }
     
     
+    private function confirmpaymentHandler($path, $id) {
+        $prms=array();
+        if (isset($_REQUEST[$this->basketname])) {
+            $prms = $_REQUEST[$this->basketname];
+        }
+        
+        if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'confirmpaymentHandler')) {
+            $this->baskethandler->confirmpaymentHandler($path, $id, $this->getBasket($this->basketname), $prms);
+        }
+        
+    }
+    
+    
     private function checkoutHandler($path, $id) {
         $this->storage[$this->basketname]['checkout'] = $this->getPayload();
         if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'checkoutHandler')) {
-            $this->baskethandler->checkoutHandler($path, $id, $this->getBasket());
+            $this->baskethandler->checkoutHandler($path, $id, $this->getBasket($this->basketname));
         }
     }
     
