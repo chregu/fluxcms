@@ -26,7 +26,7 @@
             <head>
                 <link rel="stylesheet" href="{$webroot}/themes/standard/admin/css/blog.css" type="text/css"/>
                 <link rel="stylesheet" href="{$webroot}/themes/standard/admin/css/formedit.css" type="text/css"/>
-                <script tyoe="text/javascript" src="{$webroot}admin/webinc/js/overview.js"></script>
+                <script type="text/javascript" src="{$webroot}admin/webinc/js/overview.js"></script>
                 <script type="text/javascript" language="JavaScript" src="{$webroot}webinc/js/formedit.js">
                     <xsl:text> </xsl:text>
                 </script>

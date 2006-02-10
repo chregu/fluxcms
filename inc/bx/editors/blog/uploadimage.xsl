@@ -35,7 +35,7 @@
                 </form>
 				<div id="wait_layer" style="background-color: #ffffff; text-align:center; border:#000000 solid 1px; position:absolute; width:300px; height:115px; z-index:1; left: 200px; top: 200px; visibility: hidden">
 					<h3>Upload in progress</h3>
-					<p><img src="/themes/standard/admin/images/wait_bar.gif" /><br />
+					<p><img src="{$webroot}themes/standard/admin/images/wait_bar.gif" /><br />
 					File is uploading, please wait. This window will be closed after upload.<br />
 					</p>
 				</div>

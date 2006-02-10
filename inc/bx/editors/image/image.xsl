@@ -129,7 +129,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/
 	<xsl:template name="progressbar">
 		<div id="wait_layer" style="background-color: #ffffff; text-align:center; border:#000000 solid 1px; position:absolute; width:300px; height:115px; z-index:50; left: 200px; top: 200px; visibility: hidden">
 			<h3>Image modification in progress</h3>
-			<p><img src="/themes/standard/admin/images/wait_bar.gif" /><br />
+			<p><img src="{$webroot}themes/standard/admin/images/wait_bar.gif" /><br />
 			Image will be modified, please wait. This window will be closed after success.<br />
 			</p>
 		</div>
