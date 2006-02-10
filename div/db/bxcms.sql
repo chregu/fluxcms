@@ -97,7 +97,7 @@ CREATE TABLE `##bxcms_##bloglinks` (
   `rss_link` varchar(200) default '',
   `rel` varchar(200) default '',
   `bloglinkscategories` int(11) default '0',
-  `changed` timestamp NULL default NULL,
+  `changed` timestamp NOT NULL,
   `rang` int(11) default '0',
   `description` text,
   `date` datetime default NULL,
