@@ -239,6 +239,13 @@ if ($lastVersion < 6328) {
     doQuery("ALTER TABLE `{tablePrefix}properties` CHANGE `ns` `ns` VARCHAR( 40 ) DEFAULT 'DAV:' NOT NULL",false);
     updateLastVersion(6328);
 }
+
+if ($lastVersion < 6469) {
+
+    doQuery("ALTER TABLE `{tablePrefix}bloglinks` CHANGE `changed` `changed` TIMESTAMP NOT NULL",false);
+     updateLastVersion(6469);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
