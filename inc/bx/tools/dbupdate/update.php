@@ -241,15 +241,13 @@ if ($lastVersion < 6328) {
 }
 
 if ($lastVersion < 6469) {
-
     doQuery("ALTER TABLE `{tablePrefix}bloglinks` CHANGE `changed` `changed` TIMESTAMP NOT NULL",false);
      updateLastVersion(6469);
 }
 
 if ($lastVersion < 6478) {
-
-    doQuery("ALTER TABLE `bxcms_blogposts` ADD `blog_id` INT NOT NULL AFTER `id`",false);
-     updateLastVersion(6478);
+    addCol('blogposts','blog_id',"INT NOT NULL DEFAULT 1");
+    updateLastVersion(6478);
 }
 
 // delete config files
