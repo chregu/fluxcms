@@ -44,8 +44,6 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
             
             $this->deletePosts($data['deleteposts'],bx_streams_blog::getTablePrefix($id));
         }
-        bx_helpers_debug::dump_errorlog($data
-            );
             
         if(!empty($data['uri'])) {
             if ($data['delete'] == 1 && $data['id']) {
