@@ -288,6 +288,26 @@ and adjust the delicious template itself
     <script type="text/javascript">
     var liveSearchRoot = '<xsl:value-of select="$webroot"/>';
     var liveSearchParams = 'root=<xsl:value-of select="$webrootW"/><xsl:value-of select="$collectionUri"/>';
+<xsl:if test="$singlePost = 'true'">
+<xsl:variable name="entry" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div"/>
+<xsl:if test="$entry/@blog:post_comment_allowed='1'">
+
+/* cocomment elements*/
+var blogTool               = "Flux CMS";
+var blogURL                = "<xsl:value-of select="$blogroot"/>";
+var blogTitle              = "<xsl:value-of select="$dctitle"/>";
+var postURL                = "<xsl:value-of select="$blogroot"/>archive/<xsl:value-of select="$entry/@blog:post_uri"/>.html";
+var postTitle  = "<xsl:value-of select="$entry/xhtml:h2/text()"/>";
+var commentAuthorFieldName = "bx_fw[name]";
+var commentAuthorLoggedIn  = false;
+
+var commentFormID          = "bx_foo";
+var commentTextFieldName   = "bx_fw[comments]";
+var commentButtonName      = "send";
+
+</xsl:if>
+</xsl:if>
+    
     
     </script>
     
