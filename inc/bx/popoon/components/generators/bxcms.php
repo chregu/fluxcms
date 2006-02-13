@@ -68,7 +68,11 @@ class popoon_components_generators_bxcms extends popoon_components_generator {
         
         $xml = new DomDocument();
         
-        
+        $relink = $collection->getProperty('relink', 'bx:');
+        if ($relink && strpos($relink, 'http://') === 0) {
+            header("Location: $relink");
+            exit(0);
+        }
         
         $xml = $collection->getContentByRequest($this->getParameterDefault("filename"),$this->getParameterDefault("ext"));
         if ($lastModified = $collection->getLastModifiedResource()) {
