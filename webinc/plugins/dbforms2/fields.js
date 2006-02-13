@@ -415,7 +415,29 @@ dbforms2_field_file.prototype = new dbforms2_field();
  
 
 function dbforms2_field_file_browser(DOMNode) {
-    this.init(DOMNode);
+    var isImage;
+
+    this.init = function(DOMNode) {
+        this.initField(DOMNode);
+        this.isImage = false;
+        
+        if(DOMNode.getAttribute('isImage') == '1') {
+            this.isImage = true;
+            this.previewSmallDOMNode = document.getElementById(this.DOMNode.id + "_previewSmall");
+            this.previewLargeDOMNode = document.getElementById(this.DOMNode.id + "_previewLarge");
+        }
+        
+    }
+    
+    this.setValue = function(value) {
+        this.value = value;
+        this.updateDOMNodeValue();
+        if(this.isImage) {
+            this.previewSmallDOMNode.src = bx_webroot + DBFORMS2_IMG_PREVIEW_SMALL_DIR + value;
+            //this.previewLargeDOMNode.src = 
+            bx_tooltip.prepare(this.previewLargeDOMNode, bx_webroot + DBFORMS2_IMG_PREVIEW_LARGE_DIR + value);
+        }
+    }
     
 }
 

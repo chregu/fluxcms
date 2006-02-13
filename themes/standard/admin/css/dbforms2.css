@@ -12,14 +12,15 @@ body, td {
 td.formHeader {
     width: 180px;
     text-align: right;
-    vertical-align: top;
     padding: 7px;
     border-bottom: 1px solid #ddd;
+    vertical-align: top;
 }
 
 td.formInput {
     padding: 5px 0px 10px 0px;
     border-bottom: 1px solid #ddd;
+    vertical-align: top;
 }
 
 #form {
@@ -168,4 +169,38 @@ td.formInput {
     text-decoration: underline;
 }
 
+
+
+.smallImage {
+    border: 1px #dddddd solid;
+    padding-left: 1px;
+    padding-right: 1px;
+    margin-right: 1px;
+    color: #dddddd;
+}
+
+.imageTooltip {
+    color: #000;
+    background-color: #fff;
+    border: #333333 dotted 1px;
+    padding: 5px;
+}
+
+.imageTooltip span.top {
+    padding: 0px;
+}
+
+.pic {
+    margin: 0px;
+    margin-left: 10px;
+    padding: 0px;
+    cursor: pointer;
+}
+
+.pic img {
+    padding: 0px;
+    margin: 0px 20px 5px 10px;
+    
+    vertical-align: top;
+}
 

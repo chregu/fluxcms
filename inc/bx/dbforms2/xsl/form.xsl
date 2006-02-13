@@ -69,6 +69,12 @@
                     </script>
                 </xsl:if>                
 
+                <xsl:if test="/form/fields//input[@type='file_browser']">
+                    <script type="text/javascript" src="{$webroot}/webinc/js/bx/tooltip.js">
+                        <xsl:text> </xsl:text>
+                    </script>
+                </xsl:if>
+
                 <script type="text/javascript" src="{$webroot}webinc/js/bx/helpers.js">
                     <xsl:text> </xsl:text>
                 </script>
@@ -117,6 +123,9 @@
                     var bx_webroot = "<xsl:value-of select="$webroot"/>"; 
                     var dbforms2_formConfig = new Array();
                     dbforms2_formConfig['fields'] = new Array();
+                    var DBFORMS2_IMG_PREVIEW_SMALL_DIR = 'dynimages/0,30,scale/';
+                    var DBFORMS2_IMG_PREVIEW_LARGE_DIR = 'dynimages/200/';
+
 
                     <xsl:for-each select="$form/fields/*">
                         <xsl:choose>
@@ -156,7 +165,7 @@
                 </script>
 
             </head>
-            <body onload="dbforms2.init(dbforms2_formConfig);">
+            <body onload="dbforms2.init(dbforms2_formConfig); bx_tooltip.init();">
                 <div id="controls">
                     <div id="toolbar">
                         <span id="buttons">
@@ -378,7 +387,7 @@
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
-            <td class="formInput">
+            <td class="formInput" >
                 <input xsl:use-attribute-sets="standardInputElement" disabled="true" id="field_{@name}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
@@ -386,6 +395,12 @@
                 <xsl:text> </xsl:text>
 
                 <input type="button" onclick="dbforms2_common.openFileBrowser('{@name}')" value="..."/>
+                <xsl:if test="1 or @isImage = '1'">
+                    <span id="field_{@name}_previewLarge" class="pic">
+                        <img id="field_{@name}_previewSmall" src="{$webroot}/dynimages/0,35,scale/{@value}" border="0"/>
+                    </span>
+                </xsl:if>
+                
             </td>
         </tr>
     </xsl:template>

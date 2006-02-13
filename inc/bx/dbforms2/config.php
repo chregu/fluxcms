@@ -405,7 +405,7 @@ class bx_dbforms2_config {
             if($node->hasAttribute($attribute)) {
                 $value = $node->getAttribute($attribute);
                 
-                if($type === 'bool') {
+                if($type === 'bool' || $type === 'boolean') {
                     $value = strtolower($value) === 'true' ? TRUE : FALSE;
                 } 
 
