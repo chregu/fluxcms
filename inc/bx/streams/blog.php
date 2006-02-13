@@ -170,10 +170,16 @@ class bx_streams_blog extends bx_streams_buffer {
     }
     
     function stream_close() {
-
         $this->tablePrefix = self::getTablePrefix($this->path);
         
         if ($this->mode == 'w') {
+            
+        $parts =  bx_collections::getCollectionAndFileParts($this->path, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $p = $p['plugin'];
+        $colluri = $parts['coll']->uri;
+        $blogid =  $p->getParameter($colluri,"blogid");
+            
             $content = $this->html;
             $content = preg_replace('/(\.\.\/+)+files/', BX_WEBROOT.'files', $content);
             $this->dom = new DomDocument();
@@ -257,8 +263,15 @@ class bx_streams_blog extends bx_streams_buffer {
     }
     
     function insertEntry($id = null) {
-       $db = $GLOBALS['POOL']->db;
-       $dbwrite = $GLOBALS['POOL']->dbwrite;
+        
+        $parts =  bx_collections::getCollectionAndFileParts($this->path, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $p = $p['plugin'];
+        $colluri = $parts['coll']->uri;
+        $blogid =  $p->getParameter($colluri,"blogid");
+        
+        $db = $GLOBALS['POOL']->db;
+        $dbwrite = $GLOBALS['POOL']->dbwrite;
         $post = $this->getPostObject();
         if ($id) {
             $post->id = $id;
@@ -279,8 +292,9 @@ class bx_streams_blog extends bx_streams_buffer {
         }
          
         $query = "insert into ".$this->tablePrefix."blogposts 
-            (id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode) values 
+            (id, blog_id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode) values 
             ($post->id, 
+            $blogid, 
             ".$db->quote($post->author,'text').", 
             '".$post->date."',
             '".$post->expires."',

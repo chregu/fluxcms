@@ -85,5 +85,3 @@ class bx_helpers_debug {
         print "</pre>";
     }
 }
-
-

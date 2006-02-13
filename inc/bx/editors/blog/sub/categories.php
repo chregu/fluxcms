@@ -79,7 +79,5 @@ class bx_editors_blog_sub_categories extends bx_editors_blog_sub {
         $query = "SELECT * FROM ".$this->tablePrefix."blogcategories AS blogcategories ORDER BY l";
         return bx_helpers_db2xml::getXMLByQuery($query, TRUE);
     }
-    
-    
 }
 

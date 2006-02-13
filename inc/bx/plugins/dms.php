@@ -97,6 +97,7 @@ class bx_plugins_dms extends bx_plugin implements bxIplugin{
        }
         
        $this->mode = $this->getParameter($path,"mode");
+       bx_helpers_debug::webdump($this->getParameter($path,"mode"));
        if ($this->mode == 'rss') {
               $dir = '/'.preg_replace("#/*rss.xml$#","",$dir);
        } else {

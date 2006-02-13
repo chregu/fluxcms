@@ -27,11 +27,11 @@ class bx_helpers_sql {
         if(isset($id)) {
             $query.= " WHERE id=$id";
         }
-        
         return $query;
     }
     
     static public function getInsertQuery($table, $data, $fields = array(), $id = NULL) {
+        
         $qfields = array();
         $qvalues = array();
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
@@ -57,6 +57,7 @@ class bx_helpers_sql {
         
         $qfields = implode(',', $qfields);
         $qvalues = implode(',', $qvalues);
+        
         return "INSERT INTO ".$tablePrefix.$table." ($qfields) VALUES ($qvalues)";
     }
     

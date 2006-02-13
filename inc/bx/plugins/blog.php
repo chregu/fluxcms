@@ -395,6 +395,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
    }
     protected function getBlogPostData($id,$path,$doComments = false) {
+        $blogid = $this->getParameter($path,"blogid");
+        
         if (self::$timezone === NULL) {
                self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
         }
@@ -404,6 +406,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
         $xml = "";
         $query = 'SELECT blogposts.post_uri,blogposts.id,
+        blogposts.blog_id,
         blogposts.post_title,
         blogposts.post_uri,
         blogposts.post_content,
@@ -422,9 +425,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         count(blogcomments.id) as comment_count,
         unix_timestamp(max(blogcomments.changed)) as comment_lastmodified
         from '.$tablePrefix.'blogposts as blogposts left join '.$tablePrefix.'blogcomments as blogcomments on blogposts.id = blogcomments.comment_posts_id
-        and blogcomments.comment_status = 1
-        where blogposts.id = "'.$id.'" group by blogposts.id ';
-
+        and blogcomments.comment_status = 1';
+        
+        if(isset($blogid)) {
+            $query .= ' where blogposts.id = "'.$id.'" and blogposts.blog_id = "'.$blogid.'" group by blogposts.id ';
+        } else {
+            $query .= ' where blogposts.id = "'.$id.'" group by blogposts.id ';
+        }
         $res = $GLOBALS['POOL']->db->query($query);
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
@@ -436,6 +443,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             
             $xml .= '<div class="entry" ';
             $xml .= ' id = "entry'.$row['id'].'"';
+            $xml .= ' blog:blog_id="'.$row['blog_id'].'" ' ;
             $xml .= ' blog:post_uri="'.$row['post_uri'].'" ' ;
             $xml .= ' blog:post_date_iso="'.$row['post_date_iso'].'" ' ;
             $xml .= ' blog:post_status="'.$row['post_status'].'" ' ;
@@ -677,6 +685,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
 
     public function getResourceById($path, $id, $mock = false) {
+        
+        $blogid = $this->getParameter($path,"blogid");
+        
         $pathid = $path.$id;
         if (!isset($this->res[$pathid])) {
             $id = str_replace(".html","",$id);

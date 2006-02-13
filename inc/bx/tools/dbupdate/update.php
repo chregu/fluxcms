@@ -246,6 +246,12 @@ if ($lastVersion < 6469) {
      updateLastVersion(6469);
 }
 
+if ($lastVersion < 6478) {
+
+    doQuery("ALTER TABLE `bxcms_blogposts` ADD `blog_id` INT NOT NULL AFTER `id`",false);
+     updateLastVersion(6478);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");

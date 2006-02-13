@@ -28,8 +28,13 @@ class bx_plugins_blog_categories {
            from ".$tablePrefix."blogcategories as blogcategories
            left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts2categories.blogcategories_id = blogcategories.id 
            left join ".$tablePrefix."blogposts  on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id
-             where  ".$tablePrefix."blogposts.id > 0 and " . $tablePrefix."blogposts.post_status & " . $overviewPerm ."
-           group by ".$tablePrefix."blogposts2categories.blogcategories_id order by l desc";
+             where  ".$tablePrefix."blogposts.id > 0 and " . $tablePrefix."blogposts.post_status & " . $overviewPerm;
+           
+           if (isset($blogid)) {
+               $query .= " and blogpost.blog_id = '".$blogid."' ";
+           }
+           
+           $query .= " group by ".$tablePrefix."blogposts2categories.blogcategories_id order by l desc";
            
            $res = $GLOBALS['POOL']->db->query($query);
            $catCount = $res->fetchAll($query,true);

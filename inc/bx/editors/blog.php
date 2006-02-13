@@ -44,7 +44,9 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
             
             $this->deletePosts($data['deleteposts'],bx_streams_blog::getTablePrefix($id));
         }
-        
+        bx_helpers_debug::dump_errorlog($data
+            );
+            
         if(!empty($data['uri'])) {
             if ($data['delete'] == 1 && $data['id']) {
                    bx_streams_blog::deleteEntryDirect($data['id'],$id);
@@ -103,6 +105,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 
                 
                 fwrite($fd, '<entry xmlns="http://purl.org/atom/ns#">');
+                
                 fwrite($fd, '<title>'.$data['title'].'</title>');
                 fwrite($fd, '<id>'.$data['id'].'</id>');
                 fwrite($fd, '<uri>'.$data['uri'].'</uri>');
