@@ -30,7 +30,6 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function handlePOST($path, $id, $data) {
-        
         // pass request to a subeditor if required
         if(($subEditor = $this->getSubEditorNameById($id)) !== FALSE) {
             return $this->getSubEditorInstance($subEditor)->handlePOST($path, $id, $data);
@@ -76,7 +75,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 // remove  html enitities sometimes sent by fckeditor
                 foreach ($data as $key => $value) {
                     if (!is_array($data[$key])) {
-                        $data[$key] = html_entity_decode(str_replace("&amp;","&amp;amp;",$data[$key]),ENT_NOQUOTES,"UTF-8");
+                        $data[$key] = html_entity_decode(str_replace(array("&amp;","&lt;","&gt;","&quot;"),array("&amp;amp;","&amp;lt;","&amp;gt;","&amp;quot;"),$data[$key]),ENT_NOQUOTES,"UTF-8");
                     }
                 }
                 
