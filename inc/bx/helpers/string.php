@@ -139,7 +139,7 @@ class bx_helpers_string {
     }
 
     
-    function array2query ($params) {
+    static function array2query ($params) {
         $str = '';
         if(!empty($params)) {
             foreach ($params as $key => $value) {
@@ -206,7 +206,7 @@ class bx_helpers_string {
             <func:result select="translate($text,'ABCDEFGHIJKLMNOPQRSTUVWXYZ&#x20;&#x9;&#xA;&#xD;ÄäÜüÖöÏïçÊèÉéÊêÀàÂâÔô_;:\.!,?+$£*ç%&amp;/()=','abcdefghijklmnopqrstuvwxyz----aauuooiiceeeeeeaaaaoo')"/>
         </func:function>
     */
-    function urify($text) {
+    static function urify($text) {
         $newValue = strtolower(preg_replace("/[_;:\.!,?+$£*ç%&\/\(\)=]/","",$text));
         $newValue= preg_replace("/[öÖÔô]/u","o",$newValue);
         $newValue= preg_replace("/[üÜ]/u","u",$newValue);
@@ -242,7 +242,7 @@ class bx_helpers_string {
     * @return string string with formatted fields
     * @access public
     */
-    function formatTextFields($fields, $printKey = TRUE, $hideFields = array()) {
+    static function formatTextFields($fields, $printKey = TRUE, $hideFields = array()) {
         $out = '';
         foreach($fields as $key => $value) {
             if($printKey) {
@@ -265,14 +265,14 @@ class bx_helpers_string {
     * @return string trimmed string
     * @access public
     */
-    function trim($in) {
+    static function trim($in) {
         $in = trim($in);
         $in = preg_replace('/[\s]{2,}/u', ' ', $in);
         $in = preg_replace('/[\r\n]*/u', '', $in);
         return $in;
     }
     
-    function tidyfy ($string) {
+    static function tidyfy ($string) {
         $tidyOptions = array(
         "output-xhtml" => true,
         "show-body-only" => true,
@@ -298,7 +298,7 @@ class bx_helpers_string {
         return (string) $tidy;
     }
     
-    function makeLinksClickable($text) {
+    static function makeLinksClickable($text) {
         //$res=preg_replace("/((http|ftp)+(s)?:(\/\/)([\w]+(.[\w]+))([\w\-\.,@?^=%&:;\/~\+#]*[\w\-\@?^=%&:;\/~\+#])?)/i", "<a href=\"\\0\">\\0</a>", $text);
         $res = preg_replace( "#([\s\(\.\:]|\A)(http[s]?:\/\/[^\s^>^<^\)]*)#m", "$1<a href=\"$2\">$2</a>", $text);
         return $res;
