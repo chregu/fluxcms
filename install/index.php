@@ -145,6 +145,8 @@ function startPhing() {
         
     if ( version_compare($mysql_version,"4.1",">=")) {
         Phing::setProperty("DbHasUTF8","true");
+    } else {
+        Phing::setProperty("DbHasNoUTF8","true");
     }
     /* polish CLI arguments */
 

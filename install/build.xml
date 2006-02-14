@@ -102,7 +102,7 @@
 
     </target>
     
-    <target name="installDBUTF8" if="databaseRoot.User" description="Create the Database">
+    <target name="installDBUTF8" if="databaseRoot.User" unless="DbHasNoUTF8"  description="Create the Database">
         <mdb2 onerror="continue" url="${database.type}://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/"> CREATE DATABASE ${database.name} DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;</mdb2>
 
     </target>
