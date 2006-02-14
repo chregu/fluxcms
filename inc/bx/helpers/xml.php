@@ -32,5 +32,25 @@ class bx_helpers_xml {
         return FALSE;
     }
     
+    static function array2Dom($arr, &$dom, &$parent) {
+        if (is_array($arr)) {
+            $domNode=null;
+            foreach($arr as $key => $value) {
+                if (strpos($key, "@") === 0 && !is_array($value)) {
+                    $parent->setAttribute(substr($key,1), $value);
+                } else {
+                    $key = preg_match("#^[0-9]+$#", $key) ? "entry": $key;
+                    $domNode = $dom->createElement($key);
+                    if (is_array($value)) {
+                        bx_helpers_xml::array2Dom($value, $dom, $domNode);
+                    } else {
+                        $domNode->nodeValue = $value;
+                    }
+                    $parent->appendChild($domNode);
+                }
+            }
+            return $domNode;
+        }
+    }   
     
 }
