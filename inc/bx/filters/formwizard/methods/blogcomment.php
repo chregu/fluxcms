@@ -209,7 +209,7 @@ if (isset($fields['comment_remember'])) {
         .','.$db->quote($fields['email'],'text').','.$db->quote($fields['remote_ip']).',"'.gmdate('c').'",'.$db->quote(bx_helpers_string::utf2entities($fields['comments'])).','.$comment_status.','.$db->quote($fields['comment_notification']).',"'.$comment_notification_hash.'",'.$db->quote($fields['base'],'text').')';
         $res = $GLOBALS['POOL']->dbwrite->query($query);
         
-        $GLOBALS['POOL']->dbwrite->loadModule('extended'); 
+        $GLOBALS['POOL']->dbwrite->loadModule('Extended'); 
         $lastID = $GLOBALS['POOL']->dbwrite->getAfterID(null,$blogTablePrefix.'blogcomments');
         $fields['edituri'] = BX_WEBROOT.'admin/?edit=/forms/blogcomments/?id='.$lastID;
         $fields['uri'] .= '#comment'.$lastID;
