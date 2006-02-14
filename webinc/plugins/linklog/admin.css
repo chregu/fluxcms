@@ -1,0 +1,18 @@
+.linklog_editor_data{
+	border: 1px solid black;
+	width:270px; 
+	float:left; 
+	padding: 0 20px 0 20px;
+
+}
+
+
+.linklog_editor_tags{
+	margin-left: 320px;
+	border: 1px solid black;
+	width:180px; 
+}
+
+.clear { 
+	clear: both; 
+}
