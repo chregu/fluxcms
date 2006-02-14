@@ -58,3 +58,17 @@ function updateN2M(select,id) {
 	field.setFieldValue(select.options[select.selectedIndex].value,select.options[select.selectedIndex].text);
 	select.selectedIndex = 0;
 }
+
+dbforms2_helpers = function() {
+}
+
+
+dbforms2_helpers.isImage = function(src) {
+    if(src && typeof src == 'string') {
+        var matches = src.match(/.*\.(jpeg|jpg|png|tif|gif)$/g);
+        if(matches)
+            return true;
+    }
+    
+    return false;
+}

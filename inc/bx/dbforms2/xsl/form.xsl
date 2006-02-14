@@ -360,6 +360,7 @@
         </tr>
     </xsl:template>    
 
+    <!-- in fact this is fields_file and not fields_upload -->
     <xsl:template match="input[@type='upload']" mode="xhtml">
         <tr class="formRow">
             <td class="formHeader">
@@ -375,6 +376,11 @@
                 <xsl:text> </xsl:text>
 
                 <input type="button" onclick="openUploadIframe('{@name}')" value="..."/>
+                
+                <span id="field_{@name}_previewLarge" class="pic">
+                    <img id="field_{@name}_previewSmall" src="{$webroot}/dynimages/0,35,scale/{@value}" border="0"/>
+                </span>
+
                 <iframe id="field_{@name}_iframe" width="400" height="50" style="display: none"></iframe>
             </td>
         </tr>

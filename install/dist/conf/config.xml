@@ -60,8 +60,13 @@
 
         
     <image_allowed_sizes allowFromDB="true"  mergeArray="true">
-	<!-- 60 is needed for the kupu drawer -->
+	        <!-- 60 is needed for the kupu drawer -->
             <item>60</item>
+            
+            <!-- these two are needed for dbforms2 -->
+            <item>0,30,scale</item>
+            <item>200</item>
+
             <item>100</item>
             <item>370</item>
             <item>430</item>

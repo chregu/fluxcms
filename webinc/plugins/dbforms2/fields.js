@@ -381,6 +381,28 @@ dbforms2_field_fixed_datetime.prototype = new dbforms2_field_fixed();
 
 function dbforms2_field_file(DOMNode) {
     
+    var uploadDir = '';
+
+	this.init = function(DOMNode) {
+        this.initField(DOMNode);
+        this.uploadDir = this.DOMNode.getAttribute('uploaddir');
+        
+        this.previewSmallDOMNode = document.getElementById(this.DOMNode.id + "_previewSmall");
+        this.previewLargeDOMNode = document.getElementById(this.DOMNode.id + "_previewLarge");
+    }
+
+    this.setValue = function(value) {
+        this.value = value;
+        this.updateDOMNodeValue();
+        if(dbforms2_helpers.isImage(this.value)) {
+            this.previewSmallDOMNode.src = bx_webroot + DBFORMS2_IMG_PREVIEW_SMALL_DIR + this.uploadDir + value;
+            bx_tooltip.prepare(this.previewLargeDOMNode, bx_webroot + DBFORMS2_IMG_PREVIEW_LARGE_DIR + this.uploadDir + value);
+        } else {
+            this.previewSmallDOMNode.src = '';
+            bx_tooltip.remove(this.previewLargeDOMNode);
+        }
+    }
+    
 	this.setIframe = function() {
 		
 		var iframe = document.getElementById(this.DOMNode.id + "_iframe");
@@ -406,9 +428,6 @@ function dbforms2_field_file(DOMNode) {
 		iframe.style.display = "none";
 	}
 	
-	this.init(DOMNode);
-	
-	
 }
 	
 dbforms2_field_file.prototype = new dbforms2_field();
@@ -433,9 +452,13 @@ function dbforms2_field_file_browser(DOMNode) {
         this.value = value;
         this.updateDOMNodeValue();
         if(this.isImage) {
-            this.previewSmallDOMNode.src = bx_webroot + DBFORMS2_IMG_PREVIEW_SMALL_DIR + value;
-            //this.previewLargeDOMNode.src = 
-            bx_tooltip.prepare(this.previewLargeDOMNode, bx_webroot + DBFORMS2_IMG_PREVIEW_LARGE_DIR + value);
+            if(dbforms2_helpers.isImage(this.value)) {
+                this.previewSmallDOMNode.src = bx_webroot + DBFORMS2_IMG_PREVIEW_SMALL_DIR + value;
+                bx_tooltip.prepare(this.previewLargeDOMNode, bx_webroot + DBFORMS2_IMG_PREVIEW_LARGE_DIR + value);
+            } else {
+                this.previewSmallDOMNode.src = '';
+                bx_tooltip.remove(this.previewLargeDOMNode);
+            }
         }
     }
     

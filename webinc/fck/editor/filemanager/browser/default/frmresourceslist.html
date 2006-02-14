@@ -21,12 +21,15 @@
 	<head>
 		<link href="browser.css" type="text/css" rel="stylesheet">
 		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" src="../../../../../js/bx/tooltip.js"></script>
+		<script type="text/javascript" src="../../../../../plugins/dbforms2/helpers.js"></script>
 		<script language="javascript">
 
 var oListManager = new Object() ;
 
 oListManager.Init = function()
 {
+    bx_tooltip.init();
 	this.Table = document.getElementById('tableFiles') ;
 }
 
@@ -76,7 +79,12 @@ oListManager.AddFile = function( fileName, fileUrl, fileSize )
 	// Add the file name cell.
 	oCell = oRow.insertCell(-1) ;
 	oCell.innerHTML = '&nbsp;' + sLink + fileName + '</a>' ;
-	
+    //alert();
+	el  = oCell.getElementsByTagName('a').item(0);
+    if(dbforms2_helpers.isImage(fileUrl)) {
+        bx_tooltip.prepare(el, window.top.opener.bx_webroot + '/dynimages/200/' + fileUrl);
+    }
+    
 	// Add the file size cell.
 	oCell = oRow.insertCell(-1) ;
 	oCell.noWrap = true ;

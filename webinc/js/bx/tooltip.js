@@ -47,9 +47,9 @@ bx_tooltip.prepare = function(el, imgSrc) {
         src = t.replace(/.*src: (.*)$/, "$1");
     }
     
-    if(src.indexOf('http://') == -1)
+    /*if(src.indexOf('http://') == -1)
         src = 'http://' + src;
-    
+    */
 	tooltip = bx_tooltip.createEl("span", "imageTooltip");
 	
 	img = document.createElement("img");
@@ -62,6 +62,12 @@ bx_tooltip.prepare = function(el, imgSrc) {
 	el.onmouseover = bx_tooltip.showTooltip;
 	el.onmouseout = bx_tooltip.hideTooltip;
 	el.onmousemove = bx_tooltip.locate;
+}
+
+bx_tooltip.remove = function(element) {
+    element.onmouseover = null;
+	element.onmouseout = null;
+	element.onmousemove = null;
 }
 
 bx_tooltip.showTooltip = function(e){

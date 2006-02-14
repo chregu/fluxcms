@@ -31,7 +31,7 @@ td.formInput {
 }
 
 #form input, iframe, #form textarea, #form select {
-    border: solid  #006486 1px;
+    border: solid #006486 1px;
     z-index: 1;
 }
 
@@ -182,7 +182,7 @@ td.formInput {
 .imageTooltip {
     color: #000;
     background-color: #fff;
-    border: #333333 dotted 1px;
+    border: solid #ddd 1px;
     padding: 5px;
 }
 
