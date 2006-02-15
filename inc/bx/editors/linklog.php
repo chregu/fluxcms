@@ -79,7 +79,7 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
       * 
       * The "actual being called"-method when returning content
       * 
-      * @param String id $_GET-Value of URL, e.g /linklog/edit/1
+      * @param String id $_GET-Value of URL, e.g /$colluri/edit/1
       * @return datatype DomDocument to be processed by xsl
       *  	  
       * */
@@ -97,7 +97,12 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
 		// $this->debug($this->tablePrefix, "table prefix");
 		
 		$path = $_GET['path'];
-		$myPath = str_replace("admin/edit/linklog/","",$path);
+		
+		$parts = bx_collections::getCollectionUriAndFileParts($id);
+		
+		$colluri = $parts[colluri];
+		
+		$myPath = str_replace("admin/edit$colluri","",$path);
 		
         /* default behaviour is to return an empty document */
         if($myPath === ""){
@@ -160,11 +165,11 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
      * passing the postdata to local variables and basic check and set some values - pass tags to array 
 	 * */
     private function setPostData($data){
-	 	$this->title 		= utf8_encode(trim($data['title']));
-	 	$this->url 			= utf8_encode(str_replace("&","&amp;",trim($data['url'])));
+	 	$this->title 		= trim($data['title']);
+	 	$this->url 			= str_replace("&","&amp;",trim($data['url']));
 
 		// check description
-	 	$this->description 	= utf8_encode(trim($data['description']));
+	 	$this->description 	= trim($data['description']);
 		if($this->description == ''){
 			$this->description = 'no description';
 		}
