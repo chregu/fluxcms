@@ -369,7 +369,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
          */
         $map = array();
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            if(!is_array($map[$row['linkid']])){
+            // if(!is_array($map[$row['linkid']])){
+            if(!array_key_exists($row['linkid'], $map)){
                 $map[$row['linkid']] = array($tags[$row['tagid']]);
             }else{
                 array_push($map[$row['linkid']], $tags[$row['tagid']]);
