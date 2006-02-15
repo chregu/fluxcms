@@ -5,6 +5,12 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
     static protected $currentLinkId = FALSE;
     
     public function getEditContentById($id) {
+        $parts =  bx_collections::getCollectionAndFileParts($id, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $p = $p['plugin'];
+        $colluri = $parts['coll']->uri;
+        $blogid =  $p->getParameter($colluri,"blogid");
+        
         $catdel = isset($_GET['catdel']) ? (int) $_GET['catdel'] : FALSE;
         $linkdel = isset($_GET['linkdel']) ? (int) $_GET['linkdel'] : FALSE;
         
@@ -14,7 +20,7 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
             $this->dbwrite->query($this->getDeleteQuery('bloglinks', $linkdel));
         }
         
-        $dom = $this->getBlogrollXML();
+        $dom = $this->getBlogrollXML($blogid);
         
         if(self::$currentCategoryId == FALSE) {
             self::$currentCategoryId = isset($_GET['category']) ? $_GET['category'] : 0;
@@ -30,17 +36,24 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
     }
 
     public function handlePOST($path, $id, $data) {
+        $parts =  bx_collections::getCollectionAndFileParts($id, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $p = $p['plugin'];
+        $colluri = $parts['coll']->uri;
+        $blogid =  $p->getParameter($colluri,"blogid");
+        
         $dbwrite = $GLOBALS['POOL']->dbwrite;
         
         if(isset($data['category'])) {
             $data = $data['category'];
             $id = (int) $data['id'];
             $quoted = $this->quotePostData($data);
+            $quoted['blog_id'] = $blogid;
             $quoted['changed'] = 'now()';
             if($id != 0) {
-                $query = $this->getUpdateQuery('bloglinkscategories', $quoted, array('name', 'rang','changed'), $id);
+                $query = $this->getUpdateQuery('bloglinkscategories', $quoted, array('name', 'rang','changed','blog_id'), $id);
             } else {
-                $query = $this->getInsertQuery('bloglinkscategories', $quoted, array('name', 'rang','changed'));
+                $query = $this->getInsertQuery('bloglinkscategories', $quoted, array('name', 'rang','changed','blog_id'));
                 $id = $this->lastInsertId;
             }
             $res = $this->dbwrite->query($query);
@@ -50,11 +63,13 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
             $data = $data['link'];
             $id = (int) $data['id'];
             $quoted = $this->quotePostData($data);
+            $quoted['blog_id'] = $blogid;
             $quoted['changed'] = 'now()';
+            
             if($id != 0) {
-                $query = $this->getUpdateQuery('bloglinks', $quoted, array('bloglinkscategories', 'text', 'link','rang','changed'), $id);
+                $query = $this->getUpdateQuery('bloglinks', $quoted, array('bloglinkscategories', 'text', 'link','rang','changed','blog_id'), $id);
             } else {
-                $query = $this->getInsertQuery('bloglinks', $quoted, array('bloglinkscategories', 'text', 'link','rang','changed'));
+                $query = $this->getInsertQuery('bloglinks', $quoted, array('bloglinkscategories', 'text', 'link','rang','changed','blog_id'));
                 $id = $this->lastInsertId;
             }
             $res = $this->dbwrite->query($query);
@@ -62,11 +77,12 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
         }
     }
     
-    protected function getBlogrollXML() {
+    protected function getBlogrollXML($blogid) {
         $tp = $this->tablePrefix;
         $query = "SELECT * FROM ".$tp."bloglinkscategories AS bloglinkscategories "; 
         $query.= "LEFT JOIN ".$tp."bloglinks AS bloglinks ON bloglinks.bloglinkscategories = bloglinkscategories.id ";
-        $query.= "ORDER BY bloglinkscategories.rang, bloglinks.rang";
+        $query.= "WHERE bloglinkscategories.blog_id = ".$blogid;
+        $query.= " ORDER BY bloglinkscategories.rang, bloglinks.rang";
         
         return bx_helpers_db2xml::getXMLByQuery($query, TRUE);
     }

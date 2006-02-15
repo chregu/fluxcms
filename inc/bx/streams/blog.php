@@ -328,8 +328,8 @@ class bx_streams_blog extends bx_streams_buffer {
                         //use global tableprefix for sequences for that
                         $post->id = $GLOBALS['POOL']->dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix()."_sequences");
                          $query = "insert into ".$this->tablePrefix."blogposts 
-                         (id, post_author, post_date, post_title, post_content, post_uri) values
-                         ($post->id, '".bx_permm::getInstance()->getUsername()."', '".$post->date."', ".$db->quote($post->title).",".$db->quote($post->content).",".$db->quote($post->uri).")";
+                         (id, blog_id, post_author, post_date, post_title, post_content, post_uri) values
+                         ($post->id, $blogid, '".bx_permm::getInstance()->getUsername()."', '".$post->date."', ".$db->quote($post->title).",".$db->quote($post->content).",".$db->quote($post->uri).")";
                         $res = $dbwrite->query($query);
                     }
                 }
