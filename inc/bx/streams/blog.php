@@ -270,7 +270,7 @@ class bx_streams_blog extends bx_streams_buffer {
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
         
-        if($blogid = 0) {
+        if($blogid == null) {
             $blogid = 1;
         }
         
