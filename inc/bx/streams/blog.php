@@ -270,6 +270,10 @@ class bx_streams_blog extends bx_streams_buffer {
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
         
+        if($blogid = 0) {
+            $blogid = 1;
+        }
+        
         $db = $GLOBALS['POOL']->db;
         $dbwrite = $GLOBALS['POOL']->dbwrite;
         $post = $this->getPostObject();
