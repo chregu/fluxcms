@@ -210,6 +210,7 @@ $fd = fopen ($this->endImgFile,"w");
     function copyImage() {
         copy($this->oriImgFile, $this->endImgFile);
     }
+    
     function grayImage() {
         $this->resizeImage("-colorspace gray ");
     }
@@ -220,12 +221,20 @@ $fd = fopen ($this->endImgFile,"w");
         if(!isset($this->endImgWidth) && is_numeric($this->endsize)) {
             $this->endImgWidth = (int) $this->endsize;
             $this->endImgHeight = (int) round($this->endImgWidth * $this->oriImgHeight / $this->oriImgWidth);
-            $this->resizeImage();    
+            if($this->endImgWidth >= $this->oriImgWidth) {
+                $this->copyImage();
+            } else {
+                $this->resizeImage();
+            }
         }
         // 0,nn,scale
         else if(isset($this->endImgHeight) && ($this->endImgWidth == 0)) {
             $this->endImgWidth = (int) round($this->oriImgWidth / $this->oriImgHeight * $this->endImgHeight);
-            $this->resizeImage();    
+            if($this->endImgHeight >= $this->oriImgHeight) {
+                $this->copyImage();
+            } else {
+                $this->resizeImage();
+            }
         }
         
         
