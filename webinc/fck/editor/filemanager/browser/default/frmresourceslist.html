@@ -31,6 +31,15 @@ oListManager.Init = function()
 {
     bx_tooltip.init();
 	this.Table = document.getElementById('tableFiles') ;
+
+    // get the fluxcms webroot
+    var matches = window.document.URL.match(/(.*\/)webinc\//)
+    if(matches != null) {
+        this.BX_WEBROOT = matches[1];
+    } else {
+        this.BX_WEBROOT = '/';
+    }
+
 }
 
 oListManager.Clear = function()
@@ -82,7 +91,7 @@ oListManager.AddFile = function( fileName, fileUrl, fileSize )
     //alert();
 	el  = oCell.getElementsByTagName('a').item(0);
     if(dbforms2_helpers.isImage(fileUrl)) {
-        bx_tooltip.prepare(el, window.top.opener.bx_webroot + '/dynimages/200/' + fileUrl);
+        bx_tooltip.prepare(el, this.BX_WEBROOT + 'dynimages/200/' + fileUrl);
     }
     
 	// Add the file size cell.
