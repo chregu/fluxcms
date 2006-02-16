@@ -20,6 +20,7 @@
         <xsl:attribute name="onblur">if(dbforms2_globalObj[this.id]) dbforms2_globalObj[this.id].e_onBlur();</xsl:attribute>
         <xsl:attribute name="onmouseover">if(dbforms2_globalObj[this.id]) dbforms2_globalObj[this.id].e_onMouseOver();</xsl:attribute>
         <xsl:attribute name="onmouseout">if(dbforms2_globalObj[this.id]) dbforms2_globalObj[this.id].e_onMouseOut();</xsl:attribute>
+        <xsl:attribute name="onchange">if(dbforms2_globalObj[this.id]) dbforms2_globalObj[this.id].e_onChange();</xsl:attribute>
 
         <xsl:attribute name="class"></xsl:attribute>
     </xsl:attribute-set>
@@ -394,7 +395,7 @@
                 </label>
             </td>
             <td class="formInput" >
-                <input xsl:use-attribute-sets="standardInputElement" disabled="true" id="field_{@name}">
+                <input xsl:use-attribute-sets="standardInputElement" id="field_{@name}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>

@@ -61,6 +61,9 @@ function dbforms2_field(DOMNode) {
         this.DOMNode.focus();
     }
     
+    this.onChange = function() {
+    }
+    
     /**
      * e_XXX methods are called from onXXX handlers from a HTML element
      *
@@ -83,6 +86,10 @@ function dbforms2_field(DOMNode) {
     this.e_onMouseOut = function() {
         if(!this.hasFocus)
             this.DOMNode.className = '';
+    }
+    
+    this.e_onChange = function() {
+        this.onChange();
     }
     
 }
@@ -451,15 +458,24 @@ function dbforms2_field_file_browser(DOMNode) {
     this.setValue = function(value) {
         this.value = value;
         this.updateDOMNodeValue();
+        this.updatePreviewAndTooltip();
+    }
+    
+    this.updatePreviewAndTooltip = function() {
         if(this.isImage) {
             if(dbforms2_helpers.isImage(this.value)) {
-                this.previewSmallDOMNode.src = bx_webroot + DBFORMS2_IMG_PREVIEW_SMALL_DIR + value;
-                bx_tooltip.prepare(this.previewLargeDOMNode, bx_webroot + DBFORMS2_IMG_PREVIEW_LARGE_DIR + value);
+                this.previewSmallDOMNode.src = bx_webroot + DBFORMS2_IMG_PREVIEW_SMALL_DIR + this.value;
+                bx_tooltip.prepare(this.previewLargeDOMNode, bx_webroot + DBFORMS2_IMG_PREVIEW_LARGE_DIR + this.value);
             } else {
                 this.previewSmallDOMNode.src = '';
                 bx_tooltip.remove(this.previewLargeDOMNode);
             }
         }
+    }
+    
+    this.onChange = function() {
+        this.value = this.DOMNode.value;
+        this.updatePreviewAndTooltip();
     }
     
 }
