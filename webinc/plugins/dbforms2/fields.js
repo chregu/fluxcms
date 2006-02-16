@@ -401,13 +401,22 @@ function dbforms2_field_file(DOMNode) {
     this.setValue = function(value) {
         this.value = value;
         this.updateDOMNodeValue();
+        this.updatePreviewAndTooltip();
+    }
+
+    this.updatePreviewAndTooltip = function() {
         if(dbforms2_helpers.isImage(this.value)) {
-            this.previewSmallDOMNode.src = bx_webroot + DBFORMS2_IMG_PREVIEW_SMALL_DIR + this.uploadDir + value;
-            bx_tooltip.prepare(this.previewLargeDOMNode, bx_webroot + DBFORMS2_IMG_PREVIEW_LARGE_DIR + this.uploadDir + value);
+            this.previewSmallDOMNode.src = DBFORMS2_IMG_PREVIEW_SMALL_DIR + this.uploadDir + this.value;
+            bx_tooltip.prepare(this.previewLargeDOMNode, DBFORMS2_IMG_PREVIEW_LARGE_DIR + this.uploadDir + this.value);
         } else {
-            this.previewSmallDOMNode.src = '';
+            this.previewSmallDOMNode.src = DBFORMS2_IMG_NULLIMG;
             bx_tooltip.remove(this.previewLargeDOMNode);
         }
+    }
+
+    this.onChange = function() {
+        this.value = this.DOMNode.value;
+        this.updatePreviewAndTooltip();
     }
     
 	this.setIframe = function() {
@@ -464,10 +473,10 @@ function dbforms2_field_file_browser(DOMNode) {
     this.updatePreviewAndTooltip = function() {
         if(this.isImage) {
             if(dbforms2_helpers.isImage(this.value)) {
-                this.previewSmallDOMNode.src = bx_webroot + DBFORMS2_IMG_PREVIEW_SMALL_DIR + this.value;
-                bx_tooltip.prepare(this.previewLargeDOMNode, bx_webroot + DBFORMS2_IMG_PREVIEW_LARGE_DIR + this.value);
+                this.previewSmallDOMNode.src = DBFORMS2_IMG_PREVIEW_SMALL_DIR + this.value;
+                bx_tooltip.prepare(this.previewLargeDOMNode, DBFORMS2_IMG_PREVIEW_LARGE_DIR + this.value);
             } else {
-                this.previewSmallDOMNode.src = '';
+                this.previewSmallDOMNode.src = DBFORMS2_IMG_NULLIMG;
                 bx_tooltip.remove(this.previewLargeDOMNode);
             }
         }

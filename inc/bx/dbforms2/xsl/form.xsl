@@ -14,7 +14,8 @@
     <xsl:variable name="dataURI" select="concat($webroot,'admin/dbforms2/',$formName,'/data')"/>
     <xsl:variable name="chooserDataURI" select="concat($webroot,'admin/dbforms2/',$formName,'/chooser')"/>
     <xsl:variable name="liveSelectRootURI" select="concat($webroot,'admin/dbforms2/',$formName,'/liveselect')"/>
-
+    <xsl:variable name="DBFORMS2_IMG_NULLIMG" select="concat($webroot, 'themes/standard/admin/images/dbforms2/null.gif')"/>
+    
     <xsl:attribute-set name="standardInputElement">
         <xsl:attribute name="onfocus">if(dbforms2_globalObj[this.id]) dbforms2_globalObj[this.id].e_onFocus();</xsl:attribute>
         <xsl:attribute name="onblur">if(dbforms2_globalObj[this.id]) dbforms2_globalObj[this.id].e_onBlur();</xsl:attribute>
@@ -121,11 +122,13 @@
 
                 <script type="text/javascript">
                 
-                    var bx_webroot = "<xsl:value-of select="$webroot"/>"; 
+                    var bx_webroot = "<xsl:value-of select="$webroot"/>";
+                    var BX_WEBROOT = bx_webroot;
                     var dbforms2_formConfig = new Array();
                     dbforms2_formConfig['fields'] = new Array();
-                    var DBFORMS2_IMG_PREVIEW_SMALL_DIR = 'dynimages/0,30,scale/';
-                    var DBFORMS2_IMG_PREVIEW_LARGE_DIR = 'dynimages/200/';
+                    var DBFORMS2_IMG_PREVIEW_SMALL_DIR = BX_WEBROOT + 'dynimages/0,30,scale/';
+                    var DBFORMS2_IMG_PREVIEW_LARGE_DIR = BX_WEBROOT + 'dynimages/200/';
+                    var DBFORMS2_IMG_NULLIMG = '<xsl:value-of select="$DBFORMS2_IMG_NULLIMG"/>';
 
 
                     <xsl:for-each select="$form/fields/*">
@@ -370,7 +373,7 @@
                 </label>
             </td>
             <td class="formInput">
-                <input xsl:use-attribute-sets="standardInputElement" disabled="true" id="field_{@name}">
+                <input xsl:use-attribute-sets="standardInputElement" id="field_{@name}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
@@ -379,7 +382,7 @@
                 <input type="button" onclick="openUploadIframe('{@name}')" value="..."/>
                 
                 <span id="field_{@name}_previewLarge" class="pic">
-                    <img id="field_{@name}_previewSmall" src="{$webroot}/dynimages/0,35,scale/{@value}" border="0"/>
+                    <img id="field_{@name}_previewSmall" src="{$DBFORMS2_IMG_NULLIMG}" border="0"/>
                 </span>
 
                 <iframe id="field_{@name}_iframe" width="400" height="50" style="display: none"></iframe>
@@ -404,7 +407,7 @@
                 <input type="button" onclick="dbforms2_common.openFileBrowser('{@name}')" value="..."/>
                 <xsl:if test="1 or @isImage = '1'">
                     <span id="field_{@name}_previewLarge" class="pic">
-                        <img id="field_{@name}_previewSmall" src="{$webroot}/dynimages/0,35,scale/{@value}" border="0"/>
+                        <img id="field_{@name}_previewSmall" src="{$DBFORMS2_IMG_NULLIMG}" border="0"/>
                     </span>
                 </xsl:if>
                 
