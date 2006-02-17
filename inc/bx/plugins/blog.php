@@ -87,6 +87,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
 
     public function getContentById($path, $id) {
+        $blogid = $this->getParameter($path,"blogid");
+        
         $maxposts_param = $this->getParameter($path,'maxposts');
         if ($maxposts_param ) { 
             $maxPosts = $maxposts_param;
@@ -121,7 +123,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $params = array();
             }
             $plugin = "bx_plugins_blog_".$plugin;
-            $xml =  call_user_func(array($plugin,"getContentById"), $path, $id, $params,null,$tablePrefix);
+            $xml =  call_user_func(array($plugin,"getContentById"), $path, $id, $params,$this,$tablePrefix);
             if (is_string($xml)) {
                 $dom = new DomDocument();
                 if (function_exists('iconv')) {
@@ -169,6 +171,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $cat = "";
             $query .=" where (MATCH (post_content,post_title) AGAINST ('" . $_GET['q'] ."') or  post_title like '%" .  $_GET['q']  . "%') and ".
             $tablePrefix."blogposts.post_status & ".$this->overviewPerm;
+            $query .= " and blog_id = ".$blogid;
             $query .= " and post_date < '".$gmnow."'";
             $doComments = false;
             $total = $GLOBALS['POOL']->db->query($query)->fetchOne(0);
@@ -194,6 +197,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                            $cat = substr($cat,3);
                        }
                    }
+                   $archivewhere .= " and ".$tablePrefix."blogposts.blog_id = ". $blogid;
+                   
                    //remove real cat, if exists
                   $archivepath = preg_replace('#'.$cat.'$#','',$archivepath);
                }
@@ -233,7 +238,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     die();
                }
             }
-
             else if ($cat == "root") {
                 throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
@@ -265,6 +269,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $archivewhere = ' where ';
             }
             $archivewhere .= $tablePrefix.'blogposts.id > 0 and ' . $tablePrefix.'blogposts.post_status & ' . $this->overviewPerm ;
+            $archivewhere .= ' and '.$tablePrefix.'blogposts.blog_id = '.$blogid;
             if ($this->overviewPerm != 7) {
                 
                 $archivewhere .= " and post_date < '".$gmnow."'";
@@ -301,11 +306,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     }
                 }
                 $query .= " where post_uri = '$id'  ";
+                
                 $query .= ' and '.$tablePrefix.'blogposts.post_status & ' . $this->singlePostPerm ;
             }
             $doComments = true;
         }
-        
         $res = $GLOBALS['POOL']->db->query($query);
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
@@ -479,7 +484,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '<h2 class="post_title">'.$row['post_title'].'</h2>';
             // get categories
             $catres = $GLOBALS['POOL']->db->query("select ".$tablePrefix."blogcategories.id , fullname, fulluri from ".$tablePrefix."blogcategories
-            left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogcategories.id = ".$tablePrefix."blogposts2categories.blogcategories_id where ".$tablePrefix."blogposts2categories.blogposts_id = $id and ".$tablePrefix."blogcategories.status=1");
+            left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogcategories.id = ".$tablePrefix."blogposts2categories.blogcategories_id where ".$tablePrefix."blogposts2categories.blogposts_id = $id and ".$tablePrefix."blogcategories.blog_id = ".$blogid." and ".$tablePrefix."blogcategories.status=1");
             if (MDB2::isError($catres)) {
                 throw new PopoonDBException($catres);
             }

@@ -19,13 +19,16 @@ class bx_plugins_blog_montharchive {
     static function getContentById($path,$id,$params, $p = null, $tablePrefix = "") {
        $db = $GLOBALS['POOL']->db;
        $perm = bx_permm::getInstance();
+
+        $colluri =  bx_collections::getCollectionUri($path);
+        $blogid =  $p->getParameter($colluri,"blogid");
+        
        if ($perm->isLoggedIn()) {
            $overviewPerm = 3;
        } else {
            $overviewPerm = 1;
        }
-       
-       $q="select  count(*) as count, date_format(post_date,'%M') as monthlong, date_format(post_date,'%m') as month, year(post_date) as year from ".$tablePrefix."blogposts as blogposts  where  blogposts.id > 0 and blogposts.post_status & $overviewPerm group by year(post_date), month(post_date) order by post_date DESC";
+       $q="select  count(*) as count, date_format(post_date,'%M') as monthlong, date_format(post_date,'%m') as month, year(post_date) as year from ".$tablePrefix."blogposts as blogposts  where  blogposts.id > 0 and blog_id = ".$blogid." and blogposts.post_status & $overviewPerm group by year(post_date), month(post_date) order by post_date DESC";
        $res = $db->query($q);
        if ($db->isError($res)) {
            return "<error/>";

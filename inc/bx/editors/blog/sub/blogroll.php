@@ -10,7 +10,9 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
-        
+        if (!$blogid) {
+            $bogid = 1;
+        }
         $catdel = isset($_GET['catdel']) ? (int) $_GET['catdel'] : FALSE;
         $linkdel = isset($_GET['linkdel']) ? (int) $_GET['linkdel'] : FALSE;
         

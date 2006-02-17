@@ -256,6 +256,11 @@ if ($lastVersion < 6504) {
     updateLastVersion(6504);
 }
 
+if ($lastVersion < 6520) {
+    addCol('blogcategories','blog_id',"INT NOT NULL DEFAULT 1");
+    updateLastVersion(6520);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");

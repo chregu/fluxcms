@@ -30,6 +30,12 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function handlePOST($path, $id, $data) {
+        $parts =  bx_collections::getCollectionAndFileParts($id, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $p = $p['plugin'];
+        $colluri = $parts['coll']->uri;
+        $blogid =  $p->getParameter($colluri,"blogid");
+        
         // pass request to a subeditor if required
         if(($subEditor = $this->getSubEditorNameById($id)) !== FALSE) {
             return $this->getSubEditorInstance($subEditor)->handlePOST($path, $id, $data);
@@ -56,16 +62,34 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                     $tableprefix = $GLOBALS['POOL']->config->getTablePrefix();
 
                     $quoted = array();
-                    
                     $dataN['name'] = $data['newcategory'];
                     $dataN['uri'] = bx_helpers_string::makeUri($data['newcategory']);
                     $quoted = bx_helpers_sql::quotePostData($dataN);
-                    $quoted['parentid'] = 1;
-                    $query = bx_helpers_sql::getInsertQuery('blogcategories', $quoted, array('name', 'uri', 'parentid'));
+                    $rootQuery = "select id from ".$tableprefix."blogcategories where parentid = 0 and blog_id = ".$blogid;
+                    $rootid = $dbwrite->queryOne($rootQuery);
+                    if (!$rootid) {
+                        $data['name'] = "'All'";
+                        $data['uri'] = "'root'";
+                        $data['fulluri'] = "'root'";
+                        $data['parentid'] = "'0'";
+                        $data['fullname'] = "'root'";
+                        $data['changed'] = "now()";
+                        $data['status'] = "1";
+                        $data['blog_id'] = $blogid;
+                        
+                        $query = bx_helpers_sql::getInsertQuery('blogcategories', $data, array('name', 'uri', 'fulluri', 'parentid', 'fullname', 'changed', 'status', 'blog_id'));
+                        $GLOBALS['POOL']->dbwrite->query($query);
+                        $dom = $this->getCategoriesXML($blogid);
+                    }
                     
+                    
+                    $quoted['parentid'] = $rootid;
+                    
+                    $quoted['blog_id'] = $blogid;
+                    $query = bx_helpers_sql::getInsertQuery('blogcategories', $quoted, array('name', 'uri', 'parentid', 'blog_id'));
                     $res = $dbwrite->query($query);
                     if($res) {
-                        bx_helpers_sql::updateCategoriesTree();
+                        bx_helpers_sql::updateCategoriesTree($blogid);
                     }
                     //set checkbox
                     $data['categories'][$data['newcategory']] = "on";
@@ -178,6 +202,10 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
         $res = $GLOBALS['POOL']->dbwrite->query("delete from ". $tablePrefix."blogposts where id in ($ids)");
     }
     
+        protected function getCategoriesXML($blogid) {
+        $query = "SELECT * FROM ".$GLOBALS['POOL']->tableprefix."blogcategories AS blogcategories where blog_id = $blogid ORDER BY l";
+        return bx_helpers_db2xml::getXMLByQuery($query, TRUE);
+    }
+    
 }
-
 ?>

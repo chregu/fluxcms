@@ -6,7 +6,15 @@
  * */
 class bx_plugins_blog_categories {
     static function getContentById($path,$id,$params,$parent=null,$tablePrefix = "") {
-
+        $parts =  bx_collections::getCollectionAndFileParts($path, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $p = $p['plugin'];
+        $colluri = $parts['coll']->uri;
+        $blogid =  $p->getParameter($colluri,"blogid");
+        if (!$blogid) {
+            $bogid = 1;
+        }
+        
        if (isset($params[1]) && $params[1] == 'count') {
             $perm = bx_permm::getInstance();
             if ($perm->isLoggedIn()) {
@@ -18,24 +26,19 @@ class bx_plugins_blog_categories {
             } else {
                 $overviewPerm = 1;
             }
-           $query = "select id,parentid from ".$tablePrefix."blogcategories as blogcategories where status = 1";
+           $query = "select id,parentid from ".$tablePrefix."blogcategories as blogcategories where status = 1 and blog_id = ".$blogid;
            
            $res = $GLOBALS['POOL']->db->query($query);
            $allcats = $res->fetchAll($query,true);
-           
            $query =  "select blogcategories.id,count(*), 
            blogcategories.parentid
-           from ".$tablePrefix."blogcategories as blogcategories
+           from ".$tablePrefix."blogcategories as blogcategories    
            left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts2categories.blogcategories_id = blogcategories.id 
            left join ".$tablePrefix."blogposts  on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id
-             where  ".$tablePrefix."blogposts.id > 0 and " . $tablePrefix."blogposts.post_status & " . $overviewPerm;
-           
-           if (isset($blogid)) {
-               $query .= " and blogpost.blog_id = '".$blogid."' ";
-           }
+           where  ".$tablePrefix."blogposts.id > 0 and " . $tablePrefix."blogposts.post_status & " . $overviewPerm;
+           $query .= " and  blogcategories.blog_id = ".$blogid;
            
            $query .= " group by ".$tablePrefix."blogposts2categories.blogcategories_id order by l desc";
-           
            $res = $GLOBALS['POOL']->db->query($query);
            $catCount = $res->fetchAll($query,true);
            foreach($catCount as $key => $value) {
@@ -54,15 +57,16 @@ class bx_plugins_blog_categories {
 
         $tree = bx_plugins_blog::getTreeInstance($tablePrefix);
         $data = array("name","uri","fulluri", "status","id");
-        $query = $tree->children_query(1,$data,True);
+        $query = $tree->children_query_byname(array("blog_id"=>$blogid,"parentid" => 0),$data,True);
         if (isset($params[0])) {
             $lastslash = strrpos($params[0],"/");
             $cat = substr($params[0],0,$lastslash);
         } else {
             $cat = "";
         }
-        $res = $GLOBALS['POOL']->db->query($query);
         
+        
+        $res = $GLOBALS['POOL']->db->query($query);
         $oldlevel = 1;
         $dom = new DomDocument();
         $parent = $dom;

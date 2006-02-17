@@ -67,7 +67,7 @@ class bx_helpers_sql {
         return "DELETE FROM ".$tablePrefix.$table." WHERE id=$id"; 
     }
     
-    static public function updateCategoriesTree() {
+    static public function updateCategoriesTree($blogid) {
         // this is the same code as in forms/blogcategories/updatetree.php
         $dbwrite = $GLOBALS['POOL']->dbwrite;
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
@@ -83,13 +83,13 @@ class bx_helpers_sql {
         $tree->fullnameSeparator = " :: ";
         $data = array("name","uri","fulluri");
         
-        $rootQuery = "select id from ".$tablePrefix."blogcategories where parentid = 0";
+        $rootQuery = "select id from ".$tablePrefix."blogcategories where parentid = 0 and blog_id = ".$blogid;
         $rootid = $dbwrite->queryOne($rootQuery);
         if (!$rootid) {
             print '<font color="red">You don\'t have a root collection, please define one</font><br/>
                     Otherwise the category output will not be correct<br/><br/>';
         } else {
-            $tree->importTree($rootid,true,"name");
+            $tree->importTree($rootid,true,"name","","",(($blogid-1)*1000)+1);
         }    
     }
     

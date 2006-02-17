@@ -294,7 +294,6 @@ class bx_streams_blog extends bx_streams_buffer {
         foreach (self::$adminPlugins as $plugin) {
             $post = call_user_func(array("bx_plugins_blog_".$plugin,"onInsertNewPost"),$post);
         }
-         
         $query = "insert into ".$this->tablePrefix."blogposts 
             (id, blog_id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode) values 
             ($post->id, 
@@ -637,7 +636,13 @@ class bx_streams_blog extends bx_streams_buffer {
     
     
     function returnCategories() {
-        $res = $GLOBALS['POOL']->db->query("select id, fullname from ".$this->tablePrefix."blogcategories where status = 1 order by fullname ");
+        $parts =  bx_collections::getCollectionAndFileParts($this->path, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $p = $p['plugin'];
+        $colluri = $parts['coll']->uri;
+        $blogid =  $p->getParameter($colluri,"blogid");
+        
+        $res = $GLOBALS['POOL']->db->query("select id, fullname from ".$this->tablePrefix."blogcategories where status = 1 and ".$this->tablePrefix."blogcategories.blog_id = $blogid order by fullname ");
         $xml = '<categories xmlns="http://sixapart.com/atom/category#"  xmlns:dc="http://purl.org/dc/elements/1.1/">';
 
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {

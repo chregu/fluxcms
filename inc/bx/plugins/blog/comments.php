@@ -10,14 +10,20 @@
     static protected $timezone = null;
 
     static function getContentById($path,$id,$params,$parent=Null,$tablePrefix = "") {
+        $parts =  bx_collections::getCollectionAndFileParts($path, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $p = $p['plugin'];
+        $colluri = $parts['coll']->uri;
+        $blogid =  $p->getParameter($colluri,"blogid");
+        
         self::$parent = $parent;
         if (!isset($params[1])) {
             $params[1] = 1;
         }
         if(strpos($params[0], 'latest') !== FALSE) {
-            return self::getLatestComments($params[1], $tablePrefix);
+            return self::getLatestComments($params[1], $tablePrefix, $blogid);
         } else {
-            return self::getPostComments($params[0],1, $tablePrefix);
+            return self::getPostComments($params[0],1, $tablePrefix, $blogid);
         }
     }
     
@@ -61,7 +67,7 @@
     }
     
     
-    protected function getLatestComments($status = 1, $tablePrefix = null) {
+    protected function getLatestComments($status = 1, $tablePrefix = null, $blogid) {
         $gmnow = gmdate("Y-m-d H:i:s",time());
         if (!$tablePrefix) {
             $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
@@ -86,7 +92,7 @@
         }
        
         $query .= " comment_type from ".$tablePrefix."blogcomments as blogcomments
-        left join ".$tablePrefix."blogposts as blogposts on blogposts.id = blogcomments.comment_posts_id where blogposts.post_status & ".$overviewPerm . " and blogcomments.comment_status = $status ";
+        left join ".$tablePrefix."blogposts as blogposts on blogposts.id = blogcomments.comment_posts_id where blogposts.post_status & ".$overviewPerm . " and blogcomments.comment_status = $status and blogposts.blog_id = $blogid ";
         
         if ($overviewPerm != 7) {
             $query .= " and post_date < '".$gmnow."'";
@@ -100,7 +106,7 @@
         return '<comments>'.self::getCommentXML($res).'</comments>';
     }
 
-    protected function getPostComments($id, $status = 1, $tablePrefix = null ) {
+    protected function getPostComments($id, $status = 1, $tablePrefix = null, $blogid) {
         if (!$tablePrefix) {
             $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         }
@@ -113,10 +119,11 @@
                     comment_author_ip,
                     date_add(comment_date, INTERVAL ". self::$timezone." SECOND),
                     comment_type from ".$tablePrefix."blogcomments
-                    where comment_posts_id = $id and comment_status = $status order by comment_date desc limit 10");
+                    where comment_posts_id = $id and comment_status = $status  order by comment_date desc limit 10");
         if ($GLOBALS['POOL']->db->isError($res)) {
-		            throw new PopoonDBException($res);
+                    throw new PopoonDBException($res);
         }
+        
         return '<comments>'.self::getCommentXML($res).'</comments>';
     }
 }
