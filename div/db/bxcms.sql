@@ -39,6 +39,7 @@ CREATE TABLE `##bxcms_##blogcategories` (
   `parentid` int(11) NOT NULL default '1',
   `fullname` varchar(255) NOT NULL default '',
   `changed` timestamp NOT NULL,
+    `blog_id` int(11) NOT NULL default '1',
   `status` tinyint(4) NOT NULL default '1',
   PRIMARY KEY  (`id`),
   KEY `l` (`l`),
@@ -100,6 +101,7 @@ CREATE TABLE `##bxcms_##bloglinks` (
   `changed` timestamp NOT NULL,
   `rang` int(11) default '0',
   `description` text,
+  `blog_id` int(11) NOT NULL default '1',
   `date` datetime default NULL,
   PRIMARY KEY  (`id`),
   KEY `bloglinkscategories` (`bloglinkscategories`)
@@ -123,6 +125,7 @@ CREATE TABLE `##bxcms_##bloglinkscategories` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(200) NOT NULL default '',
   `changed` timestamp NOT NULL,
+  `blog_id` int(11) NOT NULL default '1',
   `rang` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 );
@@ -149,6 +152,7 @@ CREATE TABLE `##bxcms_##blogposts` (
   `post_title` text NOT NULL,
   `post_uri` varchar(255) NOT NULL default '',
   `changed` timestamp NOT NULL,
+  `blog_id` int(11) NOT NULL default '1',
   `post_comment_mode` tinyint(4) NOT NULL default '99',
   `post_status` tinyint(4) NOT NULL default '1',
   `post_lang` char(2) default NULL,
@@ -234,7 +238,7 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('outp
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('image_allowed_sizes','',1,5);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('defaultLanguage','',0,6);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitedescription','',0,7);
-INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6469',0,8);
+INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6520',0,8);
 
 --
 -- Table structure for table `##bxcms_##properties`
