@@ -119,7 +119,10 @@ class bx_plugins_basket extends bx_plugin {
     
     
     public function clearBasket($basketname) {
-        if (isset($this->storage[$basketname])) {
+        if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'clearBasket')) {
+            $this->baskethandler->clearBasket($basketname);
+        }
+        else if (isset($this->storage[$basketname])) {
             unset($this->storage[$basketname]);
         }    
     }
