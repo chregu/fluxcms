@@ -88,7 +88,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
     public function getContentById($path, $id) {
         $blogid = $this->getParameter($path,"blogid");
-        
+        if (!$blogid) {$blogid = 1;}
         $maxposts_param = $this->getParameter($path,'maxposts');
         if ($maxposts_param ) { 
             $maxPosts = $maxposts_param;
@@ -360,7 +360,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         } else {
             throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
         }
-
         $xml .= '</body></html>';
         $dom = new DomDocument();
 
@@ -372,7 +371,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml = str_replace("§amp;","&amp;",$xml);
             $dom->loadXML($xml);
         }
-
         return $dom;
     }
     
@@ -401,7 +399,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
    }
     protected function getBlogPostData($id,$path,$doComments = false) {
         $blogid = $this->getParameter($path,"blogid");
-        
+        if (!$blogid) {$blogid = 1;};
         if (self::$timezone === NULL) {
                self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
         }
@@ -596,7 +594,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '</div>';
 
         }
-
         return $xml;
     }
 
@@ -691,7 +688,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
     public function getResourceById($path, $id, $mock = false) {
         
-        $blogid = $this->getParameter($path,"blogid");
         
         $pathid = $path.$id;
         if (!isset($this->res[$pathid])) {

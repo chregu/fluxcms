@@ -12,9 +12,8 @@ class bx_plugins_blog_categories {
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
         if (!$blogid) {
-            $bogid = 1;
+            $blogid = 1;
         }
-        
        if (isset($params[1]) && $params[1] == 'count') {
             $perm = bx_permm::getInstance();
             if ($perm->isLoggedIn()) {
@@ -133,7 +132,6 @@ class bx_plugins_blog_categories {
             $parent = $parent->parentNode->parentNode;
         }
         $parent->insertBefore($coll,$parent->firstChild);
-
         return $dom;
     }
 

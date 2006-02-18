@@ -15,7 +15,7 @@
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
-        
+        if (!$blogid) {$blogid = 1;};
         self::$parent = $parent;
         if (!isset($params[1])) {
             $params[1] = 1;

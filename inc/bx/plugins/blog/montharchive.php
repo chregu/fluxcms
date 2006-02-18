@@ -22,6 +22,7 @@ class bx_plugins_blog_montharchive {
 
         $colluri =  bx_collections::getCollectionUri($path);
         $blogid =  $p->getParameter($colluri,"blogid");
+        if (!$blogid) {$blogid = 1;};
         
        if ($perm->isLoggedIn()) {
            $overviewPerm = 3;
