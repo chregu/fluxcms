@@ -50,7 +50,7 @@
                                 </map:when>
                                 <map:otherwise>
                                     <map:transform type="xslt" src="constant(BX_THEMES_DIR)/{config://theme}/{xslt}">
-                                        <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                                        <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                                         <map:parameter name="webrootLang" value="{webrootLang}"/>
                                         <map:parameter name="requestUri" value="{requestUri}"/>
                                         <map:parameter name="collectionUri" value="{collectionUri}"/>
@@ -99,8 +99,8 @@
                     </map:aggregate>
 
                     <map:transform type="xslt" src="constant(BX_THEMES_DIR)/{config://theme}/pagenotfound.xsl">
-                        <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
-                        <map:parameter name="webrootLang" value="'constant(BX_WEBROOT)'"/>
+                        <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                        <map:parameter name="webrootLang" value="constant(BX_WEBROOT)"/>
                         <map:parameter type="options" name="registerPhpFunctions" value="true"/>
   			<map:parameter type="allowedPhpFunctions" name="one" value="config://xslt_allowed_phpfunctions"/>    
                     </map:transform>
@@ -128,8 +128,8 @@
                     </map:aggregate>
 
                     <map:transform type="xslt" src="constant(BX_THEMES_DIR)/{config://theme}/pagenotallowed.xsl">
-                        <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
-                        <map:parameter name="webrootLang" value="'constant(BX_WEBROOT)'"/>
+                        <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                        <map:parameter name="webrootLang" value="constant(BX_WEBROOT)"/>
                         <map:parameter type="options" name="registerPhpFunctions" value="true"/>
                         <map:parameter type="allowedPhpFunctions" name="one" value="config://xslt_allowed_phpfunctions"/>    
                     </map:transform>
@@ -177,7 +177,7 @@
                         <map:when test=".tal">
 
                             <map:transform type="xsltal" src="constant(BX_THEMES_DIR)/{config://theme}/{xslt}">
-                                <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                                <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                                 <map:parameter name="webrootLang" value="{webrootLang}"/>
                                 <map:parameter name="requestUri" value="{requestUri}"/>
                                 <map:parameter name="collectionUri" value="{collectionUri}"/>
@@ -192,7 +192,7 @@
                         </map:when>
                         <map:otherwise>
                             <map:transform type="xslt" src="constant(BX_THEMES_DIR)/{config://theme}/{xslt}">
-                                <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                                <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                                 <map:parameter name="webrootLang" value="{webrootLang}"/>
                                 <map:parameter name="requestUri" value="{requestUri}"/>
                                 <map:parameter name="collectionUri" value="{collectionUri}"/>
