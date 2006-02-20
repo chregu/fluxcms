@@ -10,7 +10,7 @@ class bx_editors_blog_sub_categories extends bx_editors_blog_sub {
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
         if (!$blogid) {
-            $bogid = 1;
+            $blogid = 1;
         }
         
         
