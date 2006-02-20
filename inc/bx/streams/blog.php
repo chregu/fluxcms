@@ -119,7 +119,6 @@ class bx_streams_blog extends bx_streams_buffer {
                         }
                         
                     }
-                      
                     return $xml->saveXML();
                 }
                 $xsl = new DomDocument();
@@ -159,7 +158,6 @@ class bx_streams_blog extends bx_streams_buffer {
             $commentsNode = $xml->importNode($commentsXML->documentElement, TRUE);
             $xml->documentElement->appendChild($commentsNode);
         }
-        
         return $xml->saveXML();
     }
     
@@ -641,6 +639,9 @@ class bx_streams_blog extends bx_streams_buffer {
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
+        if (!$blogid) {
+            $blogid = 1;
+        }
         
         $res = $GLOBALS['POOL']->db->query("select id, fullname from ".$this->tablePrefix."blogcategories where status = 1 and ".$this->tablePrefix."blogcategories.blog_id = $blogid order by fullname ");
         $xml = '<categories xmlns="http://sixapart.com/atom/category#"  xmlns:dc="http://purl.org/dc/elements/1.1/">';
