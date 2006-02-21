@@ -89,7 +89,6 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
 	        $this->debug($id, "id");
         */
         
-        // $this->debug($this->tablePrefix, "this table prefix");
         
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
@@ -314,15 +313,19 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
     private function getTagsForLink($linkid, $asArray = false){
             /*
              * fetch tags
-             * @todo: make private method
              */
-            $query = 'SELECT '.$this->tablePrefix.'linklog_tags.name, '.$this->tablePrefix.'linklog_tags.id from '.$this->tablePrefix.'linklog_tags ' .
-                     'LEFT JOIN '.$this->tablePrefix.$this->links2tags.' ON '.$this->tablePrefix.'linklog_tags.id = '.$this->tablePrefix.$this->links2tags.'.tagid ' .
-                     'WHERE '.$this->tablePrefix.$this->links2tags.'.linkid='.$linkid; 
+            $query = 'SELECT '.$this->tablePrefix.'linklog_tags.name, '
+                    .$this->tablePrefix.'linklog_tags.id ' .
+                    'FROM '.$this->tablePrefix.'linklog_tags ' .
+                    'LEFT JOIN '.$this->tablePrefix.$this->links2tags.' ' .
+                    'ON '.$this->tablePrefix.'linklog_tags.id = '.$this->tablePrefix.$this->links2tags.'.tagid ' .
+                    'WHERE '.$this->tablePrefix.$this->links2tags.'.linkid='.$linkid;
+                     
             $res = $this->db->query($query);
             if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
             }
+            
             while($tag = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){              
                 $tagstring .= "".str_replace('&','&amp;',$tag['name'])." "; 
                 
@@ -353,8 +356,10 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
     }
 
     /**
-	* 
-    * @todo documentation
+	* updateLink
+    * 
+    * @param String linkid
+    * @return boolean true on success
     * 
     */
     private function updateLink($linkid){
@@ -396,8 +401,10 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
     }
 
     /**
+     * getSingleLinkFromDb
      * 
-     * @todo documentation
+     * @param int linkid
+     * @return array row out of db
      */
     private function getSingleLinkFromDb($linkid){
             /*
@@ -474,7 +481,8 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
         }
         $where = substr($where, 0, -2);
         $where .= ')';
-        $query = 'select id, fulluri from '.$this->tablePrefix.'linklog_tags where fulluri in '.$where;
+        $query = 'select id, fulluri from '.$this->tablePrefix.'linklog_tags ' .
+                 'WHERE fulluri in '.$where;
         $res = $this->db->query($query);
         if (MDB2::isError($res)) {
                throw new PopoonDBException($res);
@@ -517,7 +525,8 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
             exit;
         } 
 
-        $query      = 'SELECT id, name FROM '.$this->tablePrefix.'linklog_tags ORDER BY id DESC LIMIT 0,1';                    
+        $query      = 'SELECT id, name FROM '.$this->tablePrefix.'linklog_tags ' .
+                      'ORDER BY id DESC LIMIT 0,1';                    
         $res = $this->db->query($query);
         if (MDB2::isError($res)) {
               throw new PopoonDBException($res);
@@ -561,8 +570,10 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
      */
     private function deleteLink($linkid){
          // print $linkid;
-         $queries[] = 'DELETE FROM '.$this->tablePrefix.$this->links2tags.' WHERE linkid='.$linkid;
-         $queries[] = 'DELETE FROM '.$this->tablePrefix.$this->linksTable.' WHERE id='.$linkid;
+         $queries[] = 'DELETE FROM '.$this->tablePrefix.$this->links2tags.' ' .
+                      'WHERE linkid='.$linkid;
+         $queries[] = 'DELETE FROM '.$this->tablePrefix.$this->linksTable.' ' .
+                      'WHERE id='.$linkid;
          
          foreach($queries as $query){
             $res = $this->db->query($query);
@@ -574,30 +585,54 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
          return true;
     }
     
+    /**
+     * getTags
+     * 
+     * builds up the three, that one can see which tags are already used
+     * 
+     * @return String XML of tags
+     * <pre>
+     *  <tags>
+     *    <tag>
+     *      <name />
+     *      <id />
+     *      <numberentries />
+     *    </tag>
+     *    ...
+     *  </tags>
+     * </pre>
+     * */
     private function getTags(){
-    		$query = 'SELECT '.$this->tablePrefix.'linklog_tags.name, '.$this->tablePrefix.'linklog_tags.id, count( DISTINCT '.$this->tablePrefix.$this->linksTable.'.id ) AS c
-			 	FROM '.$this->tablePrefix.'linklog_tags
-				LEFT JOIN '.$this->tablePrefix.$this->links2tags.' ON '.$this->tablePrefix.'linklog_tags.id = '.$this->tablePrefix.$this->links2tags.'.tagid
-				LEFT JOIN '.$this->tablePrefix.$this->linksTable.' ON '.$this->tablePrefix.$this->links2tags.'.linkid = '.$this->tablePrefix.$this->linksTable.'.id
-				GROUP BY id
-				ORDER BY c DESC';
+    		$query = 'SELECT '.$this->tablePrefix.'linklog_tags.name, '
+                 .$this->tablePrefix.'linklog_tags.id, count( DISTINCT '
+                 .$this->tablePrefix.$this->linksTable.'.id ) AS c
+	             FROM '.$this->tablePrefix.'linklog_tags
+                 LEFT JOIN '.$this->tablePrefix.$this->links2tags.' ' .
+                 'ON '.$this->tablePrefix.'linklog_tags.id = ' .
+                $this->tablePrefix.$this->links2tags.'.tagid
+                 LEFT JOIN '.$this->tablePrefix.$this->linksTable.' ' .
+                 'ON '.$this->tablePrefix.$this->links2tags.'.linkid = '.
+                 $this->tablePrefix.$this->linksTable.'.id
+                GROUP BY id
+                ORDER BY c DESC';
             $res = $this->db->query($query);
             if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
                 exit;
             }
             
-            $xml = '<tags>';    			
+            $xml = '<tags>';                
             while($tag = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){ 
-				$xml .= "<tag><name>$tag[name]</name><id>$tag[name]</id><numberentries>$tag[c]</numberentries></tag>";
-            }		
-			$xml .= '</tags>';
-			
-			return $xml;
+                $xml .= "<tag>" .
+                        "<name>$tag[name]</name>" .
+                        "<id>$tag[name]</id>" .
+                        "<numberentries>$tag[c]</numberentries>" .
+                        "</tag>";
+            }        
+            $xml .= '</tags>';
+            
+            return $xml;
     }
-    
-    
-
 }
 
 ?>
