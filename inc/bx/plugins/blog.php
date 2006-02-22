@@ -532,7 +532,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                             if (!($value['status'] & $this->overviewPerm ) || ($value['lastModified'] && $value['lastModified'] >time())) {
                                 continue;
                             } else if ($count == 0) {
-                                $xml .= '<div class="post_related_entries">Related Entries:';
+                                $xml .= '<div class="post_related_entries"><i18n:text>Related Entries</i18n:text>:';
                             }
                             $count++;
                             if ($count > 5) {
