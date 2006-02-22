@@ -30,17 +30,7 @@
         </plugin>
 
     </plugins>
-    <plugins inGetChildren="false">
-	
-        <file name="xmlrpc"/>
-        <parameter type="pipeline" name="xslt" value="../standard/copy.xsl"/>
-        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
-
-        <plugin type="xmlrpc_weblog">
-
-        </plugin>
-    </plugins>
-
+    
     <plugins>
         <extension type="html"/>
         <parameter type="pipeline" name="xslt" value="blog.xsl"/>
@@ -76,7 +66,7 @@
 
     <plugins>
         <extension type="xml"/>
-        <file preg="#latestcomments$#"/>
+        <file preg="#comments$#"/>
         <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
         <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/comments2rss.xsl"/>
         <plugin type="blog">
@@ -84,8 +74,43 @@
             <parameter name="tableprefix" value=""/>
         </plugin>
     </plugins>
-   
+    
+    <plugins inGetChildren="false">
+	    <extension type="xml"/>
+        <file name="xmlrpc"/>
+         
+        <parameter type="pipeline" name="xslt" value="../standard/copy.xsl"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
 
+        <plugin type="xmlrpc_weblog">
+
+        </plugin>
+    </plugins>
+    
+   <plugins inGetChildren="false">
+	    <extension type="rsd"/>
+
+        <file name="xmlrpc"/>
+         
+        <parameter type="pipeline" name="xslt" value="../standard/copy.xsl"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+
+        <plugin type="xmlrpc_weblog">
+
+        </plugin>
+    </plugins>
+    
+    
+   <!-- catch all -->
+    <plugins>
+        
+        <parameter type="pipeline" name="xslt" value="blog.xsl"/>
+        <plugin type="blog">
+            <parameter name="tableprefix" value=""/>
+        </plugin>
+
+        <plugin type="navitree"></plugin>
+    </plugins>
 
     <filters>
         <extension type="html"/>
