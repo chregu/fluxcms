@@ -155,7 +155,7 @@ and adjust the delicious template itself
 
     <xsl:template match="xhtml:div[@class = 'comments']" mode="xhtml">
         <div id="googleAd"/>
-        <h3 class="blog">comments</h3>
+        <h3 class="blog"><i18n:text>Comments</i18n:text></h3>
         <xsl:apply-templates mode="xhtml"/>
         <xsl:if test="not(../xhtml:div[@class='comments_not'])">
         
@@ -404,7 +404,7 @@ var commentButtonName      = "send";
     <xsl:variable name="entry" select="../.."/>
         <xsl:if test="$entry[@blog:post_comment_allowed = 1  or @blog:comment_count &gt; 0]">
                 <a href="{xhtml:a/@href}">
-                Comments (<xsl:value-of select="."/>)
+                <i18n:text>Comments</i18n:text> (<xsl:value-of select="."/>)
                 </a>
         </xsl:if>
     </xsl:template>

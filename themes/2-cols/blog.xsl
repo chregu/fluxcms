@@ -1,4 +1,7 @@
-<xsl:stylesheet version="1.0" xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:bxf="http://bitflux.org/functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:php="http://php.net/xsl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rss="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" exclude-result-prefixes="php blog bxf xhtml rdf rss dc">
+<xsl:stylesheet version="1.0"
+
+ xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
+xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:bxf="http://bitflux.org/functions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:php="http://php.net/xsl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rss="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" exclude-result-prefixes="php blog bxf xhtml rdf rss dc i18n">
     <xsl:import href="master.xsl"/>
     <xsl:import href="../standard/common.xsl"/>
     <xsl:import href="../standard/plugins/blog.xsl"/>
@@ -153,7 +156,7 @@ and adjust the delicious template itself
 
     <xsl:template match="xhtml:div[@class = 'comments']" mode="xhtml">
         <div id="googleAd"/>
-        <h3 class="blog">comments</h3>
+        <h3 class="blog"><i18n:text>Comments</i18n:text></h3>
         <xsl:apply-templates mode="xhtml"/>
         <xsl:if test="not(../xhtml:div[@class='comments_not'])">
         
@@ -403,7 +406,7 @@ var commentButtonName      = "send";
      <xsl:variable name="entry" select="../.."/>
          <xsl:if test="$entry[@blog:post_comment_allowed = 1  or @blog:comment_count &gt; 0]">
                  <a href="{xhtml:a/@href}">
-                 Comments (<xsl:value-of select="."/>)
+                 <i18n:text>Comments</i18n:text> (<xsl:value-of select="."/>)
                  </a>
          </xsl:if>
     </xsl:template>
