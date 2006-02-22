@@ -5,6 +5,7 @@ class bx_collectionconfig {
     protected $configxml = null;
     protected $mode;
     protected $parameters = array();
+    protected $variables = array();
 
     public function __construct($uri, $mode) {
         $this->uri = $uri;
@@ -17,6 +18,8 @@ class bx_collectionconfig {
         $this->configxml->load("bxconfig://".$url);
         $xp = new domxpath($this->configxml);
         $xp->registerNamespace("xi","http://www.w3.org/2001/XInclude");
+        $xp->registerNamespace("bxcms","http://bitflux.org/config");
+        
         $res = $xp->query("//xi:include");
         foreach( $res as $node) {
             $href = $node->getAttribute("href");
@@ -30,8 +33,19 @@ class bx_collectionconfig {
             }
         }
         $this->configxml->xinclude();
+        //parse variables
+        $res = $xp->query("/bxcms:bxcms/bxcms:variable");
+        foreach( $res as $node) {
+            $name = $node->getAttribute("name");
+            if (!isset($this->variables[$name])) {
+                $this->variables[$name] = $node->getAttribute("value");
+            }
+        }
+        if (count($this->variables) == 0) {
+            $this->variables = null;
+        }
     }
-
+    
     public function getPlugins($name, $ext, $first = false) {
         $ext = strtolower($ext);
         $plugins = array();
@@ -264,6 +278,15 @@ class bx_collectionconfig {
             $pValue = $parameterNode->getAttribute('value');
             $pKey = $parameterNode->getAttribute('key');
             $pType == '' ? $pType = BX_PARAMETER_TYPE_DEFAULT : $pType;
+            //replace variables
+            if ($this->variables && $pValue{0} == '$') {
+                $vKey = substr($pValue,1);
+                if (isset($this->variables[$vKey])) {
+                    $pValue = $this->variables[$vKey];
+                }
+                
+            }
+            
             if(!empty($pName)) {
                 if ($pPrefix = $parameterNode->getAttribute('valuePrefix')) {
                     $pValue = constant($pPrefix).$pValue;
