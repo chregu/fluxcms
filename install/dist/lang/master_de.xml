@@ -12,6 +12,9 @@
      <message key="of"> von </message>
      <message key="Back to overview">Übersicht</message>
     <!-- blog stuff -->
+    <message key="Read whole post">Lese ganzen Beitrag</message>
+    <message key="Comments">Kommentare</message>
+    <message key="Related Entries">Ähnliche Beiträge</message>
     
     <message key="No new comments allowed (anymore) on this post.">Keine (weiteren) neue Kommentare erlaubt.</message>
 </catalogue>
