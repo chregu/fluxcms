@@ -301,6 +301,8 @@ class bx_config_generate {
         } else {
             fwrite($fd,'$bx_config->cacheDBOptions = true;'."\n");
         }
+        
+        fwrite($fd,'$bx_config->magicKey = "'.md5(time() . rand(0,1000000)).'";'."\n");
         fclose($fd);
     }
     static function replaceConstants($input) {
