@@ -20,6 +20,7 @@
     <message key="blogname_rssfeed">Blog-Name für den RSS-Feed. Falls dieses Feld leer ist wird 'Seiten-Name' verwendet</message>
     <message key="desc_rssfeed">Beschreibung für den RSS-Feed. Falls dieses Feld leer ist wird 'Seiten-Beschreibung' verwendet</message>
     <message key="Name of the site">Name der Seite</message>
+    <message key="blogCaptchaAfterDays">Nach wie vielen Tagen soll Captcha-Abfrage aktiviert werden</message>
     <message key="Subtitle for the site">Untertitel der Seite</message>
     <message key="motiv_help"><![CDATA[Mehr Motive sind unter <a href="http://intensivstation.ch/en/templates/bxcms/" 
     target="_blank">intensivstation.ch</a><br/>verfügbar(Überfahren Sie die Bilder mit der Maus<br/>um eine grössere Version zu sehen)]]></message>

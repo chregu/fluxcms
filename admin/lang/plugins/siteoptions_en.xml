@@ -2,6 +2,7 @@
 <catalogue>
     <message key="blogname_rssfeed">Name of the blog for the RSS feed. If empty, 'sitename' is taken.</message>
     <message key="desc_rssfeed">Description  for the RSS feed. If empty, 'sitedescription' is taken.</message>
+    <message key="blogCaptchaAfterDays">After how many days captcha should be activated</message>
     <message key="motiv_help"><![CDATA[More themes available at <a href="http://intensivstation.ch/en/templates/bxcms/" target="_blank">intensivstation.ch</a>.
                               <br/>(Hover over the picture to see a larger version).]]></message>
     <message key="default_blogcommentmode">Default Blog post comment mode. You can change this for each post individually later.</message>
