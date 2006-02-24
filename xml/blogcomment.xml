@@ -11,16 +11,22 @@
         <section id="1">
             <fields>
                 <field name="formerrors" type="formerrors" cssClass="wizardError"/>
+                <field name="captchaerrors" type="captchaerrors" cssClass="wizardError"/>
 
                 <group name="anfragen" type="table" cssClass="form" titleWidth="90" width="380">
                 
                     <field name="name" type="text" required="y" cssClass="formgenerell" titleCssClass="formHeader"/>
-                    <field name="email" type="text"  cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="email" type="text" cssClass="formgenerell" titleCssClass="formHeader"/>
                     <field name="url" type="text"  cssClass="formurl" titleCssClass="formurl" tdCssClass="formurl"/>
                     <field name="base" type="text"  cssClass="formgenerell" titleCssClass="base"/>
                  
                     <field name="comments" type="longtext" rows="10" cols="40" required="y" titleCssClass="formHeader"/>
                     <field name="comment_notification" type="checkbox" titleCssClass="formHeader"  titleWidth="100%" cssClass="formcheckbox"/>
+                    
+                    <field name="captcha" type="captcha" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="imgid" type="captchahidden" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    <field name="passphrase" type="passphrase" cssClass="formgenerell" titleCssClass="formHeader"/>
+                    
                     <field name="send" type="submit" cssClass="formbutton"/>
 		        </group>
 
@@ -51,6 +57,11 @@
             <text lang="en">Notify me via E-Mail when new comments are made to this entry
             
             </text>
+        </entry>
+
+        <entry ID="captcha">
+            <text lang="de">Anti-Spam</text>
+            <text lang="en">Anti-Spam</text>
         </entry>
 
         <entry ID="name">
@@ -86,8 +97,6 @@ Wir werden Ihre Anfrage/Bestellung so schnell wie möglich bearbeiten. (TOTR)
             </text>
         </entry>
 
-      
-        
         <entry ID="formerrors">
             <text lang="de">Please fill in your name and comment</text>
             <text lang="en">Please fill in your name and comment</text>
