@@ -279,7 +279,7 @@ class bx_collectionconfig {
             $pKey = $parameterNode->getAttribute('key');
             $pType == '' ? $pType = BX_PARAMETER_TYPE_DEFAULT : $pType;
             //replace variables
-            if ($this->variables && $pValue{0} == '$') {
+            if ($this->variables && $pValue && $pValue{0} == '$') {
                 $vKey = substr($pValue,1);
                 if (isset($this->variables[$vKey])) {
                     $pValue = $this->variables[$vKey];
