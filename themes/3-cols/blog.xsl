@@ -9,7 +9,6 @@ xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:bxf="http://bitflux.org/func
     
     <xsl:variable name="blogname" select="php:functionString('bx_helpers_config::getOption','blogname')"/>
     <xsl:variable name="blogroot" select="concat(substring($webroot,1,string-length($webroot)-1),$collectionUri)"/>
-
     <xsl:output encoding="utf-8" method="xml"/>
     <xsl:variable name="singlePost">
         <xsl:choose>
@@ -28,7 +27,6 @@ xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:bxf="http://bitflux.org/func
         </xsl:choose>
     </xsl:variable>
     <xsl:template name="content">
-
         <xsl:choose>
             <xsl:when test="$singlePost = 'true'">
                 <xsl:call-template name="blogSinglePost"/>
@@ -351,6 +349,34 @@ var commentButtonName      = "send";
         <div class="post_content">
             <xsl:apply-templates mode="xhtml"/>
         </div>
+    </xsl:template>
+
+    <xsl:template match="xhtml:div[@id = 'captcha']" mode="xhtml">
+        <xsl:variable name="date" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:post_date_iso"/>
+        <xsl:variable name="days" select="php:functionString('bx_helpers_config::getBlogCaptchaAfterDays')"/>
+        <xsl:variable name="captcha" select="php:functionString('bx_helpers_captcha::isCaptcha', $days, $date)"/>
+        <xsl:choose>
+        <xsl:when test="$captcha = 1">
+            <xsl:apply-templates mode="xhtml"/>
+        </xsl:when>
+        <xsl:otherwise>
+            
+        </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="xhtml:div[@id = 'captchaTitle']" mode="xhtml">
+        <xsl:variable name="date" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:post_date_iso"/>
+        <xsl:variable name="days" select="php:functionString('bx_helpers_config::getBlogCaptchaAfterDays')"/>
+        <xsl:variable name="captcha" select="php:functionString('bx_helpers_captcha::isCaptcha', $days, $date)"/>
+        <xsl:choose>
+        <xsl:when test="$captcha = 1">
+            <xsl:apply-templates mode="xhtml"/>
+        </xsl:when>
+        <xsl:otherwise>
+            
+        </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template match="xhtml:span[@class='post_category']" mode="xhtml">
