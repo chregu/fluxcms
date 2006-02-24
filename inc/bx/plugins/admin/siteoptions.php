@@ -150,7 +150,8 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
            'true' => "Yes")
            , $dom,array("help"=>$i18n->translate("help_blogSendRejectedCommentNotification")));
        
-       
+       $this->addOption("blogCaptchaAfterDays","text",$dom,array("help"=>$i18n->translate("blogCaptchaAfterDays")));
+        
        $this->addOption("blogWeblogsPing","textarea",$dom,array("help"=>$i18n->translate("help_blogWeblogsPing"),"ArrayAsNewline"=>true));
        
         $this->addOption("copyright","text",$dom,array("help"=>$i18n->translate("help_copyright")));
@@ -298,6 +299,10 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
     
     public function adminResourceExists($path, $id, $ext=null, $sample = false) {
         return TRUE;
+    }
+    
+    public function getCommentCaptchaDays() {
+        return $GLOBALS['POOL']->config->blogCaptchaAfterDays;
     }
     
 }

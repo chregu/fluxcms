@@ -10,6 +10,7 @@
     static protected $timezone = null;
 
     static function getContentById($path,$id,$params,$parent=Null,$tablePrefix = "") {
+        
         $parts =  bx_collections::getCollectionAndFileParts($path, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
@@ -68,6 +69,7 @@
     
     
     protected function getLatestComments($status = 1, $tablePrefix = null, $blogid) {
+        
         $gmnow = gmdate("Y-m-d H:i:s",time());
         if (!$tablePrefix) {
             $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
@@ -107,6 +109,7 @@
     }
 
     protected function getPostComments($id, $status = 1, $tablePrefix = null, $blogid) {
+        
         if (!$tablePrefix) {
             $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         }
