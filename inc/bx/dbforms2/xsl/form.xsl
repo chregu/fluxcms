@@ -71,7 +71,7 @@
                     </script>
                 </xsl:if>                
 
-                <xsl:if test="/form/fields//input[@type='file_browser']">
+                <xsl:if test="/form/fields//input[@type='file_browser' or @type='upload']">
                     <script type="text/javascript" src="{$webroot}/webinc/js/bx/tooltip.js">
                         <xsl:text> </xsl:text>
                     </script>
