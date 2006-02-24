@@ -55,7 +55,7 @@ class bx_filters_formwizard extends bx_filter {
         $xslDom = new DomDocument();
         $xslDom->load($xslSrc);
         $xsl->importStylesheet($xslDom);
-        
+        $xsl->registerPhpFunctions();
         if ($wizardnode) {
             
             // create domxml object from config xml
@@ -281,12 +281,14 @@ class bx_filters_formwizard extends bx_filter {
             // pass some parameters
             $params['lang'] = $this->lang;
             $params['requestUri'] = $_SERVER['REQUEST_URI'];
+            $params['webroot'] = BX_WEBROOT;
             // process config xml and create some html out of it
             foreach($params as $key => $value) {
                 $xsl->setParameter('', $key, $value);
             }
             
             //var_dump($this->config->saveXML());
+            $xsl->registerPhpFunctions();
             $result = $xsl->transformToDoc($this->config);
             $parent = $wizardnode->parentNode;
             $subxml=$result->documentElement;

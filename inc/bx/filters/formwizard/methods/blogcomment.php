@@ -29,16 +29,15 @@ class bxfw_blogcomment {
         $timezone = bx_helpers_config::getTimezoneAsSeconds();
         
         $fields = $this->parent->getFields();
+        
         $isok = false;
         //add some more fields and clean some others
         $fields['remote_ip'] = $_SERVER['REMOTE_ADDR'];
         $fields['name'] = strip_tags($fields['name'] );
         $fields['email'] = strip_tags($fields['email'] );
         $fields['base'] = strip_tags($fields['base'] );
-        
         foreach($fields as $name => $value) {
             $fields[$name] = bx_helpers_string::utf2entities(str_replace("&","&amp;",trim($value)));
-            
         }
 /*
 
@@ -71,6 +70,14 @@ if (isset($fields['comment_remember'])) {
         
         $res = $GLOBALS['POOL']->db->query($query);
         $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
+        
+        if(isset($fields['captcha'])) {
+            if (!$this->checkCaptcha($fields['captcha'], $fields['imgid'])) {
+                return false;
+            }
+        }
+        
+        
         if ($row['post_comment_mode'] == 99) {
             $row['post_comment_mode'] = $GLOBALS['POOL']->config->blogDefaultPostCommentMode;
         }
@@ -191,7 +198,6 @@ if (isset($fields['comment_remember'])) {
         } else {
             $emailFrom .= ' <unknown@example.org>';
         }
-        
         // check if emailFrom is a valid input. if not -> reject!!!
         if(strpos($emailFrom, "\n") !== FALSE or strpos($emailFrom, "\r") !== FALSE) { 
             print ("Comment rejected. Looks like you're trying to spam the world....");
@@ -300,6 +306,21 @@ if (isset($fields['comment_remember'])) {
             return TRUE;
     }
     
+    protected function checkCaptcha($captcha, $imgid) {
+        $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
+        $ok = false;
+        $magickey = $GLOBALS['POOL']->config->magicKey;
+        preg_match("#.*.html#", $_SERVER['REQUEST_URI'], $matches);
+        
+        if($imgid == md5($captcha.floor(time()/(60*15)).$magickey.$_SERVER['REMOTE_ADDR'].$matches['0']) or $imgid == md5($captcha.floor(time()/(60*15-1)).$magickey.$_SERVER['REMOTE_ADDR'].$matches['0'])) {
+                unlink(BX_PROJECT_DIR.'dynimages/'.$imgid . '.png');
+                return true;
+            } else {
+                unlink(BX_PROJECT_DIR.'dynimages/'.$imgid . '.png');
+                echo '<script type="text/javascript">alert("False captcha code!!! Please enter the right one from image")</script>';
+                return false;
+            }
+    }
 }
 
 ?>

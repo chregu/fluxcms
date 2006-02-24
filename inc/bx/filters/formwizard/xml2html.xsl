@@ -1,4 +1,5 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:bxco="http://bitflux.org/config/1.0"
+xmlns:php="http://php.net/xsl" 
 xmlns="http://www.w3.org/1999/xhtml"
 xmlns:xhtml="http://www.w3.org/1999/xhtml"
 exclude-result-prefixes="bxco"
@@ -8,7 +9,8 @@ exclude-result-prefixes="bxco"
     <xsl:param name="screenid" select="0"/>
     <xsl:param name="lang" select="'fr'"/>
     <xsl:param name="requestUri" select="''"/>
-
+      <xsl:param name="webroot" select="''"/>
+        
     <xsl:variable name="realid">
         <xsl:choose>
             <xsl:when test="$screenid = 0"><xsl:value-of select="/bxco:wizard/bxco:screen/@id" /></xsl:when>
@@ -30,7 +32,6 @@ exclude-result-prefixes="bxco"
                 <xsl:if test="@error and not(@error='')">
                                     </xsl:if>
                 <xsl:apply-templates/>
-                
                 <xsl:if test="bxco:submit">
                     <xsl:call-template name="submit">
                         <xsl:with-param name="submit" select="bxco:submit"/>
@@ -88,7 +89,6 @@ exclude-result-prefixes="bxco"
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
     <xsl:template match="bxco:group">
         <div class="wizardGroup">
             <div class="wizardGroupTitle">
@@ -132,6 +132,18 @@ exclude-result-prefixes="bxco"
             </xsl:call-template>
         </div>
     </xsl:template>
+    
+    <xsl:template match="bxco:fields//bxco:field[@type='captchaerrors']">
+        
+        <xsl:if test="count(//bxco:fields//bxco:field[@error]) > 0">
+                <p class="wizardError">
+                    <xsl:call-template name="lookup">
+                        <xsl:with-param name="ID" select="@name"/>
+                    </xsl:call-template>
+                </p>
+        </xsl:if>
+    </xsl:template>
+    
     <xsl:template match="bxco:fields//bxco:field[@type='formerrors']">
         
         <xsl:if test="count(//bxco:fields//bxco:field[@error]) > 0">
@@ -180,7 +192,6 @@ exclude-result-prefixes="bxco"
                     <xsl:with-param name="ID" select="@name"/>
                 </xsl:call-template>
             </div>
-          
         </div>
         <table width="{@width}" border="0" cellspacing="0" cellpadding="0">
         <xsl:if test="@cssClass != ''">
@@ -252,6 +263,31 @@ exclude-result-prefixes="bxco"
             </td></tr>
     </xsl:template>
 
+    <xsl:template match="bxco:fields//bxco:field[@type='captcha']">
+        <xsl:variable name="img" select="php:functionString('bx_helpers_captcha::doCaptcha')"/>
+        <div id="captchaTitle">
+        <tr>
+            <td style="padding:10px 0px 0px 0px;" colspan="2">Anti-Spam Überprüfung (Code ins Eingabefeld übertragen)</td>
+        </tr>
+        </div>
+        <div id="captcha">
+        <tr id="captcha">
+            <td valign="middle" style="padding:10px 0px 0px 0px;">
+                <img alt="captcha" src="{$webroot}dynimages/{$img}.png"/>
+            </td>
+            <td valign="middle" style="padding:10px 0px 0px 50px;">
+                <input name="bx_fw[{@name}]" type="text"></input>
+                <xsl:call-template name="captchahidden">
+                    <xsl:with-param name="img" select="$img"/>
+                </xsl:call-template>
+            </td>
+        </tr>
+        </div>
+    </xsl:template>
+    <xsl:template name="captchahidden">
+            <input name="bx_fw[imgid]" type="hidden" value="{$img}"/>
+    </xsl:template>
+    
     <xsl:template match="bxco:fields//bxco:field[@type='checkbox']">
         <p>
             <input type="checkbox" name="bx_fw[{@name}]"  value="1">
