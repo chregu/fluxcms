@@ -41,6 +41,7 @@
     --> 
     <blogSendRejectedCommentNotification allowFromDB="true">false</blogSendRejectedCommentNotification>
    
+    <blogCaptchaAfterDays allowFromDB="true">31</blogCaptchaAfterDays>
     <!-- Whether to regard post expiration dates -->
     <blogPostsExpireCatAllOnly allowFromDB="true">false</blogPostsExpireCatAllOnly>
     <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
