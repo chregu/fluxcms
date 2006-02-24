@@ -18,7 +18,12 @@ class bx_helpers_config {
          return self::getProperty($option, $forceTouch);
       
     }
-
+    
+    static function getBlogCaptchaAfterDays() {
+        $blogCaptchaAfterDays = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
+        return $blogCaptchaAfterDays;
+    }
+    
     static function getProperty($param, $forceTouch = false ) {
         if (isset($GLOBALS['POOL']->config)) {
             return $GLOBALS['POOL']->config->getConfProperty($param, $forceTouch);
