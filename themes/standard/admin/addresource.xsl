@@ -13,7 +13,7 @@
      <xsl:template match="/">
         <html>
             <head><title><i18n:text>Add new Resource</i18n:text></title>
-            <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/formedit.css"/>
+            <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
             <script type="text/javascript" src="{$webroot}admin/webinc/js/adminfields.js"/>
 			<script type="text/javascript" src="{$webroot}admin/webinc/js/showhidelayers.js"/>
             <script type="text/javascript" >

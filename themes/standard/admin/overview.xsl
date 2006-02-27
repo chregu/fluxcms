@@ -15,7 +15,7 @@
                         <link href="{$webroot}themes/standard/admin/css/overviewhome.css" type="text/css" rel="stylesheet"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <link href="{$webroot}/themes/standard/admin/css/overview.css" type="text/css" rel="stylesheet"/>
+                        <link href="{$webroot}themes/standard/admin/css/overview.css" type="text/css" rel="stylesheet"/>
                     </xsl:otherwise>
                 </xsl:choose>
                 <script src="{$webroot}admin/webinc/js/overview.js" type="text/javascript">

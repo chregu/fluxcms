@@ -12,7 +12,7 @@
          <xsl:template match="/">
         <html>
             <head><title>BXCMS-BLOG</title>
-            <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/formedit.css"/>
+            <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
             
             </head>
             <body>

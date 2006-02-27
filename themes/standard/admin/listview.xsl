@@ -14,7 +14,7 @@
      <xsl:template match="/">
         <html>
             <head><title><xsl:value-of select="$collectionID"/></title>
-            <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/listview.css"/>
+            <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/listview.css"/>
             </head>
             <body>
                 <div id="header">

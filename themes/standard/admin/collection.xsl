@@ -13,7 +13,7 @@
      <xsl:template match="/">
         <html>
             <head><title><i18n:text>Add a new Collection</i18n:text></title>
-            <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/formedit.css"/>
+            <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
             </head>
             <body>
                 <xsl:apply-templates/>            

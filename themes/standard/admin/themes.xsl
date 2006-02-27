@@ -13,13 +13,13 @@
             <xsl:choose>
             <xsl:when test="/bx/plugin[@name='admin_themes']/installed">
                 <head><title><i18n:text>Themes</i18n:text></title>
-                <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/formedit.css"/>
+                <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
                 <script type="text/javascript" src="{$webroot}admin/webinc/js/adminfields.js"/>
                 </head>
             </xsl:when>
             <xsl:otherwise>
                 <head><title><i18n:text>Themes</i18n:text></title>
-                <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/formedit.css"/>
+                <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
                 <script type="text/javascript" src="{$webroot}admin/webinc/js/adminfields.js"/>
                 </head>
             </xsl:otherwise>
@@ -31,7 +31,7 @@
                 Caution: The themes are automatically activated and will overwrite some of your (maybe adjusted) files.</p>
                 <xsl:apply-templates/>
                 <xsl:if test="/bx/plugin[@name='admin_themes']/installed or /bx/plugin[@name='admin_themes']/notinstalled">
-                    <a href="{$webroot}/admin/themes/">Go back!</a>
+                    <a href="{$webroot}admin/themes/">Go back!</a>
                 </xsl:if>
            </body>
         </html>
@@ -57,7 +57,7 @@
                 <td>
                     <h3><xsl:value-of select="title"/></h3>
                     <p>Provided by: <a href="{@authorlink}" target="_blank"><xsl:value-of select="author"/></a></p>
-                    <p><a href="{$webroot}/admin/themes/?downloadlink={downloadLink}">install and activate</a></p>
+                    <p><a href="{$webroot}admin/themes/?downloadlink={downloadLink}">install and activate</a></p>
                     <p><a href="{view}" target="_blank">preview</a></p>
                 </td>
             </tr>

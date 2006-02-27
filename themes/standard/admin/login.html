@@ -8,7 +8,7 @@
 
 <title>Flux CMS Admin - Login</title> 
 <?php 
-    echo '<link rel="stylesheet" type="text/css" href="'.BX_WEBROOT.'/themes/standard/admin/css/login.css" media="screen"/>';
+    echo '<link rel="stylesheet" type="text/css" href="'.BX_WEBROOT.'themes/standard/admin/css/login.css" media="screen"/>';
     
     ?>
 
@@ -34,7 +34,7 @@
             if (isset($_GET['back']) && $_GET['back']) {
                 print '<form method="post" action="'.htmlspecialchars($_GET['back']).'">';
             } else {
-              print '<form method="post" action="'.str_replace("?logout","",htmlspecialchars(bx_helpers_uri::getRequestUri())).'" name="login">';
+              print '<form method="post" action="'.BX_WEBROOT.'admin/" name="login">';
             }
               
 
@@ -46,7 +46,7 @@ EOT;
        
     echo '<img alt="" src="';
     echo BX_WEBROOT;
-    echo '/themes/standard/admin/images/schloss.jpg"/>';
+    echo 'themes/standard/admin/images/schloss.jpg"/>';
     $title = $GLOBALS['POOL']->i18nadmin->translate('Welcome to Flux CMS');
     $user = $GLOBALS['POOL']->i18nadmin->translate('Username:');
     $pwd = $GLOBALS['POOL']->i18nadmin->translate('Password:');

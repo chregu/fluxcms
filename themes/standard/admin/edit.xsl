@@ -30,13 +30,13 @@
             </xsl:for-each>
             <xsl:apply-templates/>
             <link href="{$webroot}themes/admin/css/admin.css" id="adminrcss" rel="stylesheet" media="screen" type="text/css"/>
-            <script src="{$webroot}/webinc/js/editpopup.js">
+            <script src="{$webroot}webinc/js/editpopup.js">
                 <xsl:text> </xsl:text>
             </script>
-            <script src="{$webroot}/webinc/js/admin.js">
+            <script src="{$webroot}webinc/js/admin.js">
                 <xsl:text> </xsl:text>
             </script>
-            <script src="{$webroot}/webinc/js/sarissa.js">
+            <script src="{$webroot}webinc/js/sarissa.js">
                 <xsl:text> </xsl:text>
             </script>
         </xsl:copy>
@@ -64,7 +64,7 @@
                 </p>
             </div>
             <div id="editpopup" onmouseout="editPopup.mouseOut();" onmouseover="editPopup.mouseOver();" border="5">
-                <p id="editpopupchild" class="menuentry"><img alt="..." src="{$webroot}/admin/webinc/img/icons/loading.gif" />  Loading ...</p>
+                <p id="editpopupchild" class="menuentry"><img alt="..." src="{$webroot}admin/webinc/img/icons/loading.gif" />  Loading ...</p>
             </div>
         </xsl:if>
     </xsl:template>

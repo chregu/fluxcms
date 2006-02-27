@@ -16,7 +16,7 @@
 <html>
 <head>
 <title/>
-<link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/admin.css"/>
+<link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/admin.css"/>
 <!--
 <xsl:if test="//plugin/response/@updateTree">
    <script type="text/javascript">

@@ -14,8 +14,8 @@
                 <i18n:text>Edit Properties for {0}.</i18n:text>
                 <i18n:param><xsl:value-of select="$path"/></i18n:param>
             </i18n:translate></title>
-            <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/formedit.css"/>
-            <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/admin.css"/>
+            <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
+            <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/admin.css"/>
             
             <xsl:if test="//plugin[@name='admin_properties']/properties/@updateTree">
             <script type="text/javascript">
