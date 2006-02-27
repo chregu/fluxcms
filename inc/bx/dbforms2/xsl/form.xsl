@@ -38,7 +38,7 @@
             <head>
                 <link href="{$webroot}themes/admin/css/dbforms2.css" rel="stylesheet" media="screen" type="text/css"/>
 
-                <script type="text/javascript" src="{$webroot}/webinc/js/sarissa.js">
+                <script type="text/javascript" src="{$webroot}webinc/js/sarissa.js">
                     <xsl:text> </xsl:text>
                 </script>
 
@@ -72,7 +72,7 @@
                 </xsl:if>                
 
                 <xsl:if test="/form/fields//input[@type='file_browser' or @type='upload']">
-                    <script type="text/javascript" src="{$webroot}/webinc/js/bx/tooltip.js">
+                    <script type="text/javascript" src="{$webroot}webinc/js/bx/tooltip.js">
                         <xsl:text> </xsl:text>
                     </script>
                 </xsl:if>
@@ -115,7 +115,7 @@
                 </script>
 
                 <xsl:for-each select="$form/script">
-                    <script type="text/javascript" src="{$webroot}{@src}">
+                    <script type="text/javascript" src="{$webroot}-jopa-{@src}">
                         <xsl:text> </xsl:text>
                     </script>
                 </xsl:for-each>

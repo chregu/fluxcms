@@ -29,7 +29,7 @@
                 <map:parameter name="id" value="{../id}"/>
             </map:generate>
          <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/links/links.xsl">
-               <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+               <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                 <map:parameter name="url" value="{1}"/>
                 <map:parameter name="dataUri" value="{../dataUri}"/>
                 <map:parameter name="updateTree" value="phpglobalsclean://_GET[updateTree]"/>

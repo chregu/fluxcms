@@ -48,23 +48,23 @@
       
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <xsl:call-template name="themeInit"/>
-        <link href="{$webroot}/webinc/kupu/common/kupustyles.css" rel="stylesheet" type="text/css"/>
-        <link href="{$webroot}/webinc/kupu/common/kupucustom.css" rel="stylesheet" type="text/css"/>
-        <link href="{$webroot}/webinc/kupu/common/kupudrawerstyles.css" rel="stylesheet" type="text/css"/>
+        <link href="{$webroot}webinc/kupu/common/kupustyles.css" rel="stylesheet" type="text/css"/>
+        <link href="{$webroot}webinc/kupu/common/kupucustom.css" rel="stylesheet" type="text/css"/>
+        <link href="{$webroot}webinc/kupu/common/kupudrawerstyles.css" rel="stylesheet" type="text/css"/>
         
-        <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/admin.css"/>
+        <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/admin.css"/>
         
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/sarissa.js"/>
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupuhelpers.js"/>
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupueditor.js"/>
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupubasetools.js"/>
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupuloggers.js"/>
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupucontentfilters.js"/> 
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupucontextmenu.js"/> 
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupuinit_experimental.js"/>
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupusaveonpart.js"/>
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupusourceedit.js"/>
-        <script type="text/javascript" src="{$webroot}/webinc/kupu/common/kupudrawers.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/sarissa.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupuhelpers.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupueditor.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupubasetools.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupuloggers.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupucontentfilters.js"/> 
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupucontextmenu.js"/> 
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupuinit_experimental.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupusaveonpart.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupusourceedit.js"/>
+        <script type="text/javascript" src="{$webroot}webinc/kupu/common/kupudrawers.js"/>
        
         
         <script type="text/javascript">
@@ -201,8 +201,8 @@
             <compatible_singletons>1</compatible_singletons>
             
             
-            <image_xsl_uri><xsl:value-of select="$webroot"/>/webinc/kupu/common/kupudrawers/drawer.xsl</image_xsl_uri>
-            <link_xsl_uri><xsl:value-of select="$webroot"/>/webinc/kupu/common/kupudrawers/drawer.xsl</link_xsl_uri>
+            <image_xsl_uri><xsl:value-of select="$webroot"/>webinc/kupu/common/kupudrawers/drawer.xsl</image_xsl_uri>
+            <link_xsl_uri><xsl:value-of select="$webroot"/>webinc/kupu/common/kupudrawers/drawer.xsl</link_xsl_uri>
             <image_libraries_uri><xsl:value-of select="$webroot"/>admin/navi/kupu/?drawer=image</image_libraries_uri>
             <link_libraries_uri><xsl:value-of select="$webroot"/>admin/navi/kupu/?drawer=library</link_libraries_uri>
             <search_images_uri> </search_images_uri>

@@ -309,9 +309,9 @@ class bx_plugins_gallery extends bx_plugin {
             return $id;
            
            if ($resourceType == "archive") {
-               header("Location: ".BX_WEBROOT."/admin/addresource/".$parentUri."?type=archive&updateTree=$parentUri");
+               header("Location: ".BX_WEBROOT."admin/addresource/".$parentUri."?type=archive&updateTree=$parentUri");
            } else {
-               header("Location: ".BX_WEBROOT."/admin/edit/".$id."?updateTree=$parentUri");
+               header("Location: ".BX_WEBROOT."admin/edit/".$id."?updateTree=$parentUri");
            }
                 
            exit(0);

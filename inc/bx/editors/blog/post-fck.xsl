@@ -24,18 +24,16 @@
 
             <head>
             
-                <link rel="stylesheet" href="{$webroot}/themes/standard/admin/css/blog.css" type="text/css"/>
-                <link rel="stylesheet" href="{$webroot}/themes/standard/admin/css/formedit.css" type="text/css"/>
+                <link rel="stylesheet" href="{$webroot}themes/standard/admin/css/blog.css" type="text/css"/>
+                <link rel="stylesheet" href="{$webroot}themes/standard/admin/css/formedit.css" type="text/css"/>
                 <xsl:choose>
             <xsl:when test="$doFck">
-            
               <script type="text/javascript" src="{$webroot}webinc/fck/fckeditor.js">
             <xsl:text> </xsl:text>
         </script>
         <script type="text/javascript" src="{$webroot}webinc/plugins/blog/fck.js">
             <xsl:text> </xsl:text>
         </script>
-     
         <script type="text/javascript">
             var fckBasePath	= "<xsl:value-of select="$webroot"/>webinc/fck/";
             var bx_webroot = "<xsl:value-of select="$webroot"/>";
@@ -104,7 +102,7 @@
     </xsl:template>
 
     <xsl:template match="atom:entry">
-        <form onsubmit="return formCheck(this);"  method="post" name="entry" action="{php:functionString('bx_helpers_uri::getRequestUri')}">
+        <form onsubmit="return formCheck(this);"  method="post" name="entry" action=".">
          <xsl:call-template name="buttons">
          <xsl:with-param name="accesskeys" select="'true'"/>
          </xsl:call-template>
@@ -184,11 +182,11 @@
                     </tr>
                     <tr id="foo">
                         <td valign="top" colspan="2">
-                            <img onclick="toggleAdvanced();" id="advanced_triangle" src="{$webroot}/admin/webinc/img/closed_klein.gif">
+                            <img onclick="toggleAdvanced();" id="advanced_triangle" src="{$webroot}admin/webinc/img/closed_klein.gif">
                              <xsl:attribute name="src">
                                    <xsl:choose>
-                                       <xsl:when test="$showAdvancedView = 'true'"><xsl:value-of select="$webroot"/>/admin/webinc/img/open_klein.gif</xsl:when>
-                                        <xsl:otherwise><xsl:value-of select="$webroot"/>/admin/webinc/img/closed_klein.gif</xsl:otherwise>
+                                       <xsl:when test="$showAdvancedView = 'true'"><xsl:value-of select="$webroot"/>admin/webinc/img/open_klein.gif</xsl:when>
+                                        <xsl:otherwise><xsl:value-of select="$webroot"/>admin/webinc/img/closed_klein.gif</xsl:otherwise>
                                      </xsl:choose>
                              </xsl:attribute>
                              </img> <span onclick="toggleAdvanced();"><i18n:text>More options (click to expand)</i18n:text></span>
@@ -340,11 +338,11 @@
                     <xsl:if test="not(string-length(atom:content_extended) &gt; 0)" >
                     <tr id="toggleExtended">
                         <td valign="top" colspan="2">
-                            <img onclick="toggleExtendedPost();" id="advanced_triangle" src="{$webroot}/admin/webinc/img/closed_klein.gif">
+                            <img onclick="toggleExtendedPost();" id="advanced_triangle" src="{$webroot}admin/webinc/img/closed_klein.gif">
                              <xsl:attribute name="src">
                                    <xsl:choose>
-                                       <xsl:when test="$showAdvancedView = 'true'"><xsl:value-of select="$webroot"/>/admin/webinc/img/open_klein.gif</xsl:when>
-                                        <xsl:otherwise><xsl:value-of select="$webroot"/>/admin/webinc/img/closed_klein.gif</xsl:otherwise>
+                                       <xsl:when test="$showAdvancedView = 'true'"><xsl:value-of select="$webroot"/>admin/webinc/img/open_klein.gif</xsl:when>
+                                        <xsl:otherwise><xsl:value-of select="$webroot"/>admin/webinc/img/closed_klein.gif</xsl:otherwise>
                                      </xsl:choose>
                              </xsl:attribute>
                              </img> <span onclick="toggleExtendedPost();"><i18n:text>Make an Extended Post</i18n:text></span>

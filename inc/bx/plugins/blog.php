@@ -785,7 +785,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $dom->addLink("Edit Comments",'dbforms2/blogcomments/');
         //if (!$mainOverview) {
             $dom->addTab("Diversa");
-            $dom->addLink("Flux CMS Bookmarklet","javascript:%20var%20baseUrl%20=%20'".BX_WEBROOT."/admin/edit/blog/newpost.xml?';%20var%20url=baseUrl;var%20title=document.title;%20url=url%20+%20'link_title='%20+%20encodeURIComponent(title);%20var%20currentUrl=document.location.href;%20url=url%20+%20'&link_href='%20+%20encodeURIComponent(currentUrl);%20var%20selectedText;%20selectedText=getSelection();%20if%20(selectedText%20!=%20'')%20url=url%20+%20'&text='%20+%20encodeURIComponent(selectedText);var win = window.open(null, '', 'width=700,height=500,scrollbars,resizable,location,toolbar');win.location.href=url;win.focus();"
+            $dom->addLink("Flux CMS Bookmarklet","javascript:%20var%20baseUrl%20=%20'".BX_WEBROOT."admin/edit/blog/newpost.xml?';%20var%20url=baseUrl;var%20title=document.title;%20url=url%20+%20'link_title='%20+%20encodeURIComponent(title);%20var%20currentUrl=document.location.href;%20url=url%20+%20'&link_href='%20+%20encodeURIComponent(currentUrl);%20var%20selectedText;%20selectedText=getSelection();%20if%20(selectedText%20!=%20'')%20url=url%20+%20'&text='%20+%20encodeURIComponent(selectedText);var win = window.open(null, '', 'width=700,height=500,scrollbars,resizable,location,toolbar');win.location.href=url;win.focus();"
             ,"Drag'n'drop to your bookmarks for immediate posting from your browser");
         //}
         return $dom;

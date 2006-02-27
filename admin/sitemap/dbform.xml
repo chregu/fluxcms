@@ -21,7 +21,7 @@
         <map:act type="dbform">
             <map:parameter name="id" value="{../id}"/>
         
-            <map:redirect-to uri="{constant(BX_WEBROOT)}/forms/{table}/?id={DBid}"/>
+            <map:redirect-to uri="{constant(BX_WEBROOT)}forms/{table}/?id={DBid}"/>
             
         </map:act>    
         </map:include-definition>

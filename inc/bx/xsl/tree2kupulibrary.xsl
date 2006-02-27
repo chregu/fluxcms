@@ -84,7 +84,7 @@
 
 
 <xsl:template match="item">
-    <xsl:variable name="fileurl" select="concat($webroot, /navitree/path, @uri)"/>
+    <xsl:variable name="fileurl" select="concat($webroot, navitree/path, @uri)"/>
     <resource id="res{@title}">
         <uri><xsl:value-of select="$fileurl"/></uri>
         <title><xsl:value-of disable-output-escaping="yes" select="@title"/></title>
@@ -96,7 +96,7 @@
 
 <xsl:template match="item[contains(@mimetype, 'image/')]">
     
-    <xsl:variable name="fileurl" select="concat($webroot, /navitree/path, @uri)"/>
+    <xsl:variable name="fileurl" select="concat($webroot, navitree/path, @uri)"/>
     <xsl:variable name="thumburl" select="concat($webroot, 'dynimages/60', /navitree/path, @uri)"/>
     <resource id="res_{@title}">
         <uri><xsl:value-of select="substring-after($fileurl,$webroot)"/></uri>

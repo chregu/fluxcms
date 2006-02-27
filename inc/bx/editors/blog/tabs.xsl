@@ -64,8 +64,9 @@
         <xsl:param name="name"/>
         <xsl:param name="uri"/>
         <xsl:param name="selected"/>
+				<xsl:variable name="collectionRelUri" select="substring-after($collectionUri,'/')"/>
         <li> 
-            <a href="{concat($webroot,$collectionUri, $collectionUriOfId, $uri)}"><xsl:if test="contains($uri, $selected) or ($selected = 'overview' and $uri = '.') or ($selected = 'post' and $uri='newpost.xml')"><xsl:attribute name="class">selected</xsl:attribute></xsl:if><i18n:text><xsl:value-of select="$name"/></i18n:text></a>
+            <a href="{concat($webroot,$collectionRelUri, $collectionUriOfId, $uri)}"><xsl:if test="contains($uri, $selected) or ($selected = 'overview' and $uri = '.') or ($selected = 'post' and $uri='newpost.xml')"><xsl:attribute name="class">selected</xsl:attribute></xsl:if><i18n:text><xsl:value-of select="$name"/></i18n:text></a>
         </li>
     </xsl:template>
     

@@ -10,7 +10,7 @@
 
     <xsl:param name="url" select="'/'"/>
     <xsl:param name="dataUri" select="$dataUri"/>
-    <xsl:param name="webroot" select="$webroot"/>
+    <xsl:param name="webroot" select="'/j/'"/>
     <xsl:param name="requestUri" select="$requestUri"/>
     <xsl:param name="template" select="'default.xhtml'"/>
 
@@ -47,7 +47,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <xsl:call-template name="themeInit"/>
 
-        <link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/admin.css"/>
+        <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/admin.css"/>
         <script type="text/javascript" src="{$webroot}webinc/fck/fckeditor.js">
             <xsl:text> </xsl:text>
         </script>

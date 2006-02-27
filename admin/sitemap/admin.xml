@@ -73,7 +73,7 @@
                         <map:otherwise>
                             <map:transform type="xslt"
                                     src="BX_PROJECT_DIR://inc/bx/xsl/tree2kupulibrary.xsl">
-                                <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                                <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                             </map:transform>
 
                             <map:serialize type="xml"/>
@@ -142,7 +142,7 @@
                             <map:when test="xml">
                                 <map:include label="bxcmsGenerator"/>
                                 <map:transform type="xslt" src="constant(BX_LIBS_DIR)xsl/plugin2xml.xsl">
-                                    <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                                    <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                                     <map:parameter name="requestUri" value="{requestUri}"/>
                                     <map:parameter name="mode" value="{mode}"/>
 
@@ -210,7 +210,7 @@
                 </map:when>
                 <map:otherwise>
                     <map:transform type="xslt" src="constant(BX_THEMES_DIR)/standard/admin/{xslt}">
-                        <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                        <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                         <map:parameter name="requestUri" value="{requestUri}"/>
                         <map:parameter name="mode" value="{mode}"/>
                         <map:parameter type="options" name="registerPhpFunctions" value="true"/>

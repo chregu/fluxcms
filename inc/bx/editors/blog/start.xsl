@@ -19,8 +19,8 @@ xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://purl.org/atom/ns#
     <xsl:template match="/">
         <html>
             <head>
-                <link rel="stylesheet" href="{$webroot}/themes/standard/admin/css/formedit.css" type="text/css"/>
-                <link rel="stylesheet" href="{$webroot}/themes/standard/admin/css/blog.css" type="text/css"/>
+                <link rel="stylesheet" href="{$webroot}themes/standard/admin/css/formedit.css" type="text/css"/>
+                <link rel="stylesheet" href="{$webroot}themes/standard/admin/css/blog.css" type="text/css"/>
                 <script type="text/javascript" src="{$webroot}webinc/js/livesearch.js"></script>
                 <script type="text/javascript" src="{$webroot}webinc/plugins/blog/common.js"></script>
                 <script type="text/javascript" src="{$webroot}admin/webinc/js/overview.js"></script>

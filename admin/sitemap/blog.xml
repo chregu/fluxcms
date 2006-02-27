@@ -51,7 +51,7 @@
                 <map:otherwise>
                 
                     <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/blog/{../xslt}">
-                        <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                        <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                         <map:parameter name="collectionUri" value="{../collectionUri}"/>
                         <map:parameter name="collectionUriOfId" value="{../collectionUriOfId}"/>
                         <map:parameter name="url" value="{1}"/>

@@ -9,7 +9,7 @@
             <map:match type="uri" pattern="bxe/config.xml*">
                 <map:generate type="xmlfile" src="constant(BX_LIBS_DIR)editors/bxe/config.xml"/>
                 <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/bxe/config.xsl">
-                    <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                    <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                     <map:parameter name="dataUri" value="phpglobals://_GET[uri]"/>
                                        <map:parameter type="options" name="registerPhpFunctions" value="true"/>
 
@@ -56,7 +56,7 @@
             -->
             <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/bxe/bxe.xsl">
                 
-                <map:parameter name="webroot" value="'constant(BX_WEBROOT)'"/>
+                <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                 <map:parameter name="url" value="{1}"/>
                 <map:parameter name="template" value="phpglobals://_GET[template]"/>
 		        <map:parameter name="dataUri" value="{../dataUri}"/>

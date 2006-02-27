@@ -246,9 +246,9 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
                 header("Location: ".$_POST['bx']['plugins']['admin_addresource']['redirect']."?fileuri=$parentUri".$filename);
             }
         } else if ($resourceType == "archive") {
-            header("Location: ".BX_WEBROOT."/admin/addresource/".$parentUri."?type=archive&updateTree=$parentUri");
+            header("Location: ".BX_WEBROOT."admin/addresource/".$parentUri."?type=archive&updateTree=$parentUri");
         } else {
-            header("Location: ".BX_WEBROOT."/admin/edit/".$id."?updateTree=$parentUri");
+            header("Location: ".BX_WEBROOT."admin/edit/".$id."?updateTree=$parentUri");
         }
         exit(0);
     }

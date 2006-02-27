@@ -8,7 +8,7 @@
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     <xsl:param name="url" select="'/'"/>
     <xsl:param name="dataUri" select="''"/>
-    <xsl:param name="webroot" select="''"/>
+    <xsl:param name="webroot" select="'/'"/>
     <xsl:variable name="theme" select="php:functionString('bx_helpers_config::getProperty','theme')"/>
     <xsl:variable name="themeCss" select="php:functionString('bx_helpers_config::getProperty','themeCss')"/>
     <xsl:variable name="lang" select="php:functionString('bx_helpers_config::getProperty','adminLanguage')"/>
