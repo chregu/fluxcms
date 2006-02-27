@@ -231,13 +231,10 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 
                 "collection" => $collection,
                 "collectionUri" => $collection->uri,
-                // "pipelineName" =>$collection->getPipelineNameById($filename.".".$ext),
-                "pipelineName" => $collection->getPipelineNameByRequest($filename,$ext),
                 "filename" => $filename,
                 "ext" => $ext,
                 "requestUri" => $fulluri,
                 "mode" => $mode,
-                "filters" => $collection->getFiltersByRequest($filename, $ext),
                 'lang' => $lang,
                 'locale' => $GLOBALS['POOL']->config->getOutputLocale(),
                 'webrootLang' => $webrootLang,
@@ -245,6 +242,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             );
                          
             $a = array_merge($a,$collection->getPipelineProperties());
+						$a = array_merge($a,$collection->getPipelineParametersByRequest($filename,$ext));
             //Do we need that?
             /*
             foreach( $collection->getFirstResource($filename,$ext)->getAllProperties(BX_PROPERTY_PIPELINE_NAMESPACE) as $p) {

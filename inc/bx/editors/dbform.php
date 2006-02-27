@@ -10,8 +10,9 @@ class bx_editors_dbform extends bx_editor implements bxIeditor {
         bx_helpers_debug::webdump($id);*/
     }   
     
-    public function getPipelineName() {
-        return "dbform";
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			return array('pipelineName'=>'dbform');
     }
     
     public function getDisplayName() {

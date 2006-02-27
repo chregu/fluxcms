@@ -288,14 +288,12 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
         return array();   
     }
 
-    public function getStylesheetNameById($path = NULL, $id = NULL) {
-        return 'addresource.xsl';
-    }
-    
-   public function getPipelineName($path = NULL, $name = NULL, $ext = NULL) {
-        return "standard";
-    }
-    
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+				$params = array();
+				$params['xslt'] = 'addresource.xsl';
+				return $params;
+		}
     
     public function adminResourceExists($path, $id, $ext=null, $sample = false) {
         return TRUE;

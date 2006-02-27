@@ -121,17 +121,17 @@ class bx_plugins_admin_editpopup extends bx_plugin {
     protected function createMenuSeparator() {
         return '<p class="menuseparator"/>';
     }
-
-    public function getPipelineName($path = NULL, $id = NULL) {
-        return "xml"; 
-    }
+		
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+				$params = array();
+				$params['pipelineName'] = 'xml';
+				$params['xslt'] = 'admin.xsl';
+				return $params;
+		}
     
     public function getDataUri($path,$name,$ext) {
         return FALSE;
-    }
-
-    public function getStylesheetNameById($path = NULL, $id = NULL) {
-        return 'admin.xsl';
     }
     
     public function adminResourceExists($path, $id, $ext=null) {

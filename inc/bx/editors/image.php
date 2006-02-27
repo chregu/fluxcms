@@ -2,12 +2,13 @@
 
 class bx_editors_image extends bx_editor implements bxIeditor {    
     
-    public function getPipelineName() {
-        return "image";
-    }
-    
     public function getDisplayName() {
         return "Image";
+    }
+
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			return array('pipelineName'=>'image');
     }
     
     public function handlePOST($path, $id, $data) {

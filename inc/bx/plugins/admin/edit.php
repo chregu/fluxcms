@@ -87,26 +87,16 @@ class bx_plugins_admin_edit extends bx_component implements bxIplugin {
         }
         return $id;
     } 
-    
-    public function getPipelineName($path = NULL, $id = NULL) {
-        $editor = $this->getEditorById( $id);
-        if(!empty($editor) ) {
-            return $editor->getPipelineName($path, $id);
-        }
-        return FALSE;
-    }
-
-    public function getStylesheetNameById($path = NULL, $id = NULL) {
-        $editor = $this->getEditorById( $id);
-        
-        if(!empty($editor) ) {
-            $parts = bx_collections::getCollectionUriAndFileParts($id,$this->mode);
-            return $editor->getStylesheetNameById($parts['colluri'], $parts['rawname']);
-        }
-        return FALSE;
-        //return $this->getEditorById( $id)->getStylesheetName(); 
-    }
-    
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			$params = array();
+      $editor = $this->getEditorById( $id);
+      if(!empty($editor) ) {
+				$params = $editor->getPipelineParametersById($path, $id);
+				}
+			return $params;
+			}
+		
     public function isRealResource($path, $id) {
         return false;
     }

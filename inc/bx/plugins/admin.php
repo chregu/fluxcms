@@ -8,20 +8,9 @@
 abstract class bx_plugins_admin extends bx_component {
     
     
-    public function getStylesheetNameById($path = NULL, $id = NULL) {
-        return null;
-    }
-    
-    
     public function adminResourceExists($path, $id, $ext=null, $sample = false) {
         return true;
     }
-    
-    
-    public function getPipelineName($path = NULL, $name = NULL, $ext = NULL) {
-        return "standard";   
-    }
-    
     
     public function stripRoot() {
         return false;
@@ -35,7 +24,8 @@ abstract class bx_plugins_admin extends bx_component {
     public function getContentUriById($path, $id) {}
     
     public function getResourceByType($type, $path, $id) {}
-    
+
+		public function getPipelineParametersById($path, $id) { return array(); }
 }
 
 

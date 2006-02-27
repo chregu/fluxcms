@@ -34,9 +34,13 @@ class bx_plugins_admin_assets extends bx_plugins_navitree implements bxIplugin {
         $tree->setElements(array("src","uri","preview"));
         return $tree->getXml();
     }
-    public function getPipelineName($path =  NULL, $name = NULL, $ext = NULL) {
-        return "xml";
-    }
+		
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+				$params = array();
+				$params['pipelineName'] = 'xml';
+				return $params;
+		}
     
     public function getDataUri($path,$name,$ext) {
         return FALSE;

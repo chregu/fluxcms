@@ -262,18 +262,16 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         return FALSE;
     }
 
-    public function getPipelineName($path = NULL, $name = NULL, $ext = NULL) {
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+				$params = array();
+				$params['xslt'] = 'dbforms2.xsl'
         $dm = $this->getDisplayModeByID($this->getIdByRequest($path, $name, $ext));
         if($dm == 'data' OR $dm == 'chooser' OR $dm == 'liveselect') {
-            return 'xml';
+            $params['pipelineName'] = 'xml';
         }
-        
-        return 'standard';
-    }
-    
-    public function getStylesheetName($path = NULL, $name = NULL, $ext = NULL) {
-        return 'dbforms2.xsl';
-    }
+				return $params;
+		}
     
     public function adminResourceExists($path, $id, $ext=null, $sample=FALSE) {
         return TRUE; 

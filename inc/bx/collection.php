@@ -336,18 +336,6 @@ class bx_collection implements bxIresource {
     }
     
     /** pipeline methods **/
-    protected function getPipelineNameByPlugin($p) {
-
-        if (!is_null($p) && isset($p['plugin']) && ! is_null($p['plugin'])) {
-            
-            return $p['plugin']->getPipelineName($this->uri, $p['id']);
-        } 
-        return "standard";
-    }
-    
-    public function getPipelineNameById($id) {
-        return $this->getPipelineNameByPlugin( $this->getPluginMapById($id));
-    }
     
     public function getRequestById($id) {
        $p = $this->getPluginById($id);
@@ -357,20 +345,42 @@ class bx_collection implements bxIresource {
        }
        return null;
     }
-    
-    public function getPipelineNameByRequest($filename, $ext) {
-        return $this->getPipelineNameByPlugin( $this->getFirstPluginMapByRequest($filename,$ext));
-    }
-    
-   public function getFiltersByRequest($name, $ext) {
+
+		/**
+		 * Returns general and plugin/request - dependant parameters.
+		 * Required parameters: 
+		 *   'pipelineName' - returned by FIRST plugin (is it logical?)
+		 *   'filters' - configured in .configxml
+		 * 
+		 * @param name filename/path of request
+		 * @ext extension of request
+		 * @return array of parameters
+		 * 
+		 */
+		public function getPipelineParametersByRequest($filename, $ext) {
+			$map = $this->getPluginMapByRequest($filename, $ext);
+			$a = array();
+			$a['pipelineName'] = 'standard'; /// default 
+			$a['filters'] = $this->getFiltersByRequest($filename, $ext);
+			// merge other parameters from all plugins 
+      if (is_array($map)) {
+        foreach ($map as $p) {
+					if(isset($p['plugin']) && $p['plugin'] instanceof bxIplugin) {
+						$params = $p['plugin']->getPipelineParametersById($this->uri, $p['id']);
+						$a = array_merge($a, $params);
+						}
+					}
+				}
+			return $a;
+		 }
+   
+		protected function getFiltersByRequest($name, $ext) {
         if (empty($this->filters[$name.$ext])) {
             $this->filters[$name.$ext] = $this->config->getFilters($name, $ext);
         }
-        
         return $this->filters[$name.$ext];
-    
     }
-    
+	 
    public function getParentCollection() {
         if ($parent = $this->getProperty("parent-uri")) {
             return bx_collections::getCollection($parent,$this->mode);
@@ -381,13 +391,6 @@ class bx_collection implements bxIresource {
     
     public function getSubCollection($name, $mode) {
         return bx_collections::getCollection($name, $mode);
-    }
-    
-    public function getStylesheetNameByRequest($name, $ext) {
-        $p = $this->getFirstPluginMapByRequest($name,$ext);
-        if(!empty($p)) {
-            return $p['plugin']->getStylesheetNameById($this->uri, $p['id']);
-        }
     }
     
         
@@ -690,7 +693,6 @@ class bx_collection implements bxIresource {
         foreach ($props as $p ) {
             $params[$p['name']] = $p['value'];
         }
-        
         $params = array_merge( $params, $this->config->getParameters("pipeline"));
         return $params;
     }

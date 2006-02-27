@@ -2,17 +2,15 @@
 
 class bx_editors_kupu implements bxIeditor {    
     
-    public function getPipelineName() {
-        return "kupu";
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			return array('pipelineName'=>'kupu');
     }
 
     public function getDisplayName() {
         return "kupu";
     }
 
-    public function getStylesheetNameById() {
-    }
-    
 }
 
 ?>

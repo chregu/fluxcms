@@ -8,8 +8,9 @@ class bx_editors_links extends bx_editor implements bxIeditor {
     public $categoryTable = "bloglinkscategories";
     
     
-    public function getPipelineName() {
-        return "links";
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			return array('pipelineName'=>'links');
     }
     
     public function getDisplayName() {

@@ -26,15 +26,18 @@ class bx_editor {
         $path = str_replace('admin/edit/', '', $path);
         return $path.$name.'.'.$ext;
     }
-    
-    public function getStylesheetNameById($path,$id) {
-    }
-    
-    public function getEditContentById($id) {
-        return null;
-    }
-        
-    
+		
+		/**
+		 * Returns editor-dependant parameters to pass into pipeline for specified resource.
+		 * The same as for bx_plugins.
+		 *
+		 * @param path collection path
+		 * @param id resource id 
+		 * @return array of parameters
+		 */
+		public function getPipelineParametersById($path, $id) {
+				return array();
+		}
 }
 
 ?>

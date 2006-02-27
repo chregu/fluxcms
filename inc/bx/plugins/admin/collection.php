@@ -124,14 +124,13 @@ class bx_plugins_admin_collection extends bx_plugin {
     public function getEditorsByRequest($path, $name, $ext) {
         return array();   
     }
-
-    public function getStylesheetNameById($path = NULL, $id = NULL) {
-        return 'collection.xsl';
-    }
-    
-    public function getPipelineName($path = NULL, $name = NULL, $ext = NULL) {
-        return "standard";
-    }
+		
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+				$params = array();
+				$params['xslt'] = 'collection.xsl';
+				return $params;
+		}
 
     public function adminResourceExists($path, $id, $ext=null) {
         return $this; 

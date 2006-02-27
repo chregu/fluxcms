@@ -36,7 +36,8 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
     public function getChildren($uri, $id) {
         return array();
     }
-    
+
+		/** @bxIplugin::getIdByRequest*/
     public function getIdByRequest ($path, $name = NULL, $ext = NULL) {
         return "$name.$ext.".$this->name;
     } 
@@ -85,6 +86,7 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         return false; 
     }
     
+		/** @bxIplugin::getContentUriById */
     public function getContentUriById($path, $id, $sample = false) {
         //FIXME... we do not have a Resource in the DB eventually... 
         // take care of that here
@@ -100,6 +102,13 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         }
     } 
     
+		/** @bxIplugin::getResourceById 
+		 * 
+		 *  NB: interface violation: adding mock
+		 *  For weird situations when resource requested before created.
+		 *  The only found call is $this->getEditorsById()
+		 *  
+		 */
     public function getResourceById($path, $id, $mock = false) {
         return null;
     }
@@ -112,20 +121,20 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         return false;
     }
     
-        
-    public function getPipelineName($path = NULL, $id = NULL) {
-        return "standard";
-    }
+		/**
+		 * Returns plugin-dependant parameters to pass into pipeline for specified resource
+		 *
+		 * @param path collection path
+		 * @param id resource id 
+		 * @return array of parameters
+		 */
+		public function getPipelineParametersById($path, $id) {
+				return array();
+		}
     
     public function stripRoot() {
         return false;
     }
-    
-    public function getStylesheetNameById($path = NULL, $id = NULL) {
-        
-        //return $this->getEditorById( $id)->getStylesheetName(); 
-    }
-    
     
     public function addResource($name, $parentUri, $options=array(), $resourceType = null) {
         return false;

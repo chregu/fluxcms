@@ -246,13 +246,10 @@ class bx_plugins_admin_properties extends bx_component implements bxIplugin {
         return FALSE;
     }
 
-    public function getPipelineName($path = NULL, $name = NULL, $ext = NULL) {
-        return "standard";   
-    }
-    
-    public function getStylesheetName($path = NULL, $name = NULL, $ext = NULL) {
-        return 'admin.xsl';
-    }
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+				return array();
+		}
     
     public function resourceExists($path, $name, $ext) {
         return TRUE;

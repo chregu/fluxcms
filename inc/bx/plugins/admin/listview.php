@@ -67,14 +67,12 @@ class bx_plugins_admin_listview extends bx_plugin {
     public function getEditorsByRequest($path, $name, $ext) {
         return array();   
     }
-
-    public function getStylesheetNameById($path = NULL, $id = NULL) {
-        return 'listview.xsl';
-    }
-    
-    public function getPipelineName($path = NULL, $name = NULL, $ext = NULL) {
-        return "standard";
-    }
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+				$params = array();
+				$params['xslt'] = 'listview.xsl';
+				return $params;
+		}
 
     public function adminResourceExists($path, $id, $ext=null) {
         return $this; 

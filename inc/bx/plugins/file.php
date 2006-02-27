@@ -40,11 +40,11 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
         }
     }
 
-    public function getPipelineName($path = NULL, $id = NULL) {
-        // FIXME, we need another resource reader, it doesn't work if request != id
-        return "resourceReader";
-    }
-
+    public function getPipelineParametersById($path = NULL, $id = NULL) {
+      // FIXME, we need another resource reader, it doesn't work if request != id
+			return array('pipelineName'=>'resourceReader');
+		}
+		
     public function isRealResource($path , $id) {
         return true;
     }

@@ -93,15 +93,13 @@ class bx_plugins_admin_addresource extends bx_plugins_admin implements bxIplugin
     public function getEditorsByRequest($path, $name, $ext) {
         return array();   
     }
+		/** bx_plugin::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+				$params = array();
+				$params['xslt'] = 'addresource.xsl';
+				return $params;
+		}
 
-    public function getStylesheetNameById($path = NULL, $id = NULL) {
-        return 'addresource.xsl';
-    }
-    
-   public function getPipelineName($path = NULL, $name = NULL, $ext = NULL) {
-        return "standard";
-    }
-    
     
     public function adminResourceExists($path, $id, $ext=null, $sample = false) {
         return TRUE;

@@ -1,17 +1,21 @@
 <?php
 
 class bx_editors_blog extends bx_editor implements bxIeditor {
-
-    public function getPipelineName($path,$id) {
-        return "blog";
-    }
-    
+		
     public function getDisplayName() {
         return "Blog";
     }
     
-    public function getStylesheetNameById($path,$id) {
-        
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			$params=array();
+			$params['pipelineName'] = 'blog';
+      $parts = bx_collections::getCollectionUriAndFileParts($id,'admin');
+      $params['xslt'] = $this->getStylesheetName($parts['colluri'], $parts['rawname']);
+			return $params;
+		}
+
+    protected function getStylesheetName($path,$id) {
         switch ($id) {
             case ".":
             return "start.xsl";
@@ -25,7 +29,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 return $this->getStylesheetNameBySubEditor($subEditor);
                 
         }
-        return "post-fck.xsl";
+        return "post-fck.xsl"; // very strange default value... -- qmax
         
     }
     

@@ -111,12 +111,6 @@ class bx_plugins_dbform extends bx_plugin implements bxIplugin {
  
     /** pipeline methods **/
     
-    public function getPipelinename($path = NULL, $name = NULL, $ext = NULL) {
-        return "standard";
-    }
-    
-
-    
     public function handlePost($path, $name, $ext, $data) {
     }
     

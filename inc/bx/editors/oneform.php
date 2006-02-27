@@ -2,10 +2,11 @@
 
 class bx_editors_oneform extends bx_editor implements bxIeditor {    
     
-    public function getPipelineName() {
-        return "oneform";
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			return array('pipelineName'=>'oneform');
     }
-    
+
     public function getDisplayName() {
         return "One Form";
     }

@@ -3,10 +3,13 @@
 class bx_editors_ooo extends bx_editor implements bxIeditor {    
     
     
-    public function getStylesheetNameById($path,$id) {
-        
-        return "ooo.xsl";
-    }
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			$params=array();
+			$params['pipelineName'] = 'ooo';
+      $params['xslt'] = 'ooo.xsl';
+			return $params;
+		}
     
     public function getImage($dom,$tmpdir){
         $xp = new DomXPath($dom);
@@ -160,10 +163,6 @@ class bx_editors_ooo extends bx_editor implements bxIeditor {
             
         };
         return null;
-    }
-    
-    public function getPipelineName() {
-        return "ooo";
     }
     
     public function getDisplayName() {

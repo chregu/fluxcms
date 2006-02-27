@@ -1,11 +1,12 @@
 <?php
 
 class bx_editors_versioning extends bx_editor implements bxIeditor {    
-    
-    public function getPipelineName() {
-        return "versioning";
+
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			return array('pipelineName'=>'versioning');
     }
-    
+	
     public function getDisplayName() {
         return "Versioning";
     }

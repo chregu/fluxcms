@@ -2,17 +2,15 @@
 
 class bx_editors_fck implements bxIeditor {    
     
-    public function getPipelineName() {
-        return 'fck';
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			return array('pipelineName'=>'fck');
     }
-
+		
     public function getDisplayName() {
         return 'fck';
     }
 
-    public function getStylesheetNameById() {
-    }
-    
 }
 
 ?>

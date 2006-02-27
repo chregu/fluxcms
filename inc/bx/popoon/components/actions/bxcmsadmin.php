@@ -125,8 +125,6 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
             "collection" => $collection,
             "collectionUri" => $collection->uri,
             "collectionUriOfId" => bx_collections::getCollectionUri($id),
-            "pipelineName" => $collection->getPipelineNameById($id),
-
             "dataUri" => $dataUri,
             "id" => "$id",
             "lang" => $GLOBALS['POOL']->config->getAdminLanguage(),
@@ -142,11 +140,8 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
                 $a[$p['name']] = $p['value'];
             }
 
-            // overwrite xslt if collection has it's own
-             $a = array_merge($a,$collection->getPipelineProperties());
-            if(($xslt = $collection->getStylesheetNameByRequest($filename, $ext)) !== NULL) {
-                $a['xslt'] = $xslt;
-            }
+            $a = array_merge($a,$collection->getPipelineProperties());
+            $a = array_merge($a,$collection->getPipelineParametersByRequest($filename,$ext));
             return $a;
         }
     }

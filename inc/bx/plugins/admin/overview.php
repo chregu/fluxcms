@@ -122,12 +122,6 @@ class bx_plugins_admin_overview extends bx_plugin {
         return array();   
     }
 
- 
-    
-    public function getPipelineName($path = NULL, $name = NULL, $ext = NULL) {
-        return "standard";
-    }
-
     public function adminResourceExists($path, $id, $ext=null) {
         return $this; 
     }

@@ -2,8 +2,9 @@
 
 class bx_editors_formedit extends bx_editor implements bxIeditor {    
     
-    public function getPipelineName() {
-        return "formedit";
+		/** bx_editor::getPipelineParametersById */
+		public function getPipelineParametersById($path, $id) {
+			return array('pipelineName'=>'formedit');
     }
     
     public function getDisplayName() {
