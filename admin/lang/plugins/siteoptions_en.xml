@@ -2,10 +2,12 @@
 <catalogue>
     <message key="blogname_rssfeed">Name of the blog for the RSS feed. If empty, 'sitename' is taken.</message>
     <message key="desc_rssfeed">Description  for the RSS feed. If empty, 'sitedescription' is taken.</message>
-    <message key="blogCaptchaAfterDays">After how many days captcha should be activated</message>
     <message key="motiv_help"><![CDATA[More themes available at <a href="http://intensivstation.ch/en/templates/bxcms/" target="_blank">intensivstation.ch</a>.
                               <br/>(Hover over the picture to see a larger version).]]></message>
     <message key="default_blogcommentmode">Default Blog post comment mode. You can change this for each post individually later.</message>
+    <message key="blogCaptchaAfterDays">After how many days captcha should be activated</message>
+    <message key="blogCaptchaFontPath">The path to your font dir</message>
+    <message key="blogCaptchaFontFile">The name of you font file</message>
     <message key="help_blogSendRejectedCommentNotification">Send a notification mail on rejected comments. The Flux CMS comment spam protection tries
            hard to determine, if a comment is spam or not. If it rejects one, it's almost certainly spam and you most certainly
            don't want to be informed about that. If it's not sure, Flux CMS sets the post to moderated and you always get a mail then and you can then approve it.</message>
