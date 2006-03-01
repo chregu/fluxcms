@@ -151,7 +151,9 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
            , $dom,array("help"=>$i18n->translate("help_blogSendRejectedCommentNotification")));
        
        $this->addOption("blogCaptchaAfterDays","text",$dom,array("help"=>$i18n->translate("blogCaptchaAfterDays")));
-        
+       $this->addOption("blogCaptchaFontPath","text",$dom,array("help"=>$i18n->translate("blogCaptchaFontPath")));
+       $this->addOption("blogCaptchaFontFile","text",$dom,array("help"=>$i18n->translate("blogCaptchaFontFile")));
+       
        $this->addOption("blogWeblogsPing","textarea",$dom,array("help"=>$i18n->translate("help_blogWeblogsPing"),"ArrayAsNewline"=>true));
        
         $this->addOption("copyright","text",$dom,array("help"=>$i18n->translate("help_copyright")));
