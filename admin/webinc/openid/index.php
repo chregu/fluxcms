@@ -42,7 +42,7 @@ $conf = bx_config::getInstance();
 $confvars = $conf->getConfProperty('permm');
 $permObj = bx_permm::getInstance($confvars);
 if (!$permObj->isAllowed('/',array('admin')) && $_SERVER['REQUEST_METHOD'] != 'POST') {
-    header("Location: " . BX_WEBROOT."/admin/?back=".urlencode($_SERVER['REQUEST_URI']));
+    header("Location: " . BX_WEBROOT."admin/?back=".urlencode($_SERVER['REQUEST_URI']));
    die();
 }
     
