@@ -14,7 +14,7 @@ saveContent = function() {
 function initFck() {
 		var oFCKeditor = new FCKeditor("bx[plugins][admin_edit][content]");
 		oFCKeditor.BasePath	= fckBasePath;
-		oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + '/admin/fck/fckconfig.js';
+		oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'admin/fck/fckconfig.js';
 		oFCKeditor.Config['FullPage'] = false;
 		oFCKeditor.ToolbarSet = 'fluxfckblog';
 		//alert("here");
@@ -33,7 +33,7 @@ function initFckExtended() {
 		if (typeof FCKeditorAPI == 'undefined' || ! FCKeditorAPI.GetInstance("bx[plugins][admin_edit][content_extended]")) {
 			var oFCKeditor = new FCKeditor("bx[plugins][admin_edit][content_extended]");
 			oFCKeditor.BasePath	= fckBasePath;
-			oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + '/admin/fck/fckconfig.js';
+			oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'admin/fck/fckconfig.js';
 			oFCKeditor.Config['FullPage'] = false;
 			oFCKeditor.ToolbarSet = 'fluxfckblog';
 			//alert("here");

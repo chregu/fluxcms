@@ -195,7 +195,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
         var oFCKeditor = new FCKeditor(this.id ) ;
         oFCKeditor.BasePath	= fckBasePath;
         
-        oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + '/webinc/plugins/dbforms2/fckconfig.js';
+        oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'webinc/plugins/dbforms2/fckconfig.js';
         oFCKeditor.ToolbarSet = 'BxCMS';
         oFCKeditor.ReplaceTextarea() ;
 		
@@ -435,7 +435,7 @@ function dbforms2_field_file(DOMNode) {
 				this.onload = null;
 			}
 			
-			iframe.contentWindow.location = bx_webroot + "/webinc/plugins/dbforms2/emptyupload.html";
+			iframe.contentWindow.location = bx_webroot + "webinc/plugins/dbforms2/emptyupload.html";
 		}
 	}
 	
