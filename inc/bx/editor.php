@@ -22,6 +22,10 @@ class bx_editor {
         return FALSE;
     }
 
+    public function getEditContentById($id) {
+        return null;
+    }
+
     protected function getFullPath($path, $name, $ext) {
         $path = str_replace('admin/edit/', '', $path);
         return $path.$name.'.'.$ext;
