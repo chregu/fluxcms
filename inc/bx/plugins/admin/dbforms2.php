@@ -48,30 +48,9 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         $formConfig = new bx_dbforms2_config($formName);
         $form = $formConfig->getForm();;
         
-        /*if (!(popoon_classes_browser::isMozilla())) {
-            $relocpath = false;
-            if (isset($form->attributes['alternate'])) {
-                $relocpath = $form->attributes['alternate'];
-            } else if (file_exists(BX_PROJECT_DIR.'forms'.$id.'/config.xml')) {
-                $relocpath = 'forms'.$id;
-            }
-            
-            if ($relocpath) {
-                if ($_GET['path']) {
-                    unset($_GET['path']);    
-                }
-                header("Location: ".BX_WEBROOT. $relocpath.'?'.  bx_helpers_string::array2query($_GET));
-                die();
-            }
-        }*/
-
-        //$form->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
-        //bx_helpers_debug::webdump($form);
         if($mode == 'data') {
-            //var_dump($form);
             
             if(isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
-                //bx_log::log($GLOBALS['HTTP_RAW_POST_DATA']);
                 $db = $GLOBALS['POOL']->dbwrite;
                 
                 // create a new DOM document out of the posted string
@@ -106,7 +85,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 }
 
                 // give it a go
-                bx_log::log($query);
                 $res = $db->query($query);
 
                 if($db->isError($res)) {
@@ -260,7 +238,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         return FALSE;
     }
 
-    /** bx_plugin::getPipelineParametersById */
     public function getPipelineParametersById($path, $id) { 
         $params = array();
         $dm = $this->getDisplayModeByID($id);
@@ -268,6 +245,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         if($dm == 'data' || $dm == 'chooser' || $dm == 'liveselect') {
             $params['pipelineName'] = 'xml';
         }
+        
         return $params;
     }
     
