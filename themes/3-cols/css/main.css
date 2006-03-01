@@ -63,7 +63,14 @@ textarea, .formgenerell input, input.formgenerell {
 }
 
 .textarea{
-	height: 80px;
+    height: 80px;
+}
+
+.captcha {
+width:100px;
+border: 1px solid #aaaaaa; 
+margin-top: 5px;
+padding: 2px;
 }
 
 /* patforms filter */

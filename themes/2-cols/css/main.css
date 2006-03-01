@@ -49,6 +49,13 @@ padding: 0px;
 margin: 5px 50px 15px 50px;
 }
 
+.captcha {
+width:100px;
+border: 1px solid #aaaaaa; 
+margin-top: 5px;
+padding: 2px;
+}
+
 textarea, .formgenerell input, input.formgenerell {
 width:300px;
 border: 1px solid #aaaaaa; 
