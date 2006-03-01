@@ -29,7 +29,9 @@
            3 = No comments allowed 
      -->           
     <blogDefaultPostCommentMode allowFromDB="true">1</blogDefaultPostCommentMode>
-
+    <blogCaptchaAfterDays allowFromDB="true">31</blogCaptchaAfterDays>
+    <blogCaptchaFontPath allowFromDB="true">/usr/share/fonts/truetype/msttcorefonts/</blogCaptchaFontPath>
+    <blogCaptchaFontFile allowFromDB="true">Courier_New.ttf</blogCaptchaFontFile>
     <!-- even if comments are allowed, only allow trackbacks for a month -->
     <blogTrackbacksTimeLimit>true</blogTrackbacksTimeLimit>
             
@@ -41,7 +43,6 @@
     --> 
     <blogSendRejectedCommentNotification allowFromDB="true">false</blogSendRejectedCommentNotification>
    
-    <blogCaptchaAfterDays allowFromDB="true">31</blogCaptchaAfterDays>
     <!-- Whether to regard post expiration dates -->
     <blogPostsExpireCatAllOnly allowFromDB="true">false</blogPostsExpireCatAllOnly>
     <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
