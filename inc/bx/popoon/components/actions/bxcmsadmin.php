@@ -139,9 +139,8 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
             foreach( $collection->getSubCollection("/$filename.$ext", 'output')->getAllProperties(BX_PROPERTY_PIPELINE_NAMESPACE) as $p) {
                 $a[$p['name']] = $p['value'];
             }
-
-            $a = array_merge($a,$collection->getPipelineProperties());
             $a = array_merge($a,$collection->getPipelineParametersByRequest($filename,$ext));
+            $a = array_merge($a,$collection->getPipelineProperties());
             return $a;
         }
     }
