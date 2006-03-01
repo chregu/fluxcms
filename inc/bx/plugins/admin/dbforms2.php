@@ -29,7 +29,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
     protected function __construct($mode) {
         
         $this->mode = $mode;
-
     }
     
     public function getIdByRequest($path, $name = NULL, $ext  = NULL) {
@@ -229,7 +228,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         $mode = 'form';
         
         $elements = explode('/', substr($id, 1));
-        
         if(!empty($elements[1])) {
             if($elements[1] == 'data') {
                 $mode = 'data';
@@ -262,16 +260,16 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         return FALSE;
     }
 
-		/** bx_plugin::getPipelineParametersById */
-		public function getPipelineParametersById($path, $id) {
-				$params = array();
-				$params['xslt'] = 'dbforms2.xsl'
-        $dm = $this->getDisplayModeByID($this->getIdByRequest($path, $name, $ext));
-        if($dm == 'data' OR $dm == 'chooser' OR $dm == 'liveselect') {
+    /** bx_plugin::getPipelineParametersById */
+    public function getPipelineParametersById($path, $id) { 
+        $params = array();
+        $dm = $this->getDisplayModeByID($id);
+        
+        if($dm == 'data' || $dm == 'chooser' || $dm == 'liveselect') {
             $params['pipelineName'] = 'xml';
         }
-				return $params;
-		}
+        return $params;
+    }
     
     public function adminResourceExists($path, $id, $ext=null, $sample=FALSE) {
         return TRUE; 
