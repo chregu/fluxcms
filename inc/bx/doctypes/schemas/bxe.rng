@@ -123,6 +123,8 @@
 
     <define name="Block.class" combine="choice">
         <ref name="formserrors"/>
+        <ref name="xinclude"/>
+
     </define>
     
 
