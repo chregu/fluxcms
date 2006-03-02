@@ -603,18 +603,19 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $missingfields = false;
                     $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
                     $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
-                    
                     if(isset($_POST['bx_fw']['name']) && isset($_POST['bx_fw']['comments'])) {
                     //add some more data and clean some others
                         $data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
                         $data['name'] = strip_tags($_POST['bx_fw']['name'] );
                         $data['email'] = strip_tags($_POST['bx_fw']['email'] );
                         $data['comments'] = $_POST['bx_fw']['comments'];
+                        $data['remember'] = $_POST['bx_fw']['comment_remember'];
                         $data['base'] = strip_tags($_POST['bx_fw']['url'] );
                         $data['passphrase'] = $_POST['passphrase'];
                         $data['imgid'] = $_POST['imgid'];
+                        $data['comment_notification'] = $_POST['bx_fw']['comment_notification'];
                         
-                        } else {
+                    } else {
                         $data['name'] = null;
                         $data['base'] = null;
                         $data['email'] = null;
@@ -876,6 +877,12 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
     
     protected function getCommentForm($emailBodyID = '', $posturipath, $imgid = null, $isCaptcha, $captchacontrol, $data = null, $missingfields) {
+        //only works per post atm
+        if (isset($_COOKIE['fluxcms_blogcomments'])) {
+           foreach ($_COOKIE['fluxcms_blogcomments'] as $name => $value) {
+               $data[$name] = $value;
+           }
+        }
         $xml = '<div class="comments_new">';
         if($data == null) {
             $data['name'] = null;
@@ -907,6 +914,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                </tr><tr>
                <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_notification]" />
                Notify me via E-Mail when new comments are made to this entry</td>
+                </tr><tr>
+               <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_remember]" />
+               Remember me (need cookies)</td>
                 </tr>';
                 
                 if($isCaptcha == 1) {
@@ -937,6 +947,25 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
     
     public function handlePublicPost($path,$id, $data, $imgid) {
+        if($data['remember']) {
+                if (isset($_COOKIE['fluxcms_blogcomments'])) {
+                    setcookie("fluxcms_blogcomments[name]", 0, "/");
+                    setcookie("fluxcms_blogcomments[email]", 0, "/");
+                    setcookie("fluxcms_blogcomments[base]", 0, "/");
+                }
+                if($data['name']) {
+                    setcookie("fluxcms_blogcomments[name]", $data['name'], time()+30*24*60*60, '/');
+                }
+                
+                if($data['email']) {
+                    setcookie("fluxcms_blogcomments[email]", $data['email'], time()+30*24*60*60, '/');
+                }
+                
+                if($data['base']) {
+                    setcookie("fluxcms_blogcomments[base]", $data['base'], time()+30*24*60*60, '/');
+                }
+        }
+        
         $timezone = bx_helpers_config::getTimezoneAsSeconds();
         $isok = false;
         
