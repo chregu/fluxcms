@@ -65,6 +65,10 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if (!$perm->isAllowed($path.$name.'.'.$ext,array('read'))) {
             throw new BxPageNotAllowedException();
         }
+        if ($ext != "html" && strpos($name,"archive/tag") === 0 ) {
+            $name .= ".".$ext."/index";
+        }
+        
         return $name;
     }
 
@@ -540,7 +544,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             if (count($tags) > 0) {
                 $xml .= '<div class="post_tags">Tags:';
                 foreach ( $tags as $tag) {
-                    $xml .= '<span class="post_tag"><a rel="tag" href="'.BX_WEBROOT_W.$path.'archive/tag/'.$tag.'/">'.$tag.'</a></span> ';
+                    $xml .= '<span class="post_tag"><a rel="tag" href="'.BX_WEBROOT_W.$path.'archive/tag/'.$tag.'">'.$tag.'</a></span> ';
                 }
                 $xml .= '</div>';
                     $relatedEntries = bx_metaindex::getRelatedInfoByTags($tags,$path.$row['post_uri'].'.html');
