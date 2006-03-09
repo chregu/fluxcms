@@ -273,6 +273,15 @@ and adjust the delicious template itself
         <script type="text/javascript" src="{$webroot}webinc/js/livesearch.js"></script>
         <xsl:text>
 </xsl:text>
+        <script type="text/javascript" src="{$webroot}webinc/js/openId.js"></script>
+        <xsl:text>
+</xsl:text>
+        <script type="text/javascript" src="{$webroot}webinc/js/prototype.lite.js"></script>
+        <xsl:text>
+</xsl:text>
+        <script type="text/javascript" src="{$webroot}webinc/js/moo.ajax.js"></script>
+        <xsl:text>
+</xsl:text>
     
     <meta name="DC.title" content="{$dctitle}"/>
         <xsl:text>
@@ -343,6 +352,12 @@ var commentButtonName      = "send";
             <xsl:apply-templates mode="xhtml"/>
         </strong>
         <br/>
+    </xsl:template>
+    <xsl:template match="xhtml:span[@class='openid']" mode="xhtml">
+        &#160;
+        <a target="_blank" href="http://openid.net/">
+            <img src="{$webroot}{'files/images/opendid.gif'}" alt="open_id"/>
+        </a>
     </xsl:template>
 
     <xsl:template match="xhtml:div[@class='comment' or @class='comments_not']" mode="xhtml">

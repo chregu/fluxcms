@@ -349,6 +349,13 @@ var commentButtonName      = "send";
         <br/>
     </xsl:template>
 
+    <xsl:template match="xhtml:span[@class='openid']" mode="xhtml">
+        &#160;
+        <a target="_blank" href="http://openid.net/">
+            <img src="{$webroot}{'files/images/opendid.gif'}" alt="open_id"/>
+        </a>
+    </xsl:template>
+
     <xsl:template match="xhtml:div[@class='comment' or @class='comments_not']" mode="xhtml">
         <div class="post_content">
             <xsl:apply-templates mode="xhtml"/>
