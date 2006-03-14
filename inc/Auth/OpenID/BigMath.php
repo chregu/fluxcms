@@ -26,6 +26,17 @@ require_once 'Auth/OpenID/CryptUtil.php';
  * @package OpenID
  */
 class Auth_OpenID_MathLibrary {
+
+    static public $_Auth_OpenID_math_extensions = array(
+    array('modules' => array('gmp', 'php_gmp'),
+          'extension' => 'gmp',
+          'class' => 'Auth_OpenID_GmpMathWrapper'),
+    array('modules' => array('bcmath', 'php_bcmath'),
+          'extension' => 'bcmath',
+          'class' => 'Auth_OpenID_BcMathWrapper')
+    );
+
+
     /**
      * Given a long integer, returns the number converted to a binary
      * string.  This function accepts long integer values of arbitrary
@@ -329,14 +340,6 @@ class Auth_OpenID_GmpMathWrapper extends Auth_OpenID_MathLibrary{
  * You can define new math library implementations and add them to
  * this array.
  */
-$_Auth_OpenID_math_extensions = array(
-    array('modules' => array('gmp', 'php_gmp'),
-          'extension' => 'gmp',
-          'class' => 'Auth_OpenID_GmpMathWrapper'),
-    array('modules' => array('bcmath', 'php_bcmath'),
-          'extension' => 'bcmath',
-          'class' => 'Auth_OpenID_BcMathWrapper')
-    );
 
 /**
  * Detect which (if any) math library is available
@@ -413,11 +416,11 @@ function &Auth_OpenID_getMathLib()
     // If this method has not been called before, look at
     // $Auth_OpenID_math_extensions and try to find an extension that
     // works.
-    global $_Auth_OpenID_math_extensions;
-    $ext = Auth_OpenID_detectMathLibrary($_Auth_OpenID_math_extensions);
+error_Log(var_export((self::$_Auth_OpenID_math_extensions),true);
+    $ext = Auth_OpenID_detectMathLibrary(self::$_Auth_OpenID_math_extensions);
     if ($ext === false) {
         $tried = array();
-        foreach ($_Auth_OpenID_math_extensions as $extinfo) {
+        foreach (self::$_Auth_OpenID_math_extensions as $extinfo) {
             $tried[] = $extinfo['extension'];
         }
         $triedstr = implode(", ", $tried);
