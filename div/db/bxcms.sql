@@ -77,6 +77,7 @@ CREATE TABLE `##bxcms_##blogcomments` (
   `comment_hash` varchar(33) default NULL,
   `comment_notification` tinyint(4) default '0',
   `comment_notification_hash` varchar(32) default '',
+  `openid` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `comment_posts_id` (`comment_posts_id`)
 );
@@ -238,7 +239,7 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('outp
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('image_allowed_sizes','',1,5);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('defaultLanguage','',0,6);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitedescription','',0,7);
-INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6520',0,8);
+INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6595',0,8);
 
 --
 -- Table structure for table `##bxcms_##properties`
@@ -380,9 +381,19 @@ CREATE TABLE `##bxcms_##users` (
   KEY `user_pass` (`user_pass`)
 );
 
---
--- Dumping data for table `##bxcms_##users`
---
+
+-- 
+-- Table structure for table `fluxcms_openid_uri`
+-- 
+
+DROP TABLE IF EXISTS `##bxcms_##openid_uri`;
+CREATE TABLE `##bxcms_##openid_uri` (
+  `id` int(11) NOT NULL auto_increment,
+  `date` date NOT NULL default '0000-00-00',
+  `uri` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+);
+
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
