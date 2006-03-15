@@ -65,10 +65,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if (!$perm->isAllowed($path.$name.'.'.$ext,array('read'))) {
             throw new BxPageNotAllowedException();
         }
-        if ($ext != "html" && strpos($name,"archive/tag") === 0 ) {
-            $name .= ".".$ext."/index";
-        }
-        
         return $name;
     }
 
@@ -332,8 +328,10 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         }
         $xml .= '</title></head>';
         $xml .= '<body>';
+        
         if ($res->numRows() > 0 ) {
             $xml .= $this->getBlogPosts($res, $path, $doComments );
+            
             if (!$doComments || ($doComments == 2 && $total >0)) {
                 $end =   (($startEntry + $maxPosts) > $total) ? $total : $startEntry + $maxPosts;
                 $xml .= '<div class="blog_pager" blog:start="'.($startEntry + 1).'" blog:end="'.$end.'" blog:total="'.$total.'">';
@@ -364,6 +362,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         } else {
             throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
         }
+        
         $xml .= '</body></html>';
         $dom = new DomDocument();
 
@@ -467,6 +466,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             
             
             $xml .= '<div class="entry" ';
+            
             $xml .= ' id = "entry'.$row['id'].'"';
             $xml .= ' blog:blog_id="'.$row['blog_id'].'" ' ;
             $xml .= ' blog:post_uri="'.$row['post_uri'].'" ' ;
@@ -500,7 +500,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
             
             $xml .= '>';
-
             $xml .= '<h2 class="post_title">'.$row['post_title'].'</h2>';
             // get categories
             $catres = $GLOBALS['POOL']->db->query("select ".$tablePrefix."blogcategories.id , fullname, fulluri from ".$tablePrefix."blogcategories
@@ -544,7 +543,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             if (count($tags) > 0) {
                 $xml .= '<div class="post_tags">Tags:';
                 foreach ( $tags as $tag) {
-                    $xml .= '<span class="post_tag"><a rel="tag" href="'.BX_WEBROOT_W.$path.'archive/tag/'.$tag.'">'.$tag.'</a></span> ';
+                    $xml .= '<span class="post_tag"><a rel="tag" href="'.BX_WEBROOT_W.$path.'archive/tag/'.$tag.'/">'.$tag.'</a></span> ';
                 }
                 $xml .= '</div>';
                     $relatedEntries = bx_metaindex::getRelatedInfoByTags($tags,$path.$row['post_uri'].'.html');
@@ -594,7 +593,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             //get comments
             // don't do it if doComments = 2 (for extended POsts only..)
             if ($doComments && $doComments !== 2) {
-                $query = "select id, comment_author, DATE_FORMAT(date_add(comment_date, INTERVAL ". self::$timezone." SECOND),'%d.%m.%Y %H:%i') as comment_date, comment_author_email, comment_type, comment_author_url, comment_content from ".$tablePrefix."blogcomments where comment_status = 1 and comment_posts_id = ".$row['id']. "
+                $query = "select id, openid, comment_author, DATE_FORMAT(date_add(comment_date, INTERVAL ". self::$timezone." SECOND),'%d.%m.%Y %H:%i') as comment_date, comment_author_email, comment_type, comment_author_url, comment_content from ".$tablePrefix."blogcomments where comment_status = 1 and comment_posts_id = ".$row['id']. "
                 order by ".$tablePrefix."blogcomments.comment_date";
                 $cres = $GLOBALS['POOL']->db->query($query);
                 if (MDB2::isError($cres)) {
@@ -609,16 +608,15 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
                     if(isset($_POST['bx_fw']['name']) && isset($_POST['bx_fw']['comments'])) {
                     //add some more data and clean some others
-                        $data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
-                        $data['name'] = strip_tags($_POST['bx_fw']['name'] );
-                        $data['email'] = strip_tags($_POST['bx_fw']['email'] );
-                        $data['comments'] = $_POST['bx_fw']['comments'];
-                        $data['remember'] = $_POST['bx_fw']['comment_remember'];
-                        $data['base'] = strip_tags($_POST['bx_fw']['url'] );
-                        $data['passphrase'] = $_POST['passphrase'];
-                        $data['imgid'] = $_POST['imgid'];
-                        $data['comment_notification'] = $_POST['bx_fw']['comment_notification'];
-                        
+                        @$data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
+                        @$data['name'] = strip_tags($_POST['bx_fw']['name'] );
+                        @$data['email'] = strip_tags($_POST['bx_fw']['email'] );
+                        @$data['comments'] = $_POST['bx_fw']['comments'];
+                        @$data['remember'] = $_POST['bx_fw']['comment_remember'];
+                        @$data['base'] = strip_tags($_POST['bx_fw']['base'] );
+                        @$data['passphrase'] = $_POST['passphrase'];
+                        @$data['imgid'] = $_POST['imgid'];
+                        @$data['comment_notification'] = $_POST['bx_fw']['comment_notification'];
                     } else {
                         $data['name'] = null;
                         $data['base'] = null;
@@ -668,10 +666,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                         }
                     }
                     $xml .= $this->getCommentForm($emailBodyID = '', $posturipath, $imgid, $isCaptcha, $captchacontrol, $data, $missingfields);
-                    /*$xml .='<div class="comments_new"><forms:formwizard  xmlns:forms="http://bitflux.org/forms" src="xml/blogcomment.xml">
-                    <forms:parameter name="id" value="'.$row['id'].'" type="noform"/>
-                    </forms:formwizard></div>';*/
-                    
                 } else {
                     $xml .= '<div class="comments_not"><i18n:text>No new comments allowed (anymore) on this post.</i18n:text></div>';
 
@@ -742,6 +736,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $xml .= '>';
                 $xml .= '<a name="comment'.$row['id'].'"/>';
                 $xml .= '<div class="comment_meta_data">';
+                
                 $xml .= '<span class="comment_author_email">'.$row['comment_author_email'].'</span>';
                 $xml .= '<span class="comment_author">';
                 if ($row['comment_author_url']) {
@@ -754,14 +749,18 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $xml .= $row['comment_author'].'</span>';
                 }
                 $xml .= '<span class="comment_date">'.$row['comment_date'].' '. self::$timezoneString . '</span>';
+                if($row['openid'] == 1) {
+                    $xml .= '<span class="openid">/files/images/check.png</span>';
+                }
+                
                 $xml .= '<span class="comment_type">'.$row['comment_type'].'</span>';
                 $xml .= '</div>';
                 $xml .= '<div class="comment_content">';
 
                 $xml .= bx_helpers_string::makeLinksClickable($row['comment_content']).'</div>';
                 $xml .= "</div>";
+                
             }
-
             $xml .= '</div>';
 
         }
@@ -880,21 +879,42 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         return $dom;
     }
     
-    protected function getCommentForm($emailBodyID = '', $posturipath, $imgid = null, $isCaptcha, $captchacontrol, $data = null, $missingfields) {
-        //only works per post atm
-        if (isset($_COOKIE['fluxcms_blogcomments'])) {
-           foreach ($_COOKIE['fluxcms_blogcomments'] as $name => $value) {
-               $data[$name] = $value;
-           }
-        }
-        $xml = '<div class="comments_new">';
+    protected function getCommentForm($emailBodyID = '', $posturipath, $imgid = null, $isCaptcha, $captchacontrol, $data = null, $missingfields) {        
+        
+        $remember = null;
         if($data == null) {
             $data['name'] = null;
-            $data['url'] = null;
+            $data['base'] = null;
             $data['email'] = null;
             $data['comments'] = null;
         }
         
+        //get TablePrefix
+        $tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
+        
+        if(isset($_SESSION['flux_openid_url']) && $_SESSION['flux_openid_url'] || $_COOKIE['openid_enabled']) {
+            $query = "select comment_author, comment_author_email, comment_author_url from ".$tablePrefix."blogcomments where comment_author_url = ".$GLOBALS['POOL']->db->quote($_SESSION['flux_openid_url'])." or  comment_author_url = ".$GLOBALS['POOL']->db->quote($_COOKIE['openid_enabled'])." order by id DESC LIMIT 1";
+            $res = $GLOBALS['POOL']->db->query($query);
+            $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
+            $data['name'] = $row['comment_author'];
+            $data['base'] = $row['comment_author_url'];
+            $data['email'] = $row['comment_author_email'];
+        } else {
+            if (isset($_COOKIE['fluxcms_blogcomments'])) {
+                foreach ($_COOKIE['fluxcms_blogcomments'] as $name => $value) {
+                   $data[$name] = $value;
+                }
+                $remember = 'checked';
+            } else {
+                $remember = null;                                                        
+            }
+        }
+        
+          
+        $xml = '<div class="comments_new">';
+         
+         
+         
         if($captchacontrol == false) {
             $xml .= '<p style="color:red;">Captcha Number is not correct pls try again</p>';
         }
@@ -905,24 +925,87 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                <table class="form" style="margin-left:25px;" border="0" cellspacing="0" cellpadding="0">
                <tr>
                <td valign="top">Name*</td>
-               <td class="formHeader" valign="middle"><input class="formgenerell" type="text" name="bx_fw[name]" value="'.$data['name'].'"/></td>
+               <td class="formHeader" valign="middle"><input class="formgenerell" type="text" name="bx_fw[name]" id="bx_fw[name]" value="'.$data['name'].'"/></td>
                </tr><tr>
                <td valign="top">E-Mail</td>
-               <td><input class="formgenerell" type="text" name="bx_fw[email]" value="'.$data['email'].'"/></td>
-               </tr><tr>
+               <td><input class="formgenerell" type="text" name="bx_fw[email]" id="bx_fw[email]" value="'.$data['email'].'"/></td>
+               </tr>
+                <tr><td valign="top" width="90" class="formurl">For Spammers Only</td><td valign="middle" class="formurl"><input type="text" name="bx_fw[url]" value="" class="formurl" /></td></tr>
+             
+               <tr>
                <td valign="top">URL</td>
-               <td><input class="formgenerell" type="text" name="bx_fw[url]" value="'.$data['base'].'"/></td>
-               </tr><tr>
+               <td>
+                    <input class="formgenerell" type="text" id="baseUri" name="bx_fw[base]" value="'.$data['base'].'"/>
+                    <input type="hidden" id="bx_fw[verified]" name="bx_fw[verified]" value="0" />';
+                    
+                    if(isset($_SESSION['flux_openid_verified']) && $_SESSION['flux_openid_verified'] == true) {
+                        $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verified" />';
+                    } else {
+                        $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verify" />';
+                    }
+                    
+                    $xml .= '<div id="openIdVerify" style="display:none;">trusted</div>';
+               $xml .= '</td>
+               </tr>';
+               
+               if(isset($_COOKIE['openid_enabled']) && $_COOKIE['openid_enabled']) {
+                    if(isset($_SESSION['flux_openid_url']) && $_SESSION['flux_openid_url']) {
+                        //continue();
+                    } else {
+                        if(isset($_SESSION['flux_openid_immediate_checked']) && $_SESSION['flux_openid_immediate_checked']) {
+                            $immediate = false;
+                        } else {
+                            $immediate = true;
+                        }
+                        $_SESSION['flux_openid_immediate_checked'] = true;
+                    }
+                }
+               if(isset($immediate) && $immediate == true) {
+                   $xml .= '<iframe id="foo"  style="display: none;"/>';
+                   
+                   $process_url = BX_WEBROOT.'inc/bx/php/openid/finish_auth.php';
+                   $trust_root = BX_WEBROOT;
+                   $store_path = BX_TEMP_DIR."_php_consumer_test";
+                   
+                   require_once "Auth/OpenID/Consumer.php";
+                   
+                   require_once "Auth/OpenID/FileStore.php";
+                   $store = new Auth_OpenID_FileStore($store_path);
+                   
+                   $consumer = new Auth_OpenID_Consumer($store, null,true);
+
+                   // Begin the OpenID authentication process.
+                   list($status, $info) = $consumer->beginAuth($_COOKIE['openid_enabled']);
+                   // Handle failure status return values.
+                   if ($status != Auth_OpenID_SUCCESS) {
+                       $error = "Authentication error.";
+                       //include 'index.php';
+                   }
+                   // Redirect the user to the OpenID server for authentication.  Store
+                   // the token for this authentication so we can verify the response.
+                   $_SESSION['openid_token'] = $info->token;
+                   $redirect_url = $consumer->constructRedirect($info, $process_url, $trust_root);
+                   
+                   $xml .= '<tr><td></td><td><iframe src="'.$redirect_url.'" style="display: block; height:35px;" /></td></tr>';
+               }
+               $xml .= '<tr>
                <td valign="top">Comment*</td>
                <td><textarea name="bx_fw[comments]">'.$data['comments'].'</textarea></td>
                </tr><tr>
                <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_notification]" />
                Notify me via E-Mail when new comments are made to this entry</td>
-                </tr><tr>
-               <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_remember]" />
-               Remember me (need cookies)</td>
                 </tr>';
-                
+                if($remember == "checked" || $_COOKIE['openid_enabled']) {
+                    $xml .= '<tr>
+                   <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_remember]" checked="checked"/>
+                   Remember me (need cookies)</td>
+                    </tr>';
+                } else {
+                    $xml .= '<tr>
+                   <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_remember]"/>
+                   Remember me (need cookies)</td>
+                    </tr>';
+                }
                 if($isCaptcha == 1) {
                     $xml .= '<tr>
                     <td colspan="2"><br/>Anti-Spam Überprüfung (Code ins Eingabefeld übertragen)</td>
@@ -947,15 +1030,17 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                </form>
                </div>
                ';
+               
         return $xml;
     }
     
     public function handlePublicPost($path,$id, $data, $imgid) {
-        if($data['remember']) {
-                if (isset($_COOKIE['fluxcms_blogcomments'])) {
-                    setcookie("fluxcms_blogcomments[name]", 0, "/");
-                    setcookie("fluxcms_blogcomments[email]", 0, "/");
-                    setcookie("fluxcms_blogcomments[base]", 0, "/");
+        
+        if($data['remember'] != null) {
+            if (isset($_COOKIE['fluxcms_blogcomments'])) {
+                    setcookie("fluxcms_blogcomments[name]", '', 0, "/");
+                    setcookie("fluxcms_blogcomments[email]", '', 0, "/");
+                    setcookie("fluxcms_blogcomments[base]", '', 0, "/");
                 }
                 if($data['name']) {
                     setcookie("fluxcms_blogcomments[name]", $data['name'], time()+30*24*60*60, '/');
@@ -969,10 +1054,14 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     setcookie("fluxcms_blogcomments[base]", $data['base'], time()+30*24*60*60, '/');
                 }
         }
-        
+        // if name and comment is set and remember box not checked -> delete cookie
+        if($data['name'] && $data['comments'] && !$data['remember']) {
+                setcookie("fluxcms_blogcomments[name]", '', 0, "/");
+                setcookie("fluxcms_blogcomments[email]", '', 0, "/");
+                setcookie("fluxcms_blogcomments[base]", '', 0, "/");
+        }
         $timezone = bx_helpers_config::getTimezoneAsSeconds();
         $isok = false;
-        
         foreach($data as $name => $value) {
             $data[$name] = bx_helpers_string::utf2entities(str_replace("&","&amp;",trim($value)));
         }
@@ -987,13 +1076,12 @@ if (isset($data['comment_remember'])) {
         }
    */     
         
-        //get TablePrefix
         $parts =  bx_collections::getCollectionAndFileParts($this->parent->collUri, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
         $tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
-        
         $blogTablePrefix = $tablePrefix.$p->getParameter($parts['coll']->uri,"tableprefix");
+        
         
         $query = 'SELECT blogposts.post_uri, blogposts.id,
         blogposts.post_title,
@@ -1141,14 +1229,25 @@ if (isset($data['comment_remember'])) {
         if (!isset($data['comment_notification'])) {
             $data['comment_notification'] = 0;
         }
-        $query = 'insert into '.$blogTablePrefix.'blogcomments (comment_posts_id, comment_author, comment_author_email, comment_author_ip,
-        comment_date, comment_content,comment_status, comment_notification, comment_notification_hash,
-        comment_author_url         
-        ) VALUES ("'.$row['id'].'",'.$db->quote($data['name'])
-        .','.$db->quote($data['email'],'text').','.$db->quote($data['remote_ip']).',"'.gmdate('c').'",'.$db->quote(bx_helpers_string::utf2entities($data['comments'])).','.$comment_status.','.$db->quote($data['comment_notification']).',"'.$comment_notification_hash.'",'.$db->quote($data['base'],'text').')';
+        
+        //if uri in post is the same as in the session then do openid = true(1)
+        if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['base']) {
+            $openid = 1;
+        } else {
+            $openid = 0;
+        }
+            
+       $query =     'insert into '.$blogTablePrefix.'blogcomments (comment_posts_id, comment_author, comment_author_email, comment_author_ip,
+            comment_date, comment_content,comment_status, comment_notification, comment_notification_hash,
+            comment_author_url, openid         
+            ) VALUES ("'.$row['id'].'",'.$db->quote($data['name'])
+            .','.$db->quote($data['email'],'text').','.$db->quote($data['remote_ip']).',"'.gmdate('c').'",'.$db->quote(bx_helpers_string::utf2entities($data['comments'])).','.$comment_status.','.$db->quote($data['comment_notification']).',"'.$comment_notification_hash.'",'.$db->quote($data['base'],'text').', '.$openid.')';
+        
+        
         $res = $GLOBALS['POOL']->dbwrite->query($query);
         $GLOBALS['POOL']->dbwrite->loadModule('Extended'); 
         $lastID = $GLOBALS['POOL']->dbwrite->getAfterID(null,$blogTablePrefix.'blogcomments');
+                
         $data['edituri'] = BX_WEBROOT.'admin/?edit=/forms/blogcomments/?id='.$lastID;
         $data['uri'] .= '#comment'.$lastID;
         //get email et al
@@ -1220,7 +1319,7 @@ if (isset($data['comment_remember'])) {
             if(!$commentRejected) {
                 bx_plugins_blog_commentsnotification::sendNotificationMails($lastID,$row['id'],$parts['coll']->uri);
                 
-                header ('Location: '. bx_helpers_uri::getLocationUri($row["post_uri"]) . '.html?sent='.time().'#comment');
+                header ('Location: '. bx_helpers_uri::getLocationUri($row["post_uri"]) . '.html?sent='.time().'#comment'.$lastID);
             } else {
                 //put it in the db;
                 $query = 'update '.$blogTablePrefix.'blogcomments set comment_rejectreason = ' . $GLOBALS['POOL']->db->quote(htmlspecialchars($commentRejected)) . ' where id = ' . $lastID; 
