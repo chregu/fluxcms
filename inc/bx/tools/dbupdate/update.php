@@ -270,8 +270,8 @@ if ($lastVersion < 6595) {
       `uri` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`id`)
       )",'openid_uri');
-      addCol("blogcomments","openid"," TINYINT( 4 ) DEFAULT '0' NOT NULL");
       updateLastVersion(6595);
+      addCol("blogcomments","openid"," TINYINT( 4 ) DEFAULT '0' NOT NULL");
 }
 
 
