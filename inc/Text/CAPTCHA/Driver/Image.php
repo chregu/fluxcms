@@ -4,7 +4,7 @@
  * Require Image_Text class for generating the text.
  *
  */
-require_once 'Image/Text.php';
+require_once '../../Image/Text.php';
 
 /**
  * Text_CAPTCHA_Driver_Image - Text_CAPTCHA driver graphical CAPTCHAs
