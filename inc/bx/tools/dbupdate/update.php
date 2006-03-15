@@ -262,16 +262,16 @@ if ($lastVersion < 6520) {
 }
 
 
-if ($lastVersion < 6594) {
+if ($lastVersion < 6595) {
     $res = doQueryTable("
-    CREATE TABLE `".$tablePrefix."fluxcms_openid_uri` (
+    CREATE TABLE `".$tablePrefix."openid_uri` (
       `id` int(11) NOT NULL auto_increment,
       `date` date NOT NULL default '0000-00-00',
       `uri` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`id`)
-      )");
-      doQuery("ALTER TABLE `fluxcms_blogcomments` ADD `openid` TINYINT( 4 ) DEFAULT '0' NOT NULL ;");
-      updateLastVersion(6594);
+      )",'openid_uri');
+      addCol("blogcomments","openid"," TINYINT( 4 ) DEFAULT '0' NOT NULL");
+      updateLastVersion(6595);
 }
 
 
