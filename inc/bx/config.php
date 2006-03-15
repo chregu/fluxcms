@@ -12,7 +12,7 @@ class bx_config extends popoon_classes_config {
     public $portabilityoptions = 31;
     public $allowPHPUpload = false;
     public $adminLanguage = NULL;
-    
+    public static $instance = NULL;    
     static protected $optionIsArray = array('outputLanguages', 'image_allowed_sizes', 'adminLanguages','blogWeblogsPing');
     
     public static function getInstance () {
