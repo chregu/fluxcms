@@ -270,7 +270,7 @@ if ($lastVersion < 6582) {
       `uri` varchar(255) NOT NULL default '',
       PRIMARY KEY  (`id`)
       )");
-      doQuery("ALTER TABLE `fluxcms_blogcomments` ADD `openid2` TINYINT( 4 ) DEFAULT '0' NOT NULL ;");
+      doQuery("ALTER TABLE `fluxcms_blogcomments` ADD `openid` TINYINT( 4 ) DEFAULT '0' NOT NULL ;");
       updateLastVersion(6582);
 }
 
