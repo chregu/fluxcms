@@ -21,7 +21,7 @@ php_value error_reporting 4095
 # If you need to fopen http:// files, use something else than fopen (curl, pear class, whatever)
 #  a lot of remote code injections happens through this php feature
 php_flag register_globals Off
-php_flag allow_fopen_url Off
+php_flag allow_url_fopen Off
 php_flag zend.ze1_compatibility_mode Off
 php_flag allow_call_time_pass_reference  On
 
