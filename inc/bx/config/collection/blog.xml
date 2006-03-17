@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 
 <bxcms xmlns="http://bitflux.org/config">
+
+ <variable name="blogid" value="1"/>
+ 
  <plugins inGetChildren="false">
         <extension type="xml"/>
         <file preg="#plugin=trackback#"/>

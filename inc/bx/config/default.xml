@@ -120,7 +120,7 @@
 		<blogWeblogsPingFixed></blogWeblogsPingFixed>
         <blogPostsExpireCatAllOnly allowFromDB="true">false</blogPostsExpireCatAllOnly>
         <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
-        <blogCaptchaAfterDays allowFromDB="true">31</blogCaptchaAfterDays>
+        <blogCaptchaAfterDays allowFromDB="true">31000</blogCaptchaAfterDays>
         
         
         </options>
