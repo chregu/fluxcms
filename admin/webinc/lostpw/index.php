@@ -70,7 +70,7 @@ Have fun';
         
         $query = "update  ".$tablePrefix."users set user_tmphash = '".$hash."' where id = $id";
 	$res = $db->query($query);	
-	if ($db->isError($res) && $res->code == -19) {
+	if (MDB2::isError($res) && $res->code == -19) {
 		$query2 = "alter table ".$tablePrefix."users add user_tmphash varchar(32) default ''";
 		$res = $db->query($query2);
 		$res = $db->query($query);
