@@ -1013,7 +1013,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                }
                $xml .= '<tr>
                <td valign="top">Comment*</td>
-               <td><textarea name="bx_fw[comments]">'.$data['comments'].'</textarea></td>
+               <td><textarea rows="10" cols="40" name="bx_fw[comments]">'.$data['comments'].'</textarea></td>
                </tr><tr>
                <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_notification]" />
                Notify me via E-Mail when new comments are made to this entry</td>
