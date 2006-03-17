@@ -115,9 +115,5 @@
         <plugin type="navitree"></plugin>
     </plugins>
 
-    <filters>
-        <extension type="html"/>
-        <filter type="formwizard"></filter>
-    </filters>
 
 </bxcms>
