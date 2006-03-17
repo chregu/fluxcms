@@ -28,6 +28,27 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     static public $instance = array();
     static private $idMapper = null;
     static protected $tree = null;
+    
+    private $allowedTags = array('b','i','a','ul','li','ol','pre','blockquote','br','p');
+    
+    private $knownspammers = array();
+    
+    private $tidyOptions = array(
+    "output-xhtml" => true,
+    "show-body-only" => true,
+    
+    "clean" => true,
+    "wrap" => "350",
+    "indent" => true,
+    "indent-spaces" => 1,
+    "ascii-chars" => false,
+    "wrap-attributes" => false,
+    "alt-text" => "",
+    "doctype" => "loose",
+    "numeric-entities" => true,
+    "drop-proprietary-attributes" => true
+    );
+    
 
     /*** magic methods and functions ***/
 
@@ -401,23 +422,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
    }
     protected function getBlogPostData($id,$path,$doComments = false) {
-        //if test is 1 delete all captcha files in dynimages
-        $test = rand(1,500);
-        if($test <= 10) {
-            
-            $dir = BX_PROJECT_DIR.'dynimages/captchas/';
-            $opendir = opendir($dir);
-            while (false !== ($file = readdir($opendir))) {
-                if ($file != "." && $file != "..") {
-                    if (filectime($dir.$file) < time()-(20*60)) {
-                        @unlink($dir.$file);
-                    } else {
-                        continue;
-                    }
-                }
-            }
-            closedir($opendir);
-        }
+        
         
         $blogid = $this->getParameter($path,"blogid");
         if (!$blogid) {$blogid = 1;};
@@ -627,6 +632,24 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     }
                     //if captcha is active
                     if($isCaptcha == true) {
+                        //if test is 1 delete all captcha files in dynimages
+                        $test = rand(1,500);
+                        if($test <= 1) {
+                            
+                            $dir = BX_PROJECT_DIR.'dynimages/captchas/';
+                            $opendir = @opendir($dir);
+                            while (false !== ($file = readdir($opendir))) {
+                                if ($file != "." && $file != "..") {
+                                    if (filectime($dir.$file) < time()-(20*60)) {
+                                        @unlink($dir.$file);
+                                    } else {
+                                        continue;
+                                    }
+                                }
+                            }
+                            closedir($opendir);
+                        }
+                        
                         $captchacontrol = true;
                         // generate captcha
                         $imgid = bx_helpers_captcha::doCaptcha();
@@ -1034,8 +1057,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         return $xml;
     }
     
-    public function handlePublicPost($path,$id, $data, $imgid) {
-        
+    public function handlePublicPost($path,$id, $data) {
         if($data['remember'] != null) {
             if (isset($_COOKIE['fluxcms_blogcomments'])) {
                     setcookie("fluxcms_blogcomments[name]", '', 0, "/");
@@ -1134,6 +1156,7 @@ if (isset($data['comment_remember'])) {
         }
         
         // this preg escapes all not allowed tags...
+        
         $_tags = implode("|",$this->allowedTags).")])#i";
         $data['comments'] = preg_replace("#\<(/[^(".$_tags,"&lt;$1", $data['comments']);
         $data['comments'] = preg_replace("#\<([^(/|".$_tags,"&lt;$1", $data['comments']);
