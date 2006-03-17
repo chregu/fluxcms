@@ -915,7 +915,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         //get TablePrefix
         $tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
         
-        if(isset($_SESSION['flux_openid_url']) && $_SESSION['flux_openid_url'] || $_COOKIE['openid_enabled']) {
+        if(isset($_SESSION['flux_openid_url']) && $_SESSION['flux_openid_url'] || (isset($_COOKIE['openid_enabled']) && $_COOKIE['openid_enabled'])) {
             $query = "select comment_author, comment_author_email, comment_author_url from ".$tablePrefix."blogcomments where comment_author_url = ".$GLOBALS['POOL']->db->quote($_SESSION['flux_openid_url'])." or  comment_author_url = ".$GLOBALS['POOL']->db->quote($_COOKIE['openid_enabled'])." order by id DESC LIMIT 1";
             $res = $GLOBALS['POOL']->db->query($query);
             $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
@@ -1018,7 +1018,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_notification]" />
                Notify me via E-Mail when new comments are made to this entry</td>
                 </tr>';
-                if($remember == "checked" || $_COOKIE['openid_enabled']) {
+                if($remember == "checked" || (isset($_COOKIE['openid_enabled']) && $_COOKIE['openid_enabled'])) {
                     $xml .= '<tr>
                    <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_remember]" checked="checked"/>
                    Remember me (need cookies)</td>
