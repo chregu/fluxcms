@@ -381,7 +381,7 @@ class MDB2
      * @access  public
      * @see     MDB2::parseDSN
      */
-    function &connect($dsn, $options = false)
+    static function &connect($dsn, $options = false)
     {
         $db =& MDB2::factory($dsn, $options);
         if (PEAR::isError($db)) {
@@ -534,7 +534,7 @@ class MDB2
      * @access  public
      * @return  bool    true if parameter is an error
      */
-    function isError($data, $code = null)
+    static function isError($data, $code = null)
     {
         if (is_a($data, 'MDB2_Error')) {
             if (is_null($code)) {
