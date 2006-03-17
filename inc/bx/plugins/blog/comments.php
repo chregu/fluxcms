@@ -102,7 +102,7 @@
         
         $query .= "order by comment_date desc limit 10";
         $res = $GLOBALS['POOL']->db->query($query);
-        if ($GLOBALS['POOL']->db->isError($res)) {
+        if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
         }
         return '<comments>'.self::getCommentXML($res).'</comments>';
@@ -123,7 +123,7 @@
                     date_add(comment_date, INTERVAL ". self::$timezone." SECOND),
                     comment_type from ".$tablePrefix."blogcomments
                     where comment_posts_id = $id and comment_status = $status  order by comment_date desc limit 10");
-        if ($GLOBALS['POOL']->db->isError($res)) {
+        if (MDB2::isError($res)) {
                     throw new PopoonDBException($res);
         }
         

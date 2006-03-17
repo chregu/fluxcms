@@ -413,7 +413,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
        
        $res = $db->query($query);
 
-       if ( !$res || $db->isError($res) ) {
+       if ( !$res || MDB2::isError($res) ) {
            return false;
        } else {
            $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);

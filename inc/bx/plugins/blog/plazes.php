@@ -31,7 +31,7 @@ class bx_plugins_blog_plazes {
         require_once('XML/RPC.php');
         
         $row = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
-        if ($GLOBALS['POOL']->db->isError($row)) {
+        if (MDB2::isError($row)) {
             throw new PopoonDBException($row);
         }
         

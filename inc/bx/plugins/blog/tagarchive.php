@@ -21,7 +21,7 @@ class bx_plugins_blog_tagarchive {
        $tableprefix = $GLOBALS['POOL']->config->getTablePrefix();
        $res = $db->query("select DISTINCT tag from ".$tableprefix."tags left join ".$tableprefix."properties2tags on ".$tableprefix."tags.id = ".$tableprefix."properties2tags.tag_id where ".$tableprefix."tags.id = ".$tableprefix."properties2tags.tag_id");
        
-       if ($db->isError($res)) {
+       if (MDB2::isError($res)) {
            return "<error/>";
        }
        $xml = '<archive>';

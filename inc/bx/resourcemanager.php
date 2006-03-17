@@ -52,7 +52,7 @@ class bx_resourcemanager {
     static public function getResourceId($dir, $filename, $ext = "") {
         $query = "select path from ".$GLOBALS['POOL']->config->getTablePrefix()."properties where path like '$dir$filename%'  LIMIT 1";
         $res =  $GLOBALS['POOL']->db->query($query);
-        if ($GLOBALS['POOL']->db->isError($res)) {
+        if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
         }
         $path = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
@@ -97,7 +97,7 @@ class bx_resourcemanager {
             $res = self::$getAllPropertiesStm->execute(array('path' => $path));
         }
         
-        if ($GLOBALS['POOL']->db->isError($res)) {
+        if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
         }
 
@@ -115,7 +115,7 @@ class bx_resourcemanager {
         $paths = "('".implode("','",$paths)."')";
         $query = "select path, value from ".$prefix."properties where path in $paths and name = '$name' and ns = '$namespace'"; 
         $res = $GLOBALS['POOL']->db->query($query);
-        if ($GLOBALS['POOL']->db->isError($res)) {
+        if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
         }
         return $res->fetchAll(MDB2_FETCHMODE_ASSOC,"path");
@@ -130,7 +130,7 @@ class bx_resourcemanager {
             self::$getPropertyStm = $GLOBALS['POOL']->db->prepare($query,array('text','text','text'),array('text'));
         }
         $res = self::$getPropertyStm->execute(array('path' => $path, 'name' => $name, 'namespace' => $namespace));
-        if ($GLOBALS['POOL']->db->isError($res)) {
+        if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
         }
         
@@ -204,7 +204,7 @@ class bx_resourcemanager {
             $query = 'INSERT INTO '.$prefix.'properties  (path,name,ns,value) VALUES (:path,:name,:namespace,:value)';
             $stm = $db->prepare($query);
             $stm->execute(array('path' => $path,'name' => $name,'namespace' => $namespace,'value' => $value));
-            if ($db->isError($res = $stm->execute(array('path' => $path,'name' => $name,'namespace' => $namespace,'value' => $value)),true)) {
+            if (MDB2::isError($res = $stm->execute(array('path' => $path,'name' => $name,'namespace' => $namespace,'value' => $value)),true)) {
                 bx_log::log("MDB2 error:". $res->getMessage() . $res->getUserInfo(), PEAR_LOG_ERR);
                 return false;
             }
@@ -236,7 +236,7 @@ class bx_resourcemanager {
         }
         
         $res = $GLOBALS['POOL']->dbwrite->query($query);
-        if ($GLOBALS['POOL']->dbwrite->isError($res)) {
+        if (MDB2::isError($res)) {
             return FALSE;
         }
         

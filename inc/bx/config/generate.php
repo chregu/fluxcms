@@ -197,7 +197,7 @@ class bx_config_generate {
             $db = @MDB2::connect($dsn);
             $res = @$db->query("select * from ".$dsn['tableprefix']."options");
            
-            if (!@$db->isError($res)) { 
+            if (!@MDB2::isError($res)) { 
                 while ($row = @$res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                     //only use them, if they have a value
                     if ($row['value']) {

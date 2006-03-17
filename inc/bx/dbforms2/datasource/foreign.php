@@ -86,7 +86,7 @@ class bx_dbforms2_datasource_foreign {
         }
         
         $res = $this->db->query($sql);
-        if($this->db->isError($res)) {
+        if(MDB2::isError($res)) {
             return array();
         }
         $result = array();

@@ -25,7 +25,7 @@ class bx_plugins_blog_authorarchive {
        $tableprefix = $GLOBALS['POOL']->config->getTablePrefix();
        $res = $db->query("select user_login from ".$tableprefix."users");
        
-       if ($db->isError($res)) {
+       if (MDB2::isError($res)) {
            return "<error/>";
        }
        $xml = '<archive>';

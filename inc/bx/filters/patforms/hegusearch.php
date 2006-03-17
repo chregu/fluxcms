@@ -40,7 +40,7 @@ class bx_filters_patforms_hegusearch extends bx_filters_patforms_formhandler {
         $xml = '<div xmlns:i18n="http://apache.org/cocoon/i18n/2.1">';
 
         $res = $this->db->query($query);
-        if (!$this->db->isError($res)) {
+        if (!MDB2::isError($res)) {
             while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
 		$row['meta_projektname'] = str_replace("<right>",", ",$row['meta_projektname'] );
 		$row['meta_projektname'] = str_replace("</right>","",$row['meta_projektname'] );

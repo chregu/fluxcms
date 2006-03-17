@@ -87,7 +87,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 // give it a go
                 $res = $db->query($query);
 
-                if($db->isError($res)) {
+                if(MDB2::isError($res)) {
                     // 20 means error, this number has been chosen arbitrarily
                     $responseCode = $res->getCode();
                     $responseText = $res->getMessage(). "\n".$res->getUserInfo();

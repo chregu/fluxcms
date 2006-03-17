@@ -76,7 +76,7 @@ class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
         $query = 'select '. $this->attributes['thatidfield'] . ' as _idfield from '. $tablePrefix.$this->attributes['relationtable'] .' where ' . $this->attributes['thisidfield'] .' = '.$db->quote($id);
         $res = $db->query($query);
         $v = array();
-        if (!$db->isError($res)) {
+        if (!MDB2::isError($res)) {
             while ($row= $res->fetchRow(MDB2_FETCHMODE_ORDERED)) {
                 $v[$row[0]] = $this->values[$row[0]];
             }

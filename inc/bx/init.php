@@ -94,7 +94,7 @@ class bx_init {
         $db = $GLOBALS['POOL']->db;
         $res = @$db->query("select name, isarray, value from ".$GLOBALS['POOL']->config->getTablePrefix()."options where value != '' ");
         
-        if ($res && !$db->isError($res)) { 
+        if ($res && !MDB2::isError($res)) { 
             while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                 //only use them, if they have a value
                 if (!in_array($row['name'],$notAllowedDBOptions)) {

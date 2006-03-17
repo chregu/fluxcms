@@ -48,7 +48,7 @@ class bx_notifications_mail extends bx_notification {
      $query = "select user_email,user_fullname from ".$prefix."users where user_login =".$GLOBALS['POOL']->db->quote($username);
      
      $row = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
-     if ($GLOBALS['POOL']->db->isError($row)) {
+     if (MDB2::isError($row)) {
          throw new PopoonDBException($row);
      }
      $to = $row['user_fullname'] . ' <' .$row['user_email'].'>'; 

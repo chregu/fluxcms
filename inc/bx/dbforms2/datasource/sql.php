@@ -72,7 +72,7 @@ class bx_dbforms2_datasource_sql {
     public function getValues($args, $childNode) {
         $sql = str_replace("{tablePrefix}",$GLOBALS['POOL']->config->getTablePrefix(),$childNode);
         $res = $this->db->query($sql);
-        if($this->db->isError($res)) {
+        if(MDB2::isError($res)) {
             return array();
         }
         $result = array();

@@ -70,7 +70,7 @@ class bx_editors_links extends bx_editor implements bxIeditor {
             }
             $query .= ")";
             $res = $db->query($query);
-            if ($db->isError($res)) {
+            if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
             }
             $this->updateRang((int) $data['id'],(int) $data['rang']);

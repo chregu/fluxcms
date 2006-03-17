@@ -26,7 +26,7 @@ $db = $GLOBALS['POOL']->dbwrite;
 $res = $db->query("select value from  ".$tablePrefix."options where name = 'lastdbversion'");
 
 
-if ($db->isError($res)) {
+if (MDB2::isError($res)) {
     // if no such table, create it
     if ($res->code == -18) {
         $lastVersion = 3779;
@@ -39,7 +39,7 @@ if ($db->isError($res)) {
     if (!$lastVersion) {
         print "no lastdbversion found in option table, try to get it from _state \n";
         $lastVersion = $db->queryOne("select value from  ".$tablePrefix."_state where name = 'lastdbversion'");
-        if ($db->isError($lastVersion) || !$lastVersion) {
+        if (MDB2::isError($lastVersion) || !$lastVersion) {
             $lastVersion = 3779;
         }
         doQuery("insert into ".$tablePrefix."options (name, value) VALUES ('lastdbversion', $lastVersion)");
@@ -288,7 +288,7 @@ print "DB up-to-date \n";
 function doQueryTable($query,$tableName) {
     $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
     $res = doQuery($query,false);
-    if ($GLOBALS['POOL']->db->isError($res)) {
+    if (MDB2::isError($res)) {
         if ($res->code == -5) {
             print $tablePrefix.$tableName ." already exists, moving forward \n";
             
@@ -313,7 +313,7 @@ function doQuery($query,$fatal=true) {
 }
 
 function printError($res) {
-    if ($GLOBALS['POOL']->db->isError($res)) {
+    if (MDB2::isError($res)) {
         print $res->message ."\n";
         print $res->userinfo ."\n";
         die();
@@ -334,7 +334,7 @@ function addCol($table,$name,$type,$default = null) {
         $query .= " DEFAULT $default";
     }
     $res = doQuery($query, false);
-    if ($GLOBALS['POOL']->db->isError($res)) {
+    if (MDB2::isError($res)) {
         if ($res->code == -1) {
             print "  '$name' already exists in '".$tablePrefix."$table' (non fatal) \n\n";
         } else {

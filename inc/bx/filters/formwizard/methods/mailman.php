@@ -16,7 +16,7 @@ class bx_filters_formwizard_methods_mailman {
             $query = "insert into ".self::$table." ".self::array2sql($fields);
 
             $res = $GLOBALS['POOL']->db->query($query);
-            if(!$GLOBALS['POOL']->db->isError($res)) {
+            if(!MDB2::isError($res)) {
                 return TRUE;
             }
         }
@@ -29,7 +29,7 @@ class bx_filters_formwizard_methods_mailman {
             $query .= $GLOBALS['POOL']->db->quote($email);
             
             $res = $GLOBALS['POOL']->db->query($query);
-            if(!$GLOBALS['POOL']->db->isError($res)) {
+            if(!MDB2::isError($res)) {
                 return TRUE;
             }
         }

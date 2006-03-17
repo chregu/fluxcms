@@ -31,7 +31,7 @@ class bx_plugins_blog_montharchive {
        }
        $q="select  count(*) as count, date_format(post_date,'%M') as monthlong, date_format(post_date,'%m') as month, year(post_date) as year from ".$tablePrefix."blogposts as blogposts  where  blogposts.id > 0 and blog_id = ".$blogid." and blogposts.post_status & $overviewPerm group by year(post_date), month(post_date) order by post_date DESC";
        $res = $db->query($q);
-       if ($db->isError($res)) {
+       if (MDB2::isError($res)) {
            return "<error/>";
        }
        $xml = '<archive  xmlns:i18n="http://apache.org/cocoon/i18n/2.1">';
