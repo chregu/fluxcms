@@ -175,39 +175,32 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 $plugins = $collection->getPluginMapByRequest($filename,$ext);
             }
             $retcode = 0;
+            bx_helpers_debug::webdump($_POST);
             if (isset($_POST['bx']) && isset($_POST['bx']['plugins'])){
                 foreach($plugins as $id => $plugin) {
-                    if (isset($_POST['bx']['plugins'][$plugin['plugin']->name])) {
-                        $data = $_POST['bx']['plugins'][$plugin['plugin']->name];
-                        if (get_magic_quotes_gpc()) {
-                            $newdata = array();
-                            foreach ($data as $name => $value) {
-                                $name = stripslashes($name);
-                                if (is_array($value)) {
-                                    foreach($value as $key => $avalue) {
-                                        $newdata[$name][stripslashes($key)] = stripslashes($avalue);
-                                    }
-                                } else {
-                                    $newdata[$name] = stripslashes($value);
-                                }
-                            }
-                            $data = $newdata;
-                            unset($newdata);
-                        }
-                       
-                      $retcode = $plugin['plugin']->handlePublicPost($collection->uri,$id,$data);
+                    if (isset($_POST['bx']['plugins'][$plugin['plugin']->name]) && isset($_POST['bx']['plugins'][$plugin['plugin']->name]['_all'])) {
+                         $data = bx_helpers_globals::stripMagicQuotes($_POST);
+                         
+                         foreach ($data['bx']['plugins'][$plugin['plugin']->name] as $name => $value) {
+                             $data[$name] = $value;
+                             unset ($data['bx']['plugins'][$plugin['plugin']->name][$name]);
+                         }
+                         unset($data['bx']['plugins'][$plugin['plugin']->name]);
+                         if (count($data['bx']['plugins']) == 0) {
+                             unset ($data['bx']['plugins']);
+                             if (count($data['bx']) == 0) {
+                                 unset ($data['bx']);
+                             }
+                         }
+                         $retcode = $plugin['plugin']->handlePublicPost($collection->uri,$id,$data);
+                    } else if (isset($_POST['bx']['plugins'][$plugin['plugin']->name])) {
+                        $data = bx_helpers_globals::stripMagicQuotes($_POST['bx']['plugins'][$plugin['plugin']->name]);
+                        
+                        $retcode = $plugin['plugin']->handlePublicPost($collection->uri,$id,$data);
                     
                     }
                 }
             }
-            
-            
-            
-            //$plugins = $collection->getPluginMapByRequest($filename,$ext);;
-           /*     if(!empty($_POST['bx']['plugins'][$p->name])) {
-                    $p->handlePOST($this->uri,$p['id'], $_POST['bx']['plugins'][$p->name]);
-                }
-            }*/
             
             if ($mo) {
                 $webrootLang = BX_WEBROOT.'mo/';
