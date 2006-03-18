@@ -35,6 +35,9 @@
     <!-- even if comments are allowed, only allow trackbacks for a month -->
     <blogTrackbacksTimeLimit>true</blogTrackbacksTimeLimit>
             
+    <blogCaptchaAfterDays allowFromDB="true">31000</blogCaptchaAfterDays>
+        
+    <openIdEnabled allowFromDB="true">false</openIdEnabled>
     
     <!-- If you want to get mail notification when a comment is rejected by the Flux CMS
             comment spam detection, set this to true. Moderated and approved comments

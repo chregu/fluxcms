@@ -122,6 +122,7 @@
         <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
         <blogCaptchaAfterDays allowFromDB="true">31000</blogCaptchaAfterDays>
         
+        <openIdEnabled  allowFromDB="true">false</openIdEnabled>
         
         </options>
 </config>
