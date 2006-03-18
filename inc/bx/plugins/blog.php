@@ -591,7 +591,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $captchacontrol = 0;
                     $missingfields = false;
                     $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
-                    $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
+                    $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date_iso']);
                     if(isset($_POST['bx_fw']['name']) && isset($_POST['bx_fw']['comments'])) {
                         $_POST = bx_helpers_globals::stripMagicQuotes($_POST);
                     //add some more data and clean some others
