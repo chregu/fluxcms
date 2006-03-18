@@ -2,6 +2,9 @@
 class bx_helpers_captcha {
     
     public static function isCaptcha($days=null, $postdate=null) {
+        if ($days < 0) {
+            return false;
+        }
         $unixtimepostdate = strtotime($postdate);
         $captchastart = $unixtimepostdate + ($days * 24 * 60 * 60);
         $unixtimenow = time();
@@ -14,7 +17,6 @@ class bx_helpers_captcha {
     
     
     static function checkCaptcha($captcha, $imgid) {
-        $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
         $magickey = $GLOBALS['POOL']->config->magicKey;
         preg_match("#.*.html#", $_SERVER['REQUEST_URI'], $matches);
         
@@ -28,21 +30,29 @@ class bx_helpers_captcha {
     
     public static function doCaptcha() {
         require_once 'inc/Text/CAPTCHA.php';
-        $font_path = 0;
-        $font_file = 0;
         
         // Set CAPTCHA options (font must exist!)
+        
+        $font_path =  $GLOBALS['POOL']->config->blogCaptchaFontPath;
+        $font_file =  $GLOBALS['POOL']->config->blogCaptchaFontFile;
+        
+        if (substr($font_path,0,1) != "/") {
+            $font_path = BX_PROJECT_DIR . $font_path;
+        }
         $options = array(
         'font_size' => 16,
-        'font_path' => '/usr/share/fonts/truetype/msttcorefonts/',
-        'font_file' => 'Courier_New.ttf'
+        'font_path' => $font_path,
+        'font_file' => $font_file
         );
         
         // Generate a new Text_CAPTCHA object, Image driver
         $c = Text_CAPTCHA::factory('Image');
         $retval = $c->init(100, 30, null, $options);
         if (@PEAR::isError($retval)) {
+            
             echo 'Error generating CAPTCHA!';
+            print $retval->getMessage();
+            
             exit;
         }
         
