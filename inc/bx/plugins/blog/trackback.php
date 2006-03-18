@@ -56,16 +56,16 @@ class bx_plugins_blog_trackback {
         
         $emailBody = "";
         $data = popoon_classes_externalinput::removeMagicQuotes($_POST);
-	$commentRejected = '';        
-
+        $commentRejected = '';        
+        
         if (isset($data['title'])) {
             $emailBody .=  "Title:    " . $data['title'] . "\n";
             $title = $data['title'];
         } else {
             $title = '';
         }
-
-
+        
+        
         if (isset($data['blog_name'])) {
             $emailBody .= "BlogName: " . $data['blog_name'] . "\n";
             $emailFrom = $data['blog_name']." <noadress@example.org>";
@@ -73,45 +73,45 @@ class bx_plugins_blog_trackback {
         } else {
             $blogname = '';
             $emailFrom = "unknown <noadress@example.org>";
-	    $commentRejected .= "* No blogname given.\n";
+            $commentRejected .= "* No blogname given.\n";
         }
-
+        
         if (isset($data['url'])) {
             $emailBody .= "URL:      " . $data['url'] . "\n";
             $url = $data['url'];
         } else {
             $url = '';
-	    $commentRejected .= "* No URL given.\n";
+            $commentRejected .= "* No URL given.\n";
         }
-
+        
         $emailBody .= "IP:       " . $_SERVER['REMOTE_ADDR'] . "\n";
-
+        
         if (isset($data['excerpt'])) {
             $emailBody .= "Excerpt:  " . strip_tags($data['excerpt']) . "\n";
             $excerpt = $data['excerpt'];
         }  else {
             $excerpt = '';
         }
-
+        
         
         
         
         $emailBody .= "\nURI:\n ". BX_WEBROOT_W.$path.'archive/'.date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).'/'.$row['post_uri'].'.html'."\n";
         
         $emailSubject = "[".bx_helpers_config::getBlogName()."] ";
-
+        
         $commentRejected .= bx_plugins_blog_spam::checkRBLs(array($url));
-	$commentRejected .= bx_plugins_blog_spam::checkSenderIPBLs($_SERVER['REMOTE_ADDR']);
+        $commentRejected .= bx_plugins_blog_spam::checkSenderIPBLs($_SERVER['REMOTE_ADDR']);
         if (preg_match("#<a[^>]+href=#",$data['title'])) {
-		$commentRejected .= "* Links in title...\n";
-	}
+            $commentRejected .= "* Links in title...\n";
+        }
         if  (!$commentRejected) {
             $commentType = 2;
             $emailSubject .= "(Mod) ";
         } else {
             $commentType = 3;   
-	    $emailSubject .= "(Rej) ";
-	}        
+            $emailSubject .= "(Rej) ";
+        }        
         $emailSubject .= "New Trackback on '" . $row['post_title'] . "'";
         $db = $GLOBALS['POOL']->db;
         $query = 'insert into '.$tablePrefix.'blogcomments (
@@ -134,14 +134,14 @@ class bx_plugins_blog_trackback {
         "TRACKBACK"
         )';
         
-         
+        
         $err = $db->query($query);
         
         $db->loadModule('extended'); 
         $lastID = $db->getAfterID(null,$tablePrefix.'blogcomments');       
-         
+        
         $emailBody .= "Edit URI:\n ".  BX_WEBROOT.'admin/?edit=/forms/blogcomments/?id='.$lastID ."\n";
-
+        
         if ($GLOBALS['POOL']->config->lastdbversion >= 5266) {
             $hash = md5($lastID . rand().microtime(true));
             $hashPrefix = "a";
