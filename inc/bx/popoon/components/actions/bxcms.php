@@ -155,7 +155,6 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             $collection = $parts['coll'];
         }
 
-        //bx_helpers_debug::webdump($fulluri);
         
         $filename = $parts['name'];
         $ext = $parts['ext'];
@@ -175,7 +174,6 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 $plugins = $collection->getPluginMapByRequest($filename,$ext);
             }
             $retcode = 0;
-            bx_helpers_debug::webdump($_POST);
             if (isset($_POST['bx']) && isset($_POST['bx']['plugins'])){
                 foreach($plugins as $id => $plugin) {
                     if (isset($_POST['bx']['plugins'][$plugin['plugin']->name]) && isset($_POST['bx']['plugins'][$plugin['plugin']->name]['_all'])) {
