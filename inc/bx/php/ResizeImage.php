@@ -426,6 +426,25 @@ $fd = fopen ($this->endImgFile,"w");
    function captcha() {
        $this->deleteFileAfter = true;
        $this->lastModified = time();
+       //if test is 1 delete all captcha files in dynimages
+       $test = rand(1,500);
+       if($test <= 1) {
+           
+           $dir = $this->endImgPath."/";
+           $opendir = @opendir($dir);
+           while (false !== ($file = readdir($opendir))) {
+               if ($file != "." && $file != "..") {
+                   if (@filectime($dir.$file) < time()-(60*60)) {
+                       @unlink($dir.$file);
+                   } else {
+                       continue;
+                   }
+               }
+           }
+           closedir($opendir);
+       }
+       
+       
        if (file_exists($this->endImgFile)) {
            return true;
        } else {

@@ -614,23 +614,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     }
                     //if captcha is active
                     if($isCaptcha == true) {
-                        //if test is 1 delete all captcha files in dynimages
-                        $test = rand(1,500);
-                        if($test <= 1) {
-                            
-                            $dir = BX_PROJECT_DIR.'dynimages/captchas/';
-                            $opendir = @opendir($dir);
-                            while (false !== ($file = readdir($opendir))) {
-                                if ($file != "." && $file != "..") {
-                                    if (filectime($dir.$file) < time()-(20*60)) {
-                                        @unlink($dir.$file);
-                                    } else {
-                                        continue;
-                                    }
-                                }
-                            }
-                            closedir($opendir);
-                        }
+                        
                         
                         $captchacontrol = true;
                         // generate captcha
