@@ -1268,7 +1268,7 @@ if (isset($data['comment_remember'])) {
         
         
         $res = $GLOBALS['POOL']->dbwrite->query($query);
-        $GLOBALS['POOL']->dbwrite->loadModule('Extended'); 
+        $GLOBALS['POOL']->dbwrite->loadModule('Extended',null,false); 
         $lastID = $GLOBALS['POOL']->dbwrite->getAfterID(null,$blogTablePrefix.'blogcomments');
                 
         $data['edituri'] = BX_WEBROOT.'admin/?edit=/forms/blogcomments/?id='.$lastID;
