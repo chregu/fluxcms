@@ -26,6 +26,9 @@ class bxfw_blogcomment {
     }
     
     function emailFields($emailBodyID = '') {
+        // not needed anymore;
+        return true;
+        
         $timezone = bx_helpers_config::getTimezoneAsSeconds();
         
         $fields = $this->parent->getFields();
