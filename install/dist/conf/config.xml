@@ -29,13 +29,13 @@
            3 = No comments allowed 
      -->           
     <blogDefaultPostCommentMode allowFromDB="true">1</blogDefaultPostCommentMode>
-    <blogCaptchaAfterDays allowFromDB="true">31</blogCaptchaAfterDays>
-    <blogCaptchaFontPath allowFromDB="true">/usr/share/fonts/truetype/msttcorefonts/</blogCaptchaFontPath>
+    <blogCaptchaAfterDays allowFromDB="true">31000</blogCaptchaAfterDays>
+    <blogCaptchaFontPath allowFromDB="true">inc/bx/helpers/captcha/</blogCaptchaFontPath>
     <blogCaptchaFontFile allowFromDB="true">Courier_New.ttf</blogCaptchaFontFile>
+    
     <!-- even if comments are allowed, only allow trackbacks for a month -->
     <blogTrackbacksTimeLimit>true</blogTrackbacksTimeLimit>
             
-    <blogCaptchaAfterDays allowFromDB="true">31000</blogCaptchaAfterDays>
         
     <openIdEnabled allowFromDB="true">false</openIdEnabled>
     
