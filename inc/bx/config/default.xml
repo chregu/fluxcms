@@ -120,7 +120,7 @@
 		<blogWeblogsPingFixed></blogWeblogsPingFixed>
         <blogPostsExpireCatAllOnly allowFromDB="true">false</blogPostsExpireCatAllOnly>
         <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
-        <blogCaptchaAfterDays allowFromDB="true">31000</blogCaptchaAfterDays>
+        <blogCaptchaAfterDays allowFromDB="true">-1</blogCaptchaAfterDays>
         <blogCaptchaFontPath allowFromDB="true">inc/bx/helpers/captcha/</blogCaptchaFontPath>
         <blogCaptchaFontFile allowFromDB="true">Courier_New.ttf</blogCaptchaFontFile>
     
