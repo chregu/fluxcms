@@ -14,7 +14,7 @@ class ImageResize {
     public $tmpdir = '/tmp';
 	public $eps = false;
     public $oriImgPath = null;
-    
+    public $deleteFileAfter = false;
     
     function __construct ($imagename,$allowed_sizes = array(), $pathReplaceBy = NULL, $noStartUp = false) {
         $this->tmpdir = BX_TEMP_DIR;
@@ -24,7 +24,14 @@ class ImageResize {
             $this->allowedSizes = $allowed_sizes;
             $this->pathReplaceBy = $pathReplaceBy;
             $this->defImageInfo();
-            if ($this->method == 'gravatar') {
+            
+            if ($this->method == 'captchas') {
+                if (!$this->captcha()) {
+                    $this->send404();
+                    return;
+                }
+            }
+            else if ($this->method == 'gravatar') {
                 if (!$this->gravatar()) {
                     $this->send404();
                     return;
@@ -416,7 +423,15 @@ $fd = fopen ($this->endImgFile,"w");
             
         }
    }
-   
+   function captcha() {
+       $this->deleteFileAfter = true;
+       $this->lastModified = time();
+       if (file_exists($this->endImgFile)) {
+           return true;
+       } else {
+           return false;
+       }
+   }
    function gravatar() {
         $grav_url = 'http://www.gravatar.com/avatar.php?'.$_SERVER['QUERY_STRING'];
         $imageName = $this->endImgFile;
@@ -505,6 +520,9 @@ $fd = fopen ($this->endImgFile,"w");
           }
       }
       print file_get_contents($this->endImgFile);
+      if ($this->deleteFileAfter) {
+          @unlink($this->endImgFile);
+      }
       exit;
    }
    
