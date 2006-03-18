@@ -612,6 +612,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
                     $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
                     if(isset($_POST['bx_fw']['name']) && isset($_POST['bx_fw']['comments'])) {
+                        $_POST = bx_helpers_globals::stripMagicQuotes($_POST);
                     //add some more data and clean some others
                         @$data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
                         @$data['name'] = strip_tags($_POST['bx_fw']['name'] );
@@ -1103,7 +1104,7 @@ if (isset($data['comment_remember'])) {
         $p = $p['plugin'];
         $tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
         $blogTablePrefix = $tablePrefix.$p->getParameter($parts['coll']->uri,"tableprefix");
-        
+        $db = $GLOBALS['POOL']->db;
         
         $query = 'SELECT blogposts.post_uri, blogposts.id,
         blogposts.post_title,
@@ -1114,7 +1115,7 @@ if (isset($data['comment_remember'])) {
         
         from '.$blogTablePrefix.'blogposts as blogposts left join '.$tablePrefix.'users as users on blogposts.post_author = users.user_login
         where blogposts.id = "'.$id.'" ';
-        $res = $GLOBALS['POOL']->db->query($query);
+        $res = $db->query($query);
         $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
         
         if(isset($data['captcha'])) {
