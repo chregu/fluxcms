@@ -5,7 +5,12 @@ class bx_helpers_captcha {
         if ($days < 0) {
             return false;
         }
-        $unixtimepostdate = strtotime($postdate);
+        
+        if (is_int($postdate)) {
+            $unixtimepostdate = $postdate;
+        } else {
+            $unixtimepostdate = strtotime($postdate);
+        }
         $captchastart = $unixtimepostdate + ($days * 24 * 60 * 60);
         $unixtimenow = time();
         if($captchastart <= $unixtimenow) {
