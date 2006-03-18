@@ -12,6 +12,20 @@ class bx_helpers_captcha {
         }
     }
     
+    
+    static function checkCaptcha($captcha, $imgid) {
+        $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
+        $magickey = $GLOBALS['POOL']->config->magicKey;
+        preg_match("#.*.html#", $_SERVER['REQUEST_URI'], $matches);
+        
+        
+        if($imgid == md5($captcha.floor(time()/(60*15)).$magickey.$_SERVER['REMOTE_ADDR'].$matches['0']) or $imgid == md5($captcha.floor(time()/(60*15-1)).$magickey.$_SERVER['REMOTE_ADDR'].$matches['0'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public static function doCaptcha() {
         require_once 'inc/Text/CAPTCHA.php';
         $font_path = 0;
@@ -51,7 +65,7 @@ class bx_helpers_captcha {
     public static function generateCaptchaId($passphrase) {
         $magickey = $GLOBALS['POOL']->config->magicKey;
         preg_match("#.*.html#", $_SERVER['REQUEST_URI'], $matches);
-        $imgid = md5($passphrase.floor(time()/(60*15)).$magickey.$_SERVER['REMOTE_ADDR'].$matches['0']);
+        $imgid = md5($passphrase.floor(time()/(60*15)).$magickey.$_SERVER['REMOTE_ADDR'].$matches[0]);
         return $imgid;
     }
     
