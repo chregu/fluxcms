@@ -28,7 +28,7 @@ class bx_helpers_globals {
         }
         if (is_array($in)) {
             foreach($in as $key => $value) {
-                $in[$key]= stripslashes($value);
+                $in[$key]= self::stripMagicQuotes($value);
             }
         } else {
             return stripslashes($in);
