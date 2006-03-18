@@ -960,14 +960,14 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                <td>
                     <input class="formgenerell" type="text" id="baseUri" name="bx_fw[base]" value="'.$data['base'].'"/>
                     <input type="hidden" id="bx_fw[verified]" name="bx_fw[verified]" value="0" />';
-                    
-                    if(isset($_SESSION['flux_openid_verified']) && $_SESSION['flux_openid_verified'] == true) {
-                        $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verified" />';
-                    } else {
-                        $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verify" />';
+                    if ($GLOBALS['POOL']->config->openIdEnabled == 'true') {
+                        if(isset($_SESSION['flux_openid_verified']) && $_SESSION['flux_openid_verified'] == true) {
+                            $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verified" />';
+                        } else {
+                            $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verify" />';
+                        }
+                        $xml .= '<div id="openIdVerify" style="display:none;">trusted</div>';
                     }
-                    
-                    $xml .= '<div id="openIdVerify" style="display:none;">trusted</div>';
                $xml .= '</td>
                </tr>';
                
