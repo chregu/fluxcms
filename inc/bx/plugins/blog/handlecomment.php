@@ -25,46 +25,29 @@ class bx_plugins_blog_handlecomment {
     );
     
  function handlePost ($path,$id, $data)  {
-        if($data['remember'] != null) {
-            if (isset($_COOKIE['fluxcms_blogcomments'])) {
-                    setcookie("fluxcms_blogcomments[name]", '', 0, "/");
-                    setcookie("fluxcms_blogcomments[email]", '', 0, "/");
-                    setcookie("fluxcms_blogcomments[base]", '', 0, "/");
-                }
-                if($data['name']) {
-                    setcookie("fluxcms_blogcomments[name]", $data['name'], time()+30*24*60*60, '/');
-                }
-                
-                if($data['email']) {
-                    setcookie("fluxcms_blogcomments[email]", $data['email'], time()+30*24*60*60, '/');
-                }
-                
-                if($data['base']) {
-                    setcookie("fluxcms_blogcomments[base]", $data['base'], time()+30*24*60*60, '/');
-                }
+     
+     
+        if(!($data['name'] && $data['comments'])) {
+            return "Please fill in all needed fields";
         }
-        // if name and comment is set and remember box not checked -> delete cookie
-        if($data['name'] && $data['comments'] && !$data['remember']) {
-                setcookie("fluxcms_blogcomments[name]", '', 0, "/");
-                setcookie("fluxcms_blogcomments[email]", '', 0, "/");
-                setcookie("fluxcms_blogcomments[base]", '', 0, "/");
-        }
+            
+        //add some more data and clean some others
+        $data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
+        @$data['email'] = strip_tags($data['email'] );
+        @$data['name'] = strip_tags($data['name']);
+        @$data['openid_url'] = strip_tags($data['openid_url']);
+        @$data['comment_notification'] = $data['comment_notification'];
+     
+     
         $timezone = bx_helpers_config::getTimezoneAsSeconds();
         $isok = false;
         foreach($data as $name => $value) {
             $data[$name] = bx_helpers_string::utf2entities(str_replace("&","&amp;",trim($value)));
         }
-/*
 
-FIXME: can't set cookies, due to the location redirect at the end...
-if (isset($data['comment_remember'])) {
-            $remember = array('name' => $data['name'],'email' => $data['email'],'base' => $data['base'],'comment_notify' => @$data['comment_notify'],'comment_remember' => $data['comment_remember']);
-            setcookie("blog_remember", serialize($remember), 3600*24*60,"/");
-        } else if (isset($_COOKIE['blog_remember'])) {
-            setcookie("blog_remember", null);
-        }
-   */     
-        
+        if (($pos = strrpos($id,"/")) > 0) {
+            $id = substr($id, $pos + 1);
+        };
         $parts =  bx_collections::getCollectionAndFileParts($path, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
@@ -80,15 +63,20 @@ if (isset($data['comment_remember'])) {
         blogposts.post_comment_mode
         
         from '.$blogTablePrefix.'blogposts as blogposts left join '.$tablePrefix.'users as users on blogposts.post_author = users.user_login
-        where blogposts.id = "'.$id.'" ';
+        where blogposts.post_uri = "'.$id.'" ';
         $res = $db->query($query);
         $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
         
-        if(isset($data['captcha'])) {
-            if (!bx_helpers_captcha::checkCaptcha($data['captcha'], $data['imgid'])) {
-                return false;
+        $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
+        $isCaptcha = bx_helpers_captcha::isCaptcha($days, (int) $row['unixtime']);
+        
+        //if captcha is active
+        if($isCaptcha == true) {
+            if (!bx_helpers_captcha::checkCaptcha($data['passphrase'], $data['imgid'])) {
+              return "Captcha Number is not correct please try again.";  
             }
         }
+        
         
         if ($row['post_comment_mode'] == 99) {
             $row['post_comment_mode'] = $GLOBALS['POOL']->config->blogDefaultPostCommentMode;
@@ -96,6 +84,37 @@ if (isset($data['comment_remember'])) {
         if (!($row['post_comment_mode'] == 2 || ($row['post_comment_mode'] == 1 && (time() - 2678800) < $row['unixtime']))) {
             die("No comments allowed anymore...");
         }
+        
+        //check remember stuff
+        
+        if($data['remember'] != null) {
+            if($data['name']) {
+                setcookie("fluxcms_blogcomments[name]", $data['name'], time()+30*24*60*60, '/');
+            }
+            if($data['email']) {
+                setcookie("fluxcms_blogcomments[email]", $data['email'], time()+30*24*60*60, '/');
+            }
+            
+            if($data['openid_url']) {
+                setcookie("fluxcms_blogcomments[openid_url]", $data['openid_url'], time()+30*24*60*60, '/');
+            }
+        }
+        // if name and comment is set and remember box not checked -> delete cookie
+        else {
+            if (isset($_COOKIE['fluxcms_blogcomments'])) {
+                if (isset($_COOKIE['fluxcms_blogcomments']['name'])) {
+                    setcookie("fluxcms_blogcomments[name]", '', 0, "/");
+                }
+                if (isset($_COOKIE['fluxcms_blogcomments']['email'])) {
+                    setcookie("fluxcms_blogcomments[email]", '', 0, "/");
+                }
+                if (isset($_COOKIE['fluxcms_blogcomments']['openid_url'])) {
+                    setcookie("fluxcms_blogcomments[openid_url]", '', 0, "/");
+                }
+            }
+             
+        }
+        
         
         /* flood-protection */
         /*$query = "SELECT unix_timestamp(comment_date)  FROM ".$blogTablePrefix."blogcomments WHERE comment_author_IP='".$_SERVER['REMOTE_ADDR']."' ORDER BY comment_date DESC LIMIT 1";
@@ -110,8 +129,6 @@ if (isset($data['comment_remember'])) {
         
         $data['uri'] = BX_WEBROOT_W.$parts['coll']->uri.'archive/'.date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).'/'.$row['post_uri'].'.html';
         
-        /*$screenNode = $this->parent->confctxt->query("/bxco:wizard/bxco:screen[@emailTo]");
-        $screenNode = $screenNode->item(0);*/
         // clean up comment
         if (class_exists('tidy')) {
             $tidy = new tidy();
@@ -166,9 +183,9 @@ if (isset($data['comment_remember'])) {
             $deleteIt = true;
         }
         /* Max 5 links per post and SURBL check */
-        if (preg_match_all("#http://[\/\w\.\-]+#",$data['comments'], $matches) || $data['base'] != '') {
-            if ($data['base'] != '') {
-                $matches[0][] = $data['base'] ;
+        if (preg_match_all("#http://[\/\w\.\-]+#",$data['comments'], $matches) || $data['openid_url'] != '') {
+            if ($data['openid_url'] != '') {
+                $matches[0][] = $data['openid_url'] ;
             }
             if (isset($matches[0])) {
                 $urls = array_unique($matches[0]);
@@ -221,7 +238,7 @@ if (isset($data['comment_remember'])) {
         }
         
         //if uri in post is the same as in the session then do openid = true(1)
-        if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['base']) {
+        if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['openid_url']) {
             $openid = 1;
         } else {
             $openid = 0;
@@ -231,7 +248,7 @@ if (isset($data['comment_remember'])) {
             comment_date, comment_content,comment_status, comment_notification, comment_notification_hash,
             comment_author_url, openid         
             ) VALUES ("'.$row['id'].'",'.$db->quote($data['name'])
-            .','.$db->quote($data['email'],'text').','.$db->quote($data['remote_ip']).',"'.gmdate('c').'",'.$db->quote(bx_helpers_string::utf2entities($data['comments'])).','.$comment_status.','.$db->quote($data['comment_notification']).',"'.$comment_notification_hash.'",'.$db->quote($data['base'],'text').', '.$openid.')';
+            .','.$db->quote($data['email'],'text').','.$db->quote($data['remote_ip']).',"'.gmdate('c').'",'.$db->quote(bx_helpers_string::utf2entities($data['comments'])).','.$comment_status.','.$db->quote($data['comment_notification']).',"'.$comment_notification_hash.'",'.$db->quote($data['openid_url'],'text').', '.$openid.')';
         
         
         $res = $GLOBALS['POOL']->dbwrite->query($query);

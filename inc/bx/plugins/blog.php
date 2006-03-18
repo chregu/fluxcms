@@ -28,7 +28,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     static public $instance = array();
     static private $idMapper = null;
     static protected $tree = null;
-    
+    protected $newCommentError = false;
+    protected $commentData = null;
     
 
     /*** magic methods and functions ***/
@@ -89,6 +90,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
 
     public function getContentById($path, $id) {
+                
         $blogid = $this->getParameter($path,"blogid");
         if (!$blogid) {$blogid = 1;}
         $maxposts_param = $this->getParameter($path,'maxposts');
@@ -137,6 +139,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 return $xml;
             }
         }
+
         $mode = $this->getParameter($path,"mode");
         if ($mode == "latestcomments") {
             $plugin = "bx_plugins_blog_comments";
@@ -155,6 +158,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if (($pos = strrpos($id,"/")) > 0) {
             $cat = substr($id,0,$pos);
             $id = substr($id, $pos + 1);
+
         } else {
             $cat = "";
         }
@@ -169,6 +173,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $archivewhere = "";
         $total = 0;
         $gmnow = gmdate("Y-m-d H:i:s",time());
+
         if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
             $query .=" where (MATCH (post_content,post_title) AGAINST ('" . $_GET['q'] ."') or  post_title like '%" .  $_GET['q']  . "%') and ".
@@ -296,6 +301,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $query .= 'order by post_date DESC limit '.$startEntry . ','.$maxPosts;
             
         } else {
+
             if (strpos($id,"_id") === 0 ) {
                 $query .= " where ".$tablePrefix."blogposts.id = ".substr($id,3);
                 $query .= ' and '.$tablePrefix.'blogposts.post_status & ' . $this->singlePostPerm ; 
@@ -588,73 +594,16 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $xml .=$this->getBlogComments($cres);
                 if ($commentsAllowed) {
                     $imgid = 0;
-                    $captchacontrol = 0;
                     $missingfields = false;
                     $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
                     $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date_iso']);
-                    if(isset($_POST['bx_fw']['name']) && isset($_POST['bx_fw']['comments'])) {
-                        $_POST = bx_helpers_globals::stripMagicQuotes($_POST);
-                    //add some more data and clean some others
-                        @$data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
-                        @$data['name'] = strip_tags($_POST['bx_fw']['name'] );
-                        @$data['email'] = strip_tags($_POST['bx_fw']['email'] );
-                        @$data['comments'] = $_POST['bx_fw']['comments'];
-                        @$data['remember'] = $_POST['bx_fw']['comment_remember'];
-                        @$data['base'] = strip_tags($_POST['bx_fw']['base'] );
-                        @$data['passphrase'] = $_POST['passphrase'];
-                        @$data['imgid'] = $_POST['imgid'];
-                        @$data['comment_notification'] = $_POST['bx_fw']['comment_notification'];
-                    } else {
-                        $data['name'] = null;
-                        $data['base'] = null;
-                        $data['email'] = null;
-                        $data['comments'] = null;
-                        $data['passphrase'] = null;
-                        $data['imgid'] = null;
-                    }
+                    
                     //if captcha is active
                     if($isCaptcha == true) {
-                        
-                        
-                        $captchacontrol = true;
                         // generate captcha
                         $imgid = bx_helpers_captcha::doCaptcha();
-                        //checks if name and comment is set if not missingfield is true
-                        if($data['name'] && $data['comments']) {
-                            //checks captcha
-                            if (!bx_helpers_captcha::checkCaptcha($data['passphrase'], $data['imgid'])) {
-                                //captcha failed
-                                $captchacontrol = false;
-                            } else {
-                                //captcha works
-                                $captchacontrol = true;
-                                //make comment
-                                $this->handlePublicPost($path, $id, $data, $imgid);
-                            }
-                            //no missing field(s)
-                            $missingfields = false;
-                        } else {
-                            //checks if something is posted or not
-                            if($data['name'] || $data['comments'] || $data['email'] || $data['base']) {
-                                //missing field(s)
-                                $missingfields = true;
-                            }
-                        }
-                    } else {
-                        //comment without captcha
-                        $captchacontrol = true;
-                        //checks if name and comment is set if not missingfield is true
-                        if($data['name'] && $data['comments']) {
-                            $this->handlePublicPost($path, $id, $data);
-                            $missingfields = false;
-                        } else {
-                            //checks if something is posted or not
-                            if($data['name'] || $data['comments'] || $data['email'] || $data['base']) {
-                                $missingfields = true;
-                            }
-                        }
                     }
-                    $xml .= $this->getCommentForm($emailBodyID = '', $posturipath, $imgid, $isCaptcha, $captchacontrol, $data, $missingfields);
+                    $xml .= $this->getCommentForm($emailBodyID = '', $posturipath, $imgid, $isCaptcha);
                 } else {
                     $xml .= '<div class="comments_not"><i18n:text>No new comments allowed (anymore) on this post.</i18n:text></div>';
 
@@ -868,12 +817,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         return $dom;
     }
     
-    protected function getCommentForm($emailBodyID = '', $posturipath, $imgid = null, $isCaptcha, $captchacontrol, $data = null, $missingfields) {        
+    protected function getCommentForm($emailBodyID = '', $posturipath, $imgid = null, $isCaptcha) {        
         
         $remember = null;
+        $data = $this->commentData;
         if($data == null) {
             $data['name'] = null;
-            $data['base'] = null;
+            $data['openid_url'] = null;
             $data['email'] = null;
             $data['comments'] = null;
         }
@@ -886,12 +836,14 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $res = $GLOBALS['POOL']->db->query($query);
             $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
             $data['name'] = $row['comment_author'];
-            $data['base'] = $row['comment_author_url'];
+            $data['openid_url'] = $row['comment_author_url'];
             $data['email'] = $row['comment_author_email'];
         } else {
             if (isset($_COOKIE['fluxcms_blogcomments'])) {
                 foreach ($_COOKIE['fluxcms_blogcomments'] as $name => $value) {
-                   $data[$name] = $value;
+                    if (!isset($data[$name]) || !$data[$name]) {
+                        $data[$name] = $value;
+                    }
                 }
                 $remember = 'checked';
             } else {
@@ -903,29 +855,25 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $xml = '<div class="comments_new">';
          
          
-         
-        if($captchacontrol == false) {
-            $xml .= '<p style="color:red;">Captcha Number is not correct pls try again</p>';
+        if ($this->newCommentError) {
+            $xml .= '<p style="color:red;"><i18n:text>'.$this->newCommentError.'</i18n:text></p>';
         }
-        if($missingfields == true) {
-            $xml .= '<p style="color:red;">Please fill in your name and comment</p>';
-        }
-        $xml .= '<form name="bx_foo" action="'.$posturipath.'" method="post">
-               <table class="form" style="margin-left:25px;" border="0" cellspacing="0" cellpadding="0">
+            $xml .= '<form name="bx_foo" action="'.$posturipath.'#commentform" method="post">
+               <table class="form" style="margin-left:25px;" border="0" cellspacing="0" cellpadding="0" id="commentform">
                <tr>
                <td valign="top">Name*</td>
-               <td class="formHeader" valign="middle"><input class="formgenerell" type="text" name="bx_fw[name]" id="bx_fw[name]" value="'.$data['name'].'"/></td>
+               <td class="formHeader" valign="middle"><input class="formgenerell" type="text" name="name" id="name" value="'.$data['name'].'"/></td>
                </tr><tr>
                <td valign="top">E-Mail</td>
-               <td><input class="formgenerell" type="text" name="bx_fw[email]" id="bx_fw[email]" value="'.$data['email'].'"/></td>
+               <td><input class="formgenerell" type="text" name="email" id="email" value="'.$data['email'].'"/></td>
                </tr>
-                <tr><td valign="top" width="90" class="formurl">For Spammers Only</td><td valign="middle" class="formurl"><input type="text" name="bx_fw[url]" value="" class="formurl" /></td></tr>
+                <tr><td valign="top" width="90" class="formurl">For Spammers Only</td><td valign="middle" class="formurl"><input type="text" name="url" value="" class="formurl" /></td></tr>
              
                <tr>
                <td valign="top">URL</td>
                <td>
-                    <input class="formgenerell" type="text" id="baseUri" name="bx_fw[base]" value="'.$data['base'].'"/>
-                    <input type="hidden" id="bx_fw[verified]" name="bx_fw[verified]" value="0" />';
+                    <input class="formgenerell" type="text" id="openid_url" name="openid_url" value="'.$data['openid_url'].'"/>
+                    <input type="hidden" id="verified" name="verified" value="0" />';
                     if ($GLOBALS['POOL']->config->openIdEnabled == 'true') {
                         if(isset($_SESSION['flux_openid_verified']) && $_SESSION['flux_openid_verified'] == true) {
                             $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verified" />';
@@ -979,20 +927,20 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                }
                $xml .= '<tr>
                <td valign="top">Comment*</td>
-               <td><textarea rows="10" cols="40" name="bx_fw[comments]">'.$data['comments'].'</textarea></td>
+               <td><textarea rows="10" cols="40" name="comments">'.$data['comments'].'</textarea></td>
                </tr><tr>
-               <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_notification]" />
+               <td colspan="2" valign="top"><input type="checkbox" name="comment_notification" />
                Notify me via E-Mail when new comments are made to this entry</td>
                 </tr>';
                 if($remember == "checked" || (isset($_COOKIE['openid_enabled']) && $_COOKIE['openid_enabled'])) {
                     $xml .= '<tr>
-                   <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_remember]" checked="checked"/>
-                   Remember me (need cookies)</td>
+                   <td colspan="2" valign="top"><input type="checkbox" name="remember" checked="checked"/>
+                   Remember me (needs cookies)</td>
                     </tr>';
                 } else {
                     $xml .= '<tr>
-                   <td colspan="2" valign="top"><input type="checkbox" name="bx_fw[comment_remember]"/>
-                   Remember me (need cookies)</td>
+                   <td colspan="2" valign="top"><input type="checkbox" name="remember"/>
+                   Remember me (needs cookies)</td>
                     </tr>';
                 }
                 if($isCaptcha == 1) {
@@ -1013,7 +961,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 
                 $xml .= '<tr>
                 <td></td>
-                <td><br /><input type="submit" name="send" value="Send" class="formbutton" /></td>
+                <td><br /><input type="submit" name="bx[plugins][blog][_all]" value="Send" class="formbutton" /></td>
                 </tr>
                </table>
                </form>
@@ -1024,7 +972,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
     
     public function handlePublicPost($path,$id, $data) {
-        bx_plugins_blog_handlecomment::handlePost($path,$id,$data);
+        $error = bx_plugins_blog_handlecomment::handlePost($path,$id,$data);
+        $this->commentData = $data;
+        if ($error) {
+            $this->newCommentError = $error;
+        } else {
+            $this->newCommentError = false;
+        }
     }
     
     
