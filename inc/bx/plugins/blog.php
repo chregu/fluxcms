@@ -1098,7 +1098,7 @@ if (isset($data['comment_remember'])) {
         }
    */     
         
-        $parts =  bx_collections::getCollectionAndFileParts($this->parent->collUri, "output");
+        $parts =  bx_collections::getCollectionAndFileParts($path, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
         $tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
@@ -1127,7 +1127,7 @@ if (isset($data['comment_remember'])) {
             $row['post_comment_mode'] = $GLOBALS['POOL']->config->blogDefaultPostCommentMode;
         }
         if (!($row['post_comment_mode'] == 2 || ($row['post_comment_mode'] == 1 && (time() - 2678800) < $row['unixtime']))) {
-            die("aaaNo comments allowed anymore...");
+            die("No comments allowed anymore...");
         }
         
         /* flood-protection */
@@ -1290,14 +1290,10 @@ if (isset($data['comment_remember'])) {
                     $data['accepturi'] = "(Click the link to reject this comment [1]) :\n";
                 }
                 // insert hash
-                if ($GLOBALS['POOL']->config->lastdbversion >= 5266) {
-                    $hash = md5($lastID . rand().microtime(true));
-                    $query = 'update '.$blogTablePrefix.'blogcomments set comment_hash = ' . $GLOBALS['POOL']->db->quote($hashPrefix . $hash) . ' where id = ' . $lastID; 
-                    $GLOBALS['POOL']->dbwrite->query($query);
-                    $data['accepturi'] .= " ".BX_WEBROOT.'admin/webinc/approval/?hash='.$hashPrefix.$hash;  
-                } else {
-                    $data['accepturi'] .= " Please update your Flux CMS DB to use that feature.";
-                }
+                $hash = md5($lastID . rand().microtime(true));
+                $query = 'update '.$blogTablePrefix.'blogcomments set comment_hash = ' . $GLOBALS['POOL']->db->quote($hashPrefix . $hash) . ' where id = ' . $lastID; 
+                $GLOBALS['POOL']->dbwrite->query($query);
+                $data['accepturi'] .= " ".BX_WEBROOT.'admin/webinc/approval/?hash='.$hashPrefix.$hash;  
                 $data['edituri'] = BX_WEBROOT.'admin/edit/blog/sub/comments/?id='.$lastID;
                 $emailSubject .= "New comment on '" . html_entity_decode($row['post_title'],ENT_QUOTES,'ISO-8859-1') . "'";
                 
