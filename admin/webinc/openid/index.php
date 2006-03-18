@@ -8,8 +8,7 @@ $conf = bx_config::getInstance();
 $confvars = $conf->getConfProperty('permm');
 $permObj = bx_permm::getInstance($confvars);
 
-
-if (!$permObj->isAllowed('/',array('admin')) &&  !(isset($_POST['openid_mode']) && $_POST['openid_mode'] == 'associate')) {
+if (!$permObj->isAllowed('/',array('admin')) &&  !(isset($_POST['openid_mode']) && ($_POST['openid_mode'] == 'associate' || $_POST['openid_mode'] == 'check_authentication'))) {
     if (isset($_GET["openid_mode"]) && $_GET["openid_mode"]== 'checkid_immediate') {
         $server = bx_helpers_openid::getServer();
         $answer = $server->getOpenIDResponse(false,"GET");
