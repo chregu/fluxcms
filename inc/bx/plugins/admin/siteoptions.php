@@ -153,7 +153,9 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
        $this->addOption("blogCaptchaAfterDays","text",$dom,array("help"=>$i18n->translate("help_blogCaptchaAfterDays")));
        
        $this->addOption("blogWeblogsPing","textarea",$dom,array("help"=>$i18n->translate("help_blogWeblogsPing"),"ArrayAsNewline"=>true));
-       $this->addOption("openIdEnabled","text",$dom,array("help"=>$i18n->translate("help_openIdEnabled")));
+       $this->addSelectOption("openIdEnabled",array(
+        'false' => "No",
+           'true' => "Yes"),$dom,array("help"=>$i18n->translate("help_openIdEnabled")));
        
         $this->addOption("copyright","text",$dom,array("help"=>$i18n->translate("help_copyright")));
         
