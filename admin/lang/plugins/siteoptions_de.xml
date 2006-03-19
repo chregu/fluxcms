@@ -32,6 +32,8 @@
     Spam ist oder nicht. Wenn er einen erkennt, ist es ziemlich sicher Spam und zweifelslos 
         möchten Sie nicht über diesen informiert werden. Wenn es nicht sicher ist, setzt Flux CMS den Post auf 'moderated' und Sie erhalten dann immer eine 
         E-Mail und können den Kommentar freigeben.</message>
+    <message key="help_blogCaptchaAfterDays">After how many days captcha should be activated. (-1 = never)</message>
+    <message key="help_openIdEnabled">OpenID Verifikation bei Blogkommentaren.</message>
     
     <message key="help_copyright">Wer hat das Urheberrecht für ihren Inhalt?</message>
     
