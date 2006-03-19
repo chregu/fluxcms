@@ -167,15 +167,6 @@ class bx_plugins_blog_handlecomment {
             $commentRejected .= "* Uses known spammer proxy: ". $_SERVER['HTTP_VIA'] . "\n";
         }
         
-        //get latest spammer name list every 6 hours
-        /*
-        $this->knownspammers = $simplecache->simpleCacheRemoteArrayRead("http://www.bitflux.org/download/antispam/knownspammer.dat",21600);
-        
-        if (in_array(strtolower(preg_replace("#[^a-z]#i","",$data['name'])),$this->knownspammers)) {
-            $commentRejected .= "* Known spammer name: " . $data['name'] ."\n";
-            $deleteIt = true;
-        }*/
-        
         
         /* If url field is filled in, it was a bot ...*/
         if (isset($data['url']) && $data['url'] != "") {
@@ -283,9 +274,7 @@ class bx_plugins_blog_handlecomment {
                 
                 //$bodyID = $screenNode->getAttribute('emailBodyID');
                 
-                if(!empty($bodyID)) {
-                    $emailBodyID = $bodyID;
-                }
+                
                 
                 $emailBody = "";
                 if ($commentRejected) {
@@ -295,15 +284,11 @@ class bx_plugins_blog_handlecomment {
                 if ($xblcheck) {
                     $emailBody .= $xblcheck ."\n";
                 }
-                if(!empty($emailBodyID)) {
-                    $emailBody .= utf8_decode($this->parent->lookup($emailBodyID));
-                    $this->parent->_replaceTextData($emailBody, $data);
-                    $emailBody = html_entity_decode($emailBody,ENT_QUOTES,'UTF-8');
-                } else {
-                    foreach ($data as $key => $value) {
-                        $emailBody .= html_entity_decode("$key: $value",ENT_QUOTES,'UTF-8')."\n";
-                    }
-                }
+                $emailBodyID = 'emailBodyAnfrage';
+                
+                $emailBody .= utf8_decode(self::lookup($emailBodyID));
+                self::_replaceTextFields($emailBody, $data);
+                $emailBody = html_entity_decode($emailBody,ENT_QUOTES,'UTF-8');
                 
                 $headers = '';
                 
@@ -339,4 +324,41 @@ class bx_plugins_blog_handlecomment {
             return FALSE;
     }
 
+    
+    /* from formwizard php */
+    static public function lookup($name) {
+        
+        $config = new DomDocument();
+            $config->load(BX_PROJECT_DIR."/xml/blogcomment.xml");
+            
+            $confctxt= new DOMxpath($config);
+            $confctxt->registerNameSpace("bxco","http://bitflux.org/config/1.0");
+            
+        
+        // this could be done with one xpath-query
+        // try reequested language
+        $entryNS = $confctxt->query("//bxco:entry[@ID='$name']/bxco:text[1]");
+        $entryNode = $entryNS->item(0);
+        if(!empty($entryNode)) {
+            $childNode = $entryNode->firstChild;
+            if(!empty($childNode)) {
+                $text = $childNode->nodeValue; 
+                if(!empty($text)) {
+                    return $text;
+                }
+            }
+        }
+        
+        
+        return $name;
+    }
+    
+    static function _replaceTextFields(&$subject, $textfields) {
+        //var_dump($textfields); asdf();
+        foreach($textfields as $field => $value) {
+            $patterns[] = '/\{'.$field.'\}/';
+            $replacements[] = $value;
+        }
+        $subject = preg_replace($patterns, $replacements, $subject);
+    }
 }
