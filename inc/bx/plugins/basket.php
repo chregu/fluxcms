@@ -56,6 +56,12 @@ class bx_plugins_basket extends bx_plugin {
         $this->basketname = $this->getParameter($path, 'basketname');
         $handlerClassName = $this->getParameter($path, 'baskethandlerclass');
         $this->baskethandler = new $handlerClassName();
+
+	//post
+        if ($_SERVER["REQUEST_METHOD"] == 'POST' && is_object($this->baskethandler) && method_exists($this->baskethandler, 'postRequest')) {
+            $this->baskethandler->postRequest($this->basketname, $this, $this->storage);
+        }
+
         $command = $this->getCommand($path, $id); 
         if ($command && !empty($command) && $command!=".") {
             $id = str_replace("$command/", "", $id);
@@ -64,7 +70,7 @@ class bx_plugins_basket extends bx_plugin {
                 $this->$handler($path, $id);
             }
         }
-    
+	    
         $domdoc= new DomDocument();
         if (isset($this->storage[$this->basketname])) {
         
@@ -119,10 +125,7 @@ class bx_plugins_basket extends bx_plugin {
     
     
     public function clearBasket($basketname) {
-        if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'clearBasket')) {
-            $this->baskethandler->clearBasket($basketname);
-        }
-        else if (isset($this->storage[$basketname])) {
+        if (isset($this->storage[$basketname])) {
             unset($this->storage[$basketname]);
         }    
     }
