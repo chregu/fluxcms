@@ -125,15 +125,14 @@ class bx_plugins_blog_trackback {
         comment_type
         ) VALUES (
         '.$id.',
-        '.$db->quote(htmlspecialchars($blogname),'text').',
+        '.$db->quote(htmlspecialchars(html_entity_decode($blogname,ENT_COMPAT, 'UTF-8')),'text').',
         '.$db->quote($url).',
         "'.$_SERVER['REMOTE_ADDR'].'",
         "'.gmdate('c').'",
-        '.$db->quote(htmlspecialchars(bx_helpers_string::utf2entities($excerpt))).',
+        '.$db->quote(bx_helpers_string::utf2entities(htmlspecialchars(html_entity_decode($excerpt,ENT_COMPAT, 'UTF-8')))).',
         '.$commentType.',
         "TRACKBACK"
         )';
-        
         
         $err = $db->query($query);
         
