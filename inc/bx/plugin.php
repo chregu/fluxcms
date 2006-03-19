@@ -160,6 +160,9 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         return array();
     }
     
+	/**
+	 * @return unix timestamp
+	 */
     public function getLastModifiedById($path, $id) {
         $res = $this->getResourceById($path,$id);
         if ($res) {
