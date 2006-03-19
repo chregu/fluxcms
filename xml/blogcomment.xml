@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- a lot of this code is not needed anymore in 1.4
+actually  only      <entry ID="emailBodyAnfrage">     is used, the rest can be deleted at some stage...
+-->
 
 <wizard xmlns="http://bitflux.org/config/1.0">
     <title lang="de">Email Update</title>
