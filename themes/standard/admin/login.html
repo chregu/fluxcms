@@ -52,6 +52,7 @@ EOT;
     $pwd = $GLOBALS['POOL']->i18nadmin->translate('Password:');
     $lost = $GLOBALS['POOL']->i18nadmin->translate('Lost your password?');
     $newone = $GLOBALS['POOL']->i18nadmin->translate('Get a new one.');
+    $remember = $GLOBALS['POOL']->i18nadmin->translate('Remember me:');
 print <<<EOT
 
         Admin Login  </legend>
@@ -59,9 +60,14 @@ print <<<EOT
 <label>$user</label> <input name="username" type="text" class="input"/>
   <br />
   <label>$pwd</label> <input name="password" type="password" class="input"/>
+  <br/>
+<label>$remember</label> <input name="remember" type="checkbox"/>
+
   <br />
     <label>&#160;</label>  <input type="submit" value="Submit"  />
-  <br />  <br /><br />
+  <br />
+  
+  <br /><br />
       <label>&#160;</label>		<p>$lost <a href="./webinc/lostpw">$newone</a></p>
 	
 	</fieldset>
