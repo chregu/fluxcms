@@ -303,7 +303,6 @@ class bx_plugins_blog_handlecomment {
                 if ($GLOBALS['POOL']->config->blogSendRejectedCommentNotification == "true" || !$deleteIt) {
                     bx_notificationmanager::sendToDefault($emailTo,$emailSubject, $emailBody,$emailFrom);
                 }
-            $_SESSION["bx_wizard"] = array();
             if(!$commentRejected) {
                 bx_plugins_blog_commentsnotification::sendNotificationMails($lastID,$row['id'],$parts['coll']->uri);
                 
