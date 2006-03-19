@@ -45,6 +45,16 @@ Class bx_permm {
     */
     public function start() {
         if(method_exists($this->authObj, "start")) {
+            
+            if (empty($_SESSION['_authsession']['registered']) && empty($_POST) && !empty($_COOKIE['fluxcms_login']) ) {
+
+                list($_POST['username'],$_POST['password']) = explode(":", $_COOKIE['fluxcms_login']);
+                
+            } elseif (!empty($_POST) && !empty($_POST['remember'])) {
+                setcookie('fluxcms_login', $_POST['username'].':'.md5($_POST['username'].md5($_POST['password'])), time() + 3600*24*365,"/");
+            }
+            
+            
             $this->authObj->start();
             $this->userId = $this->authObj->getUserId(); 
         }
@@ -78,6 +88,14 @@ Class bx_permm {
          if (!$this->authObj) {
             $this->getAuth();
         }
+        
+        if (!empty($_COOKIE['fluxcms_login'])) {
+            setcookie('fluxcms_login', '', 0,"/");
+            unset($_COOKIE['fluxcms_login']);
+        }
+        
+        
+            
         if (method_exists($this->authObj, "logout")) {
             $this->authObj->logout();
         }
@@ -123,7 +141,6 @@ Class bx_permm {
     }
     
     public function isAllowed($uri,$actions) {
-        
         if ($this->permObj) {
             return $this->permObj->isAllowed($uri,$actions,$this->userId);
         } else {

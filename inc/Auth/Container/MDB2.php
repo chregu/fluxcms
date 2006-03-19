@@ -217,6 +217,7 @@ class Auth_Container_MDB2 extends Auth_Container
      */
     function fetchData($username, $password)
     {
+        
         // Prepare for a database query
         $err = $this->_prepare();
         if ($err !== true) {
@@ -245,7 +246,7 @@ class Auth_Container_MDB2 extends Auth_Container
         }
         if ($this->verifyPassword(trim($password, "\r\n"),
                                   trim($res[$this->options['passwordcol']], "\r\n"),
-                                  $this->options['cryptType'])) {
+                                  $this->options['cryptType'],$username)) {
             // Store additional field values in the session
             foreach ($res as $key => $value) {
                 if ($key == $this->options['passwordcol'] ||
@@ -419,6 +420,13 @@ class Auth_Container_MDB2 extends Auth_Container
             return PEAR::raiseError($res->getMessage(), $res->code);
         }
         return true;
+    }
+    
+    function verifyPassword($password1, $password2, $cryptType = "md5", $username = '')
+    {
+         return (md5($password1) == $password2 || $password1 == md5($username.$password2) );
+        
+        
     }
 
     // }}}

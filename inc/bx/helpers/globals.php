@@ -39,6 +39,8 @@ class bx_helpers_globals {
     static function isSessionCookieSet() {
       if (isset($_COOKIE[session_name()])) {
           return "true";
+      } else if (isset($_COOKIE["fluxcms_login"])) {
+        return "true";   
       } else {
           return "false";
       }
