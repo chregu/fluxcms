@@ -356,7 +356,7 @@ var commentButtonName      = "send";
     <xsl:template match="xhtml:span[@class='openid']" mode="xhtml">
         &#160;
         <a target="_blank" href="http://openid.net/">
-            <img src="{$webroot}{'files/images/opendid.gif'}" alt="open_id"/>
+            <img src="{$webroot}{'webinc/images/openid.gif'}" alt="open_id"/>
         </a>
     </xsl:template>
 
