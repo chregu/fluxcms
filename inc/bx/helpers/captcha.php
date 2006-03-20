@@ -54,11 +54,10 @@ class bx_helpers_captcha {
         $c = Text_CAPTCHA::factory('Image');
         $retval = $c->init(100, 30, null, $options);
         if (@PEAR::isError($retval)) {
-            
-            echo 'Error generating CAPTCHA!';
+            echo 'Error generating CAPTCHA!<br/>';
             print $retval->getMessage();
-            
-            exit;
+            print $retval->getUserInfo();
+            return false;
         }
         
         // Get CAPTCHA secret passphrase
@@ -68,7 +67,7 @@ class bx_helpers_captcha {
         $png = $c->getCAPTCHAAsPNG();
         if (@PEAR::isError($png)) {
             echo 'Error generating CAPTCHA!';
-            exit;
+            return false;
         }
         if(!is_dir(BX_PROJECT_DIR.'dynimages/captchas/')) {
             mkdir(BX_PROJECT_DIR.'dynimages/captchas/');
