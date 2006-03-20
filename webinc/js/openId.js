@@ -13,13 +13,13 @@ function openIdSubmit() {
 
 function openIdOk(name, email) {
   
-  if ($('bx_fw[name]').value == '') {
-      $('bx_fw[name]').value = name;
+  if ($('name').value == '') {
+      $('name').value = name;
   }
-  if ($('bx_fw[email]').value == '') {
-      $('bx_fw[email]').value = email;
+  if ($('email').value == '') {
+      $('email').value = email;
   }
-  document.getElementById('verify').setAttribute("value","verified");
+  document.getElementById('verify').setAttribute("value","ok");
 }
 
 function immediate() {
