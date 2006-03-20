@@ -596,6 +596,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $imgid = 0;
                     $perm = bx_permm::getInstance();
                     if (!$perm->isLoggedIn()) {
+			$days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
                         $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
                     } else {
                         $isCaptcha = false;
@@ -879,9 +880,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     <input type="hidden" id="verified" name="verified" value="0" />';
                     if ($GLOBALS['POOL']->config->openIdEnabled == 'true') {
                         if(isset($_SESSION['flux_openid_verified']) && $_SESSION['flux_openid_verified'] == true) {
-                            $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verified" />';
+                            $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/webinc/images/openid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Ok" />';
                         } else {
-                            $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/files/images/opendid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verify" />';
+                            $xml .= '<input id="verify" onclick="return openIdSubmit()" style="background-image:url(/webinc/images/openid.gif);  background-repeat:no-repeat;" type="button" value="&#160;&#160;&#160;&#160;Verify" />';
                         }
                         $xml .= '<div id="openIdVerify" style="display:none;">trusted</div>';
                     }
