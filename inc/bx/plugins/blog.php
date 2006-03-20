@@ -936,7 +936,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                <td colspan="2" valign="top"><input type="checkbox" name="comment_notification" />
                Notify me via E-Mail when new comments are made to this entry</td>
                 </tr>';
-                if($remember == "checked" || (isset($_COOKIE['openid_enabled']) && $_COOKIE['openid_enabled'])) {
+                if($remember == "checked" || (!empty($_COOKIE['openid_enabled']))) {
                     $xml .= '<tr>
                    <td colspan="2" valign="top"><input type="checkbox" name="remember" checked="checked"/>
                    Remember me (needs cookies)</td>

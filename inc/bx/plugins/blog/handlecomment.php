@@ -1,9 +1,8 @@
 <?php
-
+session_start();
 
 class bx_plugins_blog_handlecomment {
 
-    
     
     static private $allowedTags = array('b','i','a','ul','li','ol','pre','blockquote','br','p');
     
@@ -25,7 +24,6 @@ class bx_plugins_blog_handlecomment {
     );
     
  function handlePost ($path,$id, $data)  {
-     
      
         if(!($data['name'] && $data['comments'])) {
             return "Please fill in all needed fields";
@@ -86,7 +84,6 @@ class bx_plugins_blog_handlecomment {
         }
         
         //check remember stuff
-        
         if($data['remember'] != null) {
             if($data['name']) {
                 setcookie("fluxcms_blogcomments[name]", $data['name'], time()+30*24*60*60, '/');
@@ -228,14 +225,15 @@ class bx_plugins_blog_handlecomment {
             $data['comment_notification'] = 0;
         }
         
+        
         //if uri in post is the same as in the session then do openid = true(1)
         if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['openid_url']) {
             $openid = 1;
         } else {
             $openid = 0;
         }
-            
-       $query =     'insert into '.$blogTablePrefix.'blogcomments (comment_posts_id, comment_author, comment_author_email, comment_author_ip,
+
+        $query =     'insert into '.$blogTablePrefix.'blogcomments (comment_posts_id, comment_author, comment_author_email, comment_author_ip,
             comment_date, comment_content,comment_status, comment_notification, comment_notification_hash,
             comment_author_url, openid         
             ) VALUES ("'.$row['id'].'",'.$db->quote($data['name'])
