@@ -3,7 +3,7 @@ function openId(request){
 }
 
 function openIdSubmit() {
-    var uri = document.getElementById('baseUri').value;
+    var uri = document.getElementById('openid_url').value;
     new ajax (liveSearchRoot + 'inc/bx/php/openid/start_auth.php', {
 	postBody: uri,
     method: 'post', 
