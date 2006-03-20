@@ -301,12 +301,12 @@ var blogURL                = "<xsl:value-of select="$blogroot"/>";
 var blogTitle              = "<xsl:value-of select="$dctitle"/>";
 var postURL                = "<xsl:value-of select="$blogroot"/>archive/<xsl:value-of select="$entry/@blog:post_uri"/>.html";
 var postTitle  = "<xsl:value-of select="$entry/xhtml:h2/text()"/>";
-var commentAuthorFieldName = "bx_fw[name]";
+var commentAuthorFieldName = "name";
 var commentAuthorLoggedIn  = false;
 
 var commentFormID          = "bx_foo";
-var commentTextFieldName   = "bx_fw[comments]";
-var commentButtonName      = "send";
+var commentTextFieldName   = "Send";
+var commentButtonName      = "bx[plugins][blog][_all]";
 
 </xsl:if>
 </xsl:if>
