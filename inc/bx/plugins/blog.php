@@ -594,10 +594,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $xml .=$this->getBlogComments($cres);
                 if ($commentsAllowed) {
                     $imgid = 0;
-                    $missingfields = false;
-                    $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
-                    $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date_iso']);
-                    
+                    $perm = bx_permm::getInstance();
+                    if (!$perm->isLoggedIn()) {
+                        $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
+                    } else {
+                        $isCaptcha = false;
+                    }
+
                     //if captcha is active
                     if($isCaptcha == true) {
                         // generate captcha
@@ -831,7 +834,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         //get TablePrefix
         $tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
         
-        if(isset($_SESSION['flux_openid_url']) && $_SESSION['flux_openid_url'] || (isset($_COOKIE['openid_enabled']) && $_COOKIE['openid_enabled'])) {
+        if(!empty($_SESSION['flux_openid_url']) || !empty($_COOKIE['openid_enabled'])) {
             $query = "select comment_author, comment_author_email, comment_author_url from ".$tablePrefix."blogcomments where comment_author_url = ".$GLOBALS['POOL']->db->quote($_SESSION['flux_openid_url'])." or  comment_author_url = ".$GLOBALS['POOL']->db->quote($_COOKIE['openid_enabled'])." order by id DESC LIMIT 1";
             $res = $GLOBALS['POOL']->db->query($query);
             $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
