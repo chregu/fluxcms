@@ -42,13 +42,19 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
         $this->db = $GLOBALS['POOL']->db;    
     }
     
+/*
     public function getPipelineName() {
         return 'linklog';
     }
-    
+*/  
     public function getDisplayName() {
         return 'Linklog Editor';
     }	
+
+    public function getPipelineParametersById($path, $id) { 
+        return array('pipelineName'=>'linklog');
+    }
+
     
     /**
      * handlePost
