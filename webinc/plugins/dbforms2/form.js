@@ -225,7 +225,7 @@ function dbforms2_form() {
         dbforms2.toolbar.unlockAllButtons();
         this.focusFirstField();
         
-        dbforms2.statusText('Data loaded.');
+        dbforms2.statusText('Data loaded. (id = ' + this.currentID + ')');
     }
 
     this._dataSavedCallback = function(response) {
