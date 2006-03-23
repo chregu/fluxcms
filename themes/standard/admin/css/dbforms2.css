@@ -37,6 +37,7 @@ td.formInput {
     margin: 0;
     margin-bottom: 5px;
     border-bottom: 1px solid #006486;
+    width: 700px;
 }
 
 #form input, iframe, #form textarea, #form select {
