@@ -268,6 +268,7 @@ class bx_dbforms2_config {
         $form->name = $this->name;
         $form->tableName = $this->getTableName($fieldsNode);
         $form->tablePrefix = $this->getTablePrefix($fieldsNode);
+        $form->title = $this->getFormTitle($fieldsNode);
 
         $attributeSet = $form->getConfigAttributes();
         $attributes = $this->getNodeAttributes($fieldsNode, $attributeSet);
@@ -309,6 +310,24 @@ class bx_dbforms2_config {
         $chooser->setLeftJoin($chooserNode->getAttribute('leftjoin'));
         
         return $chooser;
+    }
+    
+    /**
+     *  xx
+     *
+     *  @param  type  $var descr
+     *  @access public
+     *  @return type descr
+     */
+    protected function getFormTitle($fieldsNode = NULL) {
+        if(!isset($fieldsNode)) {
+            $fieldsNS = $this->xpath->query("/dbform:form/dbform:fields");
+            $fieldsNode = $fieldsNS->item(0);
+        }
+        if($fieldsNode && $fieldsNode->parentNode->hasAttribute('title'))
+            return $fieldsNode->parentNode->getAttribute('title');
+        
+        return '';
     }
     
     /**

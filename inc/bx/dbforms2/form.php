@@ -31,6 +31,7 @@ class bx_dbforms2_form {
     protected $members = array (
         'fields' => array(),
         'name' => '',
+        'title' => '',
         'tableName' => '',
         'tablePrefix' => '',
         'idField' => 'id',
@@ -77,6 +78,7 @@ class bx_dbforms2_form {
         $dom->appendChild($dom->createElement('form'));
         
         $dom->documentElement->setAttribute('name', $this->name);
+        $dom->documentElement->setAttribute('title', $this->title);
         
         // append all attributes
         foreach($this->attributes as $name => $value) {

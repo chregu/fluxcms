@@ -199,6 +199,9 @@
                 </div>
 
                 <div id="form">
+                    <xsl:if test="$form/@title != ''">
+                        <h1><xsl:value-of select="$form/@title"/></h1>
+                    </xsl:if>
                     <form name="bxform">
                         <xsl:apply-templates select="$form/fields/input[@type='hidden']" mode="hidden"/>
                         <table id="maintable" cellpadding="0" cellspacing="0" width="700">
