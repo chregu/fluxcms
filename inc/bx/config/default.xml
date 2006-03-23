@@ -125,6 +125,7 @@
         <blogCaptchaFontFile allowFromDB="true">Courier_New.ttf</blogCaptchaFontFile>
     
         <openIdEnabled  allowFromDB="true">false</openIdEnabled>
+        <adminDeleteTmp>true</adminDeleteTmp>
         
         </options>
 </config>

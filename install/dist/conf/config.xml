@@ -125,7 +125,8 @@
     -->
        <allowPHPUpload>false</allowPHPUpload>
        
-       
+       <adminDeleteTmp>true</adminDeleteTmp>
+        
        <noOutsideConnections>false</noOutsideConnections>
        <allowHTTPAuthentication>true</allowHTTPAuthentication>
         

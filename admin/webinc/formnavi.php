@@ -92,8 +92,13 @@ echo '<span class="logout">'.$i18n->translate('User:').'';
 <a href="#" onClick="parent.edit.location.href=\''.BX_WEBROOT.'admin/overview/\'">'.$i18n->translate('home').'</a>
 <a href="http://docs.bitflux.org/en/start/" target="help">'.$i18n->translate('help').'</a>
 
-<a href="#" onClick="parent.location.href=\''.BX_WEBROOT.'admin/?logout\'">'.$i18n->translate('logout').'</a>
-';
+<a href="#" onClick="parent.location.href=\''.BX_WEBROOT.'admin/?logout\'">'.$i18n->translate('logout').'</a>';
+
+if ($GLOBALS['POOL']->config->adminDeleteTmp == 'true') {
+    echo '&#160; &#160;
+    <a href="'.BX_WEBROOT.'admin/webinc/deletetmp.php" target="edit">'.$i18n->translate('delete tmp').'</a>
+    ';
+}
 ?>
 </span>
 <?php if(popoon_classes_browser::isSafari()) { ?>

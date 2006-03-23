@@ -73,21 +73,28 @@ class bx_helpers_file {
      *  @param  string $dir Directory to delete 
      *  @access public
      */
-    static function rmdir($dir) {
+    static function rmdir($dir, $deleteitself = true) {
         $all = glob($dir.'/*');
         $hidden = glob($dir.'/.*');
         $objs = array_merge($all, $hidden);        
         if(sizeof($objs) > 0) {
             foreach($objs as $obj) {
                 if($obj != $dir.'/.' AND $obj != $dir.'/..') {
-                    if(file_exists($obj) AND !is_writable($obj))
+                    if(file_exists($obj) AND !is_writable($obj)) {
                         chmod($obj, 0666); 
+                    }
                    
-                    is_dir($obj) ? bx_helpers_file::rmdir($obj) : unlink($obj);
+                    if (is_dir($obj)) {
+                        bx_helpers_file::rmdir($obj);
+                    } else {
+                        unlink($obj);
+                    }
                 }
             }
         }
-        rmdir($dir);
+        if ($deleteitself) {
+            rmdir($dir);
+        }
     }
     
     static function cpdir($dir,$todir) {
