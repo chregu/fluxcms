@@ -60,12 +60,16 @@ if (file_exists("../../structure/quicklinks.php")) {
 
 <span style="float: right; ">
 Bookmarks:<select name="selectElement" onchange="javascript:changeElement()">
-<option value="">---</option>
+<option value="">--</option>
 
 <?php
 
 foreach ($quicklinks as $value => $name) {
-    print '<option value="'.$value.'">'.$name.'</option>';
+    if($name == '') {
+        print '<option value="" disabled="disabled">'.$value.'</option>';
+    } else {
+        print '<option value="'.$value.'">'.$name.'</option>';
+    }
 }
 ?>
 </select>
