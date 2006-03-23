@@ -237,7 +237,7 @@ function dbforms2_form() {
             dbforms2.toolbar.unlockButtons(['save', 'new']);
 
         } else {
-            dbforms2.statusText('Data saved: ' + response.getResponseText());
+            dbforms2.statusText('Data saved. (' + response.getResponseText() + ')');
             
             // reload the returned data
             this.loadFieldValuesByXML(response.responseData);
