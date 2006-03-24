@@ -92,13 +92,15 @@ class ImageResize {
           $lastpos = strrpos( $this->endImgPath,"/");
           $this->endsize =  substr($this->endImgPath,$lastpos+1);
           $this->oriEndsize = $this->endsize;
-          if (!preg_match("#^[0-9]+#",$this->endsize)) {
-              preg_match("#/([0-9][^/]*)/#",str_replace(BX_OPEN_BASEDIR,"",$this->endImgFile),$matches);
-              if(count($matches) > 0) {
-                  $this->endsize = $matches[1];
+          
+          preg_match_all("/\/(\d+[^\/]*)\//", str_replace(BX_OPEN_BASEDIR, '', $this->endImgFile), $matches);
+          foreach($matches[1] as $match) {
+              if(in_array($match, $this->allowedSizes)) {
+                  $this->endsize = $match;
                   $this->oriEndsize = $this->endsize;
               }
-          } 
+          }
+          
           if (strpos($this->endsize,",")) {
               list($this->endImgWidth, $this->endImgHeight, $this->method) = explode(",",$this->endsize);
               if ($this->endImgHeight == 0) {
@@ -108,8 +110,7 @@ class ImageResize {
 				  $this->oriEndsize = $this->endImgWidth;
                   unset ($this->endImgWidth);
               }
-          } 
-		  else if (!preg_match("#^[0-9]+#",$this->endsize)) {
+          } else if (!preg_match("#^[0-9]+#",$this->endsize)) {
 				$this->method = $this->endsize;
           }
 
@@ -117,12 +118,14 @@ class ImageResize {
                 $this->oriImgPath = str_replace('/'.$this->endsize,'',$this->endImgPath)."/";
           }
 
-          if (! isset($this->method)) {
+          if (!isset($this->method)) {
                $this->method = "resize";
           }
+          
           if ($this->pathReplaceBy) {
                $this->oriImgPath =str_replace($this->pathReplaceBy[0],$this->pathReplaceBy[1],$this->oriImgPath);
           }
+          
           $this->oriImgFile = $this->oriImgPath . basename($this->endImgFile);
     }
    
