@@ -34,7 +34,7 @@
             if (isset($_GET['back']) && $_GET['back']) {
                 print '<form method="post" action="'.htmlspecialchars($_GET['back']).'">';
             } else {
-              print '<form method="post" action="'.BX_WEBROOT.'admin/" name="login">';
+	      print '<form method="post" action="'.BX_WEBROOT.'admin/'. preg_replace("#^http.+/admin/(.*)$#","$1", str_replace("?logout","",htmlspecialchars(bx_helpers_uri::getRequestUri()))).'" name="login">';
             }
               
 
