@@ -47,7 +47,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
     /*
     * The table names
     */
-    private $linksTable 		= "linklog_links";
+    private $linksTable 	= "linklog_links";
     private $tagsTable		= "linklog_tags";
     private $links2tagsTable 	= "linklog_links2tags";   
     
@@ -79,7 +79,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
     
     // this gets called on every instance of the class 
     protected function __construct($mode) {
-        $this->tablePrefix 	= $GLOBALS['POOL']->config->getTablePrefix();
+        $this->tablePrefix 		= $GLOBALS['POOL']->config->getTablePrefix();
         $this->db 		 	= $GLOBALS['POOL']->db;
         $this->mode 			= $mode;
 		
@@ -102,7 +102,10 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
     public function getContentById($path, $id) {
 
         $dirname = dirname($id);
+
         $this->path=$path;
+
+//	bx_helpers_debug::webdump($path);
 
         // when a plugin is called:
         if (strpos($id,"plugin=") === 0) {
@@ -267,8 +270,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
             $xml .= "<url>".str_replace('&','&amp;',$row['url'])."</url>";
 
             if($this->isLoggedIn){
-                    $xml .= "<edituri>".BX_WEBROOT_W."/admin/edit/linklog/edit/".$row['id']."</edituri>";   
-                    $xml .= "<deleteuri>".BX_WEBROOT_W."/admin/edit/linklog/delete/".$row['id']."</deleteuri>";                    
+                    $xml .= "<edituri>".BX_WEBROOT_W."/admin/edit".$this->path."edit/".$row['id']."</edituri>";   
+                    $xml .= "<deleteuri>".BX_WEBROOT_W."/admin/edit".$this->path."delete/".$row['id']."</deleteuri>";                    
             }
 
             $xml .= "<tags>";
