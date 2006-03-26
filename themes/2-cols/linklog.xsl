@@ -19,7 +19,7 @@
 	xmlns:php="http://php.net/xsl"
 
 	get e.g. the username 
-    <xsl:variable name="username">
+     <xsl:variable name="username">
     		<xsl:value-of select="php:functionString('bx_helpers_perm::getUsername')"/>
     	</xsl:variable>	
    
@@ -39,7 +39,8 @@
 	<xsl:template name="html_head_title">
 		<xsl:apply-templates
 			select="/bx/plugin[@name='linklog']/links/meta/title" />
-		| sequenz/linklog
+		| 
+     <xsl:value-of select="$sitename"/>
 	</xsl:template>
 
 <!-- 
