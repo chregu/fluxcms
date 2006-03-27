@@ -232,8 +232,8 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 'fileNumber' => $fileNumber
             );
                          
+            $a = array_merge($a,$collection->getPipelineParametersByRequest($filename,$ext));
             $a = array_merge($a,$collection->getPipelineProperties());
-						$a = array_merge($a,$collection->getPipelineParametersByRequest($filename,$ext));
             //Do we need that?
             /*
             foreach( $collection->getFirstResource($filename,$ext)->getAllProperties(BX_PROPERTY_PIPELINE_NAMESPACE) as $p) {
