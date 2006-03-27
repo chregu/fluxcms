@@ -172,7 +172,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $archivepath = "";
         $archivewhere = "";
         $total = 0;
-        $gmnow = gmdate("Y-m-d H:i:s",time());
+        $gmnow = gmdate("Y-m-d H:i:s",ceil(time()/60)*60);
 
         if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
@@ -285,9 +285,10 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 if ($cat == "" || $catAllOnly == "false") {
                     $archivewhere .= " AND (";
                     $archivewhere .= $tablePrefix."blogposts.post_expires = '0000-00-00 00:00:00' OR ";
-                    $archivewhere .= "unix_timestamp(".$tablePrefix."blogposts.post_expires) >= ".time() .")";
+                    $archivewhere .= $tablePrefix."blogposts.post_expires >= '".$gmnow ."')";
                 }
             }
+            bx_helpers_debug::webdump($archivewhere);
             $res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
             
             if (MDB2::isError($res)) {
