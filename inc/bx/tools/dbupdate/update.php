@@ -49,7 +49,7 @@ if (MDB2::isError($res)) {
 /** add user_gid into users table **/
 if ($lastVersion < 3780) {
   addCol('users','user_gid','int',"'1'");  
-  addCol('bloglinks','rel','varchar(40)',"''");
+  addCol('bloglinks','rel','varchar(40)',"''",false);
   updateLastVersion(3780);
 }
 
@@ -219,7 +219,7 @@ if ($lastVersion < 5812) {
 if ($lastVersion < 5849) {
   doQuery("ALTER TABLE `{tablePrefix}blogposts` DROP `post_category`, DROP `post_karma`;", false);
   addCol('blogposts','post_guid_version',"TINYINT DEFAULT '2' NOT NULL");
-  doQuery("update `{tablePrefix}blogposts` set post_guid_version = 1, changed = changed");
+  doQuery("update `{tablePrefix}blogposts` set post_guid_version = 1, changed = changed",false);
   updateLastVersion(5849);
 }
 
@@ -312,11 +312,13 @@ function doQuery($query,$fatal=true) {
     }
 }
 
-function printError($res) {
+function printError($res, $fatal = true) {
     if (MDB2::isError($res)) {
         print $res->message ."\n";
         print $res->userinfo ."\n";
-        die();
+        if ($fatal) {
+        	die();
+	}
     }
 }
 
@@ -327,18 +329,21 @@ function updateLastVersion($version) {
     doQuery($query);
 }
 
-function addCol($table,$name,$type,$default = null) {
+function addCol($table,$name,$type,$default = null,$fatal = true) {
     $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
     $query = "ALTER TABLE `".$tablePrefix."$table` ADD `$name` $type";
     if ($default) {
         $query .= " DEFAULT $default";
     }
     $res = doQuery($query, false);
+    
     if (MDB2::isError($res)) {
         if ($res->code == -1) {
             print "  '$name' already exists in '".$tablePrefix."$table' (non fatal) \n\n";
+        } else if ($res->code == -18) {
+            print "'". $tablePrefix."$table' doesn't exist (non fatal) \n\n";
         } else {
-            printError($res);
+            printError($res,$fatal);
         }
     }
 }
