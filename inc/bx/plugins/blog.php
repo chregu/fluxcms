@@ -288,7 +288,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $archivewhere .= $tablePrefix."blogposts.post_expires >= '".$gmnow ."')";
                 }
             }
-            bx_helpers_debug::webdump($archivewhere);
             $res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
             
             if (MDB2::isError($res)) {

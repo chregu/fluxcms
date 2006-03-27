@@ -34,7 +34,6 @@ class bx_plugins_xmlrpc extends bx_plugin {
             $r = new XML_RPC_Response(0,$e->getCode(),$e->getMessage());
             $xml = '<?xml version="1.0" ?>'.$r->serialize();
         }
-        
         $dom = new DomDocument();
         $dom->loadXML($xml);
         return $dom;
