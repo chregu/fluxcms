@@ -285,6 +285,8 @@ class bx_plugins_blog_handlecomment {
                 $emailBodyID = 'emailBodyAnfrage';
                 
                 $emailBody .= utf8_decode(self::lookup($emailBodyID));
+		//BC with old blogcomments.xml files
+		$data['base'] = $data['openid_url'];
                 self::_replaceTextFields($emailBody, $data);
                 $emailBody = html_entity_decode($emailBody,ENT_QUOTES,'UTF-8');
                 
