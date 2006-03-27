@@ -273,8 +273,12 @@ if ($lastVersion < 6595) {
       updateLastVersion(6595);
       addCol("blogcomments","openid"," TINYINT( 4 ) DEFAULT '0' NOT NULL");
 }
+if ($lastVersion < 6705) {
 
-
+        doQuery("ALTER TABLE `{tablePrefix}blogposts` ADD INDEX ( `post_status` )",false); 
+        doQuery("ALTER TABLE `{tablePrefix}blogposts` ADD INDEX ( `blog_id` ) ",false);
+        updateLastVersion(6705);
+}
 
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
