@@ -283,9 +283,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 
                 $catAllOnly = $GLOBALS['POOL']->config->getConfProperty('blogPostsExpireCatAllOnly');
                 if ($cat == "" || $catAllOnly == "false") {
-                    $archivewhere .= " AND ";
+                    $archivewhere .= " AND (";
                     $archivewhere .= $tablePrefix."blogposts.post_expires = '0000-00-00 00:00:00' OR ";
-                    $archivewhere .= "unix_timestamp(".$tablePrefix."blogposts.post_expires) >= ".time();
+                    $archivewhere .= "unix_timestamp(".$tablePrefix."blogposts.post_expires) >= ".time() .")";
                 }
             }
             $res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
