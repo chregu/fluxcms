@@ -21,17 +21,8 @@
  * Required files
  */
 require_once 'PEAR.php';
+
 /**
- *
- * changes made in org/apache/fop/cli/Main.java
- * commented System.exit(0); on line 181
- * commented System.exit(1); on line 187
- * (System.exit() shuts down the php-java-bridge server...)
- * required java java_require("fop.jar;avalon-framework.jar;commons-logging.jar;commons-io.jar");
- *
- *
- *
- *
  * FO to pdf converter.
  *
  * with fo (formating objects) it's quite easy to convert xml-documents into
@@ -121,9 +112,11 @@ class XML_fo2pdf
      */
     function xml_fo2pdf ($fo = null, $pdf = '')
     {
-        java_require("fop.jar;avalon-framework.jar;commons-logging.jar;commons-io.jar");
+	java_require("fop.jar;avalon-framework.jar");
+
         if (!(is_null($fo))) {
            $this->run($fo, $pdf);
+
         }
     }
 
@@ -151,32 +144,29 @@ class XML_fo2pdf
 
         $this->pdf = $pdf;
         $this->fo  = $fo;
-        $cmdoptions   = array();
+        $options   = array();
         //$options   = array('-d');
         if ($this->configFile) {
-            $cmdoptions = array('-c', $this->configFile);
+            $options = array('-c', $this->configFile);
             //array_push($options, '-c', $this->configFile);
         }
         
-        array_push($cmdoptions,  $this->fo, '-' . $this->renderer, $this->pdf);
-        
-        if (!$main = @new JavaClass("org.apache.fop.cli.Main")) {
+        array_push($options, $this->fo, '-' . $this->renderer, $this->pdf);
+error_log(implode(" ",$options));
+        if (!$options = @new Java("org.apache.fop.apps.CommandLineOptions", $options)) {
         	return PEAR::raiseError('Unable to create Java Virtual Machine in ' . __FILE__ . ':' . __LINE__, 11, PEAR_ERROR_RETURN, null, null);
-        } // if
-        $main->startFop($cmdoptions);
-        /*$options->parse( $cmdoptions);
-        
-        $outputFormat = $options->getOutputFormat();
-        $foUserAgent = $options->getFOUserAgent();
-        $fop = null;
-        
-            
-        $fop = new Java("org.apache.fop.apps.Fop",$outputFormat, $foUserAgent);
-        
-        $options->getInputHandler()->render($fop);
-        */
-        /*$starter = $options->getStarter();
+        } 
+
+        $starter = $options->getStarter();
         $starter->run();
+
+	/* for fop-0.9 you need the following code
+and have to delete the System.exit() calls in org.apache.fop.cli.Main
+   if (!$main = @new JavaClass("org.apache.fop.cli.Main")) {
+                return PEAR::raiseError('Unable to create Java Virtual Machine in ' . __FILE__ . ':' . __LINE__, 11, PEAR_ERROR_RETURN, null, null);
+        } // if                         
+        $main->startFop($cmdoptions);
+
 */
         if ($DelFo) {
             $this->deleteFo($fo);
