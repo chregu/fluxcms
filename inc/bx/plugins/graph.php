@@ -48,7 +48,7 @@ class bx_plugins_graph extends bx_plugin implements bxIplugin {
     }
 
     public function getContentById($path, $id){
-        $blogpath = $this->getParameter($path,"blogPath",BX_PARAMETER_TYPE_DEFAULT,"/b sfdsdflog/");
+        $blogpath = $this->getParameter($path,"blogPath",BX_PARAMETER_TYPE_DEFAULT,"/blog/");
         $height = $this->getParameter($path,"height",BX_PARAMETER_TYPE_DEFAULT,"400");
         $width = $this->getParameter($path,"width",BX_PARAMETER_TYPE_DEFAULT,"300");
         $this->getGraph($blogpath, $height, $width);
