@@ -33,11 +33,12 @@ td.formInput {
 #form h1 {
     font-size: 13px;
     font-weight: bold;
-    padding: 10px;
+    padding: 15px 10px 3px 10px;
     margin: 0;
     margin-bottom: 5px;
     border-bottom: 1px solid #006486;
     width: 700px;
+    color: #006486;
 }
 
 #form input, iframe, #form textarea, #form select {
@@ -58,12 +59,13 @@ td.formInput {
     height: 48px;
     width: 100%;
     padding: 2px 0px 0px 10px;
-    background-color: #ddd;
+    border-bottom: solid #eee 1px;
+    background-color: #fff;
     z-index: 1000;
 }
 
 #buttons input {
-    border: 1px solid;
+    border: 1px solid #aaa;
     background-color: #eee;
     margin: 0px;
     padding: 1px;
@@ -72,7 +74,9 @@ td.formInput {
 }
 
 #buttons input.disabled {
-    border: 1px solid;
+    border: 1px solid #eee;
+    background-color: #eee;
+    color: #ccc;
     margin: 0px;
     padding: 1px;
     margin-bottom: 5px;
@@ -154,13 +158,14 @@ td.formInput {
 }
 
 #statusline {
+    padding-top: 5px;
 }
 
 #statustext {
     background-color: #fff;
     padding: 0px 5px 0px 5px;    
     font-family: Courier;
-    font-size : 12px;
+    font-size : 10px;
 }
 
 .n2mvalues {
