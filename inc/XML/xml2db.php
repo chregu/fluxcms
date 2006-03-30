@@ -103,7 +103,7 @@ class XML_xml2db {
                             if ($field->localName == $this->idField)
                             {
                                 $query = "select $this->idField from ".$this->tablePrefix.$table->localName." where $this->idField  = '$field_content'";
-                                $this->db->loadModule('extended');
+                                $this->db->loadModule('Extended',null,false); 
                                 $exists =  $this->db->extended->GetOne($query);
                             }
                             else
