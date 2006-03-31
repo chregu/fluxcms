@@ -46,7 +46,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         
         // get config for the form and instanciate a new form object
         $formConfig = new bx_dbforms2_config($formName);
-        $form = $formConfig->getForm();;
+        $form = $formConfig->getForm();
         
         if($mode == 'data') {
             
