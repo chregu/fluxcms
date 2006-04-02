@@ -63,7 +63,7 @@ class bx_errorhandler {
         }
     }
     public function addReport($level, $errno, $errstr, $errfile, $errline) {
-        $this->reports[] = array("level" => $level, "no" => $errno, "str"=> $errstr, "file"=>$errfile,"line"=>$errline);
+        $this->reports[] = array("level" => $level, "no" => $errno, "str"=> $errstr, "file"=>str_replace(BX_PROJECT_DIR,"[BX_PROJECT_DIR]/",$errfile),"line"=>$errline);
          $log=$level;
          $log .= "[".$errno."] ".$errstr. ' in '. $errfile . ' at line ' .$errline;
         error_log($log);
