@@ -160,18 +160,18 @@ and adjust the delicious template itself
         <xsl:apply-templates mode="xhtml"/>
         <xsl:if test="not(../xhtml:div[@class='comments_not'])">
         
-        <h3 class="blog">add a comment</h3>
+        <h3 class="blog"><i18n:text>add a comment</i18n:text></h3>
         <xsl:if test="../@blog:post_trackbacks_allowed = 1">
         
-        <p> The Trackback URL to this comment is:<br/>
+        <p><i18n:text>The Trackback URL to this post is</i18n:text>:<br/>
             <xsl:value-of select="concat($webrootW,$collectionUri,'plugin=trackback(',substring-after(../@id,'entry'),').xml')"/>
             <br/>
-            Trackbacks are moderated.
+            <i18n:text>Trackbacks are moderated.</i18n:text>
         </p>
         </xsl:if>
-        <p>  This blog is <a href="http://www.gravatar.com/">gravatar</a> enabled.<br/>
-            Your email adress will never be published.<br/>
-            Comment spam will be deleted!</p>
+        <p>  <i18n:text i18n:key="gravatarEnabled">dd</i18n:text><br/>
+            <i18n:text>Your email adress will never be published.</i18n:text><br/>
+            <i18n:text>Comment spam will be deleted!</i18n:text></p>
         </xsl:if>
     </xsl:template>
 
