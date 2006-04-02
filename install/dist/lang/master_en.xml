@@ -10,5 +10,9 @@
      <message key="previous page">previous</message>
      <message key="of"> of </message>
      <message key="Back to overview">Overview</message>
+     
+     <message key="blogGravatarEnabled" asXML="yes"><![CDATA[This blog is <a href="http://www.gravatar.com/">gravatar</a> enabled.]]></message>
+    
+     
 </catalogue>
 

@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 
 <catalogue  xmlns:xi="http://www.w3.org/2001/XInclude">
+
     <xi:include href="contact_de.xml#xpointer(//catalogue/message)" parse="xml"/>
     <xi:include href="contact.xml#xpointer(//catalogue/message)" parse="xml"/>
     
+    <message key="Send">Senden</message>
     <!-- gallery stuff -->
      <message key="next picture">nächstes Bild</message>
      <message key="previous picture">zurück</message>
@@ -16,6 +18,24 @@
     <message key="Comments">Kommentare</message>
     <message key="Related Entries">Ähnliche Beiträge</message>
     
-    <message key="No new comments allowed (anymore) on this post.">Keine (weiteren) neue Kommentare erlaubt.</message>
+    <message key="blogNoNewComments">Keine (weiteren) neuen Kommentare erlaubt.</message>
+    <message key="add a comment">Einen Kommentar hinzufügen</message>
+    <message key="blockTrackbackUrl">Die Trackback-URL zu diesem Beitrag ist</message>
+    <message key="blockTrackbackModerated">Trackbacks sind moderiert.</message>
+    <message key="blogGravatarEnabled" asXML="yes"><![CDATA[Dieser Blog unterstützt <a href="http://www.gravatar.com/">gravatare</a>.]]></message>
+    <message key="blogEmailNotPublished">Die Email Adresse wird nie veröffentlicht.</message>
+    <message key="blogCommentSpam">Kommentarspam wird gelöscht!</message>
+    
+    <message key="blogCommentEmail">E-Mail</message>
+    <message key="blogCommentName">Name</message>
+    <message key="blogCommentURL">URL</message>
+    <message key="blogCommentComment">Kommentar</message>
+    
+    <message key="blogCommentNotify">E-Mail Benachrichtigung bei neuen Kommentaren zu diesem Eintrag</message>
+    
+    <message key="blogCommentRemember">Speichere meine Daten (braucht Cookies)</message>
+    <message key="blogCommentCaptcha">Anti-Spam Überprüfung (Code ins Eingabefeld übertragen)</message>
+    <message key="blogFieldsMissing">Bitte alle benötigten Felder ausfüllen</message>
+    
 </catalogue>
 
