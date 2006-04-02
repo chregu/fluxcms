@@ -1420,7 +1420,7 @@ class patForms_Parser
 	* @param	mixed	driver name
 	* @return	object patForms_Parser
 	*/
-	function &createParser( $driver = null )
+	static function &createParser( $driver = null )
 	{
 		// not based on any driver
 		if( $driver == null )
