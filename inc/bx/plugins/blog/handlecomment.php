@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 class bx_plugins_blog_handlecomment {
 
@@ -26,7 +25,8 @@ class bx_plugins_blog_handlecomment {
  function handlePost ($path,$id, $data)  {
      
         if(!($data['name'] && $data['comments'])) {
-            return "Please fill in all needed fields";
+            
+            return '<i18n:text i18n:key="blogFieldsMissing">Please fill in all needed fields</i18n:text>';
         }
             
         //add some more data and clean some others
@@ -227,6 +227,7 @@ class bx_plugins_blog_handlecomment {
         
         
         //if uri in post is the same as in the session then do openid = true(1)
+        @session_start();
         if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['openid_url']) {
             $openid = 1;
         } else {

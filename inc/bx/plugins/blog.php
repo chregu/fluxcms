@@ -566,7 +566,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
 
             $xml .= '<div class="post_links">';
-            $posturipath = BX_WEBROOT_W.$path.'archive/'.date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).'/'.$row['post_uri'].'.html';
+            $posturipath = BX_WEBROOT_LANG.substr($path,1).'archive/'.date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).'/'.$row['post_uri'].'.html';
             
             if(!$doComments){
                 if(trim(($row['post_content_extended']))){
@@ -609,7 +609,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     }
                     $xml .= $this->getCommentForm($emailBodyID = '', $posturipath, $imgid, $isCaptcha);
                 } else {
-                    $xml .= '<div class="comments_not"><i18n:text>No new comments allowed (anymore) on this post.</i18n:text></div>';
+                    $xml .= '<div class="comments_not"><i18n:text i18n:key="blogNoNewComments">No new comments allowed (anymore) on this post.</i18n:text></div>';
 
                 }
 
@@ -860,21 +860,21 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
          
          
         if ($this->newCommentError) {
-            $xml .= '<p style="color:red;"><i18n:text>'.$this->newCommentError.'</i18n:text></p>';
+            $xml .= '<p style="color:red;">'.$this->newCommentError.'</p>';
         }
             $xml .= '<form name="bx_foo" action="'.$posturipath.'#commentform" method="post">
                <table class="form" style="margin-left:25px;" border="0" cellspacing="0" cellpadding="0" id="commentform">
                <tr>
-               <td valign="top">Name*</td>
+               <td valign="top"><i18n:text i18n:key="blogCommentName">Name</i18n:text>*</td>
                <td class="formHeader" valign="middle"><input class="formgenerell" type="text" name="name" id="name" value="'.$data['name'].'"/></td>
                </tr><tr>
-               <td valign="top">E-Mail</td>
+               <td valign="top"><i18n:text i18n:key="blogCommentEmail">E-Mail</i18n:text></td>
                <td><input class="formgenerell" type="text" name="email" id="email" value="'.$data['email'].'"/></td>
                </tr>
                 <tr><td valign="top" width="90" class="formurl">For Spammers Only</td><td valign="middle" class="formurl"><input type="text" name="url" value="" class="formurl" /></td></tr>
              
                <tr>
-               <td valign="top">URL</td>
+               <td valign="top"><i18n:text i18n:key="blogCommentURL">URL</i18n:text></td>
                <td>
                     <input class="formgenerell" type="text" id="openid_url" name="openid_url" value="'.$data['openid_url'].'"/>
                     <input type="hidden" id="verified" name="verified" value="0" />';
@@ -930,26 +930,22 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                    $xml .= '<tr><td></td><td><iframe src="'.$redirect_url.'" style="display: block; height:35px;" /></td></tr>';
                }
                $xml .= '<tr>
-               <td valign="top">Comment*</td>
+               <td valign="top"><i18n:text i18n:key="blogCommentComment">Comment</i18n:text>*</td>
                <td><textarea rows="10" cols="40" name="comments">'.$data['comments'].'</textarea></td>
                </tr><tr>
                <td colspan="2" valign="top"><input type="checkbox" name="comment_notification" />
-               Notify me via E-Mail when new comments are made to this entry</td>
+               <i18n:text i18n:key="blogCommentNotify">Notify me via E-Mail when new comments are made to this entry</i18n:text></td>
                 </tr>';
                 if($remember == "checked" || (!empty($_COOKIE['openid_enabled']))) {
-                    $xml .= '<tr>
-                   <td colspan="2" valign="top"><input type="checkbox" name="remember" checked="checked"/>
-                   Remember me (needs cookies)</td>
-                    </tr>';
+                    $xml .= '<tr><td colspan="2" valign="top"><input type="checkbox" name="remember" checked="checked"/>';
                 } else {
-                    $xml .= '<tr>
-                   <td colspan="2" valign="top"><input type="checkbox" name="remember"/>
-                   Remember me (needs cookies)</td>
-                    </tr>';
-                }
+                       $xml .= '<tr><td colspan="2" valign="top"><input type="checkbox" name="remember"/>';
+                 }
+                  $xml .= ' <i18n:text i18n:key="blogCommentRemember">Remember me (needs cookies)</i18n:text></td></tr>';
+                  
                 if($isCaptcha == 1) {
                     $xml .= '<tr>
-                    <td colspan="2"><br/>Anti-Spam Überprüfung (Code ins Eingabefeld übertragen)</td>
+                    <td colspan="2"><br/><i18n:text i18n:key="blogCommentCaptcha">Anti-Spam check, please copy the letters to the input field</i18n:text></td>
                     </tr>
                     <tr>
                     <td>
@@ -965,7 +961,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 
                 $xml .= '<tr>
                 <td></td>
-                <td><br /><input type="submit" name="bx[plugins][blog][_all]" value="Send" class="formbutton" /></td>
+                <td><br /><input type="submit" i18n:attr="value" name="bx[plugins][blog][_all]" value="Send" class="formbutton" /></td>
                 </tr>
                </table>
                </form>
