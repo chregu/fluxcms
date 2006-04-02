@@ -208,6 +208,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             if ($lang != BX_DEFAULT_LANGUAGE) {
                 $webrootLang .= $lang."/";
             }
+            define('BX_WEBROOT_LANG' ,$webrootLang);
             
             if ($GLOBALS['POOL']->config->dynamicHttpExpires == "true") {
                 $expires = bx_resourcemanager::getFirstProperty($collection->uri,"expires");
