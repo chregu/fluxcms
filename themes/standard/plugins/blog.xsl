@@ -56,4 +56,35 @@ xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:bxf="http://bitflux.org/func
         (<xsl:value-of select="format-number($plazes/blog:plazelat,'#.000')"/>,
          <xsl:value-of select="format-number($plazes/blog:plazelon,'#.000')"/>)
     </xsl:template>
+    
+      <xsl:template match="xhtml:div[@id = 'captcha']" mode="xhtml">
+        <xsl:variable name="date" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:post_date_iso"/>
+        <xsl:variable name="days" select="php:functionString('bx_helpers_config::getBlogCaptchaAfterDays')"/>
+        <xsl:variable name="captcha" select="php:functionString('bx_helpers_captcha::isCaptcha', $days, $date)"/>
+        <xsl:choose>
+        <xsl:when test="$captcha = 1">
+            <xsl:apply-templates mode="xhtml"/>
+        </xsl:when>
+        <xsl:otherwise>
+            
+        </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="xhtml:div[@id = 'captchaTitle']" mode="xhtml">
+        <xsl:variable name="date" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:post_date_iso"/>
+        <xsl:variable name="days" select="php:functionString('bx_helpers_config::getBlogCaptchaAfterDays')"/>
+        <xsl:variable name="captcha" select="php:functionString('bx_helpers_captcha::isCaptcha', $days, $date)"/>
+        <xsl:choose>
+        <xsl:when test="$captcha = 1">
+            <xsl:apply-templates mode="xhtml"/>
+        </xsl:when>
+        <xsl:otherwise>
+            
+        </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    
+    
 </xsl:stylesheet>
