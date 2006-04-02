@@ -22,6 +22,12 @@ class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
         $headers .= "From: $from\r\n";
 
         $emailSubject = !empty($params['subjectTemplateKey']) ? $this->getText($params['subjectTemplateKey']) : '';
+
+
+        if(strpos($emailSubject, "\n") !== FALSE or strpos($emailSubject, "\r") !== FALSE) { 
+            return FALSE;
+        }
+
         $emailBody = !empty($params['bodyTemplateKey']) ? $this->getText($params['bodyTemplateKey']) : '';
 
         // fields contain themselves as formatted string
