@@ -31,11 +31,10 @@ class bx_plugins_blog_handlecomment {
             
         //add some more data and clean some others
         $data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
-        @$data['email'] = strip_tags($data['email'] );
-        @$data['name'] = strip_tags($data['name']);
-        @$data['openid_url'] = strip_tags($data['openid_url']);
-        @$data['comment_notification'] = $data['comment_notification'];
-     
+        $data['email'] = strip_tags($data['email'] );
+        $data['name'] = strip_tags($data['name']);
+        $data['openid_url'] = strip_tags($data['openid_url']);
+        
      
         $timezone = bx_helpers_config::getTimezoneAsSeconds();
         $isok = false;
@@ -71,7 +70,7 @@ class bx_plugins_blog_handlecomment {
         //if captcha is active
         if($isCaptcha == true) {
             if (!bx_helpers_captcha::checkCaptcha($data['passphrase'], $data['imgid'])) {
-              return "Captcha Number is not correct please try again.";  
+              return '<i18n:text i18n:key="blogCaptchaWrong">Captcha Number is not correct please try again.</i18n:text>';  
             }
         }
         
@@ -167,9 +166,14 @@ class bx_plugins_blog_handlecomment {
         
         /* If url field is filled in, it was a bot ...*/
         if (isset($data['url']) && $data['url'] != "") {
-            $commentRejected .= "* URL field was not empty, assuming bot: " . $data['url']."\n";        
+            $commentRejected .= "* Hidden URL field was not empty, assuming bot: " . $data['url']."\n";
+            if(strpos($data['url'], "\n") !== FALSE or strpos($data['url'], "\r") !== FALSE) {
+                $commentReject .= "* Multi line hidden URL field \n";
+            }
+        
             $deleteIt = true;
         }
+        
         /* Max 5 links per post and SURBL check */
         if (preg_match_all("#http://[\/\w\.\-]+#",$data['comments'], $matches) || $data['openid_url'] != '') {
             if ($data['openid_url'] != '') {
@@ -223,7 +227,11 @@ class bx_plugins_blog_handlecomment {
         $db = $GLOBALS['POOL']->dbwrite;
         if (!isset($data['comment_notification'])) {
             $data['comment_notification'] = 0;
+        } else if (strlen($data['comment_notification'] > 2)) {
+            $deleteIt= true;
+            $commentRejected .= "* Notification value too long\n";
         }
+            
         
         
         //if uri in post is the same as in the session then do openid = true(1)
