@@ -3,11 +3,10 @@
 class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
 
     public function submitFields($params, $fields) {
-        $headers = '';
-        $headers .= "User-Agent: Flux CMS " . BXCMS_VERSION.'/'.BXCMS_REVISION ."\r\n";
-
-        $charset = !empty($params['charset']) ? $params['charset'] : "ISO-8859-1";
-        $headers .= "Content-Type: text/plain; charset=".$charset."\r\n";
+      
+        
+        $options = array();
+        $options['charset'] = !empty($params['charset']) ? $params['charset'] : "UTF-8";
         
         $from = 'Do not reply to this address <nobody@example.org>';
         if(!empty($params['emailFromField']) && !empty($fields[$params['emailFromField']])) {
@@ -36,19 +35,10 @@ class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
         // replace textfields in subject and body
         $emailSubject = bx_helpers_string::replaceTextFields($emailSubject, $fields);
         $emailBody = bx_helpers_string::replaceTextFields($emailBody, $fields);
-        
-        // recode utf8 strings
-        if ($charset != "ISO-8859-1" && function_exists("iconv")) {
-            $emailSubject=iconv("utf8",$charset,$emailSubject);
-            $emailBody=iconv("utf8",$charset,$emailBody);
-        } else {
-          // decode utf8 strings
-          $emailSubject = utf8_decode($emailSubject);
-          $emailBody = utf8_decode($emailBody);
-        }
 
-        if(!empty($params['emailTo'])) {        
-            mail($params['emailTo'], $emailSubject, $emailBody, $headers);
+        if(!empty($params['emailTo'])) {   
+            $n = bx_notificationmanager::getInstance("mail");
+            $n->send($params['emailTo'],$emailSubject, $emailBody, $from, null,$options);
             return TRUE;
         }
         return FALSE;
