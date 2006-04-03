@@ -29,8 +29,15 @@ class bx_notifications_mail extends bx_notification {
         
         if(strpos($from, "\n") !== FALSE or strpos($from, "\r") !== FALSE) { 
             throw new Exception("From: is invalid.");
-            
         }
+        if(strpos($to, "\n") !== FALSE or strpos($to, "\r") !== FALSE) { 
+            throw new Exception("To: is invalid.");
+        }
+        
+        if(strpos($subject, "\n") !== FALSE or strpos($subject, "\r") !== FALSE) { 
+            throw new Exception("Subject: is invalid.");
+        }
+        
         $headers = "From: $from\r\n";
         $headers .= "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n";
         $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")"; 
