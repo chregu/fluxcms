@@ -16,7 +16,7 @@ class bx_notifications_mail extends bx_notification {
         return self::$instance;
     }
     
-    public function send($to, $subject, $message, $fromAdress = null, $fromName= null) {
+    public function send($to, $subject, $message, $fromAdress = null, $fromName= null,$options = array()) {
         if (!$fromAdress) {
             $fromAdress = 'unknown@example.org';   
         }
@@ -38,11 +38,25 @@ class bx_notifications_mail extends bx_notification {
             throw new Exception("Subject: is invalid.");
         }
         
+        
         $headers = "From: $from\r\n";
-        $headers .= "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n";
-        $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")"; 
-        if (function_exists('iconv')) {
-            $subject = iconv("UTF-8","ISO-8859-15",$subject); 
+        $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")\r\n"; 
+        
+        if (empty($options['charset'])) {
+            $options['charset'] = 'UTF-8';
+        }
+        
+        $headers .= "Content-Type: text/plain; charset=".$options['charset']."\r\nContent-Transfer-Encoding: 8bit\r\n";
+        // recode utf8 strings
+        if ($options['charset'] != "UTF-8") {
+         if (function_exists("iconv")) {
+            $subject=iconv("utf8",$options['charset'],$subject);
+            $message=iconv("utf8",$options['charset'],$message);
+         } else {
+          // decode utf8 strings
+          $subject = utf8_decode($subject);
+          $message = utf8_decode($message);
+         }
         }
         mail($to, $subject, $message, $headers);
         return true;
