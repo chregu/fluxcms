@@ -16,7 +16,7 @@ class bx_notifications_mail extends bx_notification {
         return self::$instance;
     }
     
-    public function send($to, $subject, $message, $fromAdress = null, $fromName= null,$options = array()) {
+    public function send($to, $subject, $message, $fromAdress = null, $fromName= null, $options = array()) {
         if (!$fromAdress) {
             $fromAdress = 'unknown@example.org';   
         }

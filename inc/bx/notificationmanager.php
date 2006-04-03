@@ -16,18 +16,18 @@ class bx_notificationmanager {
         return self::$instance[$type];
         
     }
-    public function send( $to, $subject, $message, $fromAdress, $fromName= null) {
+    public function send( $to, $subject, $message, $fromAdress, $fromName= null, $options = array()) {
         
-        $this->transport->send($to,$subject,$message, $fromAdress, $fromName);    
+        $this->transport->send($to,$subject,$message, $fromAdress, $fromName,$options);    
     }
     
-    public function sendByUsername( $to, $subject, $message, $fromAdress, $fromName= null) {
+    public function sendByUsername( $to, $subject, $message, $fromAdress, $fromName= null, $options = array()) {
         
-        $this->transport->sendByUsername($to,$subject,$message, $fromAdress, $fromName);    
+        $this->transport->sendByUsername($to,$subject,$message, $fromAdress, $fromName, $options);    
     }
 
     
-    static public function sendToDefault($username, $subject, $message, $fromAdress, $fromName = null) {
+    static public function sendToDefault($username, $subject, $message, $fromAdress, $fromName = null, $options = array()) {
         if (isset($GLOBALS['POOL']->config->notifications['default'])) {
             $default = $GLOBALS['POOL']->config->notifications['default'];
         } else {
@@ -37,7 +37,7 @@ class bx_notificationmanager {
         
         $t = self::getInstance($default);
         
-        $t->sendByUsername($username,$subject,$message,$fromAdress,$fromName);
+        $t->sendByUsername($username,$subject,$message,$fromAdress,$fromName,$options);
     }
     
     
