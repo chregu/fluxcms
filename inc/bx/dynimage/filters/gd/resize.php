@@ -24,6 +24,8 @@
  */
 class bx_dynimage_filters_gd_resize extends bx_dynimage_filters_gd {
     
+    protected $knownParameters = array('w', 'h');
+    
     public function start($imgIn) {
         $imgOut = imagecreatetruecolor($this->imageEndSize['w'], $this->imageEndSize['h']);
         imagecopyresampled($imgOut, $imgIn, 0, 0, 0, 0, $this->imageEndSize['w'], $this->imageEndSize['h'], $this->imageOriginalSize['w'], $this->imageOriginalSize['h']);
@@ -36,6 +38,7 @@ class bx_dynimage_filters_gd_resize extends bx_dynimage_filters_gd {
         $endSize['w'] = $imgSize['w'];
         $endSize['h'] = $imgSize['h'];
         
+        // 'w' has precedence over 'h', so w:nn,h:mm will create a picture of nn pixels width 
         if(!empty($this->parameters['w'])) {
             if($this->parameters['w'] < $imgSize['w']) {
                 $endSize['w'] = $this->parameters['w'];

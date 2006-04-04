@@ -42,7 +42,7 @@ class bx_dynimage_request {
         return $parts['filename'];
     }
     
-    protected static function getPartsByRequest($request) {
+    public static function getPartsByRequest($request) {
         
         /*
             request syntax is:
@@ -69,6 +69,7 @@ class bx_dynimage_request {
         $p['filename'] = $fs;
         
         // parse pipeline name and parameters
+        $p['parameterstring'] = $ms;
         $m = explode(',', $ms);
         $p['pipeline'] = $m[0];
         $params = array();

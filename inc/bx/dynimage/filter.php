@@ -24,11 +24,8 @@
  */
 class bx_dynimage_filter {
     
+    protected $knownParameters = array();
     protected $parameters = array();
-    
-    public function __construct($parameters) {
-        $this->parameters = $parameters;
-    }
     
     public function modifysImageProportions() {
         return FALSE;
@@ -36,6 +33,13 @@ class bx_dynimage_filter {
     
     public function getEndSize($imgSize) {
         return FALSE;
+    }
+    
+    public function setParameters($params) {
+        foreach($params as $p => $v) {
+            if(in_array($p, $this->knownParameters))
+                $this->parameters[$p] = $v;
+        }
     }
     
 }

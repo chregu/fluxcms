@@ -31,9 +31,9 @@ class bx_dynimage_config {
     protected $dom = NULL;
     protected $driversByPriority = NULL;
     
-    public function __construct($request, $pipeline) {
+    public function __construct($request) {
         $this->request = $request;
-        $this->pipeline = $pipeline;
+        $this->pipeline = bx_dynimage_request::getPipelineByRequest($request);
         
         $configFileName = BX_PROJECT_DIR.'conf/dynimage.xml';
         if(is_readable($configFileName)) {
@@ -102,7 +102,9 @@ class bx_dynimage_config {
         foreach($fNS as $fN) {
             $fName = $fN->getAttribute('type');
             $class = 'bx_dynimage_filters_'.$driver.'_'.$fName;
-            $filters[] = new $class(bx_dynimage_request::getParametersByRequest($this->request));
+            $filter = new $class();
+            $filter->setParameters(bx_dynimage_request::getParametersByRequest($this->request));
+            $filters[] = $filter;
         }
         return $filters;
     }

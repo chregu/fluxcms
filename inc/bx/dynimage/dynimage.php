@@ -29,53 +29,95 @@ class bx_dynimage_dynimage {
     protected $validator = array();
     protected $filters = array();
     
-    public function __construct($config) {
-        $this->config = $config;
-        $this->driver = $config->getDriver();
-        $this->validator = $config->getValidator();
-        $this->filters = $config->getFilters();
+    public function __construct($request) {
+        $this->request = $request;
+    }
+    
+    protected function parseConfig() {
+        $this->config = new bx_dynimage_config($this->request);
+        $this->driver = $this->config->getDriver();
+        $this->validator = $this->config->getValidator();
+        $this->filters = $this->config->getFilters();
     }
     
     public function printImage() {
-        $oFilename = BX_PROJECT_DIR.bx_dynimage_request::getOriginalFilenameByRequest($this->config->request);
-        if(!is_readable($oFilename))
-            return FALSE;
         
-        // set the current working image to be nothing
-        $currentImage = FALSE;
-        
-        // get the size of the resulting image
-        $imgOriginalSize = array();
-        $imgSize = getimagesize($oFilename);
-        $imgOriginalSize['w'] = $imgSize[0];
-        $imgOriginalSize['h'] = $imgSize[1];
-        $imgEndSize = $this->filters[0]->getEndSize($imgOriginalSize);
-        
-        // the last filter in the pipeline which modifys proportions
-        // defines the size of the resulting image
-        foreach($this->filters as $filter) {
-            if($filter->modifysImageProportions())
-                $imgEndSize = $filter->getEndSize($imgOriginalSize);
+        $this->originalFilename = BX_PROJECT_DIR.bx_dynimage_request::getOriginalFilenameByRequest($this->request);
+        $this->cacheFilename = BX_PROJECT_DIR.$this->getCacheFilenameByRequest($this->request);
+
+        if(!$this->cacheFileIsValid()) {
+            if(!is_readable($this->originalFilename))
+                return FALSE;
+            
+            $this->parseConfig();
+            
+            // set the current working image to be nothing
+            $currentImage = FALSE;
+            
+            // get the size of the resulting image
+            $imgOriginalSize = array();
+            $imgSize = getimagesize($this->originalFilename);
+            $this->originalImageType = $imgSize[2];
+            $imgOriginalSize['w'] = $imgSize[0];
+            $imgOriginalSize['h'] = $imgSize[1];
+            $imgEndSize = $this->filters[0]->getEndSize($imgOriginalSize);
+            
+            // the last filter in the pipeline which modifys proportions
+            // defines the size of the resulting image
+            foreach($this->filters as $filter) {
+                if($filter->modifysImageProportions())
+                    $imgEndSize = $filter->getEndSize($imgOriginalSize);
+            }
+            
+            $currentImage = $this->driver->getImageByFilename($this->originalFilename, $this->originalImageType);
+            
+            foreach($this->filters as $filter) {
+                if($filter->getFormat() == $this->driver->getFormat()) {
+                    $filter->imageOriginalSize = $imgOriginalSize;
+                    $filter->imageEndSize = $imgEndSize;
+                    $currentImage = $filter->start($currentImage, $imgEndSize);
+                }
+            }
+            $this->createCacheDir();        
+            $this->driver->saveImage($currentImage, $this->cacheFilename, $this->originalImageType);
         }
-        
-        $currentImage = $this->driver->getImageByFilename($oFilename, $imgSize[2]);
-        
-        foreach($this->filters as $filter) {
-            if($filter->getFormat() == $this->driver->getFormat()) {
-                $filter->imageOriginalSize = $imgOriginalSize;
-                $filter->imageEndSize = $imgEndSize;
-                $currentImage = $filter->start($currentImage, $imgEndSize);
+
+        header('Content-type: '.popoon_helpers_mimetypes::getFromFileLocation($this->cacheFilename));
+        header('Last-Modified: '.date('r', $this->lastModified));
+        $now = time();
+        header('Expires: '. date('r', $now + ($now - $this->lastModified)));
+        if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+            $lastMod304 = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+            if ($lastMod304 >= $this->lastModified) {
+                header('Not Modified', TRUE, 304);
+                exit;
             }
         }
-        
-        header("Content-type: image/jpeg");
-        print imagejpeg($currentImage);
-        
-        //d();
+        print file_get_contents($this->cacheFilename);
         
     }
      
-    protected function printImageByFile($fname) {
+    protected function getCacheFilenameByRequest($request) {
+        $p = bx_dynimage_request::getPartsByRequest($request);
+        return 'dynimages/'.$p['parameterstring'].$p['filename']; 
     }
+    
+    protected function cacheFileIsValid() {
+        $this->lastModified = filemtime($this->originalFilename);
+        if(file_exists($this->cacheFilename) && (filemtime($this->cacheFilename) >= $this->lastModified )) {
+            return TRUE;
+        } 
+        return FALSE;
+    }
+    
+    protected function createCacheDir() {
+        $fi = pathinfo($this->cacheFilename);
+        if (!file_exists($fi['dirname'])){
+           if (!mkdir($fi['dirname'], 0777, TRUE)) {
+               die($fi['dirname'] ." is not writable ");
+           }
+        }
+    }
+    
     
 }

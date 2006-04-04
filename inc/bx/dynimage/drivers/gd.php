@@ -34,7 +34,24 @@ class bx_dynimage_drivers_gd {
         switch($imgType) {
             case IMAGETYPE_JPEG:
                 return imagecreatefromjpeg($file);
+            case IMAGETYPE_PNG:
+                return imagecreatefrompng($file);
+            case IMAGETYPE_GIF:
+                return imagecreatefromgif($file);
         }
+        return FALSE;
+    }
+    
+    public function saveImage($image, $filename, $imgType) {
+        switch($imgType) {
+            case IMAGETYPE_JPEG:
+                return imagejpeg($image, $filename);
+            case IMAGETYPE_PNG:
+                return imagepng($image, $filename);
+            case IMAGETYPE_GIF:
+                return imagegif($image, $filename);
+        }
+        return FALSE;
     }
     
 }
