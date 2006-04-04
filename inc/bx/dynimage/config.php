@@ -98,7 +98,6 @@ class bx_dynimage_config {
         $driver = $this->getDriver()->name;
         $filters = array();
     
-        $vName = 'filemtime';
         $fNS = $this->xpath->query("/config/pipelines/pipeline[@name='".$this->pipeline."']/filter");
         foreach($fNS as $fN) {
             $fName = $fN->getAttribute('type');

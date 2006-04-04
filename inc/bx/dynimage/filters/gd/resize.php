@@ -33,14 +33,22 @@ class bx_dynimage_filters_gd_resize extends bx_dynimage_filters_gd {
     
     public function getEndSize($imgSize) {
         $endSize = array();
+        $endSize['w'] = $imgSize['w'];
+        $endSize['h'] = $imgSize['h'];
+        
         if(!empty($this->parameters['w'])) {
-            $endSize['w'] = $this->parameters['w'];
-            $endSize['h'] = (int) round($this->parameters['w'] * $imgSize['h'] / $imgSize['w']);
+            if($this->parameters['w'] < $imgSize['w']) {
+                $endSize['w'] = $this->parameters['w'];
+                $endSize['h'] = (int) round($this->parameters['w'] * $imgSize['h'] / $imgSize['w']);
+            }
         }
         if(!empty($this->parameters['h']) && empty($this->parameters['w'])) {
-            $endSize['h'] = $this->parameters['h'];
-            $endSize['w'] = (int) round($imgSize['w'] / $imgSize['h'] * $imgSize['h']);
+            if($this->parameters['h'] < $imgSize['h']) {
+                $endSize['h'] = $this->parameters['h'];
+                $endSize['w'] = (int) round($imgSize['w'] / $imgSize['h'] * $this->parameters['h']);
+            }
         }
+        
         return $endSize;
     }
     
