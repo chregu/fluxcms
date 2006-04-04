@@ -45,7 +45,7 @@ class bx_plugins_basket extends bx_plugin {
     
     
     public function isRealResource($path, $id) {
-        return TRUE;
+        return false;
     }
 
 
