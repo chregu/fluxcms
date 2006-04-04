@@ -22,20 +22,19 @@
  * @category 
  * @author Bitflux GmbH <flux@bitflux.ch>
  */
-class bx_dynimage_filter {
+class bx_dynimage_drivers_gd {
     
-    protected $parameters = array();
-    
-    public function __construct($parameters) {
-        $this->parameters = $parameters;
+    public $name = 'gd';
+
+    public function getFormat() {
+        return 'gd';
     }
     
-    public function modifysImageProportions() {
-        return FALSE;
-    }
-    
-    public function getEndSize($imgSize) {
-        return FALSE;
+    public function getImageByFilename($file, $imgType) {
+        switch($imgType) {
+            case IMAGETYPE_JPEG:
+                return imagecreatefromjpeg($file);
+        }
     }
     
 }

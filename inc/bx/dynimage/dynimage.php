@@ -24,52 +24,57 @@
  */
 class bx_dynimage_dynimage {
     
-    /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
-    protected $request = '';
+    protected $config = NULL;
+    protected $driver = array();
+    protected $validator = array();
+    protected $filters = array();
     
-    /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
-    protected $method = '';
-    
-    /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
-    protected $pipeline = '';
-    
-    public $filters = array();
-    
-    /**
-     *  constructor
-     *
-     *  @access public
-     */
-    public function __construct() {
+    public function __construct($config) {
+        $this->config = $config;
+        $this->driver = $config->getDriver();
+        $this->validator = $config->getValidator();
+        $this->filters = $config->getFilters();
     }
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function printImage() {
-        var_dump($this);
+        $oFilename = BX_PROJECT_DIR.bx_dynimage_request::getOriginalFilenameByRequest($this->config->request);
+        if(!is_readable($oFilename))
+            return FALSE;
+        
+        // set the current working image to be nothing
+        $currentImage = FALSE;
+        
+        // get the size of the resulting image
+        $imgOriginalSize = array();
+        $imgSize = getimagesize($oFilename);
+        $imgOriginalSize['w'] = $imgSize[0];
+        $imgOriginalSize['h'] = $imgSize[1];
+        $imgEndSize = $this->filters[0]->getEndSize($imgOriginalSize);
+        
+        // the last filter in the pipeline which modifys proportions
+        // defines the size of the resulting image
+        foreach($this->filters as $filter) {
+            if($filter->modifysImageProportions())
+                $imgEndSize = $filter->getEndSize($imgOriginalSize);
+        }
+        
+        $currentImage = $this->driver->getImageByFilename($oFilename, $imgSize[2]);
+        
+        foreach($this->filters as $filter) {
+            if($filter->getFormat() == $this->driver->getFormat()) {
+                $filter->imageOriginalSize = $imgOriginalSize;
+                $filter->imageEndSize = $imgEndSize;
+                $currentImage = $filter->start($currentImage, $imgEndSize);
+            }
+        }
+        
+        header("Content-type: image/jpeg");
+        print imagejpeg($currentImage);
+        
+        //d();
+        
     }
      
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     protected function printImageByFile($fname) {
     }
     

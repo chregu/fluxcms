@@ -22,21 +22,7 @@
  * @category 
  * @author Bitflux GmbH <flux@bitflux.ch>
  */
-class bx_dynimage_filter {
-    
-    protected $parameters = array();
-    
-    public function __construct($parameters) {
-        $this->parameters = $parameters;
-    }
-    
-    public function modifysImageProportions() {
-        return FALSE;
-    }
-    
-    public function getEndSize($imgSize) {
-        return FALSE;
-    }
-    
+class bx_dynimage_driver {
+
 }
 

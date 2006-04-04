@@ -26,11 +26,15 @@ class bx_dynimage_config {
     
     protected $driver = NULL;
     protected $xpath = NULL;
+    public $request = NULL;
     protected $pipeline = '';
     protected $dom = NULL;
+    protected $driversByPriority = NULL;
     
-    public function __construct($pipeline) {
+    public function __construct($request, $pipeline) {
+        $this->request = $request;
         $this->pipeline = $pipeline;
+        
         $configFileName = BX_PROJECT_DIR.'conf/dynimage.xml';
         if(is_readable($configFileName)) {
             $this->dom = new DOMDocument();
@@ -57,17 +61,19 @@ class bx_dynimage_config {
         
         $this->driver = FALSE;
 
-        $drivers = array();
+        $this->driversByPriority = array();
         $dNS = $this->xpath->query("/config/drivers/driver");
         
         foreach($dNS as $dN) {
-            $drivers[$dN->getAttribute('priority')] = $dN->getAttribute('type');
+            $this->driversByPriority[$dN->getAttribute('priority')] = $dN->getAttribute('type');
         }
         
-        ksort($drivers);
-        foreach($drivers as $driver) {
-            if($this->checkDriver($driver))
-                $this->driver = $driver;
+        ksort($this->driversByPriority);
+        foreach($this->driversByPriority as $driver) {
+            if($this->checkDriver($driver)) {
+                $class = "bx_dynimage_drivers_$driver";
+                $this->driver = new $class();
+            }
         }
         
         return $this->driver;
@@ -84,9 +90,12 @@ class bx_dynimage_config {
         }
         return FALSE;
     }
+    
+    public function getNextDriver($currentDriver) {
+    }
 
     public function getFilters() {
-        $driver = $this->getDriver();
+        $driver = $this->getDriver()->name;
         $filters = array();
     
         $vName = 'filemtime';
@@ -94,7 +103,7 @@ class bx_dynimage_config {
         foreach($fNS as $fN) {
             $fName = $fN->getAttribute('type');
             $class = 'bx_dynimage_filters_'.$driver.'_'.$fName;
-            $filters[] = new $class();
+            $filters[] = new $class(bx_dynimage_request::getParametersByRequest($this->request));
         }
         return $filters;
     }

@@ -22,5 +22,26 @@
  * @category 
  * @author Bitflux GmbH <flux@bitflux.ch>
  */
-class bx_dynimage_filters_gd_resize {
+class bx_dynimage_filters_gd_resize extends bx_dynimage_filters_gd {
+    
+    public function start($imgIn) {
+        $imgOut = imagecreatetruecolor($this->imageEndSize['w'], $this->imageEndSize['h']);
+        imagecopyresampled($imgOut, $imgIn, 0, 0, 0, 0, $this->imageEndSize['w'], $this->imageEndSize['h'], $this->imageOriginalSize['w'], $this->imageOriginalSize['h']);
+        imagedestroy($imgIn);
+        return $imgOut;
+    }
+    
+    public function getEndSize($imgSize) {
+        $endSize = array();
+        if(!empty($this->parameters['w'])) {
+            $endSize['w'] = $this->parameters['w'];
+            $endSize['h'] = (int) round($this->parameters['w'] * $imgSize['h'] / $imgSize['w']);
+        }
+        if(!empty($this->parameters['h']) && empty($this->parameters['w'])) {
+            $endSize['h'] = $this->parameters['h'];
+            $endSize['w'] = (int) round($imgSize['w'] / $imgSize['h'] * $imgSize['h']);
+        }
+        return $endSize;
+    }
+    
 }
