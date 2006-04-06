@@ -28,6 +28,7 @@ class bx_dynimage_dynimage {
     protected $driver = array();
     protected $validator = array();
     protected $filters = array();
+    protected $doCache = TRUE;
     
     public function __construct($request) {
         $this->request = $request;
@@ -45,9 +46,9 @@ class bx_dynimage_dynimage {
         $this->originalFilename = BX_PROJECT_DIR.bx_dynimage_request::getOriginalFilenameByRequest($this->request);
         $this->cacheFilename = BX_PROJECT_DIR.$this->getCacheFilenameByRequest($this->request);
 
-        if(!$this->cacheFileIsValid()) {
+        if(!$this->cacheFileIsValid() || !$this->doCache) {
             if(!is_readable($this->originalFilename))
-                return FALSE;
+                $this->send404andDie();
             
             $this->parseConfig();
             
@@ -61,14 +62,6 @@ class bx_dynimage_dynimage {
             $imgOriginalSize['w'] = $imgSize[0];
             $imgOriginalSize['h'] = $imgSize[1];
             $imgEndSize = $this->filters[0]->getEndSize($imgOriginalSize);
-            
-            // the last filter in the pipeline which modifys proportions
-            // defines the size of the resulting image
-            foreach($this->filters as $filter) {
-                if($filter->modifysImageProportions())
-                    $imgEndSize = $filter->getEndSize($imgOriginalSize);
-            }
-            
             $currentImage = $this->driver->getImageByFilename($this->originalFilename, $this->originalImageType);
             
             foreach($this->filters as $filter) {
@@ -83,18 +76,20 @@ class bx_dynimage_dynimage {
         }
 
         header('Content-type: '.popoon_helpers_mimetypes::getFromFileLocation($this->cacheFilename));
-        header('Last-Modified: '.date('r', $this->lastModified));
-        $now = time();
-        header('Expires: '. date('r', $now + ($now - $this->lastModified)));
-        if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-            $lastMod304 = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);
-            if ($lastMod304 >= $this->lastModified) {
-                header('Not Modified', TRUE, 304);
-                exit;
+        
+        if($this->doCache) {
+            header('Last-Modified: '.date('r', $this->lastModified));
+            $now = time();
+            header('Expires: '. date('r', $now + ($now - $this->lastModified)));
+            if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+                $lastMod304 = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+                if ($lastMod304 >= $this->lastModified) {
+                    header('Not Modified', TRUE, 304);
+                    exit;
+                }
             }
         }
         print file_get_contents($this->cacheFilename);
-        
     }
      
     protected function getCacheFilenameByRequest($request) {
@@ -117,6 +112,19 @@ class bx_dynimage_dynimage {
                die($fi['dirname'] ." is not writable ");
            }
         }
+    }
+    
+    protected function send404andDie() {
+        header("Not Found", TRUE, 404);
+        print '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML><HEAD>
+<TITLE>404 Not Found</TITLE>
+</HEAD><BODY>
+<H1>Not Found</H1>
+The requested URL '.$_SERVER['REQUEST_URI'].' was not found on this server.<P>
+
+</BODY></HTML>';
+        die();   
     }
     
     

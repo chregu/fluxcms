@@ -22,22 +22,27 @@
  * @category 
  * @author Bitflux GmbH <flux@bitflux.ch>
  */
-class bx_dynimage_filter {
+class bx_dynimage_filters_gd_crop extends bx_dynimage_filters_gd {
     
-    protected $knownParameters = array();
-    protected $parameters = array();
-    
-    public function modifysImageProportions() {
-        return FALSE;
+    public function start($imgIn) {
+        $imgOut = imagecreatetruecolor($this->imageEndSize['w'], $this->imageEndSize['h']);
+        
+        $srcWidth = (int) round($this->imageOriginalSize['h'] * $this->imageEndSize['w'] / $this->imageEndSize['h']);
+        
+        imagecopyresampled($imgOut, $imgIn, 0, 0, 0, 0, $this->imageEndSize['w'], $this->imageEndSize['h'], $srcWidth, $this->imageOriginalSize['h']);
+        imagedestroy($imgIn);
+        return $imgOut;
     }
     
     public function getEndSize($imgSize) {
-        return $imgSize;
-    }
-    
-    public function setParameters($params) {
-        $this->parameters = $params;
+        $endSize = $imgSize;
+        
+        if(!empty($this->parameters['w']) && !empty($this->parameters['h'])) {
+            $endSize['w'] = $this->parameters['w'];
+            $endSize['h'] = $this->parameters['h'];
+        }
+        
+        return $endSize;
     }
     
 }
-

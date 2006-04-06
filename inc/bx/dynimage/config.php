@@ -103,10 +103,27 @@ class bx_dynimage_config {
             $fName = $fN->getAttribute('type');
             $class = 'bx_dynimage_filters_'.$driver.'_'.$fName;
             $filter = new $class();
-            $filter->setParameters(bx_dynimage_request::getParametersByRequest($this->request));
+            $filterParameters = $this->getFilterParameters($fN);
+            $filter->setParameters($filterParameters);
             $filters[] = $filter;
+            
         }
         return $filters;
+    }
+    
+    protected function getFilterParameters($node) {
+        $parameters = array();
+        $pNS = $this->xpath->query("parameter", $node);
+        $dynamicParameters = bx_dynimage_request::getParametersByRequest($this->request);
+        foreach($pNS as $parameter) {
+            $pName = $parameter->getAttribute('name');
+            $parameters[$pName] = $parameter->getAttribute('value');
+            if(preg_match('#\{(.*)\}#', $parameters[$pName], $matches)) {
+                if(isset($dynamicParameters[$matches[1]]))
+                    $parameters[$pName] = $dynamicParameters[$matches[1]];
+            }
+        }
+        return $parameters;
     }
     
 }

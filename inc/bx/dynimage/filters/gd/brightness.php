@@ -22,22 +22,14 @@
  * @category 
  * @author Bitflux GmbH <flux@bitflux.ch>
  */
-class bx_dynimage_filter {
+class bx_dynimage_filters_gd_brightness extends bx_dynimage_filters_gd {
     
-    protected $knownParameters = array();
-    protected $parameters = array();
-    
-    public function modifysImageProportions() {
-        return FALSE;
-    }
-    
-    public function getEndSize($imgSize) {
-        return $imgSize;
-    }
-    
-    public function setParameters($params) {
-        $this->parameters = $params;
+    public function start($imgIn) {
+        //var_dump($this);
+        if(isset($this->parameters['brightness']))
+            imagefilter($imgIn, IMG_FILTER_BRIGHTNESS, $this->parameters['brightness']);
+        
+        return $imgIn;
     }
     
 }
-
