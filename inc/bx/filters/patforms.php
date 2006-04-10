@@ -205,17 +205,17 @@ class bx_filters_patforms extends bx_filter {
             if($form->isSubmitted()) {
                 $formErrors = $this->getFormErrorsXML($form);
             }
-                // query for form errors node
-                $formErrorsNS = $this->getXPathNodes('//forms:errors');
-                if($formErrorsNS->length > 0) {
-            if(!empty($formErrors)) {
+            // query for form errors node
+            $formErrorsNS = $this->getXPathNodes('//forms:errors');
+            if($formErrorsNS->length > 0) {
+                if(!empty($formErrors)) {
                     $formErrorsDOM = new DomDocument();
                     $formErrorsDOM->loadXML($formErrors);
                     $formErrorsNode = $xml->importNode($formErrorsDOM->documentElement, TRUE);
                     $formErrorsNS->item(0)->parentNode->replaceChild($formErrorsNode, $formErrorsNS->item(0));
                 } else {
-			$formErrorsNS->item(0)->parentNode->removeChild($formErrorsNS->item(0));
-		}
+                    $formErrorsNS->item(0)->parentNode->removeChild($formErrorsNS->item(0));
+                }
             }
 
             // query forms:fieldref attributes
