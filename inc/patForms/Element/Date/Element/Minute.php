@@ -33,7 +33,7 @@ class patForms_Element_Date_Element_Minute extends patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $tokens = array(
+	public $tokens = array(
 		'i' => array(
 			'length'	=>	2,
 			'format'	=>	'%02d',

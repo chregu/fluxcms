@@ -33,7 +33,7 @@ class patForms_Element_Date_Element_Hour extends patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $tokens = array(
+	public $tokens = array(
 		'g' => array(	// 12 hour format without leading zeros
 			'length'	=>	2,
 			'format'	=>	'%01d',

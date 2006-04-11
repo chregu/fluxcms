@@ -30,7 +30,7 @@ class patForms_Element_String extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $globalJavascript	=	array(
+	public $globalJavascript	=	array(
 										'html'	=>	"/* patForms::Element::String */
 function pFEC_String( id )
 {
@@ -52,7 +52,7 @@ pFEC_String.prototype.getValue	=	function()
 	* @access	private
 	* @var		array
 	*/
-	var $instanceJavascript	=	array(
+	public $instanceJavascript	=	array(
 										'html'	=>	"var pfe_[ELEMENT::NAME] = new pFEC_String( '[ELEMENT::ID]' );\n"
 									);
 
@@ -61,7 +61,7 @@ pFEC_String.prototype.getValue	=	function()
 	* error management and should be set in every element class.
 	* @access	public
 	*/
-	var $elementName	=	'String';
+	public $elementName	=	'String';
 
    /**
 	* the type of the element - set this to the type of element you are creating
@@ -71,7 +71,7 @@ pFEC_String.prototype.getValue	=	function()
 	* @access	public
 	* @see		patForms_Element::element2html()
 	*/
-	var $elementType	=	array(	"html"	=>	"input" );
+	public $elementType	=	array(	"html"	=>	"input" );
 	
    /**
 	* set here which attributes you want to include in the element if you want to use
@@ -81,7 +81,7 @@ pFEC_String.prototype.getValue	=	function()
 	* @access	protected
 	* @see		patForms_Element::convertDefinition2Attribute()
 	*/
-	var	$attributeDefinition	=	array(	
+	public $attributeDefinition	=	array(	
 			
 			'id' =>	array(	
 				'required'		=>	false,
@@ -246,7 +246,7 @@ pFEC_String.prototype.getValue	=	function()
      *  @access private
      *  @var	array	$validatorErrorCodes
      */
-	var	$validatorErrorCodes  =   array(
+	public $validatorErrorCodes  =   array(
 		"C"	=>	array(
 			1	=>	"This field is required, please complete it.",
 			2	=>	"Value is not a string.",
@@ -257,22 +257,22 @@ pFEC_String.prototype.getValue	=	function()
 			7	=>	"Markup tags are not allowed.",
 		),
 		"de" =>	array(
-			1	=>	"Pflichtfeld. Bitte vervollständigen Sie Ihre Angabe.",
+			1	=>	"Pflichtfeld. Bitte vervollstï¿½ndigen Sie Ihre Angabe.",
 			2	=>	"Wert ist keine Zeichenkette.",
 			3	=>	"Eingabe zu kurz, bitte geben Sie mindestens [MINLENGTH] Zeichen ein.",
 			4	=>	"Eingabe zu lang, bitte geben Sie maximal [MAXLENGTH] Zeichen ein.",
-			5	=>	"Der angegebene Wert entspricht nicht dem gewünschten Eingabeformat.",
-			6	=>	"Der Text enthält unbekannte Tags; es sind nur '[ALLOWEDTAGS]' erlaubt.",
+			5	=>	"Der angegebene Wert entspricht nicht dem gewï¿½nschten Eingabeformat.",
+			6	=>	"Der Text enthï¿½lt unbekannte Tags; es sind nur '[ALLOWEDTAGS]' erlaubt.",
 			7	=>	"Tags sind nicht erlaubt.",
 		),
 		"fr" =>	array(
 			1	=>	"Ce champ est obligatoire.",
-			2	=>	"Pas une chaîne de caractères valide.",
-			3	=>	"Valeur trop courte. Longueur minimum: [MINLENGTH] caractères.",
-			4	=>	"Valeur trop longue. Longueur maximum: [MAXLENGTH] caractères.",
-			5	=>	"La valeur ne correspond pas au format souhaité.",
-			6	=>	"Le texte contient des balises non autorisées - les balises autorisées sont '[ALLOWEDTAGS]'.",
-			7	=>	"Les balises ne sont pas autorisées.",
+			2	=>	"Pas une chaï¿½ne de caractï¿½res valide.",
+			3	=>	"Valeur trop courte. Longueur minimum: [MINLENGTH] caractï¿½res.",
+			4	=>	"Valeur trop longue. Longueur maximum: [MAXLENGTH] caractï¿½res.",
+			5	=>	"La valeur ne correspond pas au format souhaitï¿½.",
+			6	=>	"Le texte contient des balises non autorisï¿½es - les balises autorisï¿½es sont '[ALLOWEDTAGS]'.",
+			7	=>	"Les balises ne sont pas autorisï¿½es.",
 		)
 	);
 		

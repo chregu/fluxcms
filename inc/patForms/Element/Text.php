@@ -24,7 +24,7 @@ class patForms_Element_Text extends patForms_Element
 	* error management and should be set in every element class.
 	* @access	public
 	*/
-	var $elementName = 'Text';
+	public $elementName = 'Text';
 
    /**
 	* the type of the element - set this to the type of element you are creating
@@ -34,7 +34,7 @@ class patForms_Element_Text extends patForms_Element
 	* @access	public
 	* @see		patForms_Element::element2html()
 	*/
-	var $elementType	=	array(	
+	public $elementType	=	array(	
 		'html'	=>	'input',
 	);
 	
@@ -46,7 +46,7 @@ class patForms_Element_Text extends patForms_Element
 	* @access	protected
 	* @see		patForms_Element::convertDefinition2Attribute()
 	*/
-	var	$attributeDefinition = array(	
+	public $attributeDefinition = array(	
 			
 		'id' => array(	
 			'required'		=>	false,
@@ -205,7 +205,7 @@ class patForms_Element_Text extends patForms_Element
      *  @access private
      *  @var	array	$validatorErrorCodes
      */
-	var	$validatorErrorCodes  =   array(
+	public $validatorErrorCodes  =   array(
 		'C'	=>	array(
 			1	=>	'This field is required, please complete it.',
 			2	=>	'Value is not a string.',
@@ -215,20 +215,20 @@ class patForms_Element_Text extends patForms_Element
 			6	=>	'The value contains some tags that are not allowed - only \'[ALLOWEDTAGS]\' are allowed here'
 		),
 		'de' =>	array(
-			1	=>	'Pflichtfeld. Bitte vervollständigen Sie Ihre Angabe.',
+			1	=>	'Pflichtfeld. Bitte vervollstï¿½ndigen Sie Ihre Angabe.',
 			2	=>	'Wert ist keine Zeichenkette.',
 			3	=>	'Eingabe zu kurz, bitte geben Sie mindestens [MINLENGTH] Zeichen ein.',
 			4	=>	'Eingabe zu lang, bitte geben Sie maximal [MAXLENGTH] Zeichen ein.',
 			5	=>	'Tags sind nicht erlaubt.',
-			6	=>	'Der Text enthält unbekannte Tags; es sind nur \'[ALLOWEDTAGS]\' erlaubt.'
+			6	=>	'Der Text enthï¿½lt unbekannte Tags; es sind nur \'[ALLOWEDTAGS]\' erlaubt.'
 		),
 		'fr' =>	array(
 			1	=>	'Ce champ est obligatoire.',
-			2	=>	'Pas une chaîne de caractères valide.',
-			3	=>	'Valeur trop courte. Longueur minimum: [MINLENGTH] caractères.',
-			4	=>	'Valeur trop longue. Longueur maximum: [MAXLENGTH] caractères.',
-			5	=>	'Les balises ne sont pas autorisées.',
-			6	=>	'Le texte contient des balises non autorisées - les balises autorisées sont \'[ALLOWEDTAGS]\'.'
+			2	=>	'Pas une chaï¿½ne de caractï¿½res valide.',
+			3	=>	'Valeur trop courte. Longueur minimum: [MINLENGTH] caractï¿½res.',
+			4	=>	'Valeur trop longue. Longueur maximum: [MAXLENGTH] caractï¿½res.',
+			5	=>	'Les balises ne sont pas autorisï¿½es.',
+			6	=>	'Le texte contient des balises non autorisï¿½es - les balises autorisï¿½es sont \'[ALLOWEDTAGS]\'.'
 		)
 	);
 

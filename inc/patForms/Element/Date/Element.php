@@ -35,7 +35,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $elementTypes = array(
+	public $elementTypes = array(
 		'default'	=>	'String',
 		'presets'	=>	'Enum'
 	);
@@ -46,7 +46,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		string
 	*/
-	var $mode = 'default';
+	public $mode = 'default';
 	
    /**
 	* Stores the actual token from the date format that will be
@@ -56,7 +56,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		string
 	*/
-	var $token = null;
+	public $token = null;
 	
    /**
 	* Stores each subelement's supported tokens and their configuration
@@ -65,7 +65,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $tokens = array();
+	public $tokens = array();
 	
    /**
 	* Stores a compatibility table of date tokens that will be converted if used
@@ -75,7 +75,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $compatTable = array();
+	public $compatTable = array();
 	
    /**
 	* Stores the patForms element object that will be used to
@@ -84,7 +84,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		object
 	*/
-	var $element = null;
+	public $element = null;
 	
    /**
 	* Stores the ID of the parent element, which is always the 
@@ -93,7 +93,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		string
 	*/
-	var $parentID = null;
+	public $parentID = null;
 	
    /**
 	* Stores this element's ID within the date element - used to
@@ -102,7 +102,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		int
 	*/
-	var $id = null;
+	public $id = null;
 	
    /**
 	* Stores the name of the parent element, which is always the date
@@ -112,7 +112,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		string
 	*/
-	var $parentName = null;
+	public $parentName = null;
 	
    /**
 	* Stores a reference to the parent object for additional functions
@@ -121,7 +121,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		object
 	*/
-	var $parent = null;
+	public $parent = null;
 	
    /**
 	* Stores the locale from patForms, and which will be used for all date
@@ -130,7 +130,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		string
 	*/
-	var $locale = 'C';
+	public $locale = 'C';
 	
    /**
 	* Stores the attributes collection for the patForms element that is
@@ -139,7 +139,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $attributes = array();
+	public $attributes = array();
 	
    /**
 	* Stores the default attributes collection for the patForms element that
@@ -150,7 +150,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $defaultAttributes = array(
+	public $defaultAttributes = array(
 		'default' => array(
 			'size'		=>	2,
 			'maxlength'	=>	2,
@@ -165,7 +165,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		object
 	*/
-	var $defaultDate = null;
+	public $defaultDate = null;
 	
    /**
 	* Stores the max date object.
@@ -173,7 +173,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		object
 	*/
-	var $maxDate = null;
+	public $maxDate = null;
 	
    /**
 	* Stores the min date object.
@@ -181,7 +181,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		object
 	*/
-	var $minDate = null;
+	public $minDate = null;
 	
    /**
 	* Stores whether the element has been submitted.
@@ -189,7 +189,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		bool
 	*/
-	var $submitted = false;
+	public $submitted = false;
 	
    /**
 	* Stores the element's date object (the element's value)
@@ -197,7 +197,7 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		object
 	*/
-	var $date = null;
+	public $date = null;
 	
    /**
 	* Stores attributes for which there are special setter methods
@@ -207,13 +207,13 @@ class patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $setterAttribs = array(
+	public $setterAttribs = array(
 		'default',
 		'max',
 		'min'
 	);
 	
-	var $initDone = false;
+	public $initDone = false;
 
    /**
 	* Initializes the element by creating the base attribute collection

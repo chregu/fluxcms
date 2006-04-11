@@ -38,7 +38,7 @@ class patForms_Element_Date_Element_Meridiem extends patForms_Element_Date_Eleme
 	* @access	private
 	* @var		array
 	*/
-	var $tokens = array(
+	public $tokens = array(
 		'a' => array(
 			'length'	=>	2,
 			'format'	=>	'%s',
@@ -55,7 +55,7 @@ class patForms_Element_Date_Element_Meridiem extends patForms_Element_Date_Eleme
 	* @access	private
 	* @var		array
 	*/
-	var $displayNames = array(
+	public $displayNames = array(
 		'C' => array(
 			'am' => 'am',
 			'pm' => 'pm',
@@ -66,7 +66,7 @@ class patForms_Element_Date_Element_Meridiem extends patForms_Element_Date_Eleme
 		),
 		'fr' => array(
 			'am' => 'Matin',
-			'pm' => 'Après-midi',
+			'pm' => 'Aprï¿½s-midi',
 		)
 	);
 	

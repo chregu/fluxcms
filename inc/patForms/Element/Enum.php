@@ -38,7 +38,7 @@ class patForms_Element_Enum extends patForms_Element
 	* error management and should be set in every element class.
 	* @access	public
 	*/
-	var $elementName	=	'Enum';
+	public $elementName	=	'Enum';
 
    /**
 	* javascript that will be displayed only once
@@ -46,7 +46,7 @@ class patForms_Element_Enum extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $globalJavascript	=	array(
+	public $globalJavascript	=	array(
 										'html'	=>	"/* patForms_Element_Enum */
 function patForms_Element_Enum( id )
 {
@@ -97,7 +97,7 @@ function patForms_Element_Enum_addOption( option )
 	* @access	private
 	* @var		array
 	*/
-	var $instanceJavascript	=	array(
+	public $instanceJavascript	=	array(
 										'html'	=>	"var pfe_[ELEMENT::NAME] = new patForms_Element_Enum( '[ELEMENT::ID]' );\n"
 									);
 
@@ -109,7 +109,7 @@ function patForms_Element_Enum_addOption( option )
 	* @access	public
 	* @see		patForms_Element::element2html()
 	*/
-	var $elementType	=	array(	"html"	=>	"select",
+	public $elementType	=	array(	"html"	=>	"select",
 								);
 	
    /**
@@ -120,7 +120,7 @@ function patForms_Element_Enum_addOption( option )
 	* @access	protected
 	* @see		patForms_Element::convertDefinition2Attribute()
 	*/
-	var	$attributeDefinition	=	array(	
+	public $attributeDefinition	=	array(	
 			
 			'id'			=>	array(	'required'		=>	false,
 										'format'		=>	'string',
@@ -248,7 +248,7 @@ function patForms_Element_Enum_addOption( option )
      *  @access private
      *  @var	array	$validatorErrorCodes
      */
-	var	$validatorErrorCodes  =   array(
+	public $validatorErrorCodes  =   array(
 		"C"	=>	array(
 			1	=>	"This field is required, please complete it.",
 			2	=>	"The value given for the element does not match any of the possible values.",
@@ -270,7 +270,7 @@ function patForms_Element_Enum_addOption( option )
 	* @access	private
 	* @var		array
 	*/
-	var	$defaultReadonlyValue  =   array(
+	public $defaultReadonlyValue  =   array(
 		"C"	=>	"No selection",
 		"de" =>	"Keine Angabe",
 		"fr" =>	"Pas de s�lection.",
@@ -282,7 +282,7 @@ function patForms_Element_Enum_addOption( option )
 	* @access	protected
 	* @see		setDataSource()
 	*/
-	var $dataSource	=	false;
+	public $dataSource	=	false;
 	
    /**
 	* sets the data source for this element. If you set a data source object, the element will 

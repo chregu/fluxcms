@@ -33,7 +33,7 @@ class patForms_Element_Date_Element_Year extends patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $tokens = array(
+	public $tokens = array(
 		'Y' => array(
 			'length'	=>	4,
 			'format'	=>	'%04d',

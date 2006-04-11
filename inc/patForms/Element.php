@@ -1039,7 +1039,7 @@ class patForms_Element
 	* @access	private
 	* @return	bool	$success	True on success, false otherwise
 	*/
-	function validateElement()
+	function validateElement($value)
 	{
         // your code here
         return true;

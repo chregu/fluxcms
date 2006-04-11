@@ -73,7 +73,7 @@ class patForms_Element_Date extends patForms_Element
 	* error management and should be set in every element class.
 	* @access	public
 	*/
-	var $elementName	=	'Date';
+	public $elementName	=	'Date';
 
    /**
 	* set here which attributes you want to include in the element if you want to use
@@ -83,7 +83,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	protected
 	* @see		patForms_Element::convertDefinition2Attribute()
 	*/
-	var	$attributeDefinition	=	array(	
+	public $attributeDefinition	=	array(	
 			
 		'id' => array(
 			'required'		=>	false,
@@ -255,7 +255,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access private
 	* @var	array	$validatorErrorCodes
 	*/
-	var	$validatorErrorCodes  =   array(
+	public $validatorErrorCodes  =   array(
 		'C'	=>	array(
 			1	=>	'This field is required, please complete it.',
 			2	=>	'Value must be after \'[MINDATE]\'!',
@@ -264,15 +264,15 @@ class patForms_Element_Date extends patForms_Element
 			
 		),
 		'de' =>	array(
-			1	=>	'Pflichtfeld. Bitte vervollständigen Sie Ihre Angabe.',
+			1	=>	'Pflichtfeld. Bitte vervollstï¿½ndigen Sie Ihre Angabe.',
 			2	=>	'Der Wert muss nach \'[MINDATE]\' sein.',
 			3	=>	'Der Wert muss vor \'[MAXDATE]\' sein.',
 			4	=>	'Falsches Datum',
 		),
 		'fr' =>	array(
 			1	=>	'Ce champ est obligatoire.',
-			2	=>	'La date doit être après le \'[MINDATE]\'.',
-			3	=>	'La date doit être avant le \'[MAXDATE]\'.',
+			2	=>	'La date doit ï¿½tre aprï¿½s le \'[MINDATE]\'.',
+			3	=>	'La date doit ï¿½tre avant le \'[MAXDATE]\'.',
 			4	=>	'Date incorrecte',
 		),
 	);
@@ -285,7 +285,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	public
 	* @see		patForms_Element::element2html()
 	*/
-	var $elementType	=	array(	"html"	=>	"input" );
+	public $elementType	=	array(	"html"	=>	"input" );
 	
    /**
 	* Stores a subelement counter used for the automatic ID generation for each of
@@ -294,7 +294,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		int
 	*/
-	var $elCount = 0;
+	public $elCount = 0;
 	
    /**
 	* Stores an index of all date tokens the date element supports, and the
@@ -304,7 +304,7 @@ class patForms_Element_Date extends patForms_Element
 	* @var		array
 	* @see		$tokens
 	*/
-	var $tokensIndex = array(
+	public $tokensIndex = array(
 		'Y'	=>	'Year',
 		'y'	=>	'Year',
 		'd'	=>	'Day',
@@ -330,7 +330,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $minmaxTokens = array(
+	public $minmaxTokens = array(
 		'Y',
 		'y'
 	);
@@ -343,7 +343,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $tokens = array();
+	public $tokens = array();
 	
    /**
 	* Stores a list of all tokens the current date format string uses. Needed by some
@@ -354,7 +354,7 @@ class patForms_Element_Date extends patForms_Element
 	* @var		array
 	* @see		tokenUsed()
 	*/
-	var $usedTokens = array();
+	public $usedTokens = array();
 		
    /**
 	* Stores a collection of all the elements the current date format uses. Built on 
@@ -364,7 +364,7 @@ class patForms_Element_Date extends patForms_Element
 	* @var		array
 	* @see		_init()
 	*/
-	var $dateElements = array();
+	public $dateElements = array();
 	
    /**
 	* Stores all date element objects needed for the current date format string. Created
@@ -374,7 +374,7 @@ class patForms_Element_Date extends patForms_Element
 	* @var		array
 	* @see		_init()
 	*/
-	var $elements = array();
+	public $elements = array();
 	
    /**
 	* Stores a list of characters contained in the date format string that will be transformed
@@ -383,7 +383,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $transformTable = array(
+	public $transformTable = array(
 		' '	=>	'&#160;'
 	);
 	
@@ -393,7 +393,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $inheritableAttributes = array(
+	public $inheritableAttributes = array(
 		'edit',
 		'display',
 		'required',
@@ -407,7 +407,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $elementsIndex = array();
+	public $elementsIndex = array();
 	
    /**
 	* Stores the current date object (the value of the element)
@@ -415,7 +415,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		object
 	*/
-	var $date = null;
+	public $date = null;
 	
    /**
 	* Stores the default date object 
@@ -423,7 +423,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		object
 	*/
-	var $defaultDate = null;
+	public $defaultDate = null;
 	
    /**
 	* Stores the max date object 
@@ -431,7 +431,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		object
 	*/
-	var $maxDate = null;
+	public $maxDate = null;
 	
    /**
 	* Stores the min date object 
@@ -439,7 +439,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		object
 	*/
-	var $minDate = null;
+	public $minDate = null;
 	
    /**
 	* Stores attributes for which there are special setter methods
@@ -449,7 +449,7 @@ class patForms_Element_Date extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $setterAttribs = array(
+	public $setterAttribs = array(
 		'default',
 		'max',
 		'min'
@@ -579,9 +579,9 @@ class patForms_Element_Date extends patForms_Element
 		
 		if( !isset( $this->attributes['min'] ) ) {
 			if( !is_null( $this->defaultDate ) ) {
-				$minDate =& new Date( $this->defaultDate );
+				$minDate = new Date( $this->defaultDate );
 			} else {
-				$minDate =& new Date();
+				$minDate = new Date();
 			}
 			
 			$this->attributes['min'] = $minDate->getDate();
@@ -589,9 +589,9 @@ class patForms_Element_Date extends patForms_Element
 		
 		if( !isset( $this->attributes['max'] ) ) {
 			if( !is_null( $this->defaultDate ) ) {
-				$maxDate =& new Date( $this->defaultDate );
+				$maxDate = new Date( $this->defaultDate );
 			} else {
-				$maxDate =& new Date();
+				$maxDate = new Date();
 			}
 			
 			// add 5 years
@@ -660,7 +660,7 @@ class patForms_Element_Date extends patForms_Element
 			}
 		}
 		
-		$date =& new Date( $dateElement );
+		$date = new Date( $dateElement );
 		
 		// if there is no year, the date object could not convert the
 		// date string ot a valid date.
@@ -730,7 +730,7 @@ class patForms_Element_Date extends patForms_Element
 
 		include_once $file;
 		
-		$el =& new $elClassName();
+		$el = new $elClassName();
 		$el->setID( $this->elCount );
 		$el->setParentName( $this->attributes['name'] );
 		$el->setParentID( $this->attributes['id'] );
@@ -906,7 +906,7 @@ class patForms_Element_Date extends patForms_Element
 			if( !is_null( $this->defaultDate ) ) {
 				$this->date = $this->defaultDate;
 			} else {
-				$this->date =& new Date();
+				$this->date = new Date();
 			}
 		}
 		

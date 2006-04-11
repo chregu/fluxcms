@@ -33,7 +33,7 @@ class patForms_Element_Date_Element_Day extends patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $tokens = array(
+	public $tokens = array(
 		'd' => array(
 			'length'	=>	2,
 			'format'	=>	'%02d',
@@ -55,7 +55,7 @@ class patForms_Element_Date_Element_Day extends patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $compatTable = array(
+	public $compatTable = array(
 		'j'	=>	'd',
 	);
 	

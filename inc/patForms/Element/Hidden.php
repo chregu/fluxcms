@@ -28,7 +28,7 @@ class patForms_Element_Hidden extends patForms_Element
 	* error management and should be set in every element class.
 	* @access	public
 	*/
-	var $elementName	=	'Hidden';
+	public $elementName	=	'Hidden';
 
    /**
 	* the type of the element - set this to the type of element you are creating
@@ -38,7 +38,7 @@ class patForms_Element_Hidden extends patForms_Element
 	* @access	public
 	* @see		patForms_Element::element2html()
 	*/
-	var $elementType	=	array(	"html"	=>	"input" );
+	public $elementType	=	array(	"html"	=>	"input" );
 	
    /**
 	* set here which attributes you want to include in the element if you want to use
@@ -48,7 +48,7 @@ class patForms_Element_Hidden extends patForms_Element
 	* @access	protected
 	* @see		patForms_Element::convertDefinition2Attribute()
 	*/
-	var	$attributeDefinition	=	array(	
+	public $attributeDefinition	=	array(	
 			
 			"id"			=>	array(	"required"		=>	false,
 										"format"		=>	"string",
@@ -89,7 +89,7 @@ class patForms_Element_Hidden extends patForms_Element
      *  @access private
      *  @var	array	$validatorErrorCodes
      */
-	var	$validatorErrorCodes  =   array();
+	public $validatorErrorCodes  =   array();
 		
    /**
 	* element creation method for the 'HTML' format in the 'default' form mode.

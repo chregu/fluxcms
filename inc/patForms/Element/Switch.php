@@ -39,7 +39,7 @@ class patForms_Element_Switch extends patForms_Element
 	* error management and should be set in every element class.
 	* @access	public
 	*/
-	var $elementName	=	'Switch';
+	public $elementName	=	'Switch';
 
    /**
 	* the type of the element - set this to the type of element you are creating
@@ -49,7 +49,7 @@ class patForms_Element_Switch extends patForms_Element
 	* @access	public
 	* @see		patForms_Element::element2html()
 	*/
-	var $elementType	=	array(	"html"	=>	"input",
+	public $elementType	=	array(	"html"	=>	"input",
 								);
 	
    /**
@@ -60,7 +60,7 @@ class patForms_Element_Switch extends patForms_Element
 	* @access	protected
 	* @see		patForms_Element::convertDefinition2Attribute()
 	*/
-	var	$attributeDefinition	=	array(	
+	public $attributeDefinition	=	array(	
 			
 			"id"			=>	array(	"required"		=>	false,
 										"format"		=>	"string",
@@ -184,15 +184,15 @@ class patForms_Element_Switch extends patForms_Element
      *  @access private
      *  @var	array	$validatorErrorCodes
      */
-	var	$validatorErrorCodes  =   array(
+	public $validatorErrorCodes  =   array(
 		"C"	=>	array(
 			1	=>	"This field is required, please check it.",
 		),
 		"de" =>	array(
-			1	=>	"Pflichtfeld. Bitte wählen Sie dieses Feld an.",
+			1	=>	"Pflichtfeld. Bitte wï¿½hlen Sie dieses Feld an.",
 		),
 		"fr" =>	array(
-			1	=>	"Vous devez sélectionner ce champ.",
+			1	=>	"Vous devez sï¿½lectionner ce champ.",
 		)
 	);
 
@@ -203,7 +203,7 @@ class patForms_Element_Switch extends patForms_Element
 	* @access	private
 	* @var		array
 	*/
-	var $readonlyValues = array(
+	public $readonlyValues = array(
 		'C' => array(
 			'checked'	=>	'Yes',
 			'unchecked'	=>	'No',

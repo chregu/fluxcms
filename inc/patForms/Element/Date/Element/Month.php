@@ -33,7 +33,7 @@ class patForms_Element_Date_Element_Month extends patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $tokens = array(
+	public $tokens = array(
 		'F' => array(	// full textual representation
 			'length'	=>	2,
 			'format'	=>	'%s',
@@ -67,7 +67,7 @@ class patForms_Element_Date_Element_Month extends patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $compatTable = array(
+	public $compatTable = array(
 		'F'	=>	'm',
 		'M'	=>	'm',
 	);
@@ -78,7 +78,7 @@ class patForms_Element_Date_Element_Month extends patForms_Element_Date_Element
 	* @access	private
 	* @var		array
 	*/
-	var $monthNames = array(
+	public $monthNames = array(
 		'C'	=>	array(
 			'1'		=>	'January',
 			'2'		=>	'February',
@@ -96,7 +96,7 @@ class patForms_Element_Date_Element_Month extends patForms_Element_Date_Element
 		'de' => array(
 			'1'		=>	'Januar',
 			'2'		=>	'Februar',
-			'3'		=>	'März',
+			'3'		=>	'Mï¿½rz',
 			'4'		=>	'April',
 			'5'		=>	'Mai',
 			'6'		=>	'Juni',
@@ -109,17 +109,17 @@ class patForms_Element_Date_Element_Month extends patForms_Element_Date_Element
 		),
 		'fr' => array(
 			'1'		=>	'Janvier',
-			'2'		=>	'Février',
+			'2'		=>	'Fï¿½vrier',
 			'3'		=>	'Mars',
 			'4'		=>	'Avril',
 			'5'		=>	'Mai',
 			'6'		=>	'Juin',
 			'7'		=>	'Juillet',
-			'8'		=>	'Août',
+			'8'		=>	'Aoï¿½t',
 			'9'		=>	'Septembre',
 			'10'	=>	'Octobre',
 			'11'	=>	'Novembre',
-			'12'	=>	'Décembre',
+			'12'	=>	'Dï¿½cembre',
 		)
 	);
 
