@@ -1274,8 +1274,8 @@ class patForms
 		
 		$moduleFile		=	PATFORMS_INCLUDE_PATH . '/'.$type.'/'.$pathName.'.php';
 		$moduleClass	=	'patForms_'.$type.'_'.$name;
-		
-		if( !class_exists( $baseClass ) )
+
+		if( !class_exists( $baseClass, FALSE ) )
 		{
 			if( !file_exists( $baseFile ) )
 			{
@@ -1289,7 +1289,7 @@ class patForms
 			include_once $baseFile;
 		}
 		
-		if( !class_exists( $moduleClass ) )
+		if( !class_exists( $moduleClass, FALSE ) )
 		{
 			if( !file_exists( $moduleFile ) )
 			{
@@ -1298,11 +1298,10 @@ class patForms
 					$type.' "'.$name.'" file "'.$moduleFile. '" could not be found.'
 				);
 			}
-			
 			include_once $moduleFile;
 		}
 
-		$module	=	&new $moduleClass();
+		$module	= new $moduleClass();
 		
 		return $module;
 	}
