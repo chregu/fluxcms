@@ -37,7 +37,7 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         return array();
     }
 
-		/** @bxIplugin::getIdByRequest*/
+    /** @bxIplugin::getIdByRequest*/
     public function getIdByRequest ($path, $name = NULL, $ext = NULL) {
         return "$name.$ext.".$this->name;
     } 
@@ -86,7 +86,7 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         return false; 
     }
     
-		/** @bxIplugin::getContentUriById */
+    /** @bxIplugin::getContentUriById */
     public function getContentUriById($path, $id, $sample = false) {
         //FIXME... we do not have a Resource in the DB eventually... 
         // take care of that here
@@ -102,13 +102,13 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         }
     } 
     
-		/** @bxIplugin::getResourceById 
-		 * 
-		 *  NB: interface violation: adding mock
-		 *  For weird situations when resource requested before created.
-		 *  The only found call is $this->getEditorsById()
-		 *  
-		 */
+    /** @bxIplugin::getResourceById 
+     * 
+     *  NB: interface violation: adding mock
+     *  For weird situations when resource requested before created.
+     *  The only found call is $this->getEditorsById()
+     *  
+     */
     public function getResourceById($path, $id, $mock = false) {
         return null;
     }
@@ -121,16 +121,16 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         return false;
     }
     
-		/**
-		 * Returns plugin-dependant parameters to pass into pipeline for specified resource
-		 *
-		 * @param path collection path
-		 * @param id resource id 
-		 * @return array of parameters
-		 */
-		public function getPipelineParametersById($path, $id) {
-				return array();
-		}
+    /**
+     * Returns plugin-dependant parameters to pass into pipeline for specified resource
+     *
+     * @param path collection path
+     * @param id resource id 
+     * @return array of parameters
+     */
+    public function getPipelineParametersById($path, $id) {
+            return array();
+    }
     
     public function stripRoot() {
         return false;
@@ -160,9 +160,9 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         return array();
     }
     
-	/**
-	 * @return unix timestamp
-	 */
+    /**
+     * @return unix timestamp
+     */
     public function getLastModifiedById($path, $id) {
         $res = $this->getResourceById($path,$id);
         if ($res) {
