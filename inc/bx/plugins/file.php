@@ -40,11 +40,11 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
         }
     }
 
-    public function getPipelineParametersById($path = NULL, $id = NULL) {
+    public function getPipelineParametersById($path, $id) {
       // FIXME, we need another resource reader, it doesn't work if request != id
-			return array('pipelineName'=>'resourceReader');
-		}
-		
+            return array('pipelineName'=>'resourceReader');
+        }
+        
     public function isRealResource($path , $id) {
         return true;
     }
@@ -75,8 +75,8 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
         if (!isset($this->absolutefileroots[$uri])) {
             $id = $this->getFileRoot($uri);
              if (BX_OS_WIN && preg_match("#^[a-zA-Z]:#",$id)) {
-			    $this->absolutefileroots[$uri] =$id;
-        	} else  if (substr($id,0,1) == "/") {
+                $this->absolutefileroots[$uri] =$id;
+            } else  if (substr($id,0,1) == "/") {
                 $this->absolutefileroots[$uri] =$id;
             } else {
                 $this->absolutefileroots[$uri] = BX_OPEN_BASEDIR.$id;
