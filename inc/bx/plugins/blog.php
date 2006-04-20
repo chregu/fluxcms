@@ -172,14 +172,14 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $archivepath = "";
         $archivewhere = "";
         $total = 0;
-        $gmnow = gmdate("Y-m-d H:i:s",ceil(time()/60)*60);
+        $gmnow = gmdate("Y-m-d H:i:00",time());
 
         if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
             $query .=" where (MATCH (post_content,post_title) AGAINST ('" . $_GET['q'] ."') or  post_title like '%" .  $_GET['q']  . "%') and ".
             $tablePrefix."blogposts.post_status & ".$this->overviewPerm;
             $query .= " and blog_id = ".$blogid;
-            $query .= " and post_date < '".$gmnow."'";
+            $query .= " and post_date < '".$gmnow."' ";
             $doComments = false;
             $total = $GLOBALS['POOL']->db->query($query)->fetchOne(0);
 
