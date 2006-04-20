@@ -79,7 +79,8 @@ CREATE TABLE `##bxcms_##blogcomments` (
   `comment_notification_hash` varchar(32) default '',
   `openid` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `comment_posts_id` (`comment_posts_id`)
+  KEY `comment_posts_id` (`comment_posts_id`),
+  KEY `comment_status` (`comment_status`)
 );
 
 --
@@ -162,6 +163,8 @@ CREATE TABLE `##bxcms_##blogposts` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `post_uri` (`post_uri`),
   KEY `post_author` (`post_author`),
+  KEY `post_status` (`post_status`),
+  KEY `blog_id` (`blog_id`), 
   FULLTEXT KEY `post_content` (`post_content`,`post_title`)
 );
 
@@ -239,7 +242,7 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('outp
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('image_allowed_sizes','',1,5);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('defaultLanguage','',0,6);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitedescription','',0,7);
-INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6595',0,8);
+INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6760',0,8);
 
 --
 -- Table structure for table `##bxcms_##properties`
