@@ -280,6 +280,11 @@ if ($lastVersion < 6705) {
         updateLastVersion(6705);
 }
 
+if ($lastVersion < 6760) {
+    doQuery("ALTER TABLE `{tablePrefix}blogcomments` ADD INDEX ( `comment_status` )",false); 
+    updateLastVersion(6760);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
