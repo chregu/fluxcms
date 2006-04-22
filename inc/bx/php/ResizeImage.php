@@ -61,6 +61,7 @@ class ImageResize {
         }
         
         $this->defImageDim();
+
         $this->resizeImage();
     }
     
@@ -89,7 +90,7 @@ class ImageResize {
    
    function defImageInfo() {
           $this->endImgPath = dirname($this->endImgFile);
-          $lastpos = strrpos( $this->endImgPath,"/");
+          $lastpos = strpos( $this->endImgPath,"/");
           $this->endsize =  substr($this->endImgPath,$lastpos+1);
           $this->oriEndsize = $this->endsize;
           
@@ -113,7 +114,7 @@ class ImageResize {
           } else if (!preg_match("#^[0-9]+#",$this->endsize)) {
 				$this->method = $this->endsize;
           }
-
+          
           if (!$this->oriImgPath) {
                 $this->oriImgPath = str_replace('/'.$this->endsize,'',$this->endImgPath)."/";
           }
