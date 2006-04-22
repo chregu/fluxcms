@@ -385,6 +385,11 @@ h3.blog, #right  h3.blog {
 	display: none;
 }
 
+.blog_gravatar {
+    float: right;
+    padding-left: 5px;
+}
+
 /*Events*/
 
 pre {

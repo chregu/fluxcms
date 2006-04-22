@@ -362,6 +362,11 @@ h3.blog, #right  h3.blog {
 	margin: 5px 25px 15px
 }
 
+.blog_gravatar {
+    float: right;
+    padding-left: 5px;
+}
+
 #right .blog li {
 	line-height:  15px;
 	padding: 0px 15px 3px 15px;
