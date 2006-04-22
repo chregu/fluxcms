@@ -88,6 +88,8 @@ class bx_init {
         if (!defined('BX_WEBROOT_W')) {
                 define ('BX_WEBROOT_W', substr(BX_WEBROOT,0,-1));
         }
+        
+        $GLOBALS['POOL']->cache = bx_cache::getInstance($bx_config['cache']);
     }
     
     static function initDBOptions($notAllowedDBOptions,$optionsMergeArray) {

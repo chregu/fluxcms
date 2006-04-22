@@ -37,19 +37,15 @@ class bx_resourcemanager {
     *
     */
     static public function getMimeType($id) {
-        // FIXME: LIKE is ugly...
-        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select value from ".$prefix."properties where path = '$id' and name = 'mimetype'";
-        $res =  $GLOBALS['POOL']->db->query($query);
-        $mimetype = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
-        if ($mimetype) {
-            return $mimetype[0];
-        } else {
-            return NULL;
-        }
+        return self::getProperty($id,'mimetype');
     }
     
-    static public function getResourceId($dir, $filename, $ext = "") {
+    static public function getResourceId($dir, $filename) {
+        
+        $key = "res_".$dir .":". $filename;
+        if (($val = $GLOBALS['POOL']->cache->get($key)) !== false) {
+            return $val;
+        }
         $query = "select path from ".$GLOBALS['POOL']->config->getTablePrefix()."properties where path like '$dir$filename%'  LIMIT 1";
         $res =  $GLOBALS['POOL']->db->query($query);
         if (MDB2::isError($res)) {
@@ -57,11 +53,12 @@ class bx_resourcemanager {
         }
         $path = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
         if ($path) {
-            return $path[0];
+            $val = $path[0];
         } else {
-            return NULL;
+            $val = NULL;
         }
-        
+        $GLOBALS['POOL']->cache->set($key,$val);
+        return $val;
     }
     static public function getChildrenByMimeType(bx_collection $coll, $mimetype) {
         $children = array();
@@ -81,6 +78,10 @@ class bx_resourcemanager {
     
     
     public static function getAllProperties ($path ,$namespace =  NULL) {
+        $key = "res_".$path .":". $namespace;
+        if (($val = $GLOBALS['POOL']->cache->get($key)) !== false) {
+            return $val;
+        }
         if ($namespace) {
             if (!self::$getAllPropertiesStmNs) {
                 $prefix = $GLOBALS['POOL']->config->getTablePrefix();
@@ -105,7 +106,9 @@ class bx_resourcemanager {
         
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $props[$row['namespace'].":".$row['name']] = $row;
+            
         }
+        $GLOBALS['POOL']->cache->set($key,$props);
         return $props;
         
     }
@@ -124,6 +127,11 @@ class bx_resourcemanager {
     
     
     public static function getProperty($path, $name, $namespace = BX_PROPERTY_DEFAULT_NAMESPACE) {
+        
+        $key = "res_".$path .":". $name .":".$namespace;
+        if (($val = $GLOBALS['POOL']->cache->get($key)) !== false) {
+            return $val;
+        }
         if (!self::$getPropertyStm) {
             $prefix = $GLOBALS['POOL']->config->getTablePrefix();
             $query = "select value from ".$prefix."properties where path = :path and name = :name and ns = :namespace"; 
@@ -136,10 +144,13 @@ class bx_resourcemanager {
         
         $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
         if ($row) {
-            return $row[0];
+            $val =  $row[0];
         } else {
-            return NULL;
+            $val = NULL;
         }
+        $GLOBALS['POOL']->cache->set($key,$val);
+        return $val;
+        
     }
     
     public static function getFirstProperty($path, $name, $namespace = BX_PROPERTY_DEFAULT_NAMESPACE) {
@@ -192,6 +203,9 @@ class bx_resourcemanager {
     }
 	    
     public static function setProperty($path, $name, $value = NULL, $namespace = BX_PROPERTY_DEFAULT_NAMESPACE) {
+        $GLOBALS['POOL']->cache->del("res_".$path.":".$name.":".$namespace);
+        $GLOBALS['POOL']->cache->del("res_".$path.":".$namespace);
+        $GLOBALS['POOL']->cache->del("res_".$path.":");
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
         //clean path
         $path = preg_replace("#\/{2,}#","/",$path);
@@ -221,6 +235,9 @@ class bx_resourcemanager {
     }
 
     public static function removeProperty($path, $name, $namespace = BX_PROPERTY_DEFAULT_NAMESPACE) {
+        $GLOBALS['POOL']->cache->del("res_".$path.":".$name.":".$namespace);
+        $GLOBALS['POOL']->cache->del("res_".$path.":".$namespace);
+        
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
         $query = "delete from ".$prefix."properties where path = '$path' and name = '$name' and ns = '$namespace'"; 
         $res = $GLOBALS['POOL']->dbwrite->query($query);
@@ -228,7 +245,9 @@ class bx_resourcemanager {
     }
     
     public static function removeAllProperties ($path ,$namespace =  NULL) {
-         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+        $GLOBALS['POOL']->cache->del("res_".$path.":".$namespace);
+        
+        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
         $query = "delete from ".$prefix."properties where path = '$path' ";
         
         if ($namespace) {

@@ -268,6 +268,27 @@ class bx_config_generate {
             fwrite($fd,"bx_global::registerStream('".(string) $stream."');\n");
         }
         
+        if ($sxe->cache) {
+            fwrite($fd,"\$bx_config->cache = '".$sxe->cache['driver']."';\n");
+            $options = array();
+            foreach($sxe->cache->option as $o) {
+               $o = dom_import_simplexml($o);
+               $option = array();
+               foreach($o->childNodes as $node) {
+                   if($node->nodeType == 1) {
+                       $option[$node->localName] = $node->textContent;
+                   }
+               }
+               $options[] = $option;
+            }
+            fwrite($fd,"\$bx_config->cacheOptions = ".var_export($options,true).";\n");
+            
+        } else {
+            
+            fwrite($fd,"\$bx_config->cache = 'dummy';\n");
+        }
+        
+        
         //notifications
         $_notification = false;
         
