@@ -90,7 +90,7 @@ class ImageResize {
    
    function defImageInfo() {
           $this->endImgPath = dirname($this->endImgFile);
-          $lastpos = strpos( $this->endImgPath,"/");
+          $lastpos = strrpos( $this->endImgPath,"/");
           $this->endsize =  substr($this->endImgPath,$lastpos+1);
           $this->oriEndsize = $this->endsize;
           
