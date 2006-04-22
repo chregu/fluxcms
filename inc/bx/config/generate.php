@@ -209,6 +209,9 @@ class bx_config_generate {
                     }
                 }
             }
+            include("popoon/pool.php");
+            include("bx/helpers/debug.php");
+            fwrite ($fd,'$bx_config->dbIsUtf8 = ' . var_export(@popoon_pool::isMysqlUTF8($dsn,$db),true) . ";\n");
             ini_set("include_path",$oldinc); 
         } else {
             $notAllowedDBOptions = array();
@@ -309,4 +312,5 @@ class bx_config_generate {
         return preg_replace("/\{([a-zA-Z0-9_\$'\[\]]*)\}/","'.$1.'",$input);
     }
     
+   
 }

@@ -53,7 +53,7 @@ class bx_helpers_string {
     * @access public
     */
     static function utf2entities($source,$force = false) {
-        if (!$force && $GLOBALS['POOL']->dbIsUtf8) {
+        if (!$force && $GLOBALS['POOL']->config->dbIsUtf8) {
             return $source;
         }
         // array used to figure what number to decrement from character order value
