@@ -5,6 +5,11 @@ class bx_helpers_users {
     
     public function getFullnameByUsername($username) {
         
+        if (count(self::$fullnames) == 0) {
+            if ($f = $GLOBALS['POOL']->cache->get("helpers_users_fullnames")) {
+                self::$fullnames = $f;
+            }
+        }
         
         if (!isset(self::$fullnames[$username])) {
             $db = $GLOBALS['POOL']->db;    
@@ -13,8 +18,9 @@ class bx_helpers_users {
             if ($row) {
                 self::$fullnames[$username] = $row;
             } else {
-                self::$fullnames[$username] = null;
+                self::$fullnames[$username] = "";
             }
+            $GLOBALS['POOL']->cache->set("helpers_users_fullnames",self::$fullnames,0,'table_users');
             
         }
         

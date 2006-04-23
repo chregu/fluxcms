@@ -28,7 +28,11 @@ class bx_cache {
     }
     
     public function set($key, $val,  $expires = null, $group = null) {
-        return $this->cache->set($this->prefix.$key, $val, $expires, $group) ;
+        if ($group) {
+            return $this->cache->set($this->prefix.$key, $val, $expires, $this->prefix.$group) ;
+        } else {
+            return $this->cache->set($this->prefix.$key, $val, $expires, null) ;
+        }
     }
     
     public function del($key) {
@@ -36,7 +40,12 @@ class bx_cache {
     }
     
     public function flush($group = null) {
-        return $this->cache->flush($group);
+        if ($group) {
+            return $this->cache->flush($this->prefix.$group);
+        } else {
+            return $this->cache->flush();
+        }
+        
     }
     
     public function get($key) {
