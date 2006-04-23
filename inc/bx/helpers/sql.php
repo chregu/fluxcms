@@ -72,6 +72,10 @@ class bx_helpers_sql {
         $dbwrite = $GLOBALS['POOL']->dbwrite;
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         
+        //clear cache for that table
+        
+        $GLOBALS['POOL']->cache->flush("table_blogcategories");
+        
         $tree = new SQL_Tree($dbwrite);
         $tree->idField = "id";
         $tree->referenceField = "parentid";

@@ -49,28 +49,31 @@ class bx_plugins_blog_categories {
                } 
            }
            
-            
+           
        } else {
-            $catCount = false;
+           $catCount = false;
        }
-
-        $tree = bx_plugins_blog::getTreeInstance($tablePrefix);
-        $data = array("name","uri","fulluri", "status","id");
-        $query = $tree->children_query_byname(array("blog_id"=>$blogid,"parentid" => 0),$data,True);
-        if (isset($params[0])) {
-            $lastslash = strrpos($params[0],"/");
-            $cat = substr($params[0],0,$lastslash);
-        } else {
-            $cat = "";
-        }
+       if (! $rows = $GLOBALS['POOL']->cache->get("plugins_blog_categories_tree_".$blogid)) {
+           $tree = bx_plugins_blog::getTreeInstance($tablePrefix);
+           $data = array("name","uri","fulluri", "status","id");
+           $query = $tree->children_query_byname(array("blog_id"=>$blogid,"parentid" => 0),$data,True);
+           $res = $GLOBALS['POOL']->db->query($query);
+           
+           $rows = $res->fetchAll(MDB2_FETCHMODE_ASSOC);
+           $GLOBALS['POOL']->cache->set("plugins_blog_categories_tree_".$blogid,$rows,null,"table_blogcategories");
+       } 
+       
+       if (isset($params[0])) {
+           $lastslash = strrpos($params[0],"/");
+           $cat = substr($params[0],0,$lastslash);
+       } else {
+           $cat = "";
+       }
+       $oldlevel = 1;
+       $dom = new DomDocument();
+       $parent = $dom;
+       foreach($rows as $row) {
         
-        
-        $res = $GLOBALS['POOL']->db->query($query);
-        $oldlevel = 1;
-        $dom = new DomDocument();
-        $parent = $dom;
-
-        while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             if ($row['status'] != 1) {continue;}
             if ($row['level'] == 1 ) {
                 $roottitle = $row['name'];
