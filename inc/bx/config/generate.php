@@ -195,6 +195,11 @@ class bx_config_generate {
             ini_set("include_path",realpath(dirname(__FILE__)."/../../"));
             @include_once("MDB2.php");
             $db = @MDB2::connect($dsn);
+            if (@MDB2::isError($db)) {
+                print $db->getMessage();
+                print "<br/>";
+                die ("no DB connection possible. please check your permissions");  
+            }
             $res = @$db->query("select * from ".$dsn['tableprefix']."options");
            
             if (!@MDB2::isError($res)) { 
@@ -208,10 +213,11 @@ class bx_config_generate {
                         }
                     }
                 }
-            }
-            include("popoon/pool.php");
-            include("bx/helpers/debug.php");
-            fwrite ($fd,'$bx_config->dbIsUtf8 = ' . var_export(@popoon_pool::isMysqlUTF8($dsn,$db),true) . ";\n");
+                include("popoon/pool.php");
+                include("bx/helpers/debug.php");
+                fwrite ($fd,'$bx_config->dbIsUtf8 = ' . var_export(@popoon_pool::isMysqlUTF8($dsn,$db),true) . ";\n");
+            } 
+            
             ini_set("include_path",$oldinc); 
         } else {
             $notAllowedDBOptions = array();
