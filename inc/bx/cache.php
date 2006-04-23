@@ -6,6 +6,10 @@ class bx_cache {
     protected $prefix = '';
     
 	private function __construct($driver) {
+        if (!$driver) {
+            $driver = 'dummy';
+        }
+            
         $class = "bx_cache_$driver";
         $this->cache = call_user_func(array($class,'getInstance'));
         $this->prefix = BX_WEBROOT;
