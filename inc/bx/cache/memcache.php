@@ -33,12 +33,14 @@ class bx_cache_memcache {
         return $this->cache->addServer($server, $port, $per, $weight, $timeout, $retry);
     }
 
-    public function set($key, $val,  $expires = 25200, $group = null) {
-        if ($group) {
-            $keys = $this->cache->get($group);
-            if (!in_array($key,$keys)) {
-                $keys[] = $key;
-                $this->cache->set($group,$keys);
+    public function set($key, $val,  $expires = 25200, $groups = null) {
+        if ($groups) {
+            foreach($groups as $group) {
+                $keys = $this->cache->get($group);
+                if (!in_array($key,$keys)) {
+                    $keys[] = $key;
+                    $this->cache->set($group,$keys);
+                }
             }
         }
         return $this->cache->set($key, $val, false, $expires);

@@ -27,9 +27,16 @@ class bx_cache {
         return $this->cache->replace($this->prefix.$key, $val, $expires, $group);
     }
     
-    public function set($key, $val,  $expires = null, $group = null) {
-        if ($group) {
-            return $this->cache->set($this->prefix.$key, $val, $expires, $this->prefix.$group) ;
+    public function set($key, $val,  $expires = null, $groups = null) {
+        if ($groups) {
+            if (!is_array($groups)) {
+                $groups = array($this->prefix.$groups);
+            } else {
+                foreach ($groups as $k => $g) {
+                    $groups[$k] = $this->prefix.$g;
+                }
+            }
+            return $this->cache->set($this->prefix.$key, $val, $expires, $groups) ;
         } else {
             return $this->cache->set($this->prefix.$key, $val, $expires, null) ;
         }

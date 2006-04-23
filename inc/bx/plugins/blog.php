@@ -494,14 +494,18 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '>';
             $xml .= '<h2 class="post_title">'.$row['post_title'].'</h2>';
             // get categories
-            $catres = $GLOBALS['POOL']->db->query("select ".$tablePrefix."blogcategories.id , fullname, fulluri from ".$tablePrefix."blogcategories
-            left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogcategories.id = ".$tablePrefix."blogposts2categories.blogcategories_id where ".$tablePrefix."blogposts2categories.blogposts_id = $id and ".$tablePrefix."blogcategories.blog_id = ".$blogid." and ".$tablePrefix."blogcategories.status=1");
-            if (MDB2::isError($catres)) {
-                throw new PopoonDBException($catres);
+            if (! ($catrows = $GLOBALS['POOL']->cache->get("plugins_blog_post_categories_".$id))) { 
+                $catres = $GLOBALS['POOL']->db->query("select ".$tablePrefix."blogcategories.id , fullname, fulluri from ".$tablePrefix."blogcategories
+                left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogcategories.id = ".$tablePrefix."blogposts2categories.blogcategories_id where ".$tablePrefix."blogposts2categories.blogposts_id = $id and ".$tablePrefix."blogcategories.blog_id = ".$blogid." and ".$tablePrefix."blogcategories.status=1");
+                if (MDB2::isError($catres)) {
+                    throw new PopoonDBException($catres);
+                }
+                $catrows = $catres->fetchAll(MDB2_FETCHMODE_ASSOC);
+                $GLOBALS['POOL']->cache->set("plugins_blog_post_categories_".$id,$catrows,0,array("table_blogcategories","plugins_blog_id_".$id));
             }
             $xml .= '<div class="post_meta_data">';
             $xml .= '<span class="post_categories">';
-            while ($catrow = $catres->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+            foreach ($catrows as $catrow) {
                 $xml .= '<span id="cat'.$catrow['id'].'" class="post_category"><a rel="tag" href="'.BX_WEBROOT_W.$path.$catrow['fulluri'].'/">'.$catrow['fullname'].'</a></span>';
             }
             $xml .= '</span>';
