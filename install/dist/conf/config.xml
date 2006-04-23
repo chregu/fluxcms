@@ -219,6 +219,24 @@
         <stream>portlet</stream>
     </streams>
 
+    <!--
+    If you want the memcached based cache (highly recommended for 
+       traffic sites, uncomment the following
+    -->   
+    
+    <!--
+    <cache driver="memcache">
+        <option>
+            <server>localhost</server>
+            <port>11211</port>
+            <per>true</per>
+            <weight>1</weight>
+            <timeout>1</timeout>
+            <retry>15</retry>
+        </option>
+    </cache>    
+    -->
+    
     <files>
     
     <!-- conf/include.php is currently used for cache control. Uncomment the following, if you want to use that.
