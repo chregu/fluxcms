@@ -37,7 +37,7 @@ class bx_cache_memcache {
         if ($groups) {
             foreach($groups as $group) {
                 $keys = $this->cache->get($group);
-                if (!in_array($key,$keys)) {
+                if (!in_array($key,(array) $keys)) {
                     $keys[] = $key;
                     $this->cache->set($group,$keys);
                 }
