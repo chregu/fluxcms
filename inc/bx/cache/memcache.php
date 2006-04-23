@@ -63,7 +63,7 @@ class bx_cache_memcache {
     public function flush($group = null) {
         if ($group) {
             $keys = $this->cache->get($group);
-            foreach ($keys as $key) {
+            foreach ((array) $keys as $key) {
                 $this->cache->delete($key);
             }
         } else {
