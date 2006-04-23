@@ -276,6 +276,8 @@ class bx_streams_blog extends bx_streams_buffer {
         $dbwrite = $GLOBALS['POOL']->dbwrite;
         $post = $this->getPostObject();
         if ($id) {
+            //delete cache
+            $GLOBALS['POOL']->cache->flush("plugins_blog_id_".$id);
             $post->id = $id;
         } else {
             $post->id = $dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix()."_sequences");
@@ -438,6 +440,8 @@ class bx_streams_blog extends bx_streams_buffer {
         $post = $this->getPostObject();
        
         $post->id = $id;
+        //delete cache
+        $GLOBALS['POOL']->cache->flush("plugins_blog_id_".$id);
         
         $row = $db->queryRow("select post_info, post_status from ".$this->tablePrefix."blogposts where id = $id", null, MDB2_FETCHMODE_ASSOC);
         if (!is_array($row)) {

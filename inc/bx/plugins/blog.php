@@ -721,21 +721,27 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         
         $pathid = $path.$id;
         if (!isset($this->res[$pathid])) {
-            $id = str_replace(".html","",$id);
-
-            $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
-            $db = $GLOBALS['POOL']->db;
-         if (self::$timezone === NULL) {
-            self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
-        }
-
-            $query = "SELECT id, post_title, concat(DATE_FORMAT(blogposts.post_date,'%Y/%m/%H/'),
-                    blogposts.post_uri) as permalink,
-                    blogposts.post_status as status,
-                    unix_timestamp(date_add(blogposts.post_date, INTERVAL ". self::$timezone." SECOND)) as cdate
-                    FROM ".$tablePrefix."blogposts as blogposts where post_uri = ". $db->quote($id);
-            $r = $db->query($query);
-            $row = $r->fetchRow(MDB2_FETCHMODE_ASSOC);
+            
+            if ($row = $GLOBALS['POOL']->cache->get("plugins_blog_path_".$pathid)) {
+                
+            } else {
+                $id = str_replace(".html","",$id);
+                
+                $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
+                $db = $GLOBALS['POOL']->db;
+                if (self::$timezone === NULL) {
+                    self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
+                }
+                
+                $query = "SELECT id, post_title, concat(DATE_FORMAT(blogposts.post_date,'%Y/%m/%H/'),
+                blogposts.post_uri) as permalink,
+                blogposts.post_status as status,
+                unix_timestamp(date_add(blogposts.post_date, INTERVAL ". self::$timezone." SECOND)) as cdate
+                FROM ".$tablePrefix."blogposts as blogposts where post_uri = ". $db->quote($id);
+                $r = $db->query($query);
+                $row = $r->fetchRow(MDB2_FETCHMODE_ASSOC);
+                $GLOBALS['POOL']->cache->set("plugins_blog_path_".$pathid,$row,0,"plugins_blog_id_".$row['id']);
+            }
             $res = new bx_resources_simple($pathid);
             if ($row['id'] > 0) {
                 $res->props['title'] = $row['post_title'];
