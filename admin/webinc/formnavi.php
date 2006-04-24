@@ -67,6 +67,13 @@ Bookmarks:<select name="selectElement" onchange="javascript:changeElement()">
 foreach ($quicklinks as $value => $name) {
     if($name == '') {
         print '<option value="" disabled="disabled">'.$value.'</option>';
+        
+    } else if(is_array($name)) {
+        print '<optgroup label="'.$value.'">';
+        foreach($name as $v => $n) {
+            print '<option value="'.$v.'">'.$n.'</option>';
+        }
+        print '</optgroup>';
     } else {
         print '<option value="'.$value.'">'.$name.'</option>';
     }
