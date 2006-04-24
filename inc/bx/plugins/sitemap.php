@@ -19,7 +19,6 @@ Class bx_plugins_sitemap extends bx_plugin {
     
     
     public function getContentById($path, $id) {
-        
         $dom = new domDocument();
         $sn  = $dom->createElement('sitemap');
         $this->getSitemapTree("/", $dom, $sn);
@@ -33,7 +32,7 @@ Class bx_plugins_sitemap extends bx_plugin {
     }
     
     
-    public function getSitemapTree($path, $domdoc, $domnode) {
+    public function getSitemapTree($path, $domdoc, $domnode, $level = 1) {
         $coll = bx_collections::getCollection($path, $this->mode);
         if (is_object($coll)) {
             
@@ -50,6 +49,7 @@ Class bx_plugins_sitemap extends bx_plugin {
                    case "httpd/unix-directory":
                        
                        $elem = $domdoc->createElement('collection');
+                       $elem->setAttribute('level', $level + 1);
                        $isCol=true;
                        
                    break;
@@ -86,16 +86,13 @@ Class bx_plugins_sitemap extends bx_plugin {
                     
                     $domnode->appendChild($elem);
                     
-                    if ($isCol === true && $localName && $localName != $path) {
-                        $this->getSitemapTree($localName, $domdoc, $elem);
-                        
+                    if($isCol === true && $localName && $localName != $path) {
+                        $this->getSitemapTree($localName, $domdoc, $elem, $level + 1);
                     }
                     
                }
-             
            }
         }
-       
     }
 
     public function getIdByRequest($path, $name = NULL, $ext  = NULL) {
