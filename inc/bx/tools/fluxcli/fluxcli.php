@@ -65,11 +65,16 @@ function printVerbose($msg) {
         echo $msg;
 }
 
-function _command_collectioncreate($options, $arguments) {
-    if(sizeof($arguments) < 1) {
+function checkArgumentCount($arguments, $count) {
+    if(sizeof($arguments) < $count) {
         echo "ERROR: too few arguments\n";
         printHelp();
     }
+    return TRUE;
+}
+
+function _command_collectioncreate($options, $arguments) {
+    checkArgumentCount($arguments, 1);    
     
     printVerbose("creating collection '".$arguments[0]."'...\n");
     $maincoll = bx_collections::getCollection($arguments[0]);
@@ -87,10 +92,7 @@ function _command_collectioncreate($options, $arguments) {
 }
 
 function _command_collectiondelete($options, $arguments) {
-    if(sizeof($arguments) < 1) {
-        echo "ERROR: too few arguments\n";
-        printHelp();
-    }
+    checkArgumentCount($arguments, 1);    
     
     printVerbose("deleting collection '".$arguments[0]."'...\n");
 
@@ -107,10 +109,7 @@ function _command_collectiondelete($options, $arguments) {
 }
 
 function _command_propertyset($options, $arguments) {
-    if(sizeof($arguments) < 3) {
-        echo "ERROR: too few arguments\n";
-        printHelp();
-    }
+    checkArgumentCount($arguments, 3);    
     
     $ns = BX_PROPERTY_DEFAULT_NAMESPACE;
     if(isset($arguments[3]) && !empty($arguments[3])) {
@@ -142,10 +141,7 @@ function _command_propertyset($options, $arguments) {
 
 
 function _command_makeuri($options, $arguments) {
-    if(sizeof($arguments) < 1) {
-        echo "ERROR: too few arguments\n";
-        printHelp();
-    }
+    checkArgumentCount($arguments, 1);    
 
     echo bx_helpers_string::makeUri(utf8_encode($arguments[0]))."\n";
     return TRUE;
