@@ -10,11 +10,11 @@ class bx_tree {
     private $recursive = false;
     private $baseUri = "";
     private $properties = array();
-	
-	private $rewrite = false;
-	private $rewriteFrom = false;
-	private $rewriteTo = false;
-	
+    
+    private $rewrite = false;
+    private $rewriteFrom = false;
+    private $rewriteTo = false;
+    
     
     private $excludePropertyNS = array('bx:', 'bx:de', 'bx:en');
     
@@ -26,16 +26,16 @@ class bx_tree {
     
     
     public function getXml() {
-		if($GLOBALS['POOL']->config->advancedRedirect == 'true'){
-	        //userdir
-	        $userdir = bx_resourcemanager::getFirstPropertyAndPath($this->path,'redirect');
-			$user = bx_helpers_perm::getUsername();
-			if( $userdir !== NULL AND $user != ''){
-				$this->rewriteFrom = $userdir['path'].'/'.$user.'/';
-				$this->rewriteTo = $userdir['path'].'/';
-			}
-		}
-		
+        if($GLOBALS['POOL']->config->advancedRedirect == 'true'){
+            //userdir
+            $userdir = bx_resourcemanager::getFirstPropertyAndPath($this->path,'redirect');
+            $user = bx_helpers_perm::getUsername();
+            if( $userdir !== NULL AND $user != ''){
+                $this->rewriteFrom = $userdir['path'].'/'.$user.'/';
+                $this->rewriteTo = $userdir['path'].'/';
+            }
+        }
+        
         $coll = bx_collections::getCollection($this->path, $this->mode);
         $colls = array();
         $childUris = array();
@@ -44,23 +44,23 @@ class bx_tree {
         $this->dom = new domDocument();
         $this->dom->loadXML("<collection/>");
         $perm = bx_permm::getInstance();
-       
+        
         $node = $this->dom->documentElement;
         $level=1;
         if ($this->recursive) {
             while ($coll) {
                 array_unshift($colls, $coll);
-				
+                
                 $childUri = $coll->uri;
                 $coll = $coll->getParentCollection();
-				
+                
                 if ($coll) {
-					$childUris[$coll->uri] = $childUri;					
+                    $childUris[$coll->uri] = $childUri;                    
                 }
                 
             }
             $this->fillElement($node,bx_collections::getCollection("/",$this->mode));
-        
+            
         } else {
             $colls[] = $coll;
             $this->fillElement($node,$coll);
@@ -75,11 +75,11 @@ class bx_tree {
                 if (!$perm->isAllowed($entry->getId(),array('read_navi', 'read'))) {
                     continue;
                 }
- 				if ($GLOBALS['POOL']->config->advancedRedirect == 'true' AND $entry->getLocalName() == $this->rewriteFrom) {
-					$this->rewrite = TRUE;
-					continue;
-				}
-				               
+                 if ($GLOBALS['POOL']->config->advancedRedirect == 'true' AND $entry->getLocalName() == $this->rewriteFrom) {
+                    $this->rewrite = TRUE;
+                    continue;
+                }
+                
                 $mt = $entry->getProperty("output-mimetype");
                 if ($mt == "httpd/unix-directory") {
                     $el = $this->dom->createElement("collection");
@@ -94,7 +94,7 @@ class bx_tree {
                 
                 $this->fillElement($el, $entry, $coll->uri);
                 $newnode = $node->appendChild($el);
-                $newnode->setAttribute("level",$level);			
+                $newnode->setAttribute("level",$level);            
                 if ($entry->getLocalName() == $childUri) {
                     $newnode->setAttribute("selected","selected");
                     $nextnode = $newnode; 
@@ -110,8 +110,8 @@ class bx_tree {
         return $this->dom;
     }
     
-    protected function fillElement($el, $entry, $uri = "/") {		
-		        
+    protected function fillElement($el, $entry, $uri = "/") {        
+        
         $displayname = $this->dom->createElement("title");
         $el->appendChild($displayname);
         
@@ -129,19 +129,19 @@ class bx_tree {
         if ($relink = $entry->getProperty("relink")) {
             $el->setAttribute("relink",$relink);
         }
-		// userdir
-		if($this->rewrite){
-			switch($mt){
-				case 'httpd/unix-directory':
-					$relink = str_replace($this->rewriteFrom, $this->rewriteTo, $entry->getLocalName() );					
-				break;
-				case 'text/html':
-					$relink =  $entry->getFileName().'.html' ;
-				break;
-			}
-			$el->setAttribute("relink",$relink);
-		}
-		
+        // userdir
+        if($this->rewrite){
+            switch($mt){
+                case 'httpd/unix-directory':
+                $relink = str_replace($this->rewriteFrom, $this->rewriteTo, $entry->getLocalName() );                    
+                break;
+                case 'text/html':
+                $relink =  $entry->getFileName().'.html' ;
+                break;
+            }
+            $el->setAttribute("relink",$relink);
+        }
+        
         $el->setAttribute('lang',$entry->getLanguage());
         
         
@@ -163,28 +163,28 @@ class bx_tree {
                 $el->appendChild($this->dom->createElement('uri',$uri .$entry->getLocalName()));
             }
             if ($this->showSrc) {
-                 $el->appendChild($this->dom->createElement('src',$this->baseUri."/". $entry->getLocalName()));
-           }
+                $el->appendChild($this->dom->createElement('src',$this->baseUri."/". $entry->getLocalName()));
+            }
         }
-
+        
         if ($this->showPreview) {
             $el->appendChild($this->dom->createElement('preview',$uri.$entry->getLocalName()));
         }
-
+        
         $displayname->appendChild($te);
         $do = $entry->getDisplayOrder();
         if ($do !== NULL) {
-           $el->appendChild($this->dom->createElement('display-order', $do));
+            $el->appendChild($this->dom->createElement('display-order', $do));
         }
         if ($do = $entry->getDisplayImage()) {
             $el->appendChild($this->dom->createElement('display-image', $do));
         }
-
+        
         $propNode = $this->getPropertiesNode($entry->getAllProperties());
         if($propNode->hasChildNodes()) {
             $el->appendChild($propNode);
         }
-
+        
         return $el;
     }
     
@@ -211,11 +211,11 @@ class bx_tree {
         }
         
     }
-   
+    
     public function setRecursive ($set) {
-       $this->recursive = $set;
+        $this->recursive = $set;
     }
-
+    
     protected function getPropertiesNode($properties) {
         $propertiesNode = $this->dom->createElement('properties');
         foreach($properties as $key => $property) {
