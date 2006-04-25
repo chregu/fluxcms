@@ -32,7 +32,7 @@ $options = array(
 
 if(!file_exists('inc/bx/init.php')) {
     echo "ERROR: please change to the project root and call me again.\n";
-    die();
+    exit(1);
 }
 
 include_once("inc/bx/init.php");
@@ -57,7 +57,7 @@ make an uri (helpful for scripting):
     fluxcli.php makeuri <name>
     
 ";
-    die();
+    exit(1);
 }
 
 function printVerbose($msg) {
@@ -143,8 +143,13 @@ function _command_propertyset($options, $arguments) {
 function _command_makeuri($options, $arguments) {
     checkArgumentCount($arguments, 1);    
 
-    echo bx_helpers_string::makeUri(utf8_encode($arguments[0]))."\n";
-    return TRUE;
+    $uri = bx_helpers_string::makeUri(utf8_encode($arguments[0]));
+    if(!empty($uri) && $uri != 'none') {
+        echo "$uri\n";
+        return TRUE;
+    }
+    
+    return FALSE;
 }
 
 $argv = $_SERVER['argv'];
@@ -179,12 +184,14 @@ if(empty($arguments)) {
 define('VERBOSE', $options['verbose']);
 
 if(in_array($arguments[0], $commands)) {
-    call_user_func('_command_'.$arguments[0], $options, array_slice($arguments, 1));
+    if(call_user_func('_command_'.$arguments[0], $options, array_slice($arguments, 1))) {
+        exit(0);
+    }
 } else {
     echo "ERROR: unknown command: '".$arguments[0]."'\n";
     printHelp();
 }
 
-
+exit(1);
 
 ?>
