@@ -21,6 +21,10 @@ class bx_plugins_navitree extends bx_plugin {
       // get up path
       $tree = new bx_tree($path, $this->mode);
       $tree->setRecursive(true);
+      if ($lo = $this->getParameter($path,"levelOpen")) {
+          $tree->setLevelOpen($lo);
+      }
+      
       $tree->setMimeTypes(array("text/html"));
       //$tree->setProperties(array("navi"));
       return $tree->getXml();

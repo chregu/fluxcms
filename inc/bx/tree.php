@@ -8,7 +8,10 @@ class bx_tree {
     private $showSrc = false;
     private $showPreview = false;
     private $recursive = false;
+    private $levelOpen = null;
     private $baseUri = "";
+    private $childUris= array();
+    private $perm = "";
     private $properties = array();
     
     private $rewrite = false;
@@ -38,12 +41,12 @@ class bx_tree {
         
         $coll = bx_collections::getCollection($this->path, $this->mode);
         $colls = array();
-        $childUris = array();
-        $childUris[$coll->uri] = "blabla";
+        $this->childUris= array();
+        $this->childUris[$coll->uri] = "_blabla";
         
         $this->dom = new domDocument();
         $this->dom->loadXML("<collection/>");
-        $perm = bx_permm::getInstance();
+        $this->perm = bx_permm::getInstance();
         
         $node = $this->dom->documentElement;
         $level=1;
@@ -55,7 +58,7 @@ class bx_tree {
                 $coll = $coll->getParentCollection();
                 
                 if ($coll) {
-                    $childUris[$coll->uri] = $childUri;                    
+                    $this->childUris[$coll->uri] = $childUri;                    
                 }
                 
             }
@@ -68,40 +71,13 @@ class bx_tree {
         $node->setAttribute("level",$level);
         $node->setAttribute("selected","selected");
         $node= $node->appendChild($this->dom->createElement("items"));
+        
         foreach ($colls as $coll) {
-            $childUri = $childUris[$coll->uri];
-            $level++;
-            foreach( $coll->getChildren() as $element => $entry) {
-                if (!$perm->isAllowed($entry->getId(),array('read_navi', 'read'))) {
-                    continue;
-                }
-                 if ($GLOBALS['POOL']->config->advancedRedirect == 'true' AND $entry->getLocalName() == $this->rewriteFrom) {
-                    $this->rewrite = TRUE;
-                    continue;
-                }
-                
-                $mt = $entry->getProperty("output-mimetype");
-                if ($mt == "httpd/unix-directory") {
-                    $el = $this->dom->createElement("collection");
-                } elseif (in_array($mt, $this->mimetypes)) {
-                    $el = $this->dom->createElement("resource");
-                } else {
-                    continue;
-                }
-                foreach($this->properties as $prop) {
-                    $el->setAttribute($prop,$entry->getProperty($prop));   
-                }
-                
-                $this->fillElement($el, $entry, $coll->uri);
-                $newnode = $node->appendChild($el);
-                $newnode->setAttribute("level",$level);            
-                if ($entry->getLocalName() == $childUri) {
-                    $newnode->setAttribute("selected","selected");
-                    $nextnode = $newnode; 
-                }
-            }
             
-            if(isset($nextnode)) {
+            $level++;
+            $nextnode = $this->insertChildren($coll,$node,$level);
+            
+            if($nextnode) {
                 $node = $nextnode->appendChild($this->dom->createElement("items"));
             } else {
                 break;
@@ -109,6 +85,53 @@ class bx_tree {
         }
         return $this->dom;
     }
+    
+    protected function insertChildren($coll,$node,$level) {
+        if (isset($this->childUris[$coll->uri])) {
+            $childUri = $this->childUris[$coll->uri];
+        } else {
+            $childUri = "";
+        }
+        $nextnode = null;
+        foreach( $coll->getChildren() as $element => $entry) {
+            if (!$this->perm->isAllowed($entry->getId(),array('read_navi', 'read'))) {
+                continue;
+            }
+            if ($GLOBALS['POOL']->config->advancedRedirect == 'true' AND $entry->getLocalName() == $this->rewriteFrom) {
+                $this->rewrite = TRUE;
+                continue;
+            }
+            
+            $mt = $entry->getProperty("output-mimetype");
+            if ($mt == "httpd/unix-directory") {
+                $el = $this->dom->createElement("collection");
+            } elseif (in_array($mt, $this->mimetypes)) {
+                $el = $this->dom->createElement("resource");
+            } else {
+                continue;
+            }
+            foreach($this->properties as $prop) {
+                $el->setAttribute($prop,$entry->getProperty($prop));   
+            }
+            
+            $this->fillElement($el, $entry, $coll->uri);
+            $newnode = $node->appendChild($el);
+            $newnode->setAttribute("level",$level); 
+            if ($entry->getLocalName() == $childUri) {
+                
+            
+                $newnode->setAttribute("selected","selected");
+                $nextnode = $newnode; 
+            } else if ($mt == "httpd/unix-directory" && $this->levelOpen && $level < $this->levelOpen) {
+                
+                 $this->insertChildren($entry,$el->appendChild($this->dom->createElement("items")),$level + 1);
+            }
+            
+            
+        }   
+        return $nextnode;
+    }
+    
     
     protected function fillElement($el, $entry, $uri = "/") {        
         
@@ -210,6 +233,12 @@ class bx_tree {
             $this->showPreview = true;
         }
         
+    }
+    
+    public function  setLevelOpen($lo = null) {
+        if ($lo) {
+            $this->levelOpen = $lo;
+        }
     }
     
     public function setRecursive ($set) {
