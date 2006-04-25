@@ -18,6 +18,17 @@
 ini_set('html_errors', 0);
 define('ID', '$Id$');
 
+$commands = array(
+    'collectioncreate',
+    'collectiondelete',
+    'propertyset',
+);
+
+$options = array(
+    'verbose' => FALSE,
+);
+
+
 echo "Flux CMS Command Line Interface, ".ID."\n";
 
 if(!file_exists('inc/bx/init.php')) {
@@ -34,7 +45,10 @@ function printHelp() {
     echo "Usage: fluxcli.php [options] <command> [parameters]
 
 create a new collection:
-    fluxcli.php collectioncreate <parentcollection uri> <collection uri>
+    fluxcli.php collectioncreate <collection uri>
+
+delete a collection:
+    fluxcli.php collectiondelete <collection uri>
 
 set a property:
     fluxcli.php propertyset <path> <name> <value> [namespace]
@@ -46,53 +60,6 @@ set a property:
 function printVerbose($msg) {
     if(VERBOSE)
         echo $msg;
-}
-
-$argv = $_SERVER['argv'];
-array_shift($argv);
-
-$commands = array(
-    'collectioncreate',
-    'propertyset',
-);
-
-$options = array(
-    'verbose' => FALSE,
-);
-
-$arguments = array();
-$parameters = array();
-
-foreach($argv as $arg) {
-    if($arg{0} == '-' && empty($arguments)) {
-        switch($arg) {
-            case '-v':
-            case '--verbose':
-                $options['verbose'] = TRUE;
-            break;
-            case '-h':
-            case '--help':
-                printHelp();
-            default:
-                echo "ERROR: unknown option: '$arg'\n";
-                printHelp();
-        }
-    } else {
-        $arguments[] = $arg;
-    }
-}
-
-if(empty($arguments)) {
-    printHelp();
-}
-
-define('VERBOSE', $options['verbose']);
-
-if(in_array($arguments[0], $commands)) {
-    call_user_func('_command_'.$arguments[0], $options, array_slice($arguments, 1));
-} else {
-    echo "ERROR: unknown command: '".$arguments[0]."'\n";
-    printHelp();
 }
 
 function _command_collectioncreate($options, $arguments) {
@@ -110,6 +77,26 @@ function _command_collectioncreate($options, $arguments) {
         return TRUE;
     } else {
         echo "ERROR: unable to create collection '".$arguments[0]."'\n";
+    }
+    
+    return FALSE;
+    
+}
+
+function _command_collectiondelete($options, $arguments) {
+    if(sizeof($arguments) < 1) {
+        echo "ERROR: too few arguments\n";
+        printHelp();
+    }
+    
+    printVerbose("deleting collection '".$arguments[0]."'...\n");
+
+    $parts = bx_collections::getCollectionAndFileParts($arguments[0], 'admin');
+    if ($parts['coll']->deleteResourceById($parts['rawname'])) {
+        echo "collection '".$arguments[0]."' successfully deleted.\n";
+        return TRUE;
+    } else {
+        echo "ERROR: unable to delete collection '".$arguments[0]."'\n";
     }
     
     return FALSE;
@@ -146,8 +133,49 @@ function _command_propertyset($options, $arguments) {
     }
     
     $res->setProperty($arguments[1], bx_helpers_string::utf2entities(utf8_encode($arguments[2])), $ns);
+    echo "property successfully set.\n";
     return TRUE;
 }
+
+
+$argv = $_SERVER['argv'];
+array_shift($argv);
+
+$arguments = array();
+$parameters = array();
+
+foreach($argv as $arg) {
+    if($arg{0} == '-' && empty($arguments)) {
+        switch($arg) {
+            case '-v':
+            case '--verbose':
+                $options['verbose'] = TRUE;
+            break;
+            case '-h':
+            case '--help':
+                printHelp();
+            default:
+                echo "ERROR: unknown option: '$arg'\n";
+                printHelp();
+        }
+    } else {
+        $arguments[] = $arg;
+    }
+}
+
+if(empty($arguments)) {
+    printHelp();
+}
+
+define('VERBOSE', $options['verbose']);
+
+if(in_array($arguments[0], $commands)) {
+    call_user_func('_command_'.$arguments[0], $options, array_slice($arguments, 1));
+} else {
+    echo "ERROR: unknown command: '".$arguments[0]."'\n";
+    printHelp();
+}
+
 
 
 ?>
