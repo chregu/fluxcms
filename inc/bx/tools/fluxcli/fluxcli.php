@@ -22,6 +22,7 @@ $commands = array(
     'collectioncreate',
     'collectiondelete',
     'propertyset',
+    'makeuri',
 );
 
 $options = array(
@@ -29,10 +30,8 @@ $options = array(
 );
 
 
-echo "Flux CMS Command Line Interface, ".ID."\n";
-
 if(!file_exists('inc/bx/init.php')) {
-    echo "please change to the project root and call me again.\n";
+    echo "ERROR: please change to the project root and call me again.\n";
     die();
 }
 
@@ -42,6 +41,7 @@ $db = $GLOBALS['POOL']->db;
 
 
 function printHelp() {
+    echo "Flux CMS Command Line Interface, ".ID."\n";
     echo "Usage: fluxcli.php [options] <command> [parameters]
 
 create a new collection:
@@ -52,6 +52,9 @@ delete a collection:
 
 set a property:
     fluxcli.php propertyset <path> <name> <value> [namespace]
+
+make an uri (helpful for scripting):
+    fluxcli.php makeuri <name>
     
 ";
     die();
@@ -137,6 +140,16 @@ function _command_propertyset($options, $arguments) {
     return TRUE;
 }
 
+
+function _command_makeuri($options, $arguments) {
+    if(sizeof($arguments) < 1) {
+        echo "ERROR: too few arguments\n";
+        printHelp();
+    }
+
+    echo bx_helpers_string::makeUri(utf8_encode($arguments[0]))."\n";
+    return TRUE;
+}
 
 $argv = $_SERVER['argv'];
 array_shift($argv);
