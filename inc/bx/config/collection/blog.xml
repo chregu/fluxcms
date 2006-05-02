@@ -10,7 +10,7 @@
         <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/trackback.xsl"/>
         <parameter type="pipeline" name="output-mimetype" value="text/xml"/>
         <plugin type="blog">
-            <parameter name="tableprefix" value=""/>
+            <parameter name="blogid" value="$blogid"/>
         </plugin>
     </plugins>
 
@@ -19,7 +19,7 @@
         <file preg="#plugin=#"/>
 
         <plugin type="blog">
-            <parameter name="tableprefix" value=""/>
+            <parameter name="blogid" value="$blogid"/>
         </plugin>
     </plugins>
 
@@ -38,7 +38,7 @@
         <extension type="html"/>
         <parameter type="pipeline" name="xslt" value="blog.xsl"/>
         <plugin type="blog">
-            <parameter name="tableprefix" value=""/>
+            <parameter name="blogid" value="$blogid"/>
         </plugin>
 
         <plugin type="navitree"></plugin>
@@ -51,7 +51,7 @@
         <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/blog2rss.xsl"/>
         <plugin type="blog">
             <parameter name="mode" value="rss"/>
-            <parameter name="tableprefix" value=""/>
+            <parameter name="blogid" value="$blogid"/>
         </plugin>
     </plugins>
     
@@ -63,7 +63,7 @@
         <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/blog2atom.xsl"/>
         <plugin type="blog">
             <parameter name="mode" value="rss"/>
-            <parameter name="tableprefix" value=""/>
+            <parameter name="blogid" value="$blogid"/>
         </plugin>
     </plugins>
 
@@ -74,7 +74,7 @@
         <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/comments2rss.xsl"/>
         <plugin type="blog">
             <parameter name="mode" value="latestcomments"/>
-            <parameter name="tableprefix" value=""/>
+            <parameter name="blogid" value="$blogid"/>
         </plugin>
     </plugins>
     
@@ -109,7 +109,7 @@
         
         <parameter type="pipeline" name="xslt" value="blog.xsl"/>
         <plugin type="blog">
-            <parameter name="tableprefix" value=""/>
+            <parameter name="blogid" value="$blogid"/>
         </plugin>
 
         <plugin type="navitree"></plugin>
