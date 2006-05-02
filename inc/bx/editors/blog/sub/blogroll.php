@@ -43,7 +43,9 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
-        
+        if (empty($blogid))  {
+                $blogid = 1;
+        }
         $dbwrite = $GLOBALS['POOL']->dbwrite;
         
         if(isset($data['category'])) {
