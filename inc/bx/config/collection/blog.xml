@@ -30,6 +30,7 @@
         <plugin type="structure2xml">
             <parameter name="src" value="structure/bloglinks.xml"/>
             <parameter name="secondtableprefix" value=""/>
+            <parameter name="structure2xml[blogid]" value="$blogid"/>
         </plugin>
 
     </plugins>
