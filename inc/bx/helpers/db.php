@@ -31,7 +31,7 @@
 
 class bx_helpers_db {
 
-    function getConfigClass ($configFile,$options=Null)
+    static function getConfigClass ($configFile,$options=Null)
     {
         if (is_string($configFile) || is_array($configFile))
         {
