@@ -31,7 +31,7 @@ class patForms_Rule_Retype extends patForms_Rule
 	*/
 	var	$validatorErrorCodes  =   array(
 		"C"	=>	array(
-			1	=>	"The fields '[FIELD1_LABEL]' and '[FIELD2_LABEL]' do not match.",
+			1	=>	"The fields '<i18n:text>[FIELD1_LABEL]</i18n:text>' and '<i18n:text>[FIELD2_LABEL]</i18n:text>' do not match.",
 		),
 		"de" =>	array(
 			1	=>	"Ihre Angaben in den Feldern '[FIELD1_LABEL]' und '[FIELD2_LABEL]' stimmen nicht überein.",
