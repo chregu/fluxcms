@@ -1223,7 +1223,7 @@ class patForms
 	* @param	string					The id of the rule, needed if the rule uses client side actions.
 	* @return	object patForms_Rule	The rule object, or error object
 	*/
-	function &createRule( $name, $id = null )
+	static function &createRule( $name, $id = null )
 	{
 		$rule	=	&patForms::_createModule( 'Rule', $name );
 		if( $id != null )
