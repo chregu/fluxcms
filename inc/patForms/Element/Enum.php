@@ -208,12 +208,12 @@ class patForms_Element_Enum extends patForms_Element
 			2	=>	"The value given for the element does not match any of the possible values.",
 		),
 		"de" =>	array(
-			1	=>	"Pflichtfeld. Bitte vervollständigen Sie Ihre Angabe.",
-			2	=>	"Der angegebene Wert stimmt mit keinem der möglichen Werte überein.",
+			1	=>	"Pflichtfeld. Bitte vervollstï¿½ndigen Sie Ihre Angabe.",
+			2	=>	"Der angegebene Wert stimmt mit keinem der mï¿½glichen Werte ï¿½berein.",
 		),
 		"fr" =>	array(
 			1	=>	"Ce champ est obligatoire.",
-			2	=>	"La valeur de ce champ ne correspond à aucune des valeurs admises.",
+			2	=>	"La valeur de ce champ ne correspond ï¿½ aucune des valeurs admises.",
 		)
 	);
 
@@ -227,7 +227,7 @@ class patForms_Element_Enum extends patForms_Element
 	var	$defaultReadonlyValue  =   array(
 		"C"	=>	"No selection",
 		"de" =>	"Keine Angabe",
-		"fr" =>	"Pas de sélection.",
+		"fr" =>	"Pas de sï¿½lection.",
 	);
 
    /**
@@ -266,8 +266,8 @@ class patForms_Element_Enum extends patForms_Element
 			*
 			* The element will be passed to the callback
 			*/
-			else if (is_callable( $this->attributes["datasource"], false)) {
-				$values	= call_user_func( $this->attributes["datasource"], $this);
+			else if (strpos($this->attributes['datasource'],"::") === false && is_callable( $this->attributes["datasource"], false)) {
+                $values	= call_user_func($this->attributes["datasource"],$this );
 			}
 			/**
 			* maybe it's a static funtion
