@@ -119,7 +119,7 @@ class bx_config extends popoon_classes_config {
         return BX_DEFAULT_ADMIN_LANGUAGE;
     }
     
-    public function getConfProperty($key,$forceTouch = false) {
+    static public function getConfProperty($key,$forceTouch = false) {
         if($key == 'adminLanguage') 
             return $GLOBALS['POOL']->config->getAdminLanguage();
         
