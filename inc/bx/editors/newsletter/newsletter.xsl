@@ -29,9 +29,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/
             </head>
             <body>
             
-            
-            <!-- xsl:value-of select="/bx/plugin/newsletter"/ -->
-            
             <xsl:copy>
     			<xsl:apply-templates select="/bx/plugin/newsletter" mode="xhtml"/>
 			</xsl:copy>
@@ -41,10 +38,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/
 		</xsl:template>
          
 		<xsl:template match="*" mode="xhtml">
-		<xsl:element name="{local-name()}">
-			<xsl:apply-templates select="@*" mode="xhtml"/>
-			<xsl:apply-templates mode="xhtml"/>
-		</xsl:element>
+			<xsl:element name="{local-name()}">
+				<xsl:apply-templates select="@*" mode="xhtml"/>
+				<xsl:apply-templates mode="xhtml"/>
+			</xsl:element>
 		</xsl:template>
 
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * The newsletter plugin manages subscription and unsubscription
+ * User interface for the newsletter plugin
  */
 class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 
@@ -17,18 +17,44 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 		$this -> mode = $mode ;
 	}
 	
+	public function getEditorsById($path, $id) {
+        return array("newsletter");
+       	
+    }
+    
+    public function getMimeTypes() {
+        return array("text/html");
+    }
+	
+	public function isRealResource ( $path , $id) {
+		return true ;
+	}
+	
+	public function adminResourceExists($path, $id, $ext=null, $sample = false) {
+		if($ext == 'xhtml') {
+			return false;
+		} 
+        return true;
+    }
+	
 	/**
-	 * Generates the newsletter form
+	 * Newsletter subscription form
 	 */
 	public function getContentById ($path , $id) {
 		
-		$xml ='<newsletter>';
+		// enable to unsubscribe directly over the URL by appending ?unsubsribe={email}
+		// this is needed in order to add unsubsribe-links to newsletter mails
+		if(isset($_GET["unsubscribe"]))
+		{   
+			$this->removeSubscriber($_GET['unsubscribe']);
+		}     
 		
+		// pass through the list of public groups to the static.xsl
+		$xml ='<newsletter>';
 		foreach ($this->getGroups() as $row)
 		{
 			$xml .= '<group id="'.$row['id'].'">'.$row['name'].'</group>';
 		}
-			
 		$xml .='</newsletter>';
 		
         $dom = new DomDocument();
@@ -45,92 +71,70 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 	}
 
 	/**
-	 * Handles events to add or remove subscribers to the newsletter
+	 * add and remove subscription events
 	 */
     public function handlePublicPost($path, $id, $data) {
 
-        // check double-opt-in
-        
-        //bx_helpers_debug::webdump($data);     
-        
         // write to db
         if(isset($data['subscribe'])){
         	$this->addSubscriber($data);
         }
         else if(isset($data['unsubscribe'])){
-        	$this->removeSubscriber($data);
+        	$this->removeSubscriber($data['email']);
         }
     }
-
-	public function isRealResource ( $path , $id) {
-		return true ;
-	}
 	
 	/**
-	 * Adds a new subscriber
-	 * 
-	 * @param data POST form data
+	 * Add a new subscriber
 	 */
     protected function addSubscriber($data){
-        // add subscriber
+    	
+    	// TODO: check for double-opt-in
+    	
+        // add to database
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "insert into ".$prefix."newsletter_users (firstname, lastname, email) value('".$data['firstname']."', '".$data['lastname']."', '".$data['email']."')";
-        $GLOBALS['POOL']->db->query($query);
+        $query = "insert into ".$prefix."newsletter_users (firstname, lastname, email, gender) value('".$data['firstname']."', '".$data['lastname']."', '".$data['email']."', '".$data['gender']."')";
+        $GLOBALS['POOL']->dbwrite->query($query);
         
         $userid = $this->getUserId($data['email']);
         
         // add to selected groups
         foreach($data['groups'] as $grp)
         {
-        	$query = "insert into ".$prefix."newsletter_lists (fk_user, fk_group) value('".$userid."', '".$grp."')";
-        	$GLOBALS['POOL']->db->query($query);
+        	$query = "insert into ".$prefix."newsletter_users2groups (fk_user, fk_group) value('".$userid."', '".$grp."')";
+        	$GLOBALS['POOL']->dbwrite->query($query);
         }
     }
     
     /**
-     * Removes the subscriber from all groups
-     * 
-     * @param data POST form data
+     * Remove a subscriber from all lists
      */
-    protected function removeSubscriber($data){
-    	$userid = $this->getUserId($data['email']);
+    protected function removeSubscriber($email){
+    	$userid = $this->getUserId($email);
     	
+    	// remove user
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
         $query = "delete from ".$prefix."newsletter_users where id='".$userid."'";
-        $GLOBALS['POOL']->db->query($query);
-        $query = "delete from ".$prefix."newsletter_lists where fk_user='".$userid."'";
-        $GLOBALS['POOL']->db->query($query);
+        $GLOBALS['POOL']->dbwrite->query($query);
+        
+        // remove from groups
+        $query = "delete from ".$prefix."newsletter_users2groups where fk_user='".$userid."'";
+        $GLOBALS['POOL']->dbwrite->query($query);
     }
-    
-    /**
-     * Counts the number of groups
-     * 
-     * @return number of groups
-     */
-    protected function getNumberOfGroups()
-	{
-        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select count(*) from ".$prefix."newsletter_groups";
-        return $GLOBALS['POOL']->db->queryOne($query);	
-	}
 	
 	/**
-	 * Returns an array of newsletter groups
-	 * 
-	 * @return associated array
+	 * Returns an associated array of newsletter groups
 	 */
 	protected function getGroups()
 	{
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select * from ".$prefix."newsletter_groups";
+        $query = "select * from ".$prefix."newsletter_groups WHERE public=1";
         $res = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
         return $res;		
 	}
 	
 	/**
 	 * Retrieves the primary key for a user from his unique email address
-	 * 
-	 * @param email email address as string
 	 */
 	protected function getUserId($email)
 	{
@@ -138,28 +142,9 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $query = "select id from ".$prefix."newsletter_users where email='".$email."'";
         return $GLOBALS['POOL']->db->queryOne($query);	
 	}
-	 
-	public function getEditorsById($path, $id) {
-        return array("newsletter");
-       	
-    }
-    
-    public function getMimeTypes() {
-        //return array("text/html","text/wiki");
-        return array("text/html");
-    }
-    /*
-    public function getResourceTypes() {
-        return array("xhtml");
-    }*/
-    
-    
-    
-    
-  	
     
     /**
-     * Admin page interface
+     * Admin view collection interface
      */
 	public function getOverviewSections($path) {
         $sections = array();
@@ -168,25 +153,20 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->setTitle("Newsletter");
         $dom->setPath($path);
         $dom->setIcon("gallery");
+
+		// first tab
+        $dom->addLink("Create Newsletter",'addresource/newsletter/?type=xhtml');
+        $dom->addLink("Send Newsletter",'edit'.$path.'send/');
+        $dom->addLink("Manage Newsletters",'edit'.$path.'manage/');
         
-        $dom->addLink("Create Newsletter",'edit'.$path.'create/');
-        $dom->addLink("Show Newsletters",'edit'.$path.'show/');
-        
+        // second tab
         $dom->addTab("Subscribers");
         $dom->addLink("Edit Users",'dbforms2/newsletter_users/');
         $dom->addLink("Edit Groups",'dbforms2/newsletter_groups/');
-        $dom->addLink("Edit Lists",'dbforms2/newsletter_lists/');
+        $dom->addLink("Edit Mailing Lists",'dbforms2/newsletter_lists/');
+        $dom->addLink("Edit Mail Servers",'dbforms2/newsletter_mailservers/');
         
         return $dom;
     }
-    
-	public function adminResourceExists($path, $id, $ext=null, $sample = false) {
-		if($ext == 'xhtml') {
-			return false;
-		} 
-        return true;
-    }
-    
-   	
 }
 ?>
