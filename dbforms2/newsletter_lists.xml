@@ -3,7 +3,7 @@
     xmlns:dbform="http://bitflux.org/dbforms2/1.0"
 >
 
-    <dbform:fields table="newsletter_lists">
+    <dbform:fields table="newsletter_users2groups">
 
         <dbform:field name="fk_user" type="select" descr="User">
         	<dbform:datasource type="foreign" table="newsletter_users" order="firstname" namefield="concat(firstname,' ',lastname,' (',id,')')" orderby="firstname" idfield="id"/>

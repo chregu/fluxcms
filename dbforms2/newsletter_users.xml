@@ -8,8 +8,12 @@
         <dbform:field name="firstname" type="text" descr="Firstname"/>
         <dbform:field name="lastname" type="text" descr="Lastname"/>
         <dbform:field name="email" type="text" descr="Email"/>
-
+        <dbform:field name="gender" type="select" descr="Gender">
+            <dbform:value name="0">Male</dbform:value>
+            <dbform:value name="1">Female</dbform:value>
+        </dbform:field>
+        
     </dbform:fields>    
-    <dbform:chooser namefield="concat(firstname,' ',lastname,' (',id,')')" wherefields="firstname, lastname, email" limit="50"/>    
+    <dbform:chooser namefield="concat(firstname,' ',lastname,' (',id,')')" wherefields="firstname, lastname, email, gender" limit="50"/>    
 
 </dbform:form>
