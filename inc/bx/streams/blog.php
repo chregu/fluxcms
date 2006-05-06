@@ -494,7 +494,7 @@ class bx_streams_blog extends bx_streams_buffer {
         bx_resourcemanager::setProperty($post->uri,"title",$post->title,'bx:');
         bx_resourcemanager::setProperty($post->uri,"content",$post->content,'bx:');
         $this->updateCategories($post->id);
-        if ($post->status == 1 && $post->status_old != 1) {
+        if ($post->status == 1 ) { // && $post->status_old != 1) {
             $this->weblogsPing();
         }
        
