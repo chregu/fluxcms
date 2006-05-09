@@ -47,7 +47,12 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 		if(isset($_GET["unsubscribe"]))
 		{   
 			$this->removeSubscriber($_GET['unsubscribe']);
-		}     
+		}
+		// activate an account in case double-opt-in is enabled
+		else if(isset($_GET["activate"]))
+		{   
+			$this->activateSubscriber($_GET['activate']);
+		}
 		
 		// pass through the list of public groups to the static.xsl
 		$xml ='<newsletter>';
@@ -89,11 +94,20 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 	 */
     protected function addSubscriber($data){
     	
-    	// TODO: check for double-opt-in
+    	$activated = 1;
+    	
+    	/* TODO: check for double-opt-in
+    	if(double-opt-in)
+    	{
+    		$activated = mt_rand(10000000,99999999);
+    		
+    		send email...
+    	}
+    	*/
     	
         // add to database
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "insert into ".$prefix."newsletter_users (firstname, lastname, email, gender) value('".$data['firstname']."', '".$data['lastname']."', '".$data['email']."', '".$data['gender']."')";
+        $query = "insert into ".$prefix."newsletter_users (firstname, lastname, email, gender, activated) value('".$data['firstname']."', '".$data['lastname']."', '".$data['email']."', '".$data['gender']."', '".$activated."')";
         $GLOBALS['POOL']->dbwrite->query($query);
         
         $userid = $this->getUserId($data['email']);
@@ -119,6 +133,16 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         
         // remove from groups
         $query = "delete from ".$prefix."newsletter_users2groups where fk_user='".$userid."'";
+        $GLOBALS['POOL']->dbwrite->query($query);
+    }
+    
+    /**
+     * Activate the subscriber with the given activation-id
+     */
+    protected function activateSubscriber($id)
+    {
+        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+        $query = "UPDATE ".$prefix."newsletter_users SET activated='1' WHERE activated = '".$id."'";
         $GLOBALS['POOL']->dbwrite->query($query);
     }
 	
@@ -157,7 +181,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 		// first tab
         $dom->addLink("Create Newsletter",'addresource/newsletter/?type=xhtml');
         $dom->addLink("Send Newsletter",'edit'.$path.'send/');
-        $dom->addLink("Manage Newsletters",'edit'.$path.'manage/');
+        $dom->addLink("Newsletter Archive",'edit'.$path.'manage/');
         
         // second tab
         $dom->addTab("Subscribers");
@@ -165,6 +189,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->addLink("Edit Groups",'dbforms2/newsletter_groups/');
         $dom->addLink("Edit Mailing Lists",'dbforms2/newsletter_lists/');
         $dom->addLink("Edit Mail Servers",'dbforms2/newsletter_mailservers/');
+        $dom->addLink("User Management",'edit'.$path.'users/');
         
         return $dom;
     }

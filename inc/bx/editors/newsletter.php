@@ -61,6 +61,17 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			// Send it
 			$this->sendNewsletter($draft, $users, $mailoptions);   
      	}
+     	else if($parts['name'] == "users/.")
+     	{
+     		if(!empty($_FILES))
+     		{
+     			// get the content of the uploaded file
+     			$file = utf8_encode(file_get_contents($_FILES["userfile"]["tmp_name"]));
+     			//bx_helpers_debug::webdump($file);
+     			$this->importUsers($file);
+     				
+     		}
+     	}
     }
     
     /**
@@ -81,6 +92,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		else if($parts['name'] == "send/")
 		{
      		return $this->generateSendView();
+		}
+		
+     	// Send view requested
+		else if($parts['name'] == "users/")
+		{
+     		return $this->generateUsersView();
 		}
     }
     
@@ -136,8 +153,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				<tr><td>From:</td><td><input type="text" name="from"/></td></tr>
 				<tr><td style="vertical-align:top">To:</td><td>'.$groupsHTML.'</td></tr>
 				<tr><td>Subject:</td><td><input type="text" name="subject"/></td></tr>
-				<tr><td>HTML Newsletter:</td><td>'.$newsHTML.'</td></tr>
-				<tr><td>Text Newsletter:</td><td>'.$newsText.'</td></tr>
+				<tr><td>HTML Body:</td><td>'.$newsHTML.'</td></tr>
+				<tr><td>Text Body:</td><td>'.$newsText.'</td></tr>
 				<tr><td>Mail Server:</td><td>'.$serversHtml.'</td></tr>
 				<tr>
 					<td></td>
@@ -164,20 +181,42 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		$newsletters = $this->getNewsletterFilenames();
 
  		$xml = '<newsletter>
-		<h3>Manage Newsletters</h3>
+		<h3>Newsletter Archive</h3>
 		<form name="bx_news_manage" action="#" method="post">
-		<table border="1">
+		<table>
+		<cols>
+			<col width="200"/>
+			<col width="200"/>
+			<col width="200"/>
+			<col width="200"/>
+			<col width="200"/>
+			<col width="200"/>
+		</cols>
 		<tr>
-			<th>File</th>
-			<th>Subject</th>
-			<th>Sent</th>
+			<th class="stdBorder">From</th>
+			<th class="stdBorder">To</th>
+			<th class="stdBorder">Subject</th>
+			<th class="stdBorder">HTML Body</th>
+			<th class="stdBorder">Text Body</th>
+			<th class="stdBorder">Sent</th>
 		</tr>';
 		
-		// first the newsletters sent
+		// the newsletters sent
 		foreach($drafts as $row)
 		{
-			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td></tr>', 
-							$row['htmlfile'], $row['subject'], $row['sent']);
+	    	$query = "select name from ".$prefix."newsletter_drafts2groups, ".$prefix."newsletter_groups WHERE fk_draft='".$row['id']."' AND fk_group=".$prefix."newsletter_groups.id";
+	    	$groups = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);			
+			
+	    	$groupstring = "";		
+			for($i=0; $i<count($groups); $i++)
+			{
+				if($i != 0)
+					$groupstring .= ", ";
+				$groupstring .= $groups[$i]["name"];	
+			}
+			
+			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>', 
+							$row['from'], $groupstring, $row['subject'], $row['htmlfile'], $row['textfile'], $row['sent']);
 					
 			// remove the element if it was already sent from the extra list
 			$key = array_search($row['htmlfile'], $newsletters);
@@ -188,12 +227,72 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		} 
 		
 		// the extra list consists of newsletter template that have not been sent yet
-		foreach($newsletters as $file)
+		/*foreach($newsletters as $file)
 		{
 			$xml .= sprintf('<tr><td>%s</td><td></td><td>never</td></tr>', $file);					
-		}
+		}*/
 		
 		$xml .= '</table>
+		</form>
+		</newsletter>';
+
+ 		return domdocument::loadXML($xml);    	
+    }
+    
+    /**
+     * The user view shows information about the existing users and lets the admin import a list of new users
+     */
+    protected function generateUsersView()
+    {
+    	// get information about the newsletters sent
+		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    	$query = "select * from ".$prefix."newsletter_users";
+    	$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
+
+ 		$xml = '<newsletter>
+		<h3>Newsletter User Management</h3>
+		<form enctype="multipart/form-data" name="bx_news_users" action="#" method="post">
+		<table>
+		<cols>
+			<col width="200"/>
+			<col width="200"/>
+			<col width="200"/>
+			<col width="200"/>
+			<col width="200"/>
+			<col width="200"/>
+		</cols>
+		<tr>
+			<th class="stdBorder">Firstname</th>
+			<th class="stdBorder">Lastname</th>
+			<th class="stdBorder">Gender</th>
+			<th class="stdBorder">Email</th>
+			<th class="stdBorder">Activated</th>
+			<th class="stdBorder">Groups</th>
+		</tr>';
+
+		foreach($users as $row)
+		{
+	    	$query = "select name from ".$prefix."newsletter_users2groups, ".$prefix."newsletter_groups WHERE fk_user='".$row['id']."' AND fk_group=".$prefix."newsletter_groups.id";
+	    	$groups = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
+	    	$groupstring = "";		
+			for($i=0; $i<count($groups); $i++)
+			{
+				if($i != 0)
+					$groupstring .= ", ";
+				$groupstring .= $groups[$i]["name"];	
+			}
+			
+			$row['activated'] = $row['activated'] == 1 ? "true" : "false";
+			$row['gender'] = $row['gender'] == 0 ? "male" : "female";
+			
+			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>', 
+							$row['firstname'], $row['lastname'], $row['gender'], $row['email'], $row['activated'], $groupstring);
+		} 
+
+		$xml .= '</table><br/>
+		<input type="hidden" name="MAX_FILE_SIZE" value="1000000"/>
+		<input name="userfile" type="file"/>
+		<input type="submit" name="bx[plugins][admin_edit][_all]" value="Import Users" class="formbutton"/>
 		</form>
 		</newsletter>';
 
@@ -213,7 +312,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	// read in the newsletter templates if existing
     	$htmlMessage = $this->readNewsletterFile($draft['htmlfile']);
 		$textMessage = $this->readNewsletterFile($draft['textfile']);
-		
+
+		$htmlMessage = $this->transformHTML($htmlMessage);
+		//bx_helpers_debug::webdump($htmlMessage); return;
+
 		// TODO: convert HTML to TXT with Lynx
 		// exec( dirname(__FILE__)
 		// lynx -force_html -nocolor -dump test.xhtml
@@ -233,9 +335,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
 			$mime =& new Mail_mime();
 			if($textMessage !== false)
-				$mime->setTXTBody($customText);
+				$mime->setTXTBody(utf8_decode($customText));
 			if($htmlMessage !== false)
-				$mime->setHTMLBody($customHtml);
+				$mime->setHTMLBody(utf8_decode($customHtml));
 			$body = $mime->get();
 			$hdrs = $mime->headers($hdrs);								
 			$hdrs['Subject'] = $draft['subject'];
@@ -253,6 +355,21 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		// finally send the messages
 		$max_amount_mails = 100;
 		$mail_queue->sendMailsInQueue($max_amount_mails);	
+    }
+    
+    /**
+     * Add custom style to the HTML document to replace the missing .css style sheet
+     */
+    protected function transformHTML($inputMessage)
+    {
+		$xsl = new DomDocument();
+		$xsl->load('data/newsletter/transform.xsl');
+		$inputdom = new DomDocument();
+		$inputdom->loadXML($inputMessage);
+		$proc = new XsltProcessor();
+		$xsl = $proc->importStylesheet($xsl);
+		$newdom = $proc->transformToDoc($inputdom);
+		return $newdom->saveXML();    	
     }
     
     /**
@@ -293,6 +410,30 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	}
     	
     	return $newsletters;
+    }
+    
+    /**
+     * Imports a list of new users as comma separated values (CSV)
+     * Line format: firstname,lastname,gender(male|female),email
+     */
+    protected function importUsers($file)
+    {
+    	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    	
+    	$lines = explode("\n", $file);
+    	foreach($lines as $line)
+    	{
+    		$tokens = explode(",", $line);
+    		
+    		$tokens[2] = $tokens[2] == "male" ? 0 : 1;
+    		
+    		// check if the email address is set at least
+    		if(isset($tokens[3]))
+    		{
+	        	$query = "insert into ".$prefix."newsletter_users (firstname, lastname, gender, email) value('".$tokens[0]."', '".$tokens[1]."', '".$tokens[2]."', '".$tokens[3]."')";
+	        	$GLOBALS['POOL']->dbwrite->query($query);
+    		}
+    	}
     }
     
 	/**
