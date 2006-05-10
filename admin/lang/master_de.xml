@@ -87,4 +87,15 @@
     
     <message key="Edit Properties for {0}.">Bearbeiten der Eigenschaften für {0}.</message>
     
+    <!-- newsletter -->
+    <message key="Edit Groups">Gruppen editieren</message>
+    <message key="Edit Mailing Lists">Mail-Listen editieren</message>
+    <message key="Edit Mail Servers">Mail Server editieren</message>
+    <message key="User Management">Benutzerliste</message>
+    <message key="Create Newsletter">Newsletter erstellen</message>
+    <message key="Send Newsletter">Newsletter senden</message>
+    <message key="Newsletter Archive">Newsletter Archiv</message>
+    <message key="Subscribers">Abonnenten</message>
+    <message key="Newsletters">Newsletter</message>
+    
 </catalogue>
