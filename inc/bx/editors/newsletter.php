@@ -5,18 +5,6 @@
  */
 class bx_editors_newsletter extends bx_editor implements bxIeditor {    
     
-    protected $db_options;
-    
-    /**
-     * Configure Mail_Queue database options
-     */
-    public function __construct()
-    {
-		$this->db_options['type']       = 'db';
-		$this->db_options['dsn']        = 'mysql://fluxcms:fluxcms@localhost/fluxcms';
-		$this->db_options['mail_table'] = 'fluxcms_mail_queue';	
-    }
-    
     public function getDisplayName() {
         return "Newsletter";
     }
@@ -42,24 +30,29 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 						'".$data['from']."', '".$data['subject']."', '".$data['htmlfile']."', '".$data['textfile']."');";
 			$GLOBALS['POOL']->dbwrite->query($query);
 			
-			$draft = $GLOBALS['POOL']->dbwrite->queryOne("SELECT ID FROM ".$prefix."newsletter_drafts ORDER BY ID DESC LIMIT 1;");
+			$draftId = $GLOBALS['POOL']->dbwrite->queryOne("SELECT ID FROM ".$prefix."newsletter_drafts ORDER BY ID DESC LIMIT 1;");
+			
+			$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);	
 			
 			foreach($data['groups'] as $grp)
 			{
 				$query = 	"INSERT INTO ".$prefix."newsletter_drafts2groups (`fk_draft`,`fk_group`)
 							VALUES (
-							'".$draft."', '".$grp."');";
+							'".$draftId."', '".$grp."');";
 				$GLOBALS['POOL']->dbwrite->query($query);
 			}
 			
 			// Get a unique list of subscriptors
-			$query = "SELECT DISTINCT firstname, lastname, email, gender FROM ".$prefix."newsletter_users, ".$prefix."newsletter_drafts2groups, ".$prefix."newsletter_users2groups WHERE ".$prefix."newsletter_drafts2groups.fk_draft = ".$draft." AND ".$prefix."newsletter_users.id=".$prefix."newsletter_users2groups.fk_user AND ".$prefix."newsletter_users2groups.fk_group = ".$prefix."newsletter_drafts2groups.fk_group AND ".$prefix."newsletter_users.activated=1";
+			$query = "SELECT DISTINCT firstname, lastname, email, gender, activated FROM ".$prefix."newsletter_users, ".$prefix."newsletter_drafts2groups, ".$prefix."newsletter_users2groups WHERE ".$prefix."newsletter_drafts2groups.fk_draft = ".$draftId." AND ".$prefix."newsletter_users.id=".$prefix."newsletter_users2groups.fk_user AND ".$prefix."newsletter_users2groups.fk_group = ".$prefix."newsletter_drafts2groups.fk_group AND ".$prefix."newsletter_users.activated=1";
         	$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
 
-			$mailoptions = $this->getMailserverOptions($data['mailserver']);
+			// get news mailer instance
+			$classname = $this->getConfigParameter($id, "sendclass");
+			$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($classname);
 
 			// Send it
-			$this->sendNewsletter($draft, $users, $mailoptions);   
+			$mailoptions = bx_editors_newsmailer_newsmailer::getMailserverOptions($data['mailserver']);
+			$newsmailer->sendNewsletter($draft, $users, $mailoptions);   
      	}
      	else if($parts['name'] == "users/.")
      	{
@@ -82,7 +75,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     public function getEditContentById($id) {
      	
      	$parts = bx_collections::getCollectionUriAndFileParts($id);
-
+		
      	// Manage view requested
      	if($parts['name'] == "manage/")
      	{
@@ -172,6 +165,15 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateManageView()
     {
+    	$xsl = new DomDocument();
+		$xsl->load('themes/3-cols/scansystems.xsl');
+		$inputdom = new DomDocument();
+		$inputdom->load('data/newsletter/newsletter.en.xhtml');
+		$proc = new XsltProcessor();
+		$xsl = $proc->importStylesheet($xsl);
+		$newdom = $proc->transformToDoc($inputdom);	
+		bx_helpers_debug::webdump($newdom->saveXML());
+    	
     	// get information about the newsletters sent
 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_drafts";
@@ -226,12 +228,6 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			}
 		} 
 		
-		// the extra list consists of newsletter template that have not been sent yet
-		/*foreach($newsletters as $file)
-		{
-			$xml .= sprintf('<tr><td>%s</td><td></td><td>never</td></tr>', $file);					
-		}*/
-		
 		$xml .= '</table>
 		</form>
 		</newsletter>';
@@ -250,7 +246,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
 
  		$xml = '<newsletter>
-		<h3>Newsletter User Management</h3>
+		<h3>User Management</h3>
 		<form enctype="multipart/form-data" name="bx_news_users" action="#" method="post">
 		<table>
 		<cols>
@@ -300,97 +296,6 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     }
     
     /**
-     * Sends a bunch of mails
-     */
-    protected function sendNewsletter($draftId, $receivers, $mailoptions)
-    {
-    	// TODO: this belongs in a separate class for further customization
-    	
-     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);	
-    	
-    	// read in the newsletter templates if existing
-    	$htmlMessage = $this->readNewsletterFile($draft['htmlfile']);
-		$textMessage = $this->readNewsletterFile($draft['textfile']);
-
-		$htmlMessage = $this->transformHTML($htmlMessage);
-		//bx_helpers_debug::webdump($htmlMessage); return;
-
-		// TODO: convert HTML to TXT with Lynx
-		// exec( dirname(__FILE__)
-		// lynx -force_html -nocolor -dump test.xhtml
-	
-		$mail_queue =& new Mail_Queue($this->db_options, $mailoptions);
-		$hdrs = array( 'From'    => $draft['from']);
-
-		// Iterate over all newsletter receivers
-		foreach($receivers as $triple)
-		{
-			// create the personalized email 
-			// The following tags will be replaced with entries from the database:
-			//		{firstname}, {lastname}, {email}, {title}
-			$customHtml = $this->customizeMessage($htmlMessage, $triple);
-			$customText = $this->customizeMessage($textMessage, $triple);
-			
-			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
-			$mime =& new Mail_mime();
-			if($textMessage !== false)
-				$mime->setTXTBody(utf8_decode($customText));
-			if($htmlMessage !== false)
-				$mime->setHTMLBody(utf8_decode($customHtml));
-			$body = $mime->get();
-			$hdrs = $mime->headers($hdrs);								
-			$hdrs['Subject'] = $draft['subject'];
-			$hdrs['To'] = $triple['email'];
-			
-			// Generate a special bounce address e.g. fluxcms-bounces+milo=bitflux.ch@bitflux.ch
-			$bounceEmail = str_replace("@", "=", $triple['email']);
-			$hdrs['Return-Path'] = "fluxcms-bounces+".$bounceEmail."@bitflux.ch";
-			
-			// Put it in the queue (the message will be cached in the database)
-			$mail_queue->put($hdrs['From'], $triple['email'], $hdrs, $body );
-		}
-		
-		// TODO: this could be called from a CRON-job
-		// finally send the messages
-		$max_amount_mails = 100;
-		$mail_queue->sendMailsInQueue($max_amount_mails);	
-    }
-    
-    /**
-     * Add custom style to the HTML document to replace the missing .css style sheet
-     */
-    protected function transformHTML($inputMessage)
-    {
-		$xsl = new DomDocument();
-		$xsl->load('data/newsletter/transform.xsl');
-		$inputdom = new DomDocument();
-		$inputdom->loadXML($inputMessage);
-		$proc = new XsltProcessor();
-		$xsl = $proc->importStylesheet($xsl);
-		$newdom = $proc->transformToDoc($inputdom);
-		return $newdom->saveXML();    	
-    }
-    
-    /**
-     * Customized the message for a certain user
-     */
-    protected function customizeMessage($message, $parameters)
-    {
-			$title = $parameters['gender'] == '0' ? 'Herr' : 'Frau';
-			return str_replace(array('{firstname}', '{lastname}', '{email}', '{title}'), 
-										array($parameters['firstname'], $parameters['lastname'], $parameters['email'], $title), $message);  	
-    }
-
-    /**
-     * Reads a newsletter resource file and returns its content
-     */
-    protected function readNewsletterFile($name)
-    {
-    	return file_get_contents('data/newsletter/'.$name);
-    }
-    
-    /**
      * Gets all newsletters saved in the collection
      */
     protected function getNewsletterFilenames()
@@ -420,12 +325,15 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     {
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	
+    	// replace different line delimiters
+    	$file = str_replace(array("\r\n", "\r"), "\n", $file);
+    	
     	$lines = explode("\n", $file);
     	foreach($lines as $line)
     	{
     		$tokens = explode(",", $line);
-    		
-    		$tokens[2] = $tokens[2] == "male" ? 0 : 1;
+
+    		$tokens[2] = ($tokens[2][0] == 'm' ? 0 : 1);
     		
     		// check if the email address is set at least
     		if(isset($tokens[3]))
@@ -450,24 +358,19 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 	}
 	
 	/**
-	 * Creates the mail_options structure for sending mails over Mail_Queue
+	 * Gets a value from the .configxml
 	 */
-	protected function getMailserverOptions($id)
+	protected function getConfigParameter($id, $name)
 	{
-        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select * from ".$prefix."newsletter_mailservers where id=".$id;
-        $server = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);	
-        
-		$mail_options = array();
-		$mail_options['driver']    = 'smtp';
-		$mail_options['host']      = $server['host'];
-		$mail_options['port']      = $server['port'];
-		$mail_options['auth']      = empty($server['username']) ? false : true;
-		$mail_options['username']  = $server['username'];
-		$mail_options['password']  = $server['password'];	
-		//$mail_options['localhost'] = 'localhost'; //optional Mail_smtp parameter
-		
-		return $mail_options;
+	    $collection = bx_collections::getCollection($id);
+     	$plugins = $collection->getPluginMapByRequest($id);
+     	foreach($plugins as $p ) {
+     		if ($p['plugin']->name == 'newsletter') {
+     			$plugin = $p['plugin'];
+     			break;
+     		}
+     	}
+     	return $plugin->getParameter($collection->uri,$name);	
 	}
 }
 

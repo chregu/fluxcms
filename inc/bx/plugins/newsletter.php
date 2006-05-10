@@ -82,7 +82,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 
         // write to db
         if(isset($data['subscribe'])){
-        	$this->addSubscriber($data);
+        	$this->addSubscriber($data, $this->getParameter($path,"double-opt-in"), $this->getParameter($path,"sendclass"));
         }
         else if(isset($data['unsubscribe'])){
         	$this->removeSubscriber($data['email']);
@@ -92,22 +92,28 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 	/**
 	 * Add a new subscriber
 	 */
-    protected function addSubscriber($data){
+    protected function addSubscriber($data, $doubleopt, $sendclass){
     	
+    	//check for double-opt-in
     	$activated = 1;
-    	
-    	/* TODO: check for double-opt-in
-    	if(double-opt-in)
+    	if($doubleopt == "true")
     	{
     		$activated = mt_rand(10000000,99999999);
+    		$data['activated'] = $activated;
     		
-    		send email...
+    		// send user a mail with his activation id
+    		$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($sendclass);
+    		$newsmailer->sendActivationMail($data);
     	}
-    	*/
     	
         // add to database
+        $firstname = $GLOBALS['POOL']->dbwrite->quote($data['firstname']."");
+        $lastname = $GLOBALS['POOL']->dbwrite->quote($data['lastname']."");
+        $email = $GLOBALS['POOL']->dbwrite->quote($data['email']."");
+        $gender = $GLOBALS['POOL']->dbwrite->quote($data['gender']."");
+        
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "insert into ".$prefix."newsletter_users (firstname, lastname, email, gender, activated) value('".$data['firstname']."', '".$data['lastname']."', '".$data['email']."', '".$data['gender']."', '".$activated."')";
+        $query = "insert into ".$prefix."newsletter_users (firstname, lastname, email, gender, activated) value(".$firstname.", ".$lastname.", ".$email.", ".$gender.", '".$activated."')";
         $GLOBALS['POOL']->dbwrite->query($query);
         
         $userid = $this->getUserId($data['email']);
@@ -125,7 +131,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
      */
     protected function removeSubscriber($email){
     	$userid = $this->getUserId($email);
-    	
+
     	// remove user
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
         $query = "delete from ".$prefix."newsletter_users where id='".$userid."'";
@@ -141,8 +147,10 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
      */
     protected function activateSubscriber($id)
     {
+    	$id = $GLOBALS['POOL']->dbwrite->quote($id);
+    	
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "UPDATE ".$prefix."newsletter_users SET activated='1' WHERE activated = '".$id."'";
+        $query = "UPDATE ".$prefix."newsletter_users SET activated='1' WHERE activated = ".$id;
         $GLOBALS['POOL']->dbwrite->query($query);
     }
 	
@@ -162,8 +170,10 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 	 */
 	protected function getUserId($email)
 	{
+		$email = $GLOBALS['POOL']->dbwrite->quote($email);
+		
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select id from ".$prefix."newsletter_users where email='".$email."'";
+        $query = "select id from ".$prefix."newsletter_users where email=".$email;
         return $GLOBALS['POOL']->db->queryOne($query);	
 	}
     
@@ -174,7 +184,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $sections = array();
         $dom = new bx_domdocs_overview();
         
-        $dom->setTitle("Newsletter");
+        $dom->setTitle("Newsletter", "Newsletters");
         $dom->setPath($path);
         $dom->setIcon("gallery");
 

@@ -126,7 +126,7 @@ define('MAILQUEUE_UNKNOWN', -2);
  * This constant tells Mail_Queue how many times should try
  * to send mails again if was any errors before.
  */
-define('MAILQUEUE_TRY', 25);
+define('MAILQUEUE_TRY', 10);
 
 /**
  * MAILQUEUE_ERROR constants
