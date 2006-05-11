@@ -175,10 +175,10 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             }
             $retcode = 0;
             if (isset($_POST['bx']) && isset($_POST['bx']['plugins'])){
-                foreach($plugins as $id => $plugin) {
-                    if (isset($_POST['bx']['plugins'][$plugin['plugin']->name]) && isset($_POST['bx']['plugins'][$plugin['plugin']->name]['_all'])) {
+            	
+            	foreach($plugins as $id => $plugin) {
+                	if (isset($_POST['bx']['plugins'][$plugin['plugin']->name]) && isset($_POST['bx']['plugins'][$plugin['plugin']->name]['_all'])) {
                          $data = bx_helpers_globals::stripMagicQuotes($_POST);
-                         
                          foreach ($data['bx']['plugins'][$plugin['plugin']->name] as $name => $value) {
                              $data[$name] = $value;
                              unset ($data['bx']['plugins'][$plugin['plugin']->name][$name]);
@@ -190,6 +190,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                                  unset ($data['bx']);
                              }
                          }
+                    	     
                          $retcode = $plugin['plugin']->handlePublicPost($collection->uri,$id,$data);
                     } else if (isset($_POST['bx']['plugins'][$plugin['plugin']->name])) {
                         $data = bx_helpers_globals::stripMagicQuotes($_POST['bx']['plugins'][$plugin['plugin']->name]);

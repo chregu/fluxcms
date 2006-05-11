@@ -192,6 +192,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->addLink("Create Newsletter",'addresource/newsletter/?type=xhtml');
         $dom->addLink("Send Newsletter",'edit'.$path.'send/');
         $dom->addLink("Newsletter Archive",'edit'.$path.'manage/');
+        $dom->addLink("Generate from Feed",'edit'.$path.'feed/');
         
         // second tab
         $dom->addTab("Subscribers");
@@ -199,6 +200,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->addLink("Edit Groups",'dbforms2/newsletter_groups/');
         $dom->addLink("Edit Mailing Lists",'dbforms2/newsletter_lists/');
         $dom->addLink("Edit Mail Servers",'dbforms2/newsletter_mailservers/');
+        $dom->addLink("Edit RSS Feeds",'dbforms2/newsletter_feeds/');
         $dom->addLink("User Management",'edit'.$path.'users/');
         
         return $dom;

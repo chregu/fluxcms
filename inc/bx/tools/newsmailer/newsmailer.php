@@ -20,6 +20,7 @@ define('ID', '$Id: fluxcli.php 6796 2006-04-25 13:15:55Z philipp $');
 
 $commands = array(
     'sendmails',
+    'deletemails',
 );
 
 $options = array(
@@ -43,6 +44,9 @@ function printHelp() {
 
 send all mails in queue:
     newsmailer.php sendmails
+
+delete all mails in queue:
+    newsmailer.php deletemails
 ";
     exit(1);
 }
@@ -66,10 +70,29 @@ function _command_sendmails($options, $arguments) {
 	$mailserver = $newsmailer->getDefaultMailServer();
     $options = $newsmailer->getMailserverOptions($mailserver);
     		
-	$newsmailer->finalizeSend($options, 200);
+    echo "starting to send mails\n";
+    		
+	if($newsmailer->finalizeSend($options, 200)) {
+		echo "your mails have been sent";
+	}
+	else {
+		echo "an unexpected error occured";
+	}
 
     return TRUE;
 }
+
+function _command_deletemails($options, $arguments) {
+
+    $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    $query = "TRUNCATE TABLE ".$prefix."feeds";
+    $GLOBALS['POOL']->dbwrite->query($query);	
+
+	echo "your mails have been deleted";
+
+    return TRUE;
+}
+
 
 $argv = $_SERVER['argv'];
 array_shift($argv);

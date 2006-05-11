@@ -5,6 +5,8 @@
  */
 class bx_editors_newsletter extends bx_editor implements bxIeditor {    
     
+    protected $callbackDate = "00000000000000";
+    
     public function getDisplayName() {
         return "Newsletter";
     }
@@ -65,6 +67,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      				
      		}
      	}
+     	else if($parts['name'] == "feed/.")
+     	{
+     		// Generate a newsletter from a RSS feed
+     		$this->createFromFeed($data);	
+     	}
     }
     
     /**
@@ -91,6 +98,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		else if($parts['name'] == "users/")
 		{
      		return $this->generateUsersView();
+		}
+		
+     	// Send view requested
+		else if($parts['name'] == "feed/")
+		{
+     		return $this->generateFeedView();
 		}
     }
     
@@ -165,15 +178,6 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateManageView()
     {
-    	$xsl = new DomDocument();
-		$xsl->load('themes/3-cols/scansystems.xsl');
-		$inputdom = new DomDocument();
-		$inputdom->load('data/newsletter/newsletter.en.xhtml');
-		$proc = new XsltProcessor();
-		$xsl = $proc->importStylesheet($xsl);
-		$newdom = $proc->transformToDoc($inputdom);	
-		bx_helpers_debug::webdump($newdom->saveXML());
-    	
     	// get information about the newsletters sent
 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_drafts";
@@ -296,6 +300,40 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     }
     
     /**
+     * The feed view lets the user generate a html newsletter from a RSS feed
+     */
+    protected function generateFeedView()
+    {
+    	// show a list of available feeds
+ 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    	$query = "select * from ".$prefix."newsletter_feeds";
+    	$feeds = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
+
+		$feedsHTML = '<select name="feed" size="1">';
+  		foreach($feeds as $feed)
+  		{
+  			$feedsHTML .= '<option value="'.$feed["id"].'">'.$feed["name"].'</option>';	
+  		}
+		$feedsHTML .= '</select>';	
+					
+
+		$xml = '<newsletter>
+    	<form name="bx_news_send" action="#" method="post">
+			<table border="0" id="send">
+				<tr><td colspan="2"><h3>Generate Newsletter from RSS Feed</h3></td></tr>
+				<tr><td>Feed:</td><td>'.$feedsHTML.'</td></tr>
+				<tr>
+					<td></td>
+					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Generate" class="formbutton"/></td>
+				</tr>
+			</table>
+		</form>
+		</newsletter>';
+
+ 		return domdocument::loadXML($xml);    		
+    }
+    
+    /**
      * Gets all newsletters saved in the collection
      */
     protected function getNewsletterFilenames()
@@ -342,6 +380,65 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 	        	$GLOBALS['POOL']->dbwrite->query($query);
     		}
     	}
+    }
+    
+    /**
+     * Generates a HTML newsletter file from the given RSS feed. Only new entries since the feed was read last
+     * time are included in the message.
+     */
+    protected function createFromFeed($data)
+    {
+ 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    	$query = "SELECT * FROM ".$prefix."newsletter_feeds WHERE id=".$data["feed"];
+    	$feed = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);	    	
+
+    	// use html special characters so the code can be displayed later
+    	$feedContent = file_get_contents($feed["url"]);
+    	$feedContent = str_replace(array('&lt;', '&gt;'), array('<', '>'), $feedContent);
+    	
+    	// simplify date format (YYYYMMDDhhmmss) so we can compare it later within Xslt
+		$this->callbackDate = $feed["lastdate"];
+		$feedContent = preg_replace("/<dc:date>(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z<\/dc:date>/e", 
+									"'<dc:date>'.\$this->callbackFeedDate('$1$2$3$4$5$6').'</dc:date>'", 
+									$feedContent);
+ 
+		$xsl = new DomDocument();
+		$xsl->load('themes/3-cols/newsfeeds.xsl');
+		$inputdom = new DomDocument();
+		$inputdom->loadXML($feedContent);
+		$proc = new XsltProcessor();
+		$xsl = $proc->importStylesheet($xsl);
+		$proc->setParameter('', 'lastdate', $feed["lastdate"]);
+		$newdom = $proc->transformToDoc($inputdom);
+		
+		// save newsletter file
+		$filenameSimple = $feed["name"].'_'.date("Ymd-His");
+		$filename = $filenameSimple.'.en.xhtml';
+		$newdom->save('data/newsletter/'.$filename);
+		
+		// add as resource so it's visible inside the collection
+		bx_resourcemanager::setProperty("/newsletter/".$filename, "parent-uri", "/newsletter/");
+		bx_resourcemanager::setProperty("/newsletter/".$filename, "display-name", $filenameSimple);
+		bx_resourcemanager::setProperty("/newsletter/".$filename, "display-order", "0");
+		bx_resourcemanager::setProperty("/newsletter/".$filename, "mimetype", "text/html");
+		bx_resourcemanager::setProperty("/newsletter/".$filename, "output-mimetype", "text/html");
+		
+		// update table with the date of the most recent feed entry
+    	$query = "UPDATE ".$prefix."newsletter_feeds SET lastdate='".$this->callbackDate."' WHERE id=".$data["feed"];
+    	$GLOBALS['POOL']->dbwrite->query($query);	 		
+    }
+    
+    /**
+     * This callback function is invoked by createFromFeed in order to extract the date of the most recent feed entry
+     */
+    protected function callbackFeedDate($date)
+    {
+    	// if the new date is greater save it
+    	if($this->callbackDate < $date) {
+    		$this->callbackDate = $date;
+    	}
+    	
+    	return $date;
     }
     
 	/**

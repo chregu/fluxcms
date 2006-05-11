@@ -123,7 +123,8 @@ class bx_editors_newsmailer_newsmailer {
     public function finalizeSend($mailoptions, $maxAmount = 1000)
     {
     	$mail_queue = new Mail_Queue($this->db_options, $mailoptions);
-		return $mail_queue->sendMailsInQueue($maxAmount);	
+		$retval = $mail_queue->sendMailsInQueue($maxAmount);	
+		return !$mail_queue->isError($retval);
     }
     
     /**
