@@ -16,8 +16,7 @@ class bx_errorhandler {
 
     private function __construct() {
         $this->excludePath = array("Cache","Date", "Config","Text","Image","MDB2","PEAR","Log","log.php","HTTP".DIRECTORY_SEPARATOR."WebDAV","Auth","sitemap.php","HTTP".DIRECTORY_SEPARATOR."Request","HTTP".DIRECTORY_SEPARATOR."Client", "Net","patForms","patError","XML");
-        set_error_handler(array($this,"error"), E_ALL | E_STRICT);
-
+        set_error_handler(array($this,"error"), error_reporting());
     }
 
     public function error($errno, $errstr, $errfile, $errline, $ctx) {
