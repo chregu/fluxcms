@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<dbform:form 
+    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>
+
+    <dbform:fields table="newsletter_feeds">
+
+        <dbform:field name="name" type="text" descr="Name"/>
+        <dbform:field name="url" type="text" descr="RSS URL"/>
+        
+    </dbform:fields>    
+    <dbform:chooser namefield="concat(name,' (',id,')')" wherefields="name,url" limit="50"/>    
+
+</dbform:form>
