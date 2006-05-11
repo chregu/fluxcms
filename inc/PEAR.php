@@ -266,7 +266,7 @@ class PEAR
      */
     function isError($data, $code = null)
     {
-        if ($data instanceof PEAR_Error) {
+        if (is_a($data, 'PEAR_Error')) {
             if (is_null($code)) {
                 return true;
             } elseif (is_string($code)) {
