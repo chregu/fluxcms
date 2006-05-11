@@ -104,22 +104,23 @@ class bx_dbforms2_data {
      *  @access public
      *  @return type descr
      */
-    public static function addAdditionalDataByForm($form,$xml) {
+    public static function addAdditionalDataByForm($form, $xml) {
         
         $xp = new domxpath($xml);
         $dataNodeName = $form->tablePrefix.$form->tableName;
+        
         foreach($form->fields as $field) {
             $data = $field->getAdditionalData($form->currentID);
-            
             if ($data) {
                 
                 $res = $xp->query("/data/$dataNodeName/$dataNodeName/".$field->name);
                 if (!$res->item(0)) {
-                  $res = $xp->query("/data/$dataNodeName/$dataNodeName");
-                  $node = $res->item(0)->appendChild($xml->createElement(  $field->name));
+                $res = $xp->query("/data/$dataNodeName/$dataNodeName");
+                    $node = $res->item(0)->appendChild($xml->createElement(  $field->name));
                 } else {
                     $node = $res->item(0);
                 }
+                
                 if ($node) {
                     if ($node->firstChild) {
                         $vs = $xml->createElement("values");
@@ -130,12 +131,14 @@ class bx_dbforms2_data {
                     foreach ($data as $id => $value) {
                         $v = $xml->createElement("value");
                         $v->setAttribute("id",$id);
-                        $v->appendChild($xml->createTextNode($value));
+                        $v->appendChild($xml->createTextNode(html_entity_decode( $value, ENT_COMPAT, 'UTF-8')));
                         $vs->appendChild($v);
                     }
                 }
+                
             }
         }
+        
         return $xml;
     }
     
