@@ -95,6 +95,8 @@
     <message key="Create Newsletter">Newsletter erstellen</message>
     <message key="Send Newsletter">Newsletter senden</message>
     <message key="Newsletter Archive">Newsletter Archiv</message>
+    <message key="Generate from Feed">Aus Feed generieren</message>
+    <message key="Edit RSS Feeds">RSS Feeds editieren</message>
     <message key="Subscribers">Abonnenten</message>
     <message key="Newsletters">Newsletter</message>
     
