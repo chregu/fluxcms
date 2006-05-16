@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--1-->
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
 
     <map:components>
@@ -107,6 +108,7 @@
                     <map:serialize type="xhtml">
                         <map:parameter type="header" name="HTTP" value="404 Not Found"/>
                         <map:parameter name="stripScriptCDATA" value="true"/>
+                        <map:parameter name="stripXMLDeclaration" value="true"/>
                     </map:serialize>
                 </map:when>
                  <map:when test="BxPageNotAllowedException">
@@ -136,6 +138,7 @@
                     <map:serialize type="xhtml" noHttpCaching="true">
                       <!--  <map:parameter type="header" name="HTTP" value="404 Not Found"/>-->
                         <map:parameter name="stripScriptCDATA" value="true"/>
+                        <map:parameter name="stripXMLDeclaration" value="true"/>
                     </map:serialize>
                 </map:when>
 
