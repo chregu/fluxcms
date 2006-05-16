@@ -79,14 +79,17 @@ class bx_dbforms2_config {
      */
     protected function loadFromFile($file) {
 
+        if(!file_exists($file)) {
+            throw new PopoonFileNotFoundException($file);
+        }
+        
         if(@$this->dom->load($file)) {
             $this->xpath = new DOMXPath($this->dom);
             // register dbforms2 namespace
             $this->xpath->registerNamespace('dbform', 'http://bitflux.org/dbforms2/1.0');
             return TRUE;
         } else {
-            print "<pre>".htmlentities(file_get_contents($file))."</pre>";
-            throw new PopoonFileNotFoundException($file);
+            throw new PopoonXMLParseErrorException($file);
         }
         return FALSE;
     }
