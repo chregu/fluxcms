@@ -13,7 +13,7 @@
 // | Author: Alain Petignat <alain@flux-cms.org>                          |
 // +----------------------------------------------------------------------+
 //
-// $Id: index.php 4336 2005-05-26 09:20:14Z chregu $
+// $Id: index.php 4336 2005-05-26 09:20:14Z chregu $	
 
 
 
@@ -40,7 +40,7 @@ print "<pre/>";
 $db = $GLOBALS['POOL']->dbwrite;
 
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_mail_queue` (
+$queries[] = "CREATE TABLE `".$tablePrefix."mail_queue` (
   `id` bigint(20) NOT NULL default '0',
   `create_time` datetime NOT NULL default '0000-00-00 00:00:00',
   `time_to_send` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -59,12 +59,12 @@ $queries[] = "CREATE TABLE `".$tablePrefix."_mail_queue` (
   KEY `id_user` (`id_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_mail_queue_seq` (
+$queries[] = "CREATE TABLE `".$tablePrefix."mail_queue_seq` (
   `id` int(10) unsigned NOT NULL auto_increment,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_drafts` (
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts` (
   `from` varchar(100) NOT NULL,
   `subject` varchar(100) NOT NULL,
   `htmlfile` varchar(50) NOT NULL,
@@ -74,14 +74,14 @@ $queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_drafts` (
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_drafts2groups` (
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts2groups` (
   `fk_draft` int(10) unsigned NOT NULL,
   `fk_group` int(10) unsigned NOT NULL,
   `ID` int(10) unsigned NOT NULL auto_increment,
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_feeds` (
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_feeds` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(100) NOT NULL,
   `url` varchar(250) NOT NULL,
@@ -89,7 +89,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_feeds` (
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_groups` (
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_groups` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(100) NOT NULL,
   `public` tinyint(4) NOT NULL default '1',
@@ -97,7 +97,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_groups` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_mailservers` (
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_mailservers` (
   `host` varchar(100) NOT NULL,
   `port` varchar(10) NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -107,7 +107,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_mailservers` (
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_users` (
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_users` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `firstname` varchar(100) default NULL,
   `lastname` varchar(100) default NULL,
@@ -118,7 +118,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."_newsletter_users2groups` (
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_users2groups` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `fk_user` int(10) unsigned NOT NULL,
   `fk_group` int(10) unsigned NOT NULL,
