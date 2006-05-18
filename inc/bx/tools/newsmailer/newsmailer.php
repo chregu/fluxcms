@@ -16,11 +16,12 @@
 // $Id: fluxcli.php 6796 2006-04-25 13:15:55Z philipp $
 
 ini_set('html_errors', 0);
-define('ID', '$Id: fluxcli.php 6796 2006-04-25 13:15:55Z philipp $');
+define('ID', '$Id$');
 
 $commands = array(
     'sendmails',
     'deletemails',
+    'checkbounces',
 );
 
 $options = array(
@@ -47,6 +48,10 @@ send all mails in queue:
 
 delete all mails in queue:
     newsmailer.php deletemails
+
+check the inbox for bounces and process them:
+	newsmailer.php checkbounces <mailbox> <username> <password>
+	see http://ch2.php.net/manual/en/function.imap-open.php for <mailbox> syntax
 ";
     exit(1);
 }
@@ -62,6 +67,60 @@ function checkArgumentCount($arguments, $count) {
         printHelp();
     }
     return TRUE;
+}
+
+function _command_checkbounces($options, $arguments) {
+
+	checkArgumentCount($arguments, 3);    
+
+	 // e.g. {mail.bitflux.ch:143}bouncer", "milo", "xxx";
+     $mailbox = imap_open($arguments[0], $arguments[1], $arguments[2]);
+     
+     print("There are ".imap_num_msg($mailbox)." message in ".$arguments[0]."\n");
+     
+     for($i =1; $i<=imap_num_msg($mailbox); $i++) {
+     	
+     	$headers = imap_fetchheader($mailbox, $i);
+     	$headers = str_replace(array("\r\n", "\r"), "\n", $headers);
+     	
+     	$lines = explode("\n", $headers);
+     	foreach($lines as $line) {
+     		$param = array();
+     		eregi("^([^:]*): (.*)", $line, $param);	
+
+			// get the original receiver of this mail
+     		if($param[1] == "Return-Path") {
+     			$email = str_replace(array('<','>'), '', $param[2]);
+     			$parts = array();
+     			eregi("^([^\+]*)\+([^@]*)@(.*)", $email, $parts);
+     			$email = str_replace('=', '@', $parts[2]);
+     			
+     			if(!empty($email)) {
+					$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+			    	$query = "UPDATE ".$prefix."newsletter_users SET bounced=bounced+1 WHERE email='".$email."'";
+			    	$bounced = $GLOBALS['POOL']->dbwrite->exec($query);
+			    	if($bounced != 1) {
+			    		print("No subscription found for: " . $email."\n");
+			    	}
+			    	else {
+			    		print("Bounce: " . $email."\n");	
+			    	}
+			    	
+			    	// if we received more than 4 bounces deactivate the subscription
+			    	$query = "UPDATE ".$prefix."newsletter_users SET status=4 WHERE bounced > 4";
+			    	$GLOBALS['POOL']->dbwrite->exec($query);			
+     			}
+     		}
+     		
+     		// TODO: delete somehow doesn't really work with IMAP
+     		imap_delete($mailbox, $i);	
+     	}
+     }
+     
+     imap_close($mailbox); 
+     
+     return TRUE;	
+	
 }
 
 function _command_sendmails($options, $arguments) {
