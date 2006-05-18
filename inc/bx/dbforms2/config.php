@@ -379,8 +379,13 @@ class bx_dbforms2_config {
      *  @return object Field instance on succes, FALSE otherwise
      */
     protected function getFieldInstance($field, $name) {
-        // "string" becomes "bx_dbforms2_fields_string"
-        $class = "bx_dbforms2_fields_$field";
+        if($field == "nofield") {
+            // "string" becomes "bx_dbforms2_string" because it's no field ;) "bx_dbforms2_nofield"
+            $class = "bx_dbforms2_$field";
+        }else {
+            // "string" becomes "bx_dbforms2_fields_string"
+            $class = "bx_dbforms2_fields_$field";
+        }
 
         return new $class($name);
     }
