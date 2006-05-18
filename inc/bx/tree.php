@@ -93,6 +93,9 @@ class bx_tree {
             $childUri = "";
         }
         $nextnode = null;
+        
+        $displayNamePropertyNS = sprintf('bx:%2s', $GLOBALS['POOL']->config->getOutputLanguage());
+        
         foreach( $coll->getChildren() as $element => $entry) {
             if (!$this->perm->isAllowed($entry->getId(),array('read_navi', 'read'))) {
                 continue;
@@ -105,6 +108,11 @@ class bx_tree {
             $mt = $entry->getProperty("output-mimetype");
             if ($mt == "httpd/unix-directory") {
                 $el = $this->dom->createElement("collection");
+
+                $displayName = $entry->getProperty('display-name', $displayNamePropertyNS);
+                $displayNameNode = $this->dom->createElement('display-name', html_entity_decode($displayName, ENT_NOQUOTES, 'UTF-8'));
+                $el->appendChild($displayNameNode);
+
             } elseif (in_array($mt, $this->mimetypes)) {
                 $el = $this->dom->createElement("resource");
             } else {
