@@ -34,8 +34,25 @@ class bx_dbforms2_fields_number_int extends bx_dbforms2_fields_number {
     public function __construct($name) {
         parent::__construct($name);
         $this->type = 'number_int';
-    }
+        $this->XMLName = 'input';
+    }     
     
+        
+    /**
+     *  DOCUMENT_ME
+     *
+     *  @param  type  $var descr
+     *  @access public
+     *  @return type descr
+     */
+    protected function getXMLAttributes() {
+        var_dump($this->getAttribute('maxlength'));
+        return array(
+            'size' => $this->getAttribute('size'),
+            'maxlength' => $this->getAttribute('maxlength'),
+        );
+    
+    }
 }
 
 ?>

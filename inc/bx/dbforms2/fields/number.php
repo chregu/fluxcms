@@ -24,6 +24,18 @@
  */
 class bx_dbforms2_fields_number extends bx_dbforms2_field {
     
+    
+    public function getConfigAttributes() {
+        
+        $ret =  parent::getConfigAttributes();
+        $ret['size'] = 40;
+        $ret['maxlength'] = 4;
+        
+        return $ret;
+    }
+    
+
+
 }
 
 ?>
