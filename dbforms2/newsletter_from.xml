@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<dbform:form 
+    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>
+
+    <dbform:fields table="newsletter_from">
+
+        <dbform:field name="sender" type="text" descr="Sender"/>
+
+    </dbform:fields>    
+    <dbform:chooser namefield="concat(sender,' (',id,')')" wherefields="sender" limit="50"/>    
+
+</dbform:form>

@@ -10,6 +10,10 @@
             <dbform:value name="1">true</dbform:value>
             <dbform:value name="0">false</dbform:value>
         </dbform:field>
+        <dbform:field name="optin" type="select" descr="Double-Opt-In">   
+            <dbform:value name="0">false</dbform:value>
+            <dbform:value name="1">true</dbform:value>
+        </dbform:field>
 
     </dbform:fields>    
     <dbform:chooser namefield="concat(name,' (',id,')')" wherefields="name" limit="50"/>    
