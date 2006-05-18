@@ -46,7 +46,6 @@ class bx_dbforms2_fields_number_int extends bx_dbforms2_fields_number {
      *  @return type descr
      */
     protected function getXMLAttributes() {
-        var_dump($this->getAttribute('maxlength'));
         return array(
             'size' => $this->getAttribute('size'),
             'maxlength' => $this->getAttribute('maxlength'),
