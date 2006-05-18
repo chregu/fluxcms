@@ -89,10 +89,18 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_feeds` (
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_from` (
+  `ID` int(10) unsigned NOT NULL auto_increment,
+  `sender` varchar(100) NOT NULL,
+  PRIMARY KEY  (`ID`),
+  UNIQUE KEY `from` (`sender`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+
 $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_groups` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(100) NOT NULL,
   `public` tinyint(4) NOT NULL default '1',
+  `optin` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`ID`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
@@ -113,7 +121,11 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_users` (
   `lastname` varchar(100) default NULL,
   `email` varchar(100) NOT NULL,
   `gender` tinyint(4) NOT NULL default '0',
-  `activated` int(10) unsigned NOT NULL default '1',
+  `activation` int(10) unsigned NOT NULL default '0',
+  `created` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `status` tinyint(4) NOT NULL default '1',
+  `bounced` smallint(6) NOT NULL default '0',
+  `lastevent` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`ID`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
@@ -122,7 +134,9 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_users2groups` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `fk_user` int(10) unsigned NOT NULL,
   `fk_group` int(10) unsigned NOT NULL,
-  PRIMARY KEY  (`ID`)
+  `stamp` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`ID`),
+  UNIQUE KEY `fk_group` (`fk_group`,`fk_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0;";
 
 
@@ -153,7 +167,10 @@ $configxml = '<bxcms xmlns ="http://bitflux.org/config">
 
 <plugin type ="newsletter">
   <parameter name="sendclass" value="newsmailer"/>
-  <parameter name="double-opt-in" value="true"/>
+  <parameter name="activation-server" value="Bitflux"/>
+  <parameter name="activation-from" value="milo@bitflux.ch"/>
+  <parameter name="activation-subject" value="Newsletter Activation"/>
+  <parameter name="activation-text" value="activation.en.xhtml"/>
 </plugin>
 
 <plugin type ="navitree"></plugin>

@@ -55,8 +55,8 @@ class bx_editors_newsmailer_newsmailer {
     public function sendNewsletter($draft, $receivers, $mailoptions, $embedImages = false)
     {
     	// read in the newsletter templates if existing
-    	$htmlMessage = $this->readNewsletterFile($draft['htmlfile']);
-		$textMessage = $this->readNewsletterFile($draft['textfile']);
+    	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
+		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
 
 		$dom = new DomDocument();
 		$dom->loadXML($htmlMessage);
@@ -168,6 +168,7 @@ class bx_editors_newsmailer_newsmailer {
     
     /**
      * Customized the message for a certain user
+     * tags in the form of {field} are replaced with its corresponding value from the database
      */
     protected function customizeMessage($message, $person)
     {
@@ -187,7 +188,7 @@ class bx_editors_newsmailer_newsmailer {
     /**
      * Reads a newsletter resource file and returns its content
      */
-    protected function readNewsletterFile($name)
+    protected function readNewsletterFile($name, $type)
     {
     	return file_get_contents('data/newsletter/'.$name);
     }
@@ -199,7 +200,7 @@ class bx_editors_newsmailer_newsmailer {
     {
 		// Generate a special bounce address e.g. fluxcms-bounces+milo=bitflux.ch@bitflux.ch
 		$bounceEmail = str_replace("@", "=", $parameters['email']);
-		return "fluxcms-bounces+".$bounceEmail."@bitflux.ch";    	
+		return "milo+".$bounceEmail."@bitflux.ch";    	
     }
     
     /**

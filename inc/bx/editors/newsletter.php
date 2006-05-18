@@ -25,9 +25,16 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	// Send event
      	if($parts['name'] == "send/.")
      	{
-     		if($data['groups'] === null) {
-     			$_POST["nogroups"] = true;
+     		if($data["_all"] == "Preview") {
+     			if($data['groups'] === null) {
+     				$_POST["nogroups"] = true;
+     			}
+     			
+     			$_POST["preview"] = true;
      			return;
+     		}
+     		else {
+     			$_POST["sent"] = true;
      		}
      		
      		// Save all the information we received about the newsletter in the database for archiving purposes
@@ -95,6 +102,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	// Send view requested
 		else if($parts['name'] == "send/")
 		{
+			if(isset($_POST["preview"]) and !isset($_POST["nogroups"])) {
+				return $this->generatePreviewView();
+			}
      		return $this->generateSendView();
 		}
 		
@@ -109,6 +119,77 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		{
      		return $this->generateFeedView();
 		}
+    }
+  
+    /**
+     * The send view lets the user enter information about the newsletter to be sent
+     */
+    protected function generatePreviewView()
+    {
+    	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+        $query = "select * from ".$prefix."newsletter_mailservers where id=".$_POST["mailserver"];
+        $mailserver = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC); 
+    	
+    	if(!isset($_POST["embed"])) {
+    		$_POST["embed"] = "off";
+    	}
+    	
+    	$groupIds = implode(",", $_POST["groups"]);
+        $query = "select name from ".$prefix."newsletter_groups where id in (".$groupIds.")";
+        $groups = implode(",", $GLOBALS['POOL']->db->queryCol($query)); 
+    	
+    	$query = "select DISTINCT fk_user from ".$prefix."newsletter_users2groups, ".$prefix."newsletter_users where fk_group in (".$groupIds.") AND fk_user=".$prefix."newsletter_users.id AND ".$prefix."newsletter_users.status='1' ORDER BY fk_user";
+    	$usercount = count($GLOBALS['POOL']->db->queryAll($query)); 
+    	
+		$xml = '<newsletter>
+    	<form name="bx_news_send" action="#" method="post">
+			<h3>Newsletter Preview</h3>
+			<table border="0" id="send">
+				<tr><td>From:</td><td>'.$_POST["from"].'</td></tr>
+				<tr><td style="vertical-align:top">To:</td><td>'.$groups.' ('.$usercount.' subscribers)'.'</td></tr>
+				<tr><td>Subject:</td><td>'.$_POST["subject"].'</td></tr>
+				<tr><td>Mail Server:</td><td>'.$mailserver["descr"].' ('.$mailserver["host"].')'.'</td></tr>
+				<tr><td>Embed Images:</td><td>'.$_POST["embed"].'</td></tr>
+				<tr>
+					<td></td>
+					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Send" class="formbutton"/></td>
+				</tr>
+			</table><br/>
+
+			<table>
+				<cols>
+					<col width="700"/>
+					<col width="500"/>
+				</cols>
+				<tr>
+					<td><b>'.$_POST["htmlfile"].'</b></td>
+					<td><b>'.$_POST["textfile"].'</b></td>
+				</tr>
+				<tr>
+					<td>
+						<iframe src="'.BX_WEBROOT.'admin/edit/newsletter/'.$_POST["htmlfile"].'?editor=kupu" width="100%" height="500" name="htmlfile"/>
+					</td>
+					<td>
+						<iframe src="'.BX_WEBROOT.'admin/edit/newsletter/'.$_POST["textfile"].'?editor=oneform" width="100%" height="500" name="textfile"/>
+					</td>
+				</tr>
+			</table>
+
+			<input type="hidden" name="from" value="'.$_POST["from"].'"/>
+			<input type="hidden" name="subject" value="'.$_POST["subject"].'"/>
+			<input type="hidden" name="htmlfile" value="'.$_POST["htmlfile"].'"/>
+			<input type="hidden" name="textfile" value="'.$_POST["textfile"].'"/>
+			<input type="hidden" name="mailserver" value="'.$_POST["mailserver"].'"/>';
+		if($_POST["embed"] == "on") {
+			$xml .= '<input type="hidden" name="embed" value="'.$_POST["embed"].'"/>';
+		}
+		foreach($_POST["groups"] as $group) {
+			$xml .=	'<input type="hidden" name="groups[]" value="'.$group.'"/>';
+		}
+		$xml .= '</form>
+		</newsletter>';
+    	
+    	return domdocument::loadXML($xml);
     }
     
     /**
@@ -166,13 +247,16 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		$serversHtml .= '</select>';				
 
 		if(isset($_POST["nogroups"])) {
-			$error = "<b>ERROR: Select at least one group</b>";	
+			$msg = "<b>ERROR: Select at least one group</b>";	
+		}
+		else if(isset($_POST["sent"])) {
+			$msg = "<b>Your message has been sent</b>";	
 		}
 
 		$xml = '<newsletter>
     	<form name="bx_news_send" action="#" method="post">
 			<h3>Send Newsletter</h3>';
-		$xml .= $error;
+		$xml .= $msg;
 		$xml .= '<table border="0" id="send">
 				<tr><td>From:</td><td>'.$sendersHTML.'</td></tr>
 				<tr><td style="vertical-align:top">To:</td><td>'.$groupsHTML.'</td></tr>
@@ -239,8 +323,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 					$groupstring .= ", ";
 				$groupstring .= $groups[$i]["name"];	
 			}
-			
-			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>', 
+
+			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="'.BX_WEBROOT.'admin/edit/newsletter/'.$row['htmlfile'].'?editor=kupu">%s</a></td><td><a href="'.BX_WEBROOT.'admin/edit/newsletter/'.$row['textfile'].'?editor=oneform">%s</a></td><td>%s</td></tr>', 
 							$row['from'], $groupstring, $row['subject'], $row['htmlfile'], $row['textfile'], $row['sent']);
 					
 			// remove the element if it was already sent from the extra list
