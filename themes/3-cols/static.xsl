@@ -43,6 +43,12 @@
     <xsl:apply-templates select="/bx/plugin[@name='xhtml']/xhtml:html/xhtml:body/@*" mode="xhtml"/>
     </xsl:template>
     
+    <xsl:template match="xhtml:span[@id='status']" mode="xhtml">
+    	<xsl:if test="/bx/plugin[@name='newsletter']/newsletter/status">
+    		<b><xsl:value-of select="/bx/plugin[@name='newsletter']/newsletter/status"/></b>
+    	</xsl:if>
+    </xsl:template>
+    
     <xsl:template match="xhtml:div[@id='newsletter_groups']" mode="xhtml">
         <xsl:for-each select="/bx/plugin[@name='newsletter']/newsletter/group">
         	<input type="checkbox" name="groups[]" checked="checked" value="{@id}"/>
