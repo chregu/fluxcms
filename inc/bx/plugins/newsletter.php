@@ -42,20 +42,48 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 	 */
 	public function getContentById ($path , $id) {
 		
+		$xml ='<newsletter>';
+		
 		// enable to unsubscribe directly over the URL by appending ?unsubsribe={email}
 		// this is needed in order to add unsubsribe-links to newsletter mails
 		if(isset($_GET["unsubscribe"]))
 		{   
-			$this->removeSubscriber($_GET['unsubscribe']);
+			if(!$this->removeSubscriber($_GET['unsubscribe'])) {
+				$_POST["notfound"] = "true";
+			}
 		}
 		// activate an account in case double-opt-in is enabled
 		else if(isset($_GET["activate"]))
 		{   
-			$this->activateSubscriber($_GET['activate']);
+			if($this->activateSubscriber($_GET['activate'])) {
+				$xml .= '<status>Your subscription has been activated.</status>';
+			}
+			else {
+				$xml .= '<status>ERROR: The provided activation id is invalid.</status>';
+			}
 		}
 		
+		if(isset($_POST["notfound"]))
+		{
+			$xml .= '<status>ERROR: Your subscription could not be found!</status>';
+		}		
+		else if(isset($_GET["unsubscribe"]) or isset($_POST["unsubscribe"]))
+		{
+			$xml .= '<status>Your subscription has been canceled.</status>';
+		}
+		else if(isset($_POST["duplicate"]))
+		{
+			$xml .= '<status>ERROR: Your email address is already in use!</status>';
+		}
+		else if(isset($_POST["subscribe"]))
+		{
+			$xml .= '<status>Your subscription was added successfully.</status>';
+		}
+		
+
+		
 		// pass through the list of public groups to the static.xsl
-		$xml ='<newsletter>';
+		
 		foreach ($this->getGroups() as $row)
 		{
 			$xml .= '<group id="'.$row['id'].'">'.$row['name'].'</group>';
@@ -82,48 +110,78 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 
         // write to db
         if(isset($data['subscribe'])){
-        	$this->addSubscriber($data, $this->getParameter($path,"double-opt-in"), $this->getParameter($path,"sendclass"));
+        	if($this->addSubscriber($data, $path) === false) {
+        		$_POST["duplicate"] = "true";
+        	}
         }
         else if(isset($data['unsubscribe'])){
-        	$this->removeSubscriber($data['email']);
+        	if($this->removeSubscriber($data['email']) === false) {
+        		$_POST["notfound"] = "true";
+        	}
         }
     }
 	
 	/**
 	 * Add a new subscriber
 	 */
-    protected function addSubscriber($data, $doubleopt, $sendclass){
-    	
-    	//check for double-opt-in
-    	$activated = 1;
-    	if($doubleopt == "true")
+    protected function addSubscriber($data, $path) {
+
+		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+
+    	// create a query with all input fields starting with 'field_'
+    	$queryFields = "";
+    	$queryValues = "";
+    	foreach($data as $key => $value)
     	{
-    		$activated = mt_rand(10000000,99999999);
-    		$data['activated'] = $activated;
-    		
-    		// send user a mail with his activation id
-    		$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($sendclass);
-    		$newsmailer->sendActivationMail($data);
+    		if(strncmp($key, "field_", 6) == 0) {
+    			$queryFields .= substr($key, 6) . ",";
+    			$queryValues .= $GLOBALS['POOL']->dbwrite->quote($value."") . ",";
+    			$data[substr($key, 6)] = $value;
+    		}
+    	}
+
+    	// create a random activation id
+    	$activation = $activation = mt_rand(10000000,99999999);
+    	$data['activation'] = $activation;
+    	$status = 1;
+    	
+    	// check if the user wants to join a double-opt-in group
+    	$query = "select id from ".$prefix."newsletter_groups WHERE optin=1 AND public=1";
+    	$optinGroups = $GLOBALS['POOL']->db->queryRow($query);	
+    	
+    	$doubleopt = false;
+    	if(count(array_intersect($optinGroups, $data['groups'])) > 0) {
+    		$doubleopt = true;
+    		$status = 2; // needs activation
     	}
     	
+    	$userid = $this->getUserId($data['field_email']);
+    	
+    	// delete old entries with the same email address
+    	$query = "delete from ".$prefix."newsletter_users where id='".$userid."' AND status=3";
+        $GLOBALS['POOL']->dbwrite->exec($query);
+    	
         // add to database
-        $firstname = $GLOBALS['POOL']->dbwrite->quote($data['firstname']."");
-        $lastname = $GLOBALS['POOL']->dbwrite->quote($data['lastname']."");
-        $email = $GLOBALS['POOL']->dbwrite->quote($data['email']."");
-        $gender = $GLOBALS['POOL']->dbwrite->quote($data['gender']."");
-        
-        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "insert into ".$prefix."newsletter_users (firstname, lastname, email, gender, activated) value(".$firstname.", ".$lastname.", ".$email.", ".$gender.", '".$activated."')";
-        $GLOBALS['POOL']->dbwrite->query($query);
-        
-        $userid = $this->getUserId($data['email']);
-        
+        $query = "insert into ".$prefix."newsletter_users (".$queryFields."activation,status,created) value(".$queryValues."'".$activation."','".$status."',NOW())";
+        if($GLOBALS['POOL']->dbwrite->exec($query) !== 1) {
+        	// could not insert user
+        	return false;	
+        }
+
         // add to selected groups
         foreach($data['groups'] as $grp)
         {
         	$query = "insert into ".$prefix."newsletter_users2groups (fk_user, fk_group) value('".$userid."', '".$grp."')";
-        	$GLOBALS['POOL']->dbwrite->query($query);
+        	$GLOBALS['POOL']->dbwrite->exec($query);
         }
+        
+    	if($doubleopt == "true") {
+    		// send user a mail with his activation id
+    		$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($this->getParameter($path,"sendclass"));
+    		$newsmailer->sendActivationMail($data, $this->getParameter($path,"activation-server"), 
+    			$this->getParameter($path,"activation-from"), $this->getParameter($path,"activation-subject"),
+    			$this->getParameter($path,"activation-text"), $this->getParameter($path,"activation-html"));
+    	}
     }
     
     /**
@@ -134,12 +192,17 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 
     	// remove user
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "delete from ".$prefix."newsletter_users where id='".$userid."'";
-        $GLOBALS['POOL']->dbwrite->query($query);
+        $query = "UPDATE ".$prefix."newsletter_users SET status='3' WHERE id='".$userid."'";
+        if($GLOBALS['POOL']->dbwrite->exec($query) !== 1) {
+        	// could not deactivate user
+        	return false;	
+        }
         
         // remove from groups
         $query = "delete from ".$prefix."newsletter_users2groups where fk_user='".$userid."'";
-        $GLOBALS['POOL']->dbwrite->query($query);
+        $GLOBALS['POOL']->dbwrite->exec($query);
+        
+        return true;
     }
     
     /**
@@ -147,11 +210,18 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
      */
     protected function activateSubscriber($id)
     {
+    	if($id < 10000000 or $id > 99999999)
+    		return false;
+    	
     	$id = $GLOBALS['POOL']->dbwrite->quote($id);
     	
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "UPDATE ".$prefix."newsletter_users SET activated='1' WHERE activated = ".$id;
-        $GLOBALS['POOL']->dbwrite->query($query);
+        $query = "UPDATE ".$prefix."newsletter_users SET status='1' WHERE activation = ".$id;
+        if($GLOBALS['POOL']->dbwrite->exec($query) !== 1) {
+        	// could not find user
+        	return false;	
+        }
+        return true;
     }
 	
 	/**
@@ -195,10 +265,10 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->addLink("Generate from Feed",'edit'.$path.'feed/');
         
         // second tab
-        $dom->addTab("Subscribers");
+        $dom->addTab("Management");
         $dom->addLink("Edit Users",'dbforms2/newsletter_users/');
         $dom->addLink("Edit Groups",'dbforms2/newsletter_groups/');
-        $dom->addLink("Edit Mailing Lists",'dbforms2/newsletter_lists/');
+        $dom->addLink("Edit Senders",'dbforms2/newsletter_from/');
         $dom->addLink("Edit Mail Servers",'dbforms2/newsletter_mailservers/');
         $dom->addLink("Edit RSS Feeds",'dbforms2/newsletter_feeds/');
         $dom->addLink("User Management",'edit'.$path.'users/');

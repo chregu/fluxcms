@@ -5,6 +5,7 @@
  */
 class bx_editors_newsmailer_newsmailer {    
     
+    protected static $htmlImages = array();
     protected $db_options;
     
     /**
@@ -12,9 +13,10 @@ class bx_editors_newsmailer_newsmailer {
      */
     public function __construct()
     {
+    	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
 		$this->db_options['type']       = 'db';
-		$this->db_options['dsn']        = 'mysql://fluxcms:fluxcms@localhost/fluxcms';
-		$this->db_options['mail_table'] = 'fluxcms_mail_queue';	
+		$this->db_options['dsn']        = $GLOBALS['POOL']->dbwrite->getDSN();
+		$this->db_options['mail_table'] = $prefix.'mail_queue';	
     }
     
     /**
@@ -46,27 +48,26 @@ class bx_editors_newsmailer_newsmailer {
 		
 		return $mail_options;
 	}
-	
-	/**
-	 * Returns the id of the mailserver with the name 'default'
-	 */
-	final public static function getDefaultMailServer()
-	{
-        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select id from ".$prefix."newsletter_mailservers where descr='default'";
-        return $GLOBALS['POOL']->db->queryOne($query);			
-	}
     
     /**
      * Sends a bunch of mails
      */
-    public function sendNewsletter($draft, $receivers, $mailoptions)
+    public function sendNewsletter($draft, $receivers, $mailoptions, $embedImages = false)
     {
     	// read in the newsletter templates if existing
     	$htmlMessage = $this->readNewsletterFile($draft['htmlfile']);
 		$textMessage = $this->readNewsletterFile($draft['textfile']);
 
-		$htmlMessage = $this->transformHTML($htmlMessage);
+		$dom = new DomDocument();
+		$dom->loadXML($htmlMessage);
+		
+		if($embedImages) {
+			self::$htmlImages = array();
+			$dom = $this->transformHTMLImages($dom);
+    	}
+		$dom = $this->transformHTML($dom);
+
+		$htmlTransform = $dom->saveXML();
 
 		// TODO: convert HTML to TXT with Lynx
 	
@@ -77,7 +78,7 @@ class bx_editors_newsmailer_newsmailer {
 		foreach($receivers as $person)
 		{
 			// create the personalized email 
-			$customHtml = $this->customizeMessage($htmlMessage, $person);
+			$customHtml = $this->customizeMessage($htmlTransform, $person);
 			$customText = $this->customizeMessage($textMessage, $person);
 			
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
@@ -86,6 +87,15 @@ class bx_editors_newsmailer_newsmailer {
 				$mime->setTXTBody(utf8_decode($customText));
 			if($htmlMessage !== false)
 				$mime->setHTMLBody(utf8_decode($customHtml));
+				
+			if($embedImages) {
+				// Add images to MIME Body
+				foreach(self::$htmlImages as $image) {
+					$type = end(explode(".", $image["name"]));
+					$mime->addHTMLImage($image["content"], "image/".$type, $image["name"], false);
+				}
+			}
+
 			$body = $mime->get();
 			$hdrs = $mime->headers($hdrs);								
 			$hdrs['Subject'] = $draft['subject'];
@@ -95,7 +105,7 @@ class bx_editors_newsmailer_newsmailer {
 			// Put it in the queue (the message will be cached in the database)
 			$mail_queue->put($hdrs['From'], $person['email'], $hdrs, $body );
 		}
-		
+
 		// wait a second before we send, otherwise the queue seems to be empty (bug)
     	sleep(1);
 		
@@ -105,16 +115,24 @@ class bx_editors_newsmailer_newsmailer {
     /**
      * If double-opt-in is set, send the user an email in order to confirm his subscription
      */
-    public function sendActivationMail($person)
+    public function sendActivationMail($person, $mailserver, $mailfrom, $mailsub, $mailtext, $mailhtml)
     {
-    		$mailserver = $this->getDefaultMailServer();
-    		$options = $this->getMailserverOptions($mailserver);
-    		
-    		$draft = array(	"from" => "milo@bitflux.ch",
-    						"subject" => "Bitflux Newsletter Activation",
-    						"textfile" => "activation.en.xhtml");
-    		
-    		$this->sendNewsletter($draft, array($person), $options);
+    	if($mailserver === null) {
+			$mailserver = "default";
+    	}
+
+		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    	$query = "select id from ".$prefix."newsletter_mailservers where descr='".$mailserver."'";
+    	$mailserver = $GLOBALS['POOL']->db->queryOne($query);			
+
+		$options = $this->getMailserverOptions($mailserver);
+		
+		$draft = array(	"from" => $mailfrom,
+						"subject" => $mailsub,
+						"textfile" => $mailtext,
+						"htmlfile" => $mailhtml);
+
+		$this->sendNewsletter($draft, array($person), $options);
     }
     
     /**
@@ -128,11 +146,24 @@ class bx_editors_newsmailer_newsmailer {
     }
     
     /**
-     * Add custom style to the HTML document to replace the missing .css style sheet
+     * Add custom style to the HTML document
      */
-    protected function transformHTML($inputMessage)
+    protected function transformHTML($inputdom)
     {
-		return $inputMessage;   	
+		return $inputdom;   	  	
+    }
+    
+    /**
+     * Embedds images directly into the HTML document
+     */
+    protected function transformHTMLimages($inputdom)
+    {
+		$xsl = new DomDocument();
+		$xsl->load('themes/3-cols/htmlimage.xsl');
+		$proc = new XsltProcessor();
+		$proc->registerPHPFunctions();
+		$xsl = $proc->importStylesheet($xsl);
+		return $proc->transformToDoc($inputdom);  	
     }
     
     /**
@@ -140,9 +171,17 @@ class bx_editors_newsmailer_newsmailer {
      */
     protected function customizeMessage($message, $person)
     {
-		$title = $person['gender'] == '0' ? 'Herr' : 'Frau';
-		return str_replace(array('{firstname}', '{lastname}', '{email}', '{title}', '{activation}'), 
-							array($person['firstname'], $person['lastname'], $person['email'], $title, $person['activated']), $message);
+    	$templates = array();
+    	$values = array();
+    	foreach($person as $key=>$val) {
+    		array_push($templates, '{' . $key . '}');
+    		array_push($values, $val);
+    	}
+    	
+    	array_push($templates, '{title}');
+    	array_push($values, $person['gender'] == '0' ? 'Mr' : 'Ms');
+    	
+    	return str_replace($templates, $values, $message);
     }
 
     /**
@@ -161,6 +200,25 @@ class bx_editors_newsmailer_newsmailer {
 		// Generate a special bounce address e.g. fluxcms-bounces+milo=bitflux.ch@bitflux.ch
 		$bounceEmail = str_replace("@", "=", $parameters['email']);
 		return "fluxcms-bounces+".$bounceEmail."@bitflux.ch";    	
+    }
+    
+    /**
+     * Callback function from htmlimage.xsl
+     * Preloads the images found and returns a short filename in order to reference them as embedded HTML images
+     */
+    public static function adjustImagePath($path)
+    {
+    	// extract filename
+    	$path = ltrim($path, "/");
+    	$shortname = end(preg_split("[\\/]", $path));	
+    	
+    	if(($content = file_get_contents($path)) != false) {
+    		
+    		// save the loaded image, this array is being read by sendNewsletter() later
+    		self::$htmlImages[] = array("name" => $shortname, "content" => $content);
+    	}
+    	
+    	return $shortname;
     }
 }
 

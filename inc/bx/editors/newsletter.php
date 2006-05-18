@@ -25,12 +25,17 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	// Send event
      	if($parts['name'] == "send/.")
      	{
+     		if($data['groups'] === null) {
+     			$_POST["nogroups"] = true;
+     			return;
+     		}
+     		
      		// Save all the information we received about the newsletter in the database for archiving purposes
      		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
      		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`)
 						VALUES (
 						'".$data['from']."', '".$data['subject']."', '".$data['htmlfile']."', '".$data['textfile']."');";
-			$GLOBALS['POOL']->dbwrite->query($query);
+			$GLOBALS['POOL']->dbwrite->exec($query);
 			
 			$draftId = $GLOBALS['POOL']->dbwrite->queryOne("SELECT ID FROM ".$prefix."newsletter_drafts ORDER BY ID DESC LIMIT 1;");
 			
@@ -41,11 +46,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				$query = 	"INSERT INTO ".$prefix."newsletter_drafts2groups (`fk_draft`,`fk_group`)
 							VALUES (
 							'".$draftId."', '".$grp."');";
-				$GLOBALS['POOL']->dbwrite->query($query);
+				$GLOBALS['POOL']->dbwrite->exec($query);
 			}
 			
 			// Get a unique list of subscriptors
-			$query = "SELECT DISTINCT firstname, lastname, email, gender, activated FROM ".$prefix."newsletter_users, ".$prefix."newsletter_drafts2groups, ".$prefix."newsletter_users2groups WHERE ".$prefix."newsletter_drafts2groups.fk_draft = ".$draftId." AND ".$prefix."newsletter_users.id=".$prefix."newsletter_users2groups.fk_user AND ".$prefix."newsletter_users2groups.fk_group = ".$prefix."newsletter_drafts2groups.fk_group AND ".$prefix."newsletter_users.activated=1";
+			$query = "SELECT DISTINCT * FROM ".$prefix."newsletter_users, ".$prefix."newsletter_drafts2groups, ".$prefix."newsletter_users2groups WHERE ".$prefix."newsletter_drafts2groups.fk_draft = ".$draftId." AND ".$prefix."newsletter_users.id=".$prefix."newsletter_users2groups.fk_user AND ".$prefix."newsletter_users2groups.fk_group = ".$prefix."newsletter_drafts2groups.fk_group AND ".$prefix."newsletter_users.status=1";
         	$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
 
 			// get news mailer instance
@@ -54,7 +59,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 
 			// Send it
 			$mailoptions = bx_editors_newsmailer_newsmailer::getMailserverOptions($data['mailserver']);
-			$newsmailer->sendNewsletter($draft, $users, $mailoptions);   
+			$newsmailer->sendNewsletter($draft, $users, $mailoptions, isset($data["embed"]));   
      	}
      	else if($parts['name'] == "users/.")
      	{
@@ -62,8 +67,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      		{
      			// get the content of the uploaded file
      			$file = utf8_encode(file_get_contents($_FILES["userfile"]["tmp_name"]));
-     			//bx_helpers_debug::webdump($file);
-     			$this->importUsers($file);
+     			$this->importUsers($file, $_POST["importgroup"]);
      				
      		}
      	}
@@ -116,6 +120,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
  		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_groups";
     	$groups = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
+    	$query = "select * from ".$prefix."newsletter_from";
+    	$senders = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
 
 		$groupsHTML = '<select name="groups[]" size="'.count($groups).'" multiple="multiple">';
   		foreach($groups as $row)
@@ -123,6 +129,13 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
   			$groupsHTML .= '<option value="'.$row['id'].'">'.$row['name'].'</option>';	
   		}
 		$groupsHTML .= '</select>';
+
+		$sendersHTML = '<select name="from" size="1">';
+  		foreach($senders as $row)
+  		{
+  			$sendersHTML .= '<option value="'.$row['sender'].'">'.$row['sender'].'</option>';	
+  		}
+		$sendersHTML .= '</select>';
 
 		// show a list of newsletter templates created
 		$files = $this->getNewsletterFilenames();
@@ -152,19 +165,25 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
   		}
 		$serversHtml .= '</select>';				
 
+		if(isset($_POST["nogroups"])) {
+			$error = "<b>ERROR: Select at least one group</b>";	
+		}
+
 		$xml = '<newsletter>
     	<form name="bx_news_send" action="#" method="post">
-			<table border="0" id="send">
-				<tr><td colspan="2"><h3>Send Newsletter</h3></td></tr>
-				<tr><td>From:</td><td><input type="text" name="from"/></td></tr>
+			<h3>Send Newsletter</h3>';
+		$xml .= $error;
+		$xml .= '<table border="0" id="send">
+				<tr><td>From:</td><td>'.$sendersHTML.'</td></tr>
 				<tr><td style="vertical-align:top">To:</td><td>'.$groupsHTML.'</td></tr>
 				<tr><td>Subject:</td><td><input type="text" name="subject"/></td></tr>
 				<tr><td>HTML Body:</td><td>'.$newsHTML.'</td></tr>
 				<tr><td>Text Body:</td><td>'.$newsText.'</td></tr>
 				<tr><td>Mail Server:</td><td>'.$serversHtml.'</td></tr>
+				<tr><td>Embed Images:</td><td><input type="checkbox" name="embed"/></td></tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Send" class="formbutton"/></td>
+					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Preview" class="formbutton"/></td>
 				</tr>
 			</table>
 		</form>
@@ -244,59 +263,79 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateUsersView()
     {
-    	// get information about the newsletters sent
 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-    	$query = "select * from ".$prefix."newsletter_users";
-    	$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
-
+    	$query = "select * from ".$prefix."newsletter_groups";
+    	$groups = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	    	
+    	
+    	// filter for user entered attributes
+    	$query = "select * from ".$prefix."newsletter_users LIMIT 1";
+    	$columns = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);	    	
+    	unset($columns["id"]);
+    	unset($columns["activation"]);
+    	unset($columns["created"]);
+    	unset($columns["status"]);
+    	unset($columns["bounced"]);
+    	unset($columns["lastevent"]);
+    	
+    	// cache table headers
+    	$cols = '<cols>';
+    	for($i=0; $i<count($columns); $i++) {
+    		$cols .= '<col width="200"/>';
+    	}
+    	$cols .= '</cols><tr>';
+    	foreach($columns as $col=>$val) {
+    		$cols .= '<th class="stdBorder">'.$col.'</th>';
+    	}
+    	$cols .= '</tr>';
+    	
  		$xml = '<newsletter>
-		<h3>User Management</h3>
-		<form enctype="multipart/form-data" name="bx_news_users" action="#" method="post">
-		<table>
-		<cols>
-			<col width="200"/>
-			<col width="200"/>
-			<col width="200"/>
-			<col width="200"/>
-			<col width="200"/>
-			<col width="200"/>
-		</cols>
-		<tr>
-			<th class="stdBorder">Firstname</th>
-			<th class="stdBorder">Lastname</th>
-			<th class="stdBorder">Gender</th>
-			<th class="stdBorder">Email</th>
-			<th class="stdBorder">Activated</th>
-			<th class="stdBorder">Groups</th>
-		</tr>';
-
-		foreach($users as $row)
+		<h2>User Management</h2>
+		<form enctype="multipart/form-data" name="bx_news_users" action="#" method="post">';
+		
+		foreach($groups as $group)
 		{
-	    	$query = "select name from ".$prefix."newsletter_users2groups, ".$prefix."newsletter_groups WHERE fk_user='".$row['id']."' AND fk_group=".$prefix."newsletter_groups.id";
-	    	$groups = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
-	    	$groupstring = "";		
-			for($i=0; $i<count($groups); $i++)
-			{
-				if($i != 0)
-					$groupstring .= ", ";
-				$groupstring .= $groups[$i]["name"];	
-			}
+	 		$xml .= '<h3>'.$group["name"].'</h3>
+			<table>'.$cols;			
 			
-			$row['activated'] = $row['activated'] == 1 ? "true" : "false";
-			$row['gender'] = $row['gender'] == 0 ? "male" : "female";
-			
-			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>', 
-							$row['firstname'], $row['lastname'], $row['gender'], $row['email'], $row['activated'], $groupstring);
-		} 
+			// get this group's users
+			$query = "select * from ".$prefix."newsletter_users2groups,".$prefix."newsletter_users where fk_group=".$group["id"]." and ".$prefix."newsletter_users.id=fk_user";
+    		$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+    		
+    		foreach($users as $user) {
+    			$user['gender'] = $user['gender'] == 0 ? "male" : "female";
+    			$user['email'] = '<a href="../../../dbforms2/newsletter_users/?id='.$user['id'].'">'.$user['email'].'</a>';
 
-		$xml .= '</table><br/>
+    			$xml .= '<tr>';
+    			foreach($columns as $col=>$val) {
+    				$xml .= '<td>'.$user[$col].'</td>';
+    			}
+    			$xml .= '</tr>';
+    		}
+    		
+    		$xml .= '</table><br/>';
+		}
+		
+		$groupsHTML = '<select name="importgroup" size="1">';
+  		foreach($groups as $row)
+  		{
+  			$groupsHTML .= '<option value="'.$row['id'].'">'.$row['name'].'</option>';	
+  		}
+		$groupsHTML .= '</select>';
+		
+		// fiel upload to import a user list
+		$xml .= '<br/><h2>Import Users</h2>
 		<input type="hidden" name="MAX_FILE_SIZE" value="1000000"/>
-		<input name="userfile" type="file"/>
-		<input type="submit" name="bx[plugins][admin_edit][_all]" value="Import Users" class="formbutton"/>
+		<table>
+		<tr><td>CSV-File:</td><td><input name="userfile" type="file"/></td></tr>
+		<tr><td>Group:</td><td>'.$groupsHTML.'</td></tr>
+		<tr><td></td><td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Import" class="formbutton"/></td></tr>
+		</table>
 		</form>
 		</newsletter>';
 
- 		return domdocument::loadXML($xml);    	
+		//bx_helpers_debug::webdump($xml); 
+
+		return domdocument::loadXML($xml);    	
     }
     
     /**
@@ -357,28 +396,43 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     
     /**
      * Imports a list of new users as comma separated values (CSV)
-     * Line format: firstname,lastname,gender(male|female),email
      */
-    protected function importUsers($file)
+    protected function importUsers($file, $group)
     {
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	
     	// replace different line delimiters
     	$file = str_replace(array("\r\n", "\r"), "\n", $file);
     	
+    	$firstline = true;
+    	$queryFields = "";
+    	
     	$lines = explode("\n", $file);
     	foreach($lines as $line)
     	{
-    		$tokens = explode(",", $line);
-
-    		$tokens[2] = ($tokens[2][0] == 'm' ? 0 : 1);
-    		
-    		// check if the email address is set at least
-    		if(isset($tokens[3]))
-    		{
-	        	$query = "insert into ".$prefix."newsletter_users (firstname, lastname, gender, email) value('".$tokens[0]."', '".$tokens[1]."', '".$tokens[2]."', '".$tokens[3]."')";
-	        	$GLOBALS['POOL']->dbwrite->query($query);
+    		if($line == "") {
+    			continue;
     		}
+    		
+    		// first line defines which db fields are being filled in
+    		if($firstline === true) {
+    			$queryFields = $line;
+    			$firstline = false;
+    			continue;
+    		}
+    		
+    		// quote values
+    		$tokens = explode(",", $line);
+    		for($i=0; $i<count($tokens); $i++) {
+    			$tokens[$i] = "'" . $tokens[$i] . "'";	
+    		}
+    		$line = implode(",", $tokens);
+
+	        $query = "insert into ".$prefix."newsletter_users (".$queryFields.",created) value(".$line.",NOW())";
+	        if($GLOBALS['POOL']->dbwrite->exec($query) == 1) {
+	        	$query = "insert into ".$prefix."newsletter_users2groups (fk_user,fk_group) value('".$GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_users", "id")."','".$group."')";
+	        	$GLOBALS['POOL']->dbwrite->exec($query);
+	        }
     	}
     }
     
@@ -425,7 +479,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		
 		// update table with the date of the most recent feed entry
     	$query = "UPDATE ".$prefix."newsletter_feeds SET lastdate='".$this->callbackDate."' WHERE id=".$data["feed"];
-    	$GLOBALS['POOL']->dbwrite->query($query);	 		
+    	$GLOBALS['POOL']->dbwrite->exec($query);	 		
     }
     
     /**
