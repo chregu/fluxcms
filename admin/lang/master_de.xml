@@ -89,15 +89,15 @@
     
     <!-- newsletter -->
     <message key="Edit Groups">Gruppen editieren</message>
-    <message key="Edit Mailing Lists">Mail-Listen editieren</message>
+    <message key="Edit Senders">Sender editieren</message>
     <message key="Edit Mail Servers">Mail Server editieren</message>
-    <message key="User Management">Benutzerliste</message>
+    <message key="User Management">Benutzer Übersicht</message>
     <message key="Create Newsletter">Newsletter erstellen</message>
     <message key="Send Newsletter">Newsletter senden</message>
     <message key="Newsletter Archive">Newsletter Archiv</message>
     <message key="Generate from Feed">Aus Feed generieren</message>
     <message key="Edit RSS Feeds">RSS Feeds editieren</message>
-    <message key="Subscribers">Abonnenten</message>
+    <message key="Management">Verwaltung</message>
     <message key="Newsletters">Newsletter</message>
     
 </catalogue>
