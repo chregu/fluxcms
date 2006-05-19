@@ -47,9 +47,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         // get config for the form and instanciate a new form object
         $formConfig = new bx_dbforms2_config($formName);
         $form = $formConfig->getForm();
-        
         if($mode == 'data') {
-            
             if(isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
                 $db = $GLOBALS['POOL']->dbwrite;
                 
@@ -98,7 +96,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 }
 
                 $dataDOM = NULL;
-
                 // run additional field queries and server-side onsave handlers if there was no error 
                 if ($responseCode == 0) {
                     bx_dbforms2_data::doAdditionalQueries($type,$form);
@@ -128,7 +125,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     $dataNode->appendChild($dom->importNode($dataDOM->documentElement, TRUE));
                     $dom->documentElement->appendChild($dataNode);
                 }
-
                 return $dom;
             } 
             
@@ -141,7 +137,18 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
             if (isset($_GET['XML']) && $_GET['XML'] == 1.1) {
                 return $dom;
             }
-            return bx_dbforms2_common::transformFormXML($dom, $form->tablePrefix);
+            
+            // default form-xsl
+            $xslfile = BX_LIBS_DIR.'dbforms2/xsl/form.xsl';
+            // check for userspace form-xsl in local include dir
+            if (isset($form->attributes['xsl']) && !empty($form->attributes['xsl'])) {
+                $userxslf = BX_LOCAL_INCLUDE_DIR."dbforms2/xsl/".$form->attributes['xsl'];
+                if (file_exists($userxslf)) {
+                    $xslfile = $userxslf;    
+                }
+            }
+             
+            return bx_dbforms2_common::transformFormXML($dom, $form->tablePrefix, $xslfile);
 
         } else if($mode == 'chooser') {
             
