@@ -13,14 +13,16 @@ class bx_editors_newsmailer_mitlinks extends bx_editors_newsmailer_newsmailer {
     public function sendNewsletter($draft, $receivers, $mailoptions, $embedImages = false)
     {
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-    	$GLOBALS['POOL']->dbwrite->getDSN();
+
+    	// mysqli(mysqli)://fluxcms:fluxcms@localhost/fluxcms
+    	eregi("^([^//]*)//([^:]*):([^@]*)@([^/]*)/(.*)", $GLOBALS['POOL']->dbwrite->getDSN(), $dbparams);
     	
     	self::$textHeader = 
-'dbhost: localhost
-dbuser: test
-dbpass: testpw
+'dbhost: '.$dbparams[4].'
+dbuser: '.$dbparams[2].'
+dbpass: '.$dbparams[3].'
 dbtable: '.$prefix.'mail_queue
-dbname:  spammail
+dbname:  '.$dbparams[5].'
 listname: testliste
 password: daspasswort!
 

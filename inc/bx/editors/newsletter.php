@@ -57,7 +57,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			}
 			
 			// Get a unique list of subscriptors
-			$query = "SELECT DISTINCT * FROM ".$prefix."newsletter_users, ".$prefix."newsletter_drafts2groups, ".$prefix."newsletter_users2groups WHERE ".$prefix."newsletter_drafts2groups.fk_draft = ".$draftId." AND ".$prefix."newsletter_users.id=".$prefix."newsletter_users2groups.fk_user AND ".$prefix."newsletter_users2groups.fk_group = ".$prefix."newsletter_drafts2groups.fk_group AND ".$prefix."newsletter_users.status=1";
+			$query = "SELECT DISTINCT u.* FROM ".$prefix."newsletter_users2groups u2g, ".$prefix."newsletter_drafts2groups d2g, ".$prefix."newsletter_users u WHERE d2g.fk_draft = ".$draftId." AND u.id=u2g.fk_user AND u2g.fk_group = d2g.fk_group AND u.status=1";
         	$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
 
 			// get news mailer instance
@@ -66,7 +66,26 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 
 			// Send it
 			$mailoptions = bx_editors_newsmailer_newsmailer::getMailserverOptions($data['mailserver']);
-			$newsmailer->sendNewsletter($draft, $users, $mailoptions, isset($data["embed"]));   
+			//$newsmailer->sendNewsletter($draft, $users, $mailoptions, isset($data["embed"]));   
+
+			// archive the file
+			$newfile = date("Ymd-").$draft["subject"];
+			
+			if(!empty($data["htmlfile"])) {
+				rename("data/newsletter/".$draft["htmlfile"], "data/newsletter/archive/".$newfile.".en.xhtml");
+				$this->removeNewsletterProperties("/newsletter/".$draft["htmlfile"]);
+				$this->addNewsletterProperties("/newsletter/archive/".$newfile.".en.xhtml", $draft["subject"]);
+			}
+			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
+				rename("data/newsletter/".$draft["textfile"], "data/newsletter/archive/".$newfile.".en.xhtml");
+				$this->removeNewsletterProperties("/newsletter/".$draft["textfile"]);
+				$this->addNewsletterProperties("/newsletter/archive/".$newfile.".en.xhtml", $draft["subject"]);
+			}			
+			
+			if(isset($data['publish'])) {
+				// make the newsletter visible to the users
+				bx_resourcemanager::setProperty("/newsletter/archive/".$newfile.".en.xhtml", "display-order", "99");
+			}
      	}
      	else if($parts['name'] == "users/.")
      	{
@@ -83,6 +102,30 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      		// Generate a newsletter from a RSS feed
      		$this->createFromFeed($data);	
      	}
+    }
+    
+    /**
+     * Removes all properties of the given resource
+     */
+    protected function addNewsletterProperties($path, $display) 
+    {
+		bx_resourcemanager::setProperty($path, "parent-uri", "/newsletter/archive/");
+		bx_resourcemanager::setProperty($path, "display-name", $display);
+		bx_resourcemanager::setProperty($path, "display-order", "0");
+		bx_resourcemanager::setProperty($path, "mimetype", "text/html");
+		bx_resourcemanager::setProperty($path, "output-mimetype", "text/html");
+    }
+    
+    /**
+     * Removes all properties of the given resource
+     */
+    protected function removeNewsletterProperties($path) 
+    {
+    	bx_resourcemanager::removeProperty($path, "parent-uri");
+		bx_resourcemanager::removeProperty($path, "display-name");
+		bx_resourcemanager::removeProperty($path, "display-order");
+		bx_resourcemanager::removeProperty($path, "mimetype");
+		bx_resourcemanager::removeProperty($path, "output-mimetype");	
     }
     
     /**
@@ -133,13 +176,16 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	if(!isset($_POST["embed"])) {
     		$_POST["embed"] = "off";
     	}
-    	
+    	if(!isset($_POST["publish"])) {
+    		$_POST["publish"] = "off";
+    	}
+    	   	
     	$groupIds = implode(",", $_POST["groups"]);
         $query = "select name from ".$prefix."newsletter_groups where id in (".$groupIds.")";
         $groups = implode(",", $GLOBALS['POOL']->db->queryCol($query)); 
     	
-    	$query = "select DISTINCT fk_user from ".$prefix."newsletter_users2groups, ".$prefix."newsletter_users where fk_group in (".$groupIds.") AND fk_user=".$prefix."newsletter_users.id AND ".$prefix."newsletter_users.status='1' ORDER BY fk_user";
-    	$usercount = count($GLOBALS['POOL']->db->queryAll($query)); 
+    	$query = "select COUNT(DISTINCT fk_user) from ".$prefix."newsletter_users2groups u2g, ".$prefix."newsletter_users u where fk_group in (".$groupIds.") AND fk_user=u.id AND u.status='1' ORDER BY fk_user";
+    	$usercount = $GLOBALS['POOL']->db->queryOne($query); 
     	
 		$xml = '<newsletter>
     	<form name="bx_news_send" action="#" method="post">
@@ -150,6 +196,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				<tr><td>Subject:</td><td>'.$_POST["subject"].'</td></tr>
 				<tr><td>Mail Server:</td><td>'.$mailserver["descr"].' ('.$mailserver["host"].')'.'</td></tr>
 				<tr><td>Embed Images:</td><td>'.$_POST["embed"].'</td></tr>
+				<tr><td>Publish Online:</td><td>'.$_POST["publish"].'</td></tr>
 				<tr>
 					<td></td>
 					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Send" class="formbutton"/></td>
@@ -182,6 +229,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			<input type="hidden" name="mailserver" value="'.$_POST["mailserver"].'"/>';
 		if($_POST["embed"] == "on") {
 			$xml .= '<input type="hidden" name="embed" value="'.$_POST["embed"].'"/>';
+		}
+		if($_POST["publish"] == "on") {
+			$xml .= '<input type="hidden" name="publish" value="'.$_POST["publish"].'"/>';
 		}
 		foreach($_POST["groups"] as $group) {
 			$xml .=	'<input type="hidden" name="groups[]" value="'.$group.'"/>';
@@ -265,6 +315,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				<tr><td>Text Body:</td><td>'.$newsText.'</td></tr>
 				<tr><td>Mail Server:</td><td>'.$serversHtml.'</td></tr>
 				<tr><td>Embed Images:</td><td><input type="checkbox" name="embed"/></td></tr>
+				<tr><td>Publish Online:</td><td><input type="checkbox" name="publish" checked="checked"/></td></tr>
 				<tr>
 					<td></td>
 					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Preview" class="formbutton"/></td>
@@ -416,8 +467,6 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		</table>
 		</form>
 		</newsletter>';
-
-		//bx_helpers_debug::webdump($xml); 
 
 		return domdocument::loadXML($xml);    	
     }
