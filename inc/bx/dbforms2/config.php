@@ -137,9 +137,9 @@ class bx_dbforms2_config {
                 $fieldInstance->setAttributes($attributes);
                 
                 // check if this field has values from the config file
-                if($fieldInstance->hasConfigValues())
+                if($fieldInstance->hasConfigValues()) {
                     $fieldInstance->setValues($this->getFieldValues($field));
-                    
+                }
                 if(($default = $this->getDefaultFieldValue($field)) !== NULL) {
                     $fieldInstance->setDefaultValue($default);
                 }
@@ -196,7 +196,6 @@ class bx_dbforms2_config {
         foreach ($valuesNS as $valueNode) {
             $type = $valueNode->getAttribute("type");
             $className = 'bx_dbforms2_datasource_'.$type;
-            
             $ds =  call_user_func(array( $className, 'getInstance'));
             $args = array();
             foreach ($valueNode->attributes as $attr) {
@@ -207,8 +206,9 @@ class bx_dbforms2_config {
             } else {
                 $childValue = null;
             }
-            $values = $ds->getValues($args,$childValue);
             
+            $values = $ds->getValues($args,$childValue);
+             
         }
         
         $valuesNS = $this->xpath->query('dbform:value', $fieldNode);
@@ -427,7 +427,6 @@ class bx_dbforms2_config {
      */
     protected function getNodeAttributes($node, $attributeSet = NULL) {
         $attributes = array();
-
         foreach($attributeSet as $attribute => $type) {
             if($node->hasAttribute($attribute)) {
                 $value = $node->getAttribute($attribute);

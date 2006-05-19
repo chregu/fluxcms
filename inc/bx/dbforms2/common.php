@@ -31,15 +31,21 @@ class bx_dbforms2_common {
      *  @access public
      *  @return type descr
      */
-    public static function transformFormXML($dom,$tablePrefix) {
-        $xslt = new XSLTProcessor();
-        $xsl = new DOMDocument();
-        $xsl->load(BX_LIBS_DIR.'dbforms2/xsl/form.xsl');
-        $xslt->importStylesheet($xsl);
-        $xslt->setParameter('', 'webroot', BX_WEBROOT);
-        $xslt->setParameter('', 'tablePrefix', $tablePrefix);
-        $xslt->registerPhpFunctions();
-        return $xslt->transformToDoc($dom);
+    public static function transformFormXML($dom,$tablePrefix,$formxsl) {
+        file_put_contents("/tmp/m20.log", $dom->saveXML());
+        if (file_exists($formxsl)) {
+            $xslt = new XSLTProcessor();
+            $xsl = new DOMDocument();
+            $xsl->load($formxsl);
+            $xslt->importStylesheet($xsl);
+            $xslt->setParameter('', 'webroot', BX_WEBROOT);
+            $xslt->setParameter('', 'tablePrefix', $tablePrefix);
+            $xslt->registerPhpFunctions();
+            
+            return $xslt->transformToDoc($dom);
+        }
+        
+        return false;
     }
     
 }

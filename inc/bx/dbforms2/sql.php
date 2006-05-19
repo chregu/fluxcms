@@ -40,11 +40,14 @@ class bx_dbforms2_sql {
         $fields[] = $form->idField;
         
         foreach($form->fields as $field) {
-            $name = $field->getSQLName('select');
-            if ($name) {
-                //$fields[] = $db->quoteIdentifier($name);
-                $fields[] = $name;
+            if ($field->getAttribute('nosql')==false) {
+                $name = $field->getSQLName('select');
+                if ($name) {
+                    //$fields[] = $db->quoteIdentifier($name);
+                    $fields[] = $name;
+                }
             }
+        
         }
         
         $query.= implode(',', $fields);
@@ -87,7 +90,7 @@ class bx_dbforms2_sql {
         $query = "UPDATE $table SET";
         
         foreach($form->fields as $field) {
-            if($field->name != $form->idField) {
+            if($field->name != $form->idField && $field->getAttribute('nosql')==false) {
                 $col =  $field->getSQLName('update');
                 if ($col) {
                     $value = $field->getSQLValue();
@@ -129,7 +132,7 @@ class bx_dbforms2_sql {
         $values[] = $form->currentID;
         
         foreach($form->fields as $field) {
-            if($field->name != $form->idField) {
+            if($field->name != $form->idField && $field->getAttribute('nosql')==false) {
                 $name =  $field->getSQLName('insert');
                 if ($name) {
                     $fields[] = $db->quoteIdentifier($name);

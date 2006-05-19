@@ -78,6 +78,14 @@ class bx_dbforms2_field {
      */
     public $liveSelect = NULL;
     
+
+    /**
+    *  Indicates whether field is ignored in sql query
+    *  @var nosql
+    */
+    public $nosql = false;
+    
+
     /**
      *  Constructor
      *
@@ -285,7 +293,13 @@ class bx_dbforms2_field {
         
         if(!empty($this->values)) {
             foreach($this->values as $name => $disp) {
-                $valueNode = $dom->createElement($this->valueXMLName, $disp);
+                if (is_array($disp)) {
+                    $valueNode = $dom->createElement('entry');
+                    bx_helpers_xml::array2Dom($disp,$dom, $valueNode ); 
+                } else {
+                
+                    $valueNode = $dom->createElement($this->valueXMLName, $disp);
+                }
                 $valueNode->setAttribute('value', $name);
                 
                 $node->appendChild($valueNode);

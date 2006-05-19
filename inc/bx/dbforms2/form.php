@@ -154,7 +154,8 @@ class bx_dbforms2_form {
         return array(
             'onsavejs' => 'string',
             'onsavephp' => 'string',
-            'alternate' => 'string'
+            'alternate' => 'string',
+            'xsl'       => 'string'
         );
     }
 

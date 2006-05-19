@@ -79,7 +79,7 @@ class bx_dbforms2_datasource_sql {
         while ($row = $res->fetchRow()) {
                $result[$row[0]] = $row[1];
         }
-        
+         
         return $result;
         
     }
