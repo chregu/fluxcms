@@ -31,20 +31,23 @@ class bx_dbforms2_common {
      *  @access public
      *  @return type descr
      */
-    public static function transformFormXML($dom,$tablePrefix,$formxsl) {
-        if (file_exists($formxsl)) {
-            $xslt = new XSLTProcessor();
-            $xsl = new DOMDocument();
-            $xsl->load($formxsl);
-            $xslt->importStylesheet($xsl);
-            $xslt->setParameter('', 'webroot', BX_WEBROOT);
-            $xslt->setParameter('', 'tablePrefix', $tablePrefix);
-            $xslt->registerPhpFunctions();
+    public static function transformFormXML($dom,$tablePrefix,$formxsl = null) {
+        $xslt = new XSLTProcessor();
+        $xsl = new DOMDocument();
             
-            return $xslt->transformToDoc($dom);
+        if ($formxsl && file_exists($formxsl)) {
+            $xsl->load($formxsl);
+        } else {
+            $xsl->load(BX_LIBS_DIR.'dbforms2/xsl/form.xsl');
         }
+        $xslt->importStylesheet($xsl);
+        $xslt->setParameter('', 'webroot', BX_WEBROOT);
+        $xslt->setParameter('', 'tablePrefix', $tablePrefix);
+        $xslt->registerPhpFunctions();
         
-        return false;
+        return $xslt->transformToDoc($dom);
+        
+        
     }
     
 }
