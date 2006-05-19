@@ -32,7 +32,6 @@ class bx_dbforms2_common {
      *  @return type descr
      */
     public static function transformFormXML($dom,$tablePrefix,$formxsl) {
-        file_put_contents("/tmp/m20.log", $dom->saveXML());
         if (file_exists($formxsl)) {
             $xslt = new XSLTProcessor();
             $xsl = new DOMDocument();
