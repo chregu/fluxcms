@@ -79,6 +79,8 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts2groups` (
   `fk_group` int(10) unsigned NOT NULL,
   `ID` int(10) unsigned NOT NULL auto_increment,
   PRIMARY KEY  (`ID`)
+  KEY `fk_group` (`fk_group`),
+  KEY `fk_draft` (`fk_draft`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
 $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_feeds` (
@@ -149,12 +151,37 @@ foreach($queries as $query){
 }
 
 echo "<h1>Success ;)</h1>";
-echo "<p>Newsletter-Plugin-Tables successfully created. Now you can create a collection with the following .configxml:</p>";
+echo "<p>Newsletter-Plugin-Tables successfully created. Now you can create the newsletter collection with the following .configxml:</p>";
 
 printConfigXML();
 
-echo "<p>Make sure, you have the newsfeeds.xsl and if neccessary a mail transformer e.g. scansystems.xsl, in your themes-folder. Default can be found in 3-cols.</p>";
+echo "<p>Now create another collection called archive inside of the newsletter Collection. Also make sure, you have newsfeeds.xsl and htmlimage.xsl in your themes-folder. Defaults can be found in 3-cols.</p>";
 
+// Add resources
+
+bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "display-name", "Index");
+bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "display-order", "0");
+bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "output-mimetype", "text/html");
+
+bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "display-name", "Subscribe");
+bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "display-order", "1");
+bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "output-mimetype", "text/html");
+
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "display-name", "Unsubscribe");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "display-order", "2");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "output-mimetype", "text/html");
+
+bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "display-name", "Activation");
+bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "display-order", "0");
+bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "output-mimetype", "text/html");
 
 /**
  * just prints the configxml used for linkplugin.
