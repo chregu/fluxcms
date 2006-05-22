@@ -90,9 +90,8 @@ class bx_dbforms2_field {
     "
     *  @var nosql
     */
-    public $nosql = false;
+    public $nosql = FALSE;
     
-
     /**
      *  Constructor
      *
@@ -342,6 +341,17 @@ class bx_dbforms2_field {
     public function doAdditionalQuery($id) {
         return null;   
     }
+    
+    /**
+     *   Indicates whether the SQL value of this field should be quoted
+     *
+     *  @access public
+     *  @return boolean TRUE means quote please, FALSE the opposite
+     */
+    public function quoteSQLValue() {
+        return TRUE;
+    }
+    
 
 }
 

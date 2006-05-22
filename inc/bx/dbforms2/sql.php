@@ -98,7 +98,10 @@ class bx_dbforms2_sql {
                         $value = htmlspecialchars($value);
                     }
                     
-                    $value = $db->quote(bx_helpers_string::utf2entities($value));
+                    $value = bx_helpers_string::utf2entities($value);
+                    if($field->quoteSQLValue()) {
+                        $value = $db->quote($value);
+                    }
                     
                     $query.= ' '.$db->quoteIdentifier($col)."=$value,";
                 }
@@ -141,7 +144,12 @@ class bx_dbforms2_sql {
                     if($field->getAttribute('isxml') !== TRUE) {
                         $value = htmlspecialchars($value);
                     }
-                    $value = $db->quote(bx_helpers_string::utf2entities($value));
+
+                    $value = bx_helpers_string::utf2entities($value);
+                    if($field->quoteSQLValue()) {
+                        $value = $db->quote($value);
+                    }
+                    
                     $values[] = $value;
                 }
             }
