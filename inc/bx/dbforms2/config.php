@@ -49,6 +49,7 @@ class bx_dbforms2_config {
      *  @access public
      */
     public function __construct($name = NULL) {
+        
         $this->dom = new DOMDocument();
         if(isset($name)) {
             $this->load($name);
@@ -113,7 +114,7 @@ class bx_dbforms2_config {
      *  @access public
      *  @return type descr
      */
-    public function getFields($fieldsNode) {
+    public function getFields($fieldsNode, $parentForm) {
         $fields = array();
         // get nodeset which contains all fields of the current form
         $fieldsNS = $this->xpath->query('dbform:field|dbform:group|dbform:nofield', $fieldsNode);
@@ -131,6 +132,8 @@ class bx_dbforms2_config {
             }
             
             if($fieldInstance instanceof bx_dbforms2_field) {
+                $fieldInstance->parentForm = $parentForm;
+                
                 $attributeSet = $fieldInstance->getConfigAttributes();
                 $attributes = $this->getNodeAttributes($field, $attributeSet);
                 
@@ -267,7 +270,7 @@ class bx_dbforms2_config {
         $fieldsNode = $fieldsNS->item(0);
 
         $form = new bx_dbforms2_form();
-        $form->fields = $this->getFields($fieldsNode);
+        $form->fields = $this->getFields($fieldsNode, $form);
         $form->name = $this->name;
         $form->tableName = $this->getTableName($fieldsNode);
         $form->tablePrefix = $this->getTablePrefix($fieldsNode);
