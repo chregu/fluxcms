@@ -192,7 +192,6 @@ class bx_dbforms2_sql {
 		$matcher = ( !empty($ls->getMatcher) AND isset($_GET[$ls->getMatcher]) )? ' AND '.$ls->getMatcher.' = "'.$_GET[$ls->getMatcher].'" ' : '';
         
         $query = 'SELECT '.$table.'.'.$ls->idField.' AS _id, '.$ls->nameField.' AS _title FROM '.$table.' '. $ls->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby.' LIMIT '.$ls->limit;
-        bx_log::log($query);
         return $query;
     }
     
