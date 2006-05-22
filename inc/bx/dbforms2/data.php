@@ -149,7 +149,7 @@ class bx_dbforms2_data {
      *  @access public
      *  @return type descr
      */
-    public static function doAdditionalQueries($type, $form) {
+    public static function doAdditionalQueries($form) {
         foreach($form->fields as $field) {
             $field->doAdditionalQuery($form->currentID);
         }
