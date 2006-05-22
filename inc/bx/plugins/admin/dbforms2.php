@@ -107,9 +107,9 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     if (isset($form->attributes['onsavephp'])) {
                         if (strpos($form->attributes['onsavephp'], "::") > 0) {
                             list($class, $function) = explode ("::", $form->attributes['onsavephp']);
-                            call_user_func(array($class, $function), $type, $form);
+                            call_user_func(array($class, $function), $form);
                         } else {
-                            call_user_func($form->attributes['onsavephp'], $type, $form);
+                            call_user_func($form->attributes['onsavephp'], $form);
                         }
                     }
 
