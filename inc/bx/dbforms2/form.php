@@ -37,7 +37,8 @@ class bx_dbforms2_form {
         'idField' => 'id',
         'currentID' => 0,
         'attributes' => array(),
-        'jsHrefs' => array()
+        'jsHrefs' => array(),
+        'queryMode' => bx_dbforms2::QUERYMODE_UPDATE,
     );
     
     /**
