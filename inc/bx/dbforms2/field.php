@@ -80,7 +80,14 @@ class bx_dbforms2_field {
     
 
     /**
+     *  Instance of the form this field belongs to
+     *  @var parentForm
+     */
+    public $parentForm = NULL;
+    
+    /**
     *  Indicates whether field is ignored in sql query
+    "
     *  @var nosql
     */
     public $nosql = false;
