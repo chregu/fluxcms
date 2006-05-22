@@ -37,9 +37,7 @@ class bx_dbforms2_fields_file extends bx_dbforms2_field {
     public function moveUploadedFile($file) {
         if ($file['tmp_name']) {
             $filename = bx_helpers_string::makeUri($file['name'],true);
-            
             move_uploaded_file($file['tmp_name'],$this->getFileLocation().'/'.$filename);
-			bx_log::log($file['tmp_name'].' ---> '.$this->getFileLocation().'/'.$filename);
         }
         
         $xml = '<html><head><script type="text/javascript">
