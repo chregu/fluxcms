@@ -102,8 +102,8 @@ class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
      *  @access public
      *  @return type descr
      */
-    public function doAdditionalQuery($type,$id) {
-        if ($type == "delete") {
+    public function doAdditionalQuery($id) {
+        if ($this->parentForm->queryMode == dbforms2::QUERYMODE_DELETE) {
             return  $this->_deleteQuery($id);
         } else {
             return $this->_updateInsertQuery($id);

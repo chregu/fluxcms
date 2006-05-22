@@ -31,7 +31,7 @@ class bx_dbforms2_helpers {
     *  @access public
     *  @return type descr
     */
-   static public function updateCategoriesTree($type,$form) {
+   static public function updateCategoriesTree($form) {
        $tablePrefix = $form->tablePrefix;
        
        $tableName = $tablePrefix.$form->__get('tableName');

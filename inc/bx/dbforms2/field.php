@@ -339,7 +339,7 @@ class bx_dbforms2_field {
      *  @access public
      *  @return type descr
      */
-    public function doAdditionalQuery($type, $id) {
+    public function doAdditionalQuery($id) {
         return null;   
     }
 

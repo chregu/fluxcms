@@ -69,21 +69,18 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 
                 if ($xmlData->documentElement->getAttribute("delete") == "true" && $form->currentID != 0) {
                     // delete an existing entry
-                    $type = "delete";
                     $form->queryMode = bx_dbforms2::QUERYMODE_DELETE;
                     $query = bx_dbforms2_sql::getDeleteQueryByForm($form);  
                     $deleteRequest = true;
                 
                 } else if ($form->currentID == 0) {
                     // create a new entry
-                    $type = "insert";
                     $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
                     $form->currentID = $db->nextID($form->tablePrefix.'_sequences');
                     $query = bx_dbforms2_sql::getInsertQueryByForm($form);
                 
                 } else {
                     // update an existing entry
-                    $type = "update";
                     $form->queryMode = bx_dbforms2::QUERYMODE_UPDATE;
                     $query = bx_dbforms2_sql::getUpdateQueryByForm($form);
                 }
@@ -106,7 +103,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
 
                 // run additional field queries and server-side onsave handlers if there was no error 
                 if ($responseCode == 0) {
-                    bx_dbforms2_data::doAdditionalQueries($type, $form);
+                    bx_dbforms2_data::doAdditionalQueries($form);
                     if (isset($form->attributes['onsavephp'])) {
                         if (strpos($form->attributes['onsavephp'], "::") > 0) {
                             list($class, $function) = explode ("::", $form->attributes['onsavephp']);
