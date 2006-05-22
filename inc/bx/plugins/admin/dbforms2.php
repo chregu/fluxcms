@@ -114,7 +114,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     }
 
                     // reload the saved data and return it to the client (on insert or update only)
-                    if($type == 'insert' OR $type = 'update') { 
+                    if($form->queryMode == bx_dbforms2::QUERYMODE_INSERT || $form->queryMode == bx_dbforms2::QUERYMODE_UPDATE) { 
                         $dataDOM = $this->getDataByForm($form);
                     }
                 }
