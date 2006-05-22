@@ -15,6 +15,7 @@
 //
 // $Id$
 
+
 class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
     
    static private $instance = array();
@@ -47,7 +48,9 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         // get config for the form and instanciate a new form object
         $formConfig = new bx_dbforms2_config($formName);
         $form = $formConfig->getForm();
+        
         if($mode == 'data') {
+            
             if(isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
                 $db = $GLOBALS['POOL']->dbwrite;
                 
@@ -66,20 +69,23 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 
                 if ($xmlData->documentElement->getAttribute("delete") == "true" && $form->currentID != 0) {
                     // delete an existing entry
-                    $query = bx_dbforms2_sql::getDeleteQueryByForm($form);  
                     $type = "delete";
+                    $form->queryMode = bx_dbforms2::QUERYMODE_DELETE;
+                    $query = bx_dbforms2_sql::getDeleteQueryByForm($form);  
                     $deleteRequest = true;
                 
                 } else if ($form->currentID == 0) {
                     // create a new entry
+                    $type = "insert";
+                    $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
                     $form->currentID = $db->nextID($form->tablePrefix.'_sequences');
                     $query = bx_dbforms2_sql::getInsertQueryByForm($form);
-                    $type = "insert";
                 
                 } else {
                     // update an existing entry
-                    $query = bx_dbforms2_sql::getUpdateQueryByForm($form);
                     $type = "update";
+                    $form->queryMode = bx_dbforms2::QUERYMODE_UPDATE;
+                    $query = bx_dbforms2_sql::getUpdateQueryByForm($form);
                 }
 
                 // give it a go
@@ -89,6 +95,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     // 20 means error, this number has been chosen arbitrarily
                     $responseCode = $res->getCode();
                     $responseText = $res->getMessage(). "\n".$res->getUserInfo();
+
                 } else {
                     // 0 means everthing went ok and as expected
                     $responseCode = 0;
@@ -96,20 +103,23 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 }
 
                 $dataDOM = NULL;
+
                 // run additional field queries and server-side onsave handlers if there was no error 
                 if ($responseCode == 0) {
-                    bx_dbforms2_data::doAdditionalQueries($type,$form);
+                    bx_dbforms2_data::doAdditionalQueries($type, $form);
                     if (isset($form->attributes['onsavephp'])) {
-                        if (strpos($form->attributes['onsavephp'],"::") > 0) {
-                            list ($class,$function) = explode ("::",$form->attributes['onsavephp']);
-                            call_user_func(array($class,$function),$type,$form);
+                        if (strpos($form->attributes['onsavephp'], "::") > 0) {
+                            list($class, $function) = explode ("::", $form->attributes['onsavephp']);
+                            call_user_func(array($class, $function), $type, $form);
                         } else {
-                            call_user_func($form->attributes['onsavephp'],$type,$form);
+                            call_user_func($form->attributes['onsavephp'], $type, $form);
                         }
                     }
+
                     // reload the saved data and return it to the client (on insert or update only)
-                    if($type == 'insert' OR $type = 'update') 
+                    if($type == 'insert' OR $type = 'update') { 
                         $dataDOM = $this->getDataByForm($form);
+                    }
                 }
                 
                 // create response
@@ -128,11 +138,14 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 return $dom;
             } 
             
-            if(isset($_GET['id']))
+            if(isset($_GET['id'])) {
                 $form->currentID = (int) $_GET['id'];
+            }
+                
             return $this->getDataByForm($form);
 
         } else if($mode == 'form') {
+            
             $dom = $form->serializeTODOM();
             if (isset($_GET['XML']) && $_GET['XML'] == 1.1) {
                 return $dom;
@@ -143,7 +156,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
             // check for userspace form-xsl in local include dir
             if (isset($form->attributes['xsl']) && !empty($form->attributes['xsl'])) {
                 $userxslf = BX_LOCAL_INCLUDE_DIR."dbforms2/xsl/".$form->attributes['xsl'];
-                if (file_exists($userxslf)) {
+                if(file_exists($userxslf)) {
                     $xslfile = $userxslf;    
                 }
             }
@@ -235,6 +248,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
      *  @return type descr
      */
     protected function getDataByForm($form) {
+        $form->queryMode = bx_dbforms2::QUERYMODE_SELECT;
         $query = bx_dbforms2_sql::getSelectQueryByForm($form);
         $dataDOM = bx_dbforms2_data::getXMLByQuery($query,true);
         $dataDOM = bx_dbforms2_data::addAdditionalDataByForm($form, $dataDOM);
