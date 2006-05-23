@@ -259,7 +259,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->setIcon("gallery");
 
 		// first tab
-        $dom->addLink("Create Newsletter",'addresource/newsletter/?type=xhtml');
+        $dom->addLink("Create Newsletter",'addresource/newsletter/drafts/?type=xhtml');
         $dom->addLink("Send Newsletter",'edit'.$path.'send/');
         $dom->addLink("Newsletter Archive",'edit'.$path.'manage/');
         $dom->addLink("Generate from Feed",'edit'.$path.'feed/');

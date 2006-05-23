@@ -37,14 +37,35 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      			$_POST["sent"] = true;
      		}
      		
+     		// archive the file
+     		$newHtmlFile = date("Ymd-").$data['subject'].".en.xhtml";
+			$newTextFile = date("Ymd-").$data['subject'].".en.txt.xhtml";
+			$year = date("Y") . "/";
+			
+			if(!empty($data["htmlfile"])) {
+				rename("data/newsletter/drafts/".$data["htmlfile"], "data/newsletter/archive/".$year.$newHtmlFile);
+				$this->removeNewsletterProperties("/newsletter/drafts/".$data["htmlfile"]);
+				$this->addNewsletterProperties("/newsletter/archive/".$year.$newHtmlFile, $data["subject"]);
+				
+				if(isset($data['publish'])) {
+					// make the newsletter visible to the users
+					bx_resourcemanager::setProperty("/newsletter/archive/".$year.$newHtmlFile, "display-order", "99");
+				}
+			}
+			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
+				rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$year.$newTextFile);
+				$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
+				$this->addNewsletterProperties("/newsletter/archive/".$year.$newTextFile, $data["subject"]);
+			}			
+
      		// Save all the information we received about the newsletter in the database for archiving purposes
      		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
      		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`)
 						VALUES (
-						'".$data['from']."', '".$data['subject']."', '".$data['htmlfile']."', '".$data['textfile']."');";
+						'".$data['from']."', '".$data['subject']."', '".$year.$newHtmlFile."', '".$year.$newTextFile."');";
 			$GLOBALS['POOL']->dbwrite->exec($query);
-			
-			$draftId = $GLOBALS['POOL']->dbwrite->queryOne("SELECT ID FROM ".$prefix."newsletter_drafts ORDER BY ID DESC LIMIT 1;");
+
+			$draftId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_drafts", "id");
 			
 			$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);	
 			
@@ -66,26 +87,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 
 			// Send it
 			$mailoptions = bx_editors_newsmailer_newsmailer::getMailserverOptions($data['mailserver']);
-			//$newsmailer->sendNewsletter($draft, $users, $mailoptions, isset($data["embed"]));   
-
-			// archive the file
-			$newfile = date("Ymd-").$draft["subject"];
-			
-			if(!empty($data["htmlfile"])) {
-				rename("data/newsletter/".$draft["htmlfile"], "data/newsletter/archive/".$newfile.".en.xhtml");
-				$this->removeNewsletterProperties("/newsletter/".$draft["htmlfile"]);
-				$this->addNewsletterProperties("/newsletter/archive/".$newfile.".en.xhtml", $draft["subject"]);
-			}
-			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
-				rename("data/newsletter/".$draft["textfile"], "data/newsletter/archive/".$newfile.".en.xhtml");
-				$this->removeNewsletterProperties("/newsletter/".$draft["textfile"]);
-				$this->addNewsletterProperties("/newsletter/archive/".$newfile.".en.xhtml", $draft["subject"]);
-			}			
-			
-			if(isset($data['publish'])) {
-				// make the newsletter visible to the users
-				bx_resourcemanager::setProperty("/newsletter/archive/".$newfile.".en.xhtml", "display-order", "99");
-			}
+			$newsmailer->sendNewsletter($draft, $users, $mailoptions, isset($data["embed"]));   
      	}
      	else if($parts['name'] == "users/.")
      	{
@@ -109,7 +111,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function addNewsletterProperties($path, $display) 
     {
-		bx_resourcemanager::setProperty($path, "parent-uri", "/newsletter/archive/");
+		bx_resourcemanager::setProperty($path, "parent-uri", "/newsletter/archive/".date("Y")."/");
 		bx_resourcemanager::setProperty($path, "display-name", $display);
 		bx_resourcemanager::setProperty($path, "display-order", "0");
 		bx_resourcemanager::setProperty($path, "mimetype", "text/html");
@@ -214,10 +216,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				</tr>
 				<tr>
 					<td>
-						<iframe src="'.BX_WEBROOT.'admin/edit/newsletter/'.$_POST["htmlfile"].'?editor=kupu" width="100%" height="500" name="htmlfile"/>
+						<iframe src="'.BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["htmlfile"].'?editor=kupu" width="100%" height="500" name="htmlfile"/>
 					</td>
 					<td>
-						<iframe src="'.BX_WEBROOT.'admin/edit/newsletter/'.$_POST["textfile"].'?editor=oneform" width="100%" height="500" name="textfile"/>
+						<iframe src="'.BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["textfile"].'?editor=oneform" width="100%" height="500" name="textfile"/>
 					</td>
 				</tr>
 			</table>
@@ -375,7 +377,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				$groupstring .= $groups[$i]["name"];	
 			}
 
-			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="'.BX_WEBROOT.'admin/edit/newsletter/'.$row['htmlfile'].'?editor=kupu">%s</a></td><td><a href="'.BX_WEBROOT.'admin/edit/newsletter/'.$row['textfile'].'?editor=oneform">%s</a></td><td>%s</td></tr>', 
+			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="'.BX_WEBROOT.'admin/edit/newsletter/archive/'.$row['htmlfile'].'?editor=kupu">%s</a></td><td><a href="'.BX_WEBROOT.'admin/edit/newsletter/archive/'.$row['textfile'].'?editor=oneform">%s</a></td><td>%s</td></tr>', 
 							$row['from'], $groupstring, $row['subject'], $row['htmlfile'], $row['textfile'], $row['sent']);
 					
 			// remove the element if it was already sent from the extra list
@@ -512,7 +514,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     {
     	$newsletters = array();
     	$counter = 0;
-    	$files = scandir("data/newsletter/");
+    	$files = scandir("data/newsletter/drafts/");
     	
     	foreach($files as $file)
     	{
@@ -601,14 +603,14 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		// save newsletter file
 		$filenameSimple = $feed["name"].'_'.date("Ymd-His");
 		$filename = $filenameSimple.'.en.xhtml';
-		$newdom->save('data/newsletter/'.$filename);
+		$newdom->save('data/newsletter/drafts/'.$filename);
 		
 		// add as resource so it's visible inside the collection
-		bx_resourcemanager::setProperty("/newsletter/".$filename, "parent-uri", "/newsletter/");
-		bx_resourcemanager::setProperty("/newsletter/".$filename, "display-name", $filenameSimple);
-		bx_resourcemanager::setProperty("/newsletter/".$filename, "display-order", "0");
-		bx_resourcemanager::setProperty("/newsletter/".$filename, "mimetype", "text/html");
-		bx_resourcemanager::setProperty("/newsletter/".$filename, "output-mimetype", "text/html");
+		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "parent-uri", "/newsletter/drafts/");
+		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "display-name", $filenameSimple);
+		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "display-order", "0");
+		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "mimetype", "text/html");
+		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "output-mimetype", "text/html");
 		
 		// update table with the date of the most recent feed entry
     	$query = "UPDATE ".$prefix."newsletter_feeds SET lastdate='".$this->callbackDate."' WHERE id=".$data["feed"];

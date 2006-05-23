@@ -190,7 +190,7 @@ class bx_editors_newsmailer_newsmailer {
      */
     protected function readNewsletterFile($name, $type)
     {
-    	return file_get_contents('data/newsletter/'.$name);
+    	return file_get_contents('data/newsletter/archive/'.$name);
     }
     
     /**
