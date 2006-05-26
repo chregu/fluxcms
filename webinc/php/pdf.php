@@ -64,6 +64,8 @@ try {
     $p->set_parameter("SearchPath", $searchpath);    
     /* Input pdfs sind 1.6 */
     $p->set_parameter("compatibility", "1.6");
+    /* lizenz */
+    $p->set_parameter("license", "X600605-009100-4FB312-055097");
     /* This line is required to avoid problems on Japanese systems */
     $p->set_parameter("hypertextencoding", "winansi");
 
