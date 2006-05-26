@@ -62,23 +62,28 @@ class bx_config extends popoon_classes_config {
     }
     
     public function getAdminLanguage() {
-        if(isset($this->adminLanguage))
+        if(isset($this->adminLanguage)) {
             return $this->adminLanguage;
+        }
             
         // for fckconfig.js, this is called before the session has been started
-        if(!isset($_SESSION))
+        if(!isset($_SESSION)) {
             session_start();
+        }
         
-        if(!isset($this->adminLanguages))
+        if(!isset($this->adminLanguages)) {
             $this->adminLanguages = array('en');
+        }
             
         if(isset($_SESSION['_authsession']['data']['user_adminlang']) && in_array($_SESSION['_authsession']['data']['user_adminlang'], $this->adminLanguages)) {
             $this->adminLanguage = $_SESSION['_authsession']['data']['user_adminlang'];
+            
         } else {
             // small hack to prevent the ugly error after logging in without
             // having deleted the tmp/ directory before.
-            if(!defined('BX_DEFAULT_ADMIN_LANGUAGE'))
+            if(!defined('BX_DEFAULT_ADMIN_LANGUAGE')) {
                 define('BX_DEFAULT_ADMIN_LANGUAGE','en');
+            }
             
             $this->adminLanguage = popoon_helpers_lang::preferredBrowserLanguage($this->adminLanguages, BX_DEFAULT_ADMIN_LANGUAGE);
             if(isset($_SESSION['_authsession']['data'])) {
