@@ -32,9 +32,9 @@ function changeElement ()
 if (document.forms['bookmarks'].selectElement.selectedIndex > 0) {
 var element = document.forms['bookmarks'].selectElement.options[document.forms['bookmarks'].selectElement.selectedIndex].value;
 if(element.match(/\//)) {
-    parent.edit.location.href="<?php echo BX_WEBROOT; ?>"+element+"/";
+    parent.edit.location.href="<?php echo BX_WEBROOT; ?>"+element;
 } else {
-    parent.edit.location.href="<?php echo BX_WEBROOT; ?>forms/"+element;
+    parent.edit.location.href="<?php echo BX_WEBROOT; ?>forms/"+element+"/";
 }
 document.forms['bookmarks'].selectElement.selectedIndex = 0;
 }
