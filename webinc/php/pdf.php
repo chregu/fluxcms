@@ -155,7 +155,7 @@ try {
 	 */
     header("Content-type: application/pdf");
     header("Content-Length: $len");
-    header("Content-Disposition: inline; filename=businesscard.pdf");
+    header("Content-Disposition: inline; filename=m20-areal.pdf");
     print $buf;
 
 }
@@ -248,7 +248,8 @@ function m20_objekte_typ($p, $typ){
 	m20_line($p,$y,LEFT,RIGHT);
 	
 	//titel
-	$textflow = $p->create_textflow("Geschoss\tFläche\tMietpreis\tNebenkosten\tMieter", $optlist);
+	$text = utf8_decode("Geschoss\tFläche\tMietpreis\tNebenkosten\tMieter");
+	$textflow = $p->create_textflow($text, $optlist);
  	$p->fit_textflow($textflow, LEFT, $y-$leading, RIGHT, $y, "");
 	$p->delete_textflow($textflow); 
 		
