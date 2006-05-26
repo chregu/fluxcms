@@ -28,11 +28,11 @@ class Test_of_bx_helpers_string extends UnitTestCase {
     }
     
     function test_utf2entities() {
-        $this->assertEqual(bx_helpers_string::utf2entities("Zürich"),"Z&#252;rich","Zürich. %s");
-        $this->assertEqual(bx_helpers_string::utf2entities(html_entity_decode("&#1488;",ENT_QUOTES,'utf-8')),"&#1488;","Hebrew: %s");
-        $this->assertEqual(bx_helpers_string::utf2entities(html_entity_decode("&#1580;",ENT_QUOTES,'utf-8')),"&#1580;","Arabic: %s");
-        $this->assertEqual(bx_helpers_string::utf2entities(html_entity_decode("&#12395;",ENT_QUOTES,'utf-8')),"&#12395;","Hiragana. %s");
-        
+         
+         $this->assertEqual(bx_helpers_string::utf2entities("Zürich",true),"Z&#252;rich","Zürich. %s");
+         $this->assertEqual(bx_helpers_string::utf2entities(html_entity_decode("&#1488;",ENT_QUOTES,'utf-8'),true),"&#1488;","Hebrew: %s");
+         $this->assertEqual(bx_helpers_string::utf2entities(html_entity_decode("&#1580;",ENT_QUOTES,'utf-8'),true),"&#1580;","Arabic: %s");
+        $this->assertEqual(bx_helpers_string::utf2entities(html_entity_decode("&#12395;",ENT_QUOTES,'utf-8'),true),"&#12395;","Hiragana. %s");
     }
     
     
