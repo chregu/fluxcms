@@ -70,7 +70,7 @@
     
     protected function getLatestComments($status = 1, $tablePrefix = null, $blogid) {
         
-        $gmnow = gmdate("Y-m-d H:i:00",time());
+        $gmnow = gmdate("Y-m-d H:i:00",time() + 60);
         if (!$tablePrefix) {
             $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         }

@@ -172,7 +172,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $archivepath = "";
         $archivewhere = "";
         $total = 0;
-        $gmnow = gmdate("Y-m-d H:i:00",time());
+        $gmnow = gmdate("Y-m-d H:i:00",time()  + 60);
 
         if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
