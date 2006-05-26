@@ -18,7 +18,6 @@ class Test_of_blog extends BxWebTestCase {
         
         $this->get($this->host."blog/");
         $this->assertWantedText("title $fix","New post not found error. \n %s");
-        
         $this->get($this->host."admin/");
         $this->setFrameFocus("edit");
         $this->clickLink("Blog Posts Overview / Latest Comments");
@@ -45,10 +44,11 @@ class Test_of_blog extends BxWebTestCase {
         $this->assertNoCmsErrors();
         $this->assertText("add a comment","Add a comment not found. \n %s");
         $fix = substr(md5(time()),0,5);
-        $this->setField("bx_fw[name]","name $fix");
-        $this->setField("bx_fw[email]","$fix@example.org");
-        $this->setField("bx_fw[base]","http://$fix.example.org");
-        $this->setField("bx_fw[comments]","hi. I'm $fix.");
+        $this->setField("name","name $fix");
+        $this->setField("email","$fix@example.org");
+        $this->setField("openid_url","http://$fix.example.org");
+        $this->setField("comments","hi. I'm $fix.");
+        
         $this->clickSubmit("Send");
         $this->assertWantedPattern("#<a href=\"http:\/\/$fix.example.org\">name $fix</a>#");
         $this->assertWantedText("I'm $fix.","Comment not found. \n %s");
