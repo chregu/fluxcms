@@ -1,7 +1,7 @@
 <?php
 
 $GLOBALS['testsuite'] = array();
-$GLOBALS['testsuite']['host'] = 'http://bxcmsng:8085/';
+$GLOBALS['testsuite']['host'] = 'http://fluxcms/';
 
 //following values are the same as on the installer page
 // those 2 are needed for logging into the admin
@@ -12,11 +12,11 @@ $GLOBALS['testsuite']['cms.password'] = ''; /*change this */
 // the following is only needed for the installertest.php
 $GLOBALS['testsuite']['dir.sub'] = '';
 
-$GLOBALS['testsuite']['database.name'] = 'bxcms';
-$GLOBALS['testsuite']['database.user'] = 'bxcms';
+$GLOBALS['testsuite']['database.name'] = 'fluxcms';
+$GLOBALS['testsuite']['database.user'] = 'fluxcms';
 $GLOBALS['testsuite']['database.password'] = ''; /* usually you have to change this */
 $GLOBALS['testsuite']['database.host'] = 'localhost';
-$GLOBALS['testsuite']['database.prefix'] = 'bxcms_';
+$GLOBALS['testsuite']['database.prefix'] = 'fluxcms_';
 
 $GLOBALS['testsuite']['databaseRoot.User'] = 'root';
 $GLOBALS['testsuite']['databaseRoot.Password'] = '';
