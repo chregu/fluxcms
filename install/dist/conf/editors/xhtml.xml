@@ -4,7 +4,7 @@
 
     <editors>
         <editor name="bxe"/>
-        <editor name="kupu"/>
+        <editor name="fck"/>
         <editor name="oneform"/>
     </editors>
 
