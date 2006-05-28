@@ -1,8 +1,8 @@
 -- MySQL dump 10.9
 --
--- Host: localhost    Database: bxcms
+-- Host: localhost    Database: fluxcms
 -- ------------------------------------------------------
--- Server version	4.1.12-max
+-- Server version	4.1.12-max-log
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO,MYSQL40' */;
@@ -22,7 +22,7 @@ CREATE TABLE `##bxcms_##_sequences_seq` (
 -- Dumping data for table `##bxcms_##_sequences_seq`
 --
 
-INSERT INTO `##bxcms_##_sequences_seq` (`sequence`) VALUES (9);
+INSERT INTO `##bxcms_##_sequences_seq` (`sequence`) VALUES (13);
 
 --
 -- Table structure for table `##bxcms_##blogcategories`
@@ -39,7 +39,7 @@ CREATE TABLE `##bxcms_##blogcategories` (
   `parentid` int(11) NOT NULL default '1',
   `fullname` varchar(255) NOT NULL default '',
   `changed` timestamp NOT NULL,
-    `blog_id` int(11) NOT NULL default '1',
+  `blog_id` int(11) NOT NULL default '1',
   `status` tinyint(4) NOT NULL default '1',
   PRIMARY KEY  (`id`),
   KEY `l` (`l`),
@@ -51,9 +51,9 @@ CREATE TABLE `##bxcms_##blogcategories` (
 -- Dumping data for table `##bxcms_##blogcategories`
 --
 
-INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `status`) VALUES (1,'All','root',1,6,'root',0,'root','2005-04-08 15:07:35',1);
-INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `status`) VALUES (3,'Moblog Pictures','moblog',4,5,'moblog',1,'Moblog Pictures','2005-04-08 15:07:35',1);
-INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `status`) VALUES (7,'General','general',2,3,'general',1,'General','2005-04-08 15:07:35',1);
+INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `blog_id`, `status`) VALUES (1,'All','root',1,6,'root',0,'root','2005-04-08 15:07:35',1,1);
+INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `blog_id`, `status`) VALUES (3,'Moblog Pictures','moblog',4,5,'moblog',1,'Moblog Pictures','2005-04-08 15:07:35',1,1);
+INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `blog_id`, `status`) VALUES (7,'General','general',2,3,'general',1,'General','2005-04-08 15:07:35',1,1);
 
 --
 -- Table structure for table `##bxcms_##blogcomments`
@@ -113,10 +113,10 @@ CREATE TABLE `##bxcms_##bloglinks` (
 -- Dumping data for table `##bxcms_##bloglinks`
 --
 
-INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `date`) VALUES (5,'Freeflux.net','http://freeflux.net','','',4,'2005-04-08 15:05:55',1,NULL,NULL);
-INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `date`) VALUES (6,'Bitflux GmbH','http://www.bitflux.ch/','','',4,'2005-04-08 15:06:09',2,NULL,NULL);
-INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `date`) VALUES (7,'netzwirt.ch','http://www.netzwirt.ch/','','',4,'2005-04-08 17:06:10',3,NULL,NULL);
-INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `date`) VALUES (8,'monorom.com','http://www.monorom.com/','','',4,'2005-04-08 17:06:10',4,NULL,NULL);
+INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (5,'Freeflux.net','http://freeflux.net','','',4,'2005-04-08 15:05:55',1,NULL,1,NULL);
+INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (6,'Bitflux GmbH','http://www.bitflux.ch/','','',4,'2005-04-08 15:06:09',2,NULL,1,NULL);
+INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (7,'netzwirt.ch','http://www.netzwirt.ch/','','',4,'2005-04-08 17:06:10',3,NULL,1,NULL);
+INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (8,'monorom.com','http://www.monorom.com/','','',4,'2005-04-08 17:06:10',4,NULL,1,NULL);
 
 --
 -- Table structure for table `##bxcms_##bloglinkscategories`
@@ -136,7 +136,7 @@ CREATE TABLE `##bxcms_##bloglinkscategories` (
 -- Dumping data for table `##bxcms_##bloglinkscategories`
 --
 
-INSERT INTO `##bxcms_##bloglinkscategories` (`id`, `name`, `changed`, `rang`) VALUES (4,'Supported by','2005-04-08 16:05:38',1);
+INSERT INTO `##bxcms_##bloglinkscategories` (`id`, `name`, `changed`, `blog_id`, `rang`) VALUES (4,'Supported by','2005-04-08 16:05:38',1,1);
 
 --
 -- Table structure for table `##bxcms_##blogposts`
@@ -157,14 +157,14 @@ CREATE TABLE `##bxcms_##blogposts` (
   `blog_id` int(11) NOT NULL default '1',
   `post_comment_mode` tinyint(4) NOT NULL default '99',
   `post_status` tinyint(4) NOT NULL default '1',
-  `post_lang` char(2) default NULL,
+  `post_lang` varchar(2) default NULL,
   `post_info` text,
   `post_guid_version` tinyint(4) NOT NULL default '2',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `post_uri` (`post_uri`),
   KEY `post_author` (`post_author`),
   KEY `post_status` (`post_status`),
-  KEY `blog_id` (`blog_id`), 
+  KEY `blog_id` (`blog_id`),
   FULLTEXT KEY `post_content` (`post_content`,`post_title`)
 );
 
@@ -172,7 +172,7 @@ CREATE TABLE `##bxcms_##blogposts` (
 -- Dumping data for table `##bxcms_##blogposts`
 --
 
-INSERT INTO `##bxcms_##blogposts` (`id`, `post_author`, `post_date`, `post_content`, `post_content_extended`, `post_content_summary`, `post_title`, `post_uri`, `changed`, `post_comment_mode`, `post_status`, `post_lang`, `post_info`, `post_guid_version`) VALUES (8,'test','2006-05-15 16:10:00','<p>Welcome to Flux CMS and its blog plugin.</p>\n\n<p>You can edit and posts in the admin section, if you click on the blog collection on the left side.</p>\n<p>Links and Categories can be managed via the Quicklinks dropdown on the top-right in the admin.</p>\n<p>If you have any questions, look at the <a href=\"http://docs.bitflux.org/en/user/blog/\">blog documentation</a>,  ask on the <a href=\"http://forum.freeflux.net/\">Forum</a> or on our <a href=\"http://wiki.bitflux.org/Support\">Mailinglist</a>.\n\n</p><p>But now, have fun ;) </p>','','','Your first Post','your-first-post','2006-05-15 08:34:06',99,1,NULL,NULL,1);
+INSERT INTO `##bxcms_##blogposts` (`id`, `post_author`, `post_date`, `post_expires`, `post_content`, `post_content_extended`, `post_content_summary`, `post_title`, `post_uri`, `changed`, `blog_id`, `post_comment_mode`, `post_status`, `post_lang`, `post_info`, `post_guid_version`) VALUES (8,'test','2006-05-15 16:10:00','0000-00-00 00:00:00','<p>Welcome to Flux CMS and its blog plugin.</p>\n\n<p>You can edit and posts in the admin section, if you click on the blog collection on the left side.</p>\n<p>Links and Categories can be managed via the Quicklinks dropdown on the top-right in the admin.</p>\n<p>If you have any questions, look at the <a href=\"http://docs.bitflux.org/en/user/blog/\">blog documentation</a>,  ask on the <a href=\"http://forum.freeflux.net/\">Forum</a> or on our <a href=\"http://wiki.bitflux.org/Support\">Mailinglist</a>.\n\n</p><p>But now, have fun ;) </p>','','','Your first Post','your-first-post','2006-05-15 08:34:06',1,99,1,NULL,NULL,1);
 
 --
 -- Table structure for table `##bxcms_##blogposts2categories`
@@ -215,6 +215,23 @@ CREATE TABLE `##bxcms_##locks` (
 
 --
 -- Dumping data for table `##bxcms_##locks`
+--
+
+
+--
+-- Table structure for table `##bxcms_##openid_uri`
+--
+
+DROP TABLE IF EXISTS `##bxcms_##openid_uri`;
+CREATE TABLE `##bxcms_##openid_uri` (
+  `id` int(11) NOT NULL auto_increment,
+  `date` date NOT NULL default '0000-00-00',
+  `uri` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+);
+
+--
+-- Dumping data for table `##bxcms_##openid_uri`
 --
 
 
@@ -280,7 +297,7 @@ INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`,
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/','output-mimetype','bx:','text/html',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/','display-name','bx:de','Kontakt',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/','display-name','bx:en','Contact',NULL,NULL);
-INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/','display-order','bx:','10',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/','display-order','bx:','40',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/index.en.xhtml','mimetype','bx:','text/html',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/index.en.xhtml','parent-uri','bx:','/',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/index.en.xhtml','output-mimetype','bx:','text/html',NULL,NULL);
@@ -303,7 +320,7 @@ INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`,
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/blog/','parent-uri','bx:','/',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/blog/','display-name','bx:de','Blog',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/blog/','display-name','bx:en','Blog',NULL,NULL);
-INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/blog/','display-order','bx:','1',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/blog/','display-order','bx:','10',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/lang/','mimetype','bx:','httpd/unix-directory',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/lang/','output-mimetype','bx:','httpd/unix-directory',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/lang/','parent-uri','bx:','/',NULL,NULL);
@@ -313,7 +330,7 @@ INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`,
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/gallery/','output-mimetype','bx:','httpd/unix-directory',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/gallery/','parent-uri','bx:','/',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/gallery/','display-name','bx:en','Gallery',NULL,NULL);
-INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/gallery/','display-order','bx:','2',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/gallery/','display-order','bx:','20',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/thanks.en.xhtml','mimetype','bx:','text/html',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/thanks.en.xhtml','output-mimetype','bx:','text/html',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/thanks.en.xhtml','parent-uri','bx:','/contact/',NULL,NULL);
@@ -325,6 +342,22 @@ INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`,
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/thanks.de.xhtml','output-mimetype','bx:','text/html',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/contact/thanks.de.xhtml','parent-uri','bx:','/contact/',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/gallery/','display-name','bx:de','Bilder',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/','mimetype','bx:','httpd/unix-directory',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/','output-mimetype','bx:','httpd/unix-directory',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/','parent-uri','bx:','/',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/','display-name','bx:en','About me',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/','display-order','bx:','30',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.en.xhtml','mimetype','bx:','text/html',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.en.xhtml','output-mimetype','bx:','text/html',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.en.xhtml','parent-uri','bx:','/about/',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.en.xhtml','display-name','bx:','index',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.en.xhtml','display-order','bx:','99',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/','display-name','bx:de','&#220;ber mich',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.de.xhtml','display-name','bx:','index',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.de.xhtml','display-order','bx:','0',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.de.xhtml','mimetype','bx:','text/html',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.de.xhtml','output-mimetype','bx:','text/html',NULL,NULL);
+INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.de.xhtml','parent-uri','bx:','/about/',NULL,NULL);
 
 --
 -- Table structure for table `##bxcms_##properties2tags`
@@ -344,6 +377,7 @@ CREATE TABLE `##bxcms_##properties2tags` (
 -- Dumping data for table `##bxcms_##properties2tags`
 --
 
+INSERT INTO `##bxcms_##properties2tags` (`id`, `path`, `tag_id`) VALUES (12,'/blog/title-6fe0a6.html',11);
 
 --
 -- Table structure for table `##bxcms_##tags`
@@ -361,6 +395,7 @@ CREATE TABLE `##bxcms_##tags` (
 -- Dumping data for table `##bxcms_##tags`
 --
 
+INSERT INTO `##bxcms_##tags` (`id`, `tag`) VALUES (11,'');
 
 --
 -- Table structure for table `##bxcms_##users`
@@ -384,20 +419,11 @@ CREATE TABLE `##bxcms_##users` (
   KEY `user_pass` (`user_pass`)
 );
 
+--
+-- Dumping data for table `##bxcms_##users`
+--
 
--- 
--- Table structure for table `fluxcms_openid_uri`
--- 
-
-DROP TABLE IF EXISTS `##bxcms_##openid_uri`;
-CREATE TABLE `##bxcms_##openid_uri` (
-  `id` int(11) NOT NULL auto_increment,
-  `date` date NOT NULL default '0000-00-00',
-  `uri` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-);
-
-
+INSERT INTO `##bxcms_##users` (`ID`, `user_login`, `user_pass`, `user_email`, `user_fullname`, `user_gupi`, `user_gid`, `user_tmphash`, `user_adminlang`, `plazes_username`, `plazes_password`) VALUES (1,'admin','f56107fb349a099199f394d5890293ae','','',NULL,1,'','',NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
