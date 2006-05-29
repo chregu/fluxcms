@@ -8,7 +8,7 @@ class bx_permm_perm_true {
     function isAllowed($uri, $actions,$userId) {
         if (in_array('admin',$actions)) {
             if ($userId) {
-                if ((int) $_SESSION['_authsession']['data']['user_gid'] == 2) {
+                if (isset($_SESSION['_authsession']['data']['user_gid']) && (int) $_SESSION['_authsession']['data']['user_gid'] == 2) {
                     return false;
                 }
                 return true;
