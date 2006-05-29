@@ -46,7 +46,7 @@ abstract class bx_permm_auth_common {
     
     protected $auth_gupicol = 'user_gupi';
     protected $auth_emailcol = 'user_email';
-    protected $auth_dbfields = 'user_adminlang';
+    protected $auth_dbfields = 'user_adminlang, user_gid';
     
     protected $auth_idcol = 'id';
     /**

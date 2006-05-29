@@ -10,7 +10,7 @@ Class bx_permm {
     
     private function __construct($options) {
         $this->permm = $options;
-        if (!isset($options['permModule']) || !$options['permModule']['type'] || $options['permModule']['type'] == 'true') {
+        if (!isset($options['permModule']) || !$options['permModule']['type'] ) {
             $this->permObj = null;
         } else {
             $this->authObj = bx_permm::factory($options['authModule'], 'auth');
