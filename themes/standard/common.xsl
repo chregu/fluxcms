@@ -75,5 +75,31 @@
 <xsl:template match="xhtml:br/@type" mode="xhtml">
 </xsl:template>
 
+ <xsl:template name="littleLogin">
+    <xsl:variable name="username" select="php:functionString('bx_helpers_perm::getUsername')"/>
+    <xsl:choose>
+    <xsl:when test="$username = ''">
+    <h3><a onclick="document.getElementById('littleLogin').style.display = 'block'; return false; " href="{$webroot}admin/">Login</a></h3>
+    
+ <form style="display: none;" method="post" action="{php:functionString('bx_helpers_uri::getRequestUri')}" id="littleLogin">
+    <label>User:</label><input size="10" name="username" type="text" class="input"/><br/>
+    <label>Pwd:</label><input size="10"  name="password" type="password" class="input"/><br/>
+
+    <label>&#160;</label>  <input type="submit" value="Submit"  />
+  </form>
+  </xsl:when>
+  <xsl:otherwise>
+  <p>Hello <xsl:value-of select="$username"/>.
+  <a href="{$webroot}admin/?logout&amp;back={php:functionString('bx_helpers_uri::getRequestUri')}">Logout</a>.
+  <xsl:if test="php:functionString('bx_helpers_perm::isAdmin')  = 'true'">
+  <br/>
+  <a href="{$webroot}admin/">Go to Admin</a>
+  </xsl:if>
+  </p>
+  
+  </xsl:otherwise>
+  </xsl:choose>
+    </xsl:template>
+
 
 </xsl:stylesheet>
