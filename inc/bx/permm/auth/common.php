@@ -59,18 +59,21 @@ abstract class bx_permm_auth_common {
     
     
     protected function __construct($options) {
-        if ($GLOBALS['POOL']->config->lastdbversion < 5390) {
-             $this->auth_dbfields = '';
-        }
         if (is_array($options)) {
+            if (isset($options['auth_dbfields'])) {
+                if (trim($options['auth_dbfields']) == '' ) {
+                    unset($options['auth_dbfields']); 
+                } else {
+                    $options['auth_dbfields'] .= "," .$this->auth_dbfields;
+                }
+            } 
             foreach ($options as $name => $value) {
                 if (isset($this->$name)) {
                     $this->$name = $value;
                 }
             }
+            
         }
-        
- 
     }
     
     
