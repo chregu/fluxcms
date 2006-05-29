@@ -389,3 +389,29 @@ h3.blog, #right  h3.blog {
 .formurl {
     display: none;
 }
+/* loginform */
+
+#littleLogin  input.input{
+    font-size: 11px;
+    width: 6em;
+    
+}
+
+#littleLogin input {
+    width: 6em;
+    font-size: 11px;
+    background-color: #f3f3f3;
+    border: 1px solid #555555;
+    margin-top: 3px;
+}
+
+#littleLogin label {
+     width: 3em;
+     float: left;
+     line-height: 21px;
+     clear: left;
+}
+
+#littleLogin {
+    margin-left: 15px;
+}

@@ -58,8 +58,10 @@ and adjust the delicious template itself
         <xsl:call-template name="bloglinks"/>
         <xsl:call-template name="archive"/>
         <xsl:call-template name="buttons"/>
+        <xsl:call-template name="littleLogin"/>
     </xsl:template>
     
+   
 
     <xsl:template name="buttons">
         <h3 class="blog">Buttons</h3>
