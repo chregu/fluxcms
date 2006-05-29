@@ -54,10 +54,10 @@ class bx_resourcemanager {
         $path = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
         if ($path) {
             $val = $path[0];
+            $GLOBALS['POOL']->cache->set($key,$val);
         } else {
             $val = NULL;
         }
-        $GLOBALS['POOL']->cache->set($key,$val);
         return $val;
     }
     static public function getChildrenByMimeType(bx_collection $coll, $mimetype) {
@@ -145,10 +145,11 @@ class bx_resourcemanager {
         $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
         if ($row) {
             $val =  $row[0];
+            $GLOBALS['POOL']->cache->set($key,$val);
         } else {
             $val = NULL;
         }
-        $GLOBALS['POOL']->cache->set($key,$val);
+        
         return $val;
         
     }
