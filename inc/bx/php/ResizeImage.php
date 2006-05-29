@@ -39,6 +39,7 @@ class ImageResize {
             }
             else if (!$this->check304etAl()) {                
                 $this->defImageDim();
+
 				$this->checkIfExists();
                 $methodname = $this->method."Image";
                 $this->$methodname();
@@ -106,7 +107,7 @@ class ImageResize {
               list($this->endImgWidth, $this->endImgHeight, $this->method) = explode(",",$this->endsize);
               if ($this->endImgHeight == 0) {
                   unset ($this->endImgHeight);
-                  $this->oriImgPath = str_replace('/'.$this->endsize,'',$this->endImgPath)."/";
+                  $this->oriImgPath = str_replace('/'.$this->endsize.'/','/',$this->endImgPath)."/";
                   $this->endsize = $this->endImgWidth;
 				  $this->oriEndsize = $this->endImgWidth;
                   unset ($this->endImgWidth);
@@ -116,7 +117,7 @@ class ImageResize {
           }
           
           if (!$this->oriImgPath) {
-                $this->oriImgPath = str_replace('/'.$this->endsize,'',$this->endImgPath)."/";
+                $this->oriImgPath = str_replace('/'.$this->endsize.'/','/',$this->endImgPath)."/";
           }
 
           if (!isset($this->method)) {
