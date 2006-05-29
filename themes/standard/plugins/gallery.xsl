@@ -107,7 +107,7 @@
                 </a>
             </xsl:when>
             <xsl:otherwise>
-                <a href="{$webrootW}{../../@collUri}{@href}">
+                <a href="{$webrootLangW}{../../@collUri}{@href}">
                     <img src="{$webroot}dynimages/{$thumbWidth}/{$href}" border="0"  alt="{$href}"/>
                 </a>
              </xsl:otherwise>
