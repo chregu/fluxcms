@@ -83,6 +83,11 @@ abstract class bx_permm_auth_common {
      * @return  void
      */
     public function start() {
+        if (empty($_SESSION['_authsession']['registered']) && empty($_POST) && !empty($_COOKIE['fluxcms_login']) ) {
+                list($_POST['username'],$_POST['password']) = explode(":", $_COOKIE['fluxcms_login']);
+        } elseif (!empty($_POST) && !empty($_POST['remember'])) {
+                setcookie('fluxcms_login', $_POST['username'].':'.md5($_POST['username'].md5($_POST['password'])), time() + 3600*24*365,"/");
+        }
         $this->authObj->assignData();
         $u = $this->specialEncode($this->authObj->username);
         $p = $this->specialEncode($this->authObj->password);

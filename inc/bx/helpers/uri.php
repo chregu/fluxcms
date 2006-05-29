@@ -30,7 +30,7 @@ class bx_helpers_uri {
         return $uri.'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['REQUEST_URI'])."/".$filename;
     }
     
-    static function getRequestUri($q = null) {
+    static function getRequestUri($q = '',$random = false) {
         
          if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") {
             $uri = 'https';
@@ -38,15 +38,20 @@ class bx_helpers_uri {
             $uri = 'http';
         }
         
+        if ($random) {
+            if ($q) {
+                $q .= '&st='.rand(1,1000);
+            } else {
+                $q = 'st='.rand(1,1000);
+            }
+        }
         if ($q) {
             if (strpos($_SERVER['REQUEST_URI'],'?') === false) {
                 $q = '?'.$q;
             } else {
                 $q = '&'.$q;
             }
-        } else {
-            $q = '';
-        }
+        } 
         return $uri.'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$q;
     }
     
