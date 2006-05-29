@@ -154,6 +154,16 @@ class bx_plugins_blog_handlecomment {
         }
         $commentRejected = "";
         
+        //if uri in post is the same as in the session then do openid = true(1)
+        @session_start();
+        if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['openid_url']) {
+            $openid = 1;
+        } else {
+            $openid = 0;
+        }
+        
+        $username = bx_helpers_perm::getUsername();
+        
         /* known spammer user */
         $simplecache = popoon_helpers_simplecache::getInstance();
         $simplecache->cacheDir = BX_TEMP_DIR;
@@ -165,7 +175,7 @@ class bx_plugins_blog_handlecomment {
         
         
         /* If url field is filled in, it was a bot ...*/
-        if (isset($data['url']) && $data['url'] != "") {
+        if (isset($data['url']) && $data['url'] != "" && !$username) {
             $commentRejected .= "* Hidden URL field was not empty, assuming bot: " . $data['url']."\n";
             if(strpos($data['url'], "\n") !== FALSE or strpos($data['url'], "\r") !== FALSE) {
                 $commentReject .= "* Multi line hidden URL field \n";
@@ -175,7 +185,8 @@ class bx_plugins_blog_handlecomment {
         }
         
         /* Max 5 links per post and SURBL check */
-        if (preg_match_all("#http://[\/\w\.\-]+#",$data['comments'], $matches) || $data['openid_url'] != '') {
+        /* No check, when logged in */
+        if (!$username && (preg_match_all("#http://[\/\w\.\-]+#",$data['comments'], $matches) || $data['openid_url'] != '')) {
             if ($data['openid_url'] != '') {
                 $matches[0][] = $data['openid_url'] ;
             }
@@ -193,7 +204,12 @@ class bx_plugins_blog_handlecomment {
         }
         
         //check sender IP against xbl.spamhaus.org
-        $xblcheck = bx_plugins_blog_spam::checkSenderIPBLs($_SERVER['REMOTE_ADDR']);
+        
+        if (!$username) {
+            $xblcheck = bx_plugins_blog_spam::checkSenderIPBLs($_SERVER['REMOTE_ADDR']);
+        } else {
+            $xblcheck = '';
+        }
         
         if (!$commentRejected) {
             // insert comment
@@ -234,19 +250,17 @@ class bx_plugins_blog_handlecomment {
             
         
         
-        //if uri in post is the same as in the session then do openid = true(1)
-        @session_start();
-        if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['openid_url']) {
-            $openid = 1;
-        } else {
-            $openid = 0;
-        }
+        
 
         $query =     'insert into '.$blogTablePrefix.'blogcomments (comment_posts_id, comment_author, comment_author_email, comment_author_ip,
             comment_date, comment_content,comment_status, comment_notification, comment_notification_hash,
-            comment_author_url, openid         
+            comment_author_url, openid, comment_username         
             ) VALUES ("'.$row['id'].'",'.$db->quote($data['name'])
-            .','.$db->quote($data['email'],'text').','.$db->quote($data['remote_ip']).',"'.gmdate('c').'",'.$db->quote(bx_helpers_string::utf2entities($data['comments'])).','.$comment_status.','.$db->quote($data['comment_notification']).',"'.$comment_notification_hash.'",'.$db->quote($data['openid_url'],'text').', '.$openid.')';
+            .','.$db->quote($data['email'],'text').','.$db->quote($data['remote_ip']).',
+            "'.gmdate('c').'",'.$db->quote(bx_helpers_string::utf2entities($data['comments'])).',
+            '.$comment_status.','.$db->quote($data['comment_notification']).',
+            "'.$comment_notification_hash.'",'.$db->quote($data['openid_url'],'text').', '.$openid.',
+            '.$db->quote($username).')';
         
         
         $res = $GLOBALS['POOL']->dbwrite->query($query);

@@ -284,6 +284,11 @@ if ($lastVersion < 6760) {
     doQuery("ALTER TABLE `{tablePrefix}blogcomments` ADD INDEX ( `comment_status` )",false); 
     updateLastVersion(6760);
 }
+if ($lastVersion < 6991) {
+    addCol("blogcomments","comment_username"," VARCHAR( 100 ) NOT NULL ");
+    updateLastVersion(6991);
+}
+
 
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
