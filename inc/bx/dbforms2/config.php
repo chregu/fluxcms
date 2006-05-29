@@ -279,8 +279,14 @@ class bx_dbforms2_config {
 
         $attributeSet = $form->getConfigAttributes();
         $attributes = $this->getNodeAttributes($fieldsNode, $attributeSet);
-        $form->attributes = $attributes;
+
+        // backward compatibility for the onsavephp attribute
+        if(!empty($attributes['onsavephp'])) {
+            $form->eventHandlers['php'][bx_dbforms2::EVENT_UPDATE_POST][] = $attributes['onsavephp'];
+            unset($attributes['onsavephp']);
+        }
         
+        $form->attributes = $attributes;
         $form->jsHrefs = $this->getJSHrefs();
         
         return $form;

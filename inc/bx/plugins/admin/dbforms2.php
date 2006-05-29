@@ -119,15 +119,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 // run additional field queries and server-side onsave handlers if there was no error 
                 if ($responseCode == 0) {
                     bx_dbforms2_data::doAdditionalQueries($form);
-                    if (isset($form->attributes['onsavephp'])) {
-                        if (strpos($form->attributes['onsavephp'], "::") > 0) {
-                            list($class, $function) = explode ("::", $form->attributes['onsavephp']);
-                            call_user_func(array($class, $function), $form);
-                        } else {
-                            call_user_func($form->attributes['onsavephp'], $form);
-                        }
-                    }
-
+                    
                     // reload the saved data and return it to the client (on insert or update only)
                     if($form->queryMode == bx_dbforms2::QUERYMODE_INSERT || $form->queryMode == bx_dbforms2::QUERYMODE_UPDATE) { 
                         $dataDOM = $this->getDataByForm($form);
