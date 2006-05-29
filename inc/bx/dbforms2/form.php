@@ -39,6 +39,7 @@ class bx_dbforms2_form {
         'attributes' => array(),
         'jsHrefs' => array(),
         'queryMode' => bx_dbforms2::QUERYMODE_UPDATE,
+        'eventHandlers' => array(),
     );
     
     /**
@@ -160,6 +161,18 @@ class bx_dbforms2_form {
         );
     }
 
+    public function callEventHandlers($event) {
+        if(!empty($this->eventHandlers['php'][$event])) {
+            foreach($this->eventHandlers['php'][$event] as $handler) {
+                if (strpos($handler, "::") > 0) {
+                    list($class, $function) = explode ("::", $handler);
+                    call_user_func(array($class, $function), $this);
+                } else {
+                    call_user_func($handler, $this);
+                }
+            }
+        }
+    }
     
 }
 

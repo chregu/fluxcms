@@ -275,6 +275,7 @@ class bx_dbforms2_config {
         $form->tableName = $this->getTableName($fieldsNode);
         $form->tablePrefix = $this->getTablePrefix($fieldsNode);
         $form->title = $this->getFormTitle($fieldsNode);
+        $form->eventHandlers = $this->getEventHandlersByForm($fieldsNode->parentNode);
 
         $attributeSet = $form->getConfigAttributes();
         $attributes = $this->getNodeAttributes($fieldsNode, $attributeSet);
@@ -460,6 +461,66 @@ class bx_dbforms2_config {
             }
         }
         return $hrefs;
+    }
+    
+    /**
+     *  Returns all events handlers of the given type
+     *
+     *  @param  DOMElement $node DOM-node of the form
+     *  @access public
+     *  @return array Array with event all handlers
+     */
+    protected function getEventHandlersByForm($node) {
+        $ehandlers = array();
+        
+        // <dbform:eventhandler event="insert_pre" type="php" handler="foo::bar"/>
+        
+        $ehNS = $this->xpath->query("dbform:eventhandler", $node);
+        foreach($ehNS as $ehNode) {
+            
+            $type = $ehNode->getAttribute('type');
+            $event = $ehNode->getAttribute('event');
+            $handler = $ehNode->getAttribute('handler');
+            
+            if(!empty($handler) && !empty($event)) {
+            
+                if(!isset($ehandlers[$type])) {
+                    $ehandlers[$type] = array();
+                }
+                
+                switch($event) {
+                    case 'select_pre':
+                        $ehandlers[$type][bx_dbforms2::EVENT_SELECT_PRE][] = $handler;
+                    break;
+                    case 'select_post':
+                        $ehandlers[$type][bx_dbforms2::EVENT_SELECT_POST][] = $handler;
+                    break;
+    
+                    case 'insert_pre':
+                        $ehandlers[$type][bx_dbforms2::EVENT_INSERT_PRE][] = $handler;
+                    break;
+                    case 'insert_post':
+                        $ehandlers[$type][bx_dbforms2::EVENT_INSERT_POST][] = $handler;
+                    break;
+    
+                    case 'update_pre':
+                        $ehandlers[$type][bx_dbforms2::EVENT_UPDATE_PRE][] = $handler;
+                    break;
+                    case 'update_post':
+                        $ehandlers[$type][bx_dbforms2::EVENT_UPDATE_POST][] = $handler;
+                    break;
+    
+                    case 'delete_pre':
+                        $ehandlers[$type][bx_dbforms2::EVENT_DELETE_PRE][] = $handler;
+                    break;
+                    case 'delete_post':
+                        $ehandlers[$type][bx_dbforms2::EVENT_DELETE_POST][] = $handler;
+                    break;
+                }
+            }
+        }
+        
+        return $ehandlers;
     }
     
     

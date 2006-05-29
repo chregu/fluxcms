@@ -72,24 +72,27 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     $form->queryMode = bx_dbforms2::QUERYMODE_DELETE;
                     $query = bx_dbforms2_sql::getDeleteQueryByForm($form);  
                     $deleteRequest = true;
+                    $form->callEventHandlers(bx_dbforms2::EVENT_DELETE_PRE);
                 
                 } else if ($form->currentID == 0) {
                     // create a new entry
                     $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
                     $form->currentID = $db->nextID($form->tablePrefix.'_sequences');
                     $query = bx_dbforms2_sql::getInsertQueryByForm($form);
+                    $form->callEventHandlers(bx_dbforms2::EVENT_INSERT_PRE);
                 
                 } else {
                     // update an existing entry
                     $form->queryMode = bx_dbforms2::QUERYMODE_UPDATE;
                     $query = bx_dbforms2_sql::getUpdateQueryByForm($form);
+                    $form->callEventHandlers(bx_dbforms2::EVENT_UPDATE_PRE);
                 }
-
+                
                 // give it a go
                 $res = $db->query($query);
 
                 if(MDB2::isError($res)) {
-                    // 20 means error, this number has been chosen arbitrarily
+                    // pass error code and message to the browser
                     $responseCode = $res->getCode();
                     $responseText = $res->getMessage(). "\n".$res->getUserInfo();
 
@@ -100,6 +103,18 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 }
 
                 $dataDOM = NULL;
+                
+                switch($form->queryMode) {
+                    case bx_dbforms2::QUERYMODE_INSERT:
+                        $form->callEventHandlers(bx_dbforms2::EVENT_INSERT_POST);
+                    break;
+                    case bx_dbforms2::QUERYMODE_UPDATE:
+                        $form->callEventHandlers(bx_dbforms2::EVENT_UPDATE_POST);
+                    break;
+                    case bx_dbforms2::QUERYMODE_DELETE:
+                        $form->callEventHandlers(bx_dbforms2::EVENT_DELETE_POST);
+                    break;
+                }
 
                 // run additional field queries and server-side onsave handlers if there was no error 
                 if ($responseCode == 0) {
@@ -246,9 +261,11 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
      */
     protected function getDataByForm($form) {
         $form->queryMode = bx_dbforms2::QUERYMODE_SELECT;
+        $form->callEventHandlers(bx_dbforms2::EVENT_SELECT_PRE);        
         $query = bx_dbforms2_sql::getSelectQueryByForm($form);
         $dataDOM = bx_dbforms2_data::getXMLByQuery($query,true);
         $dataDOM = bx_dbforms2_data::addAdditionalDataByForm($form, $dataDOM);
+        $form->callEventHandlers(bx_dbforms2::EVENT_SELECT_POST);        
         return $dataDOM;
     }
     

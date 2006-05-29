@@ -17,10 +17,24 @@
 
 class bx_dbforms2 {
     
-    const QUERYMODE_SELECT = 1;
-    const QUERYMODE_UPDATE = 2;
-    const QUERYMODE_INSERT = 3;
-    const QUERYMODE_DELETE = 4;
+    const QUERYMODE_SELECT  = 1;
+    const QUERYMODE_UPDATE  = 2;
+    const QUERYMODE_INSERT  = 3;
+    const QUERYMODE_DELETE  = 4;
+
+    // events
+    const EVENT_SELECT_PRE  = 1;
+    const EVENT_SELECT_POST = 2;
+
+    const EVENT_INSERT_PRE  = 3;
+    const EVENT_INSERT_POST = 4;
+
+    const EVENT_UPDATE_PRE  = 5;
+    const EVENT_UPDATE_POST = 6;
+
+    const EVENT_DELETE_PRE  = 7;
+    const EVENT_DELETE_POST = 8;
+
     
 }
 
