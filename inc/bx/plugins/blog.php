@@ -860,7 +860,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     }
                 }
                 $remember = 'checked';
-            } else {
+            } else if ($_uname = bx_helpers_perm::getUsername()) {
+                $data['name'] = $_uname;
+                if (!empty($_SESSION['_authsession']['data']['user_email'])) {
+                    $data['email'] = $_SESSION['_authsession']['data']['user_email'];
+                }
+                $data['openid_url'] = BX_WEBROOT;
+            }   else {
                 $remember = null;                                                        
             }
         }

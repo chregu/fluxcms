@@ -46,7 +46,7 @@ abstract class bx_permm_auth_common {
     
     protected $auth_gupicol = 'user_gupi';
     protected $auth_emailcol = 'user_email';
-    protected $auth_dbfields = 'user_adminlang, user_gid';
+    protected $auth_dbfields = 'user_adminlang, user_gid, user_email';
     
     protected $auth_idcol = 'id';
     /**
@@ -85,7 +85,7 @@ abstract class bx_permm_auth_common {
     public function start() {
         if (empty($_SESSION['_authsession']['registered']) && empty($_POST) && !empty($_COOKIE['fluxcms_login']) ) {
                 list($_POST['username'],$_POST['password']) = explode(":", $_COOKIE['fluxcms_login']);
-        } elseif (!empty($_POST) && !empty($_POST['remember'])) {
+        } elseif (!empty($_POST) && !empty($_POST['remember']) && !empty($_POST['username']) && !empty($_POST['password'])) {
                 $hash = $_POST['username'].':'.md5($_POST['username'].md5($_POST['password']));
                 if (! (isset($_COOKIE['fluxcms_login']) && $_COOKIE['fluxcms_login'] == $hash)) {
                     setcookie('fluxcms_login',$hash, time() + 3600*24*365,"/");
