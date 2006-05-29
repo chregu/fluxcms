@@ -9,6 +9,10 @@ class ImageDirectoryIterator extends DirectoryIterator {
     
     
     public function isImage() {
-        return bx_helpers_image::isImage($this->getFileName());
+       $fn = $this->getFileName();
+       if ($fn != ".." && $fn != ".") {
+               return bx_helpers_image::isImage($this->getFileName());
+       } 
+       return false;
     }
 }
