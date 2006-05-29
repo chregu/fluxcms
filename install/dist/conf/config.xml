@@ -169,7 +169,7 @@
                 <auth_table>users</auth_table>
                 <auth_usernamecol>user_login</auth_usernamecol>
                 <auth_passwordcol>user_pass</auth_passwordcol>
-                 <auth_dbfields>user_gid</auth_dbfields>
+                 <auth_dbfields>user_adminlang, user_gid</auth_dbfields>
                 <cryptType>md5</cryptType>
                 <dsn copy="auth_dsn"/>
             </authModule>
