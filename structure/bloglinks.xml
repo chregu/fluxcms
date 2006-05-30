@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
         
-    <bxst:section name="bloglinks" where="bloglinkscategories.blog_id = $blogid" orderby="bloglinkscategories.rang, bloglinks.rang">
+    <bxst:section name="bloglinks" where="[[bloglinkscategories.blog_id = $blogid]]" orderby="bloglinkscategories.rang, bloglinks.rang">
         <bxst:table name="bloglinkscategories" fields="id , name , blog_id"> 
             <bxst:table name="bloglinks"  thisfield="bloglinkscategories"/>
         </bxst:table>
