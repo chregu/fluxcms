@@ -109,36 +109,64 @@ class bx_dbforms2_data {
         $xp = new domxpath($xml);
         $dataNodeName = $form->tablePrefix.$form->tableName;
         
-        foreach($form->fields as $field) {
-            $data = $field->getAdditionalData($form->currentID);
-            if ($data) {
+        if (is_array($form->fields)) {
+            foreach($form->fields as $field) {
+                $data = $field->getAdditionalData($form->currentID);
+                if ($data) {
                 
-                $res = $xp->query("/data/$dataNodeName/$dataNodeName/".$field->name);
-                if (!$res->item(0)) {
-                $res = $xp->query("/data/$dataNodeName/$dataNodeName");
-                    $node = $res->item(0)->appendChild($xml->createElement(  $field->name));
-                } else {
-                    $node = $res->item(0);
-                }
-                
-                if ($node) {
-                    if ($node->firstChild) {
-                        $vs = $xml->createElement("values");
-                        $node->replaceChild($vs,$node->firstChild);
+                    $res = $xp->query("/data/$dataNodeName/$dataNodeName/".$field->name);
+                    if (!$res->item(0)) {
+                        $res = $xp->query("/data/$dataNodeName/$dataNodeName");
+                        $node = $res->item(0)->appendChild($xml->createElement(  $field->name));
                     } else {
-                        $vs = $node->appendChild($xml->createElement("values"));
+                        $node = $res->item(0);
                     }
-                    foreach ($data as $id => $value) {
-                        $v = $xml->createElement("value");
-                        $v->setAttribute("id",$id);
-                        $v->appendChild($xml->createTextNode(html_entity_decode( $value, ENT_COMPAT, 'UTF-8')));
-                        $vs->appendChild($v);
+                
+                    if ($node) {
+                        if ($node->firstChild) {
+                            $vs = $xml->createElement("values");
+                            $node->replaceChild($vs,$node->firstChild);
+                        } else {
+                            $vs = $node->appendChild($xml->createElement("values"));
+                        }
+                        
+                        foreach ($data as $id => $value) {
+                            $v = $xml->createElement("value");
+                            $v->setAttribute("id",$id);
+                            $v->appendChild($xml->createTextNode(html_entity_decode( $value, ENT_COMPAT, 'UTF-8')));
+                            $vs->appendChild($v);
+                        }
+                    }
+                
+                } else {
+                    
+                    $value = $field->getValue();
+                
+                    if ($value && !empty($value)) {
+                    
+                        $res = $xp->query("/data/$dataNodeName/$dataNodeName/".$field->name);
+                        if ($res->length == 0) {
+                            $parent =  $xp->query("/data/$dataNodeName/$dataNodeName");   
+                            if ($parent->item(0) && $parent->item(0) instanceof DOMElement) {
+                                $p = $parent->item(0);   
+                                $node = $xml->createElement($field->name);
+                                $p->appendChild($node);
+                            }
+                        } else {
+                            $node = $res->item(0);    
+                        }
+                    
+                        if ($node instanceof DOMElement) { 
+                            $node->appendChild($xml->createTextNode(html_entity_decode($value, ENT_COMPAT, 'UTF-8')));
+                        }
                     }
                 }
-                
             }
+
+            
+            
         }
-        
+
         return $xml;
     }
     

@@ -102,6 +102,10 @@ class bx_dbforms2_field {
         $this->name = $name;
     }
     
+    public function setParentForm($parentForm) {
+        $this->parentForm = $parentForm;    
+    }
+    
     /**
      *  Gets the current field value.
      *
@@ -182,6 +186,7 @@ class bx_dbforms2_field {
             'descr' => 'string', 
             'isxml' => 'bool',
             'onkeyup' => 'string',
+            'nosql' => 'bool'
         );
     }
     

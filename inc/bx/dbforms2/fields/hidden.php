@@ -35,8 +35,10 @@ class bx_dbforms2_fields_hidden extends bx_dbforms2_field {
         parent::__construct($name);
         $this->type = 'hidden';
         $this->XMLName = 'input';
+    
     }
    
+
 }
 
 ?>

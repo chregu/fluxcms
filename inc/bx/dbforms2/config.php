@@ -132,7 +132,7 @@ class bx_dbforms2_config {
             }
             
             if($fieldInstance instanceof bx_dbforms2_field) {
-                $fieldInstance->parentForm = $parentForm;
+                $fieldInstance->setParentForm($parentForm);
                 
                 $attributeSet = $fieldInstance->getConfigAttributes();
                 $attributes = $this->getNodeAttributes($field, $attributeSet);

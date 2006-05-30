@@ -112,9 +112,12 @@ class bx_dbforms2_form {
      *  @return type descr
      */
     public function getFieldByName($name) {
-        foreach($this->fields as $field) {
-            if($field->name == $name)
-                return $field;
+        if (is_array($this->fields)) {
+            foreach($this->fields as $field) {
+                if($field instanceof bx_dbforms2_field && ($field->name == $name)) {
+                    return $field;
+                }
+            }
         }
     }
     

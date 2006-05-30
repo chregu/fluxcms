@@ -39,15 +39,17 @@ class bx_dbforms2_sql {
 
         $fields[] = $form->idField;
         
-        foreach($form->fields as $field) {
-            if ($field->getAttribute('nosql')==false) {
-                $name = $field->getSQLName('select');
-                if ($name) {
-                    //$fields[] = $db->quoteIdentifier($name);
-                    $fields[] = $name;
+        if (is_array($form->fields))  {
+            foreach($form->fields as $field) {
+                if ($field->getAttribute('nosql')==false) {
+                    $name = $field->getSQLName('select');
+                    if ($name) {
+                        //$fields[] = $db->quoteIdentifier($name);
+                        $fields[] = $name;
+                    }
                 }
+         
             }
-        
         }
         
         $query.= implode(',', $fields);
