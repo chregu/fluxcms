@@ -373,7 +373,7 @@ var commentButtonName      = "bx[plugins][blog][_all]";
             <xsl:when test="$singlePost = 'true'">
                 <h2 class="post_title">
                     <xsl:if test="../@blog:post_status != 1"> 
-                        <img src="{$webrootW}webinc/images/privat.gif"/>
+                        <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/privat.gif"/>
                     </xsl:if>
                     <xsl:apply-templates/>
                 </h2>
