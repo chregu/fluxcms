@@ -24,8 +24,11 @@ class bx_editors_newsmailer_newsmailer {
      */
     final public static function newsMailerFactory($name)
     {
-		$class = new ReflectionClass("bx_editors_newsmailer_".$name);
-		return $class->newInstance();
+    	$module = "bx_editors_newsmailer_".$name;
+    	if(class_exists($module)) {
+			return new $module();
+        }
+		return null;
     }
     
 	/**
@@ -61,11 +64,12 @@ class bx_editors_newsmailer_newsmailer {
 		$dom = new DomDocument();
 		$dom->loadXML($htmlMessage);
 		
+		$dom = $this->transformHTML($dom);
+		
 		if($embedImages) {
 			self::$htmlImages = array();
 			$dom = $this->transformHTMLImages($dom);
     	}
-		$dom = $this->transformHTML($dom);
 
 		$htmlTransform = $dom->saveXML();
 
@@ -78,8 +82,8 @@ class bx_editors_newsmailer_newsmailer {
 		foreach($receivers as $person)
 		{
 			// create the personalized email 
-			$customHtml = $this->customizeMessage($htmlTransform, $person);
-			$customText = $this->customizeMessage($textMessage, $person);
+			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile']);
+			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
 			
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
 			$mime =& new Mail_mime();
@@ -170,7 +174,7 @@ class bx_editors_newsmailer_newsmailer {
      * Customized the message for a certain user
      * tags in the form of {field} are replaced with its corresponding value from the database
      */
-    protected function customizeMessage($message, $person)
+    protected function customizeMessage($message, $person, $filename)
     {
     	$templates = array();
     	$values = array();
@@ -179,8 +183,17 @@ class bx_editors_newsmailer_newsmailer {
     		array_push($values, $val);
     	}
     	
-    	array_push($templates, '{title}');
-    	array_push($values, $person['gender'] == '0' ? 'Mr' : 'Ms');
+    	$webfilename = str_replace(array('en.xhtml', 'de.xhtml'), 'html', $filename);
+    	bx_helpers_debug::webdump($webfilename); 
+    	
+    	array_push($templates, '{title}', '{weblink}', '{activate}', '{unsubscribe}', '{publication}', '{date}');
+    	
+    	array_push($values, $person['gender'] == '0' ? 'Herr' : 'Frau');
+    	array_push($values, BX_WEBROOT);
+    	array_push($values, BX_WEBROOT."newsletter/index.html?activate=".$person['activation']);
+    	array_push($values, BX_WEBROOT."newsletter/index.html?unsubscribe=".$person['email']);
+    	array_push($values, BX_WEBROOT."newsletter/archive/".$webfilename);
+    	array_push($values, date("m/Y"));
     	
     	return str_replace($templates, $values, $message);
     }

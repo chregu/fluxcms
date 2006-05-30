@@ -147,7 +147,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
     	
     	// check if the user wants to join a double-opt-in group
     	$query = "select id from ".$prefix."newsletter_groups WHERE optin=1 AND public=1";
-    	$optinGroups = $GLOBALS['POOL']->db->queryRow($query);	
+    	$optinGroups = $GLOBALS['POOL']->db->queryCol($query);	
     	
     	$doubleopt = false;
     	if(count(array_intersect($optinGroups, $data['groups'])) > 0) {
@@ -155,10 +155,9 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
     		$status = 2; // needs activation
     	}
     	
-    	$userid = $this->getUserId($data['field_email']);
-    	
     	// delete old entries with the same email address
-    	$query = "delete from ".$prefix."newsletter_users where id='".$userid."' AND status=3";
+    	$email = $GLOBALS['POOL']->dbwrite->quote($email);
+    	$query = "delete from ".$prefix."newsletter_users where email=".$email." AND status=3";
         $GLOBALS['POOL']->dbwrite->exec($query);
     	
         // add to database
@@ -168,6 +167,8 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         	return false;	
         }
 
+    	$userid = $this->getUserId($data['field_email']);
+    	
         // add to selected groups
         foreach($data['groups'] as $grp)
         {
@@ -175,7 +176,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         	$GLOBALS['POOL']->dbwrite->exec($query);
         }
         
-    	if($doubleopt == "true") {
+    	if($doubleopt == true) {
     		// send user a mail with his activation id
     		$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($this->getParameter($path,"sendclass"));
     		$newsmailer->sendActivationMail($data, $this->getParameter($path,"activation-server"), 

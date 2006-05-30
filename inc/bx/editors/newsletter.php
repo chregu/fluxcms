@@ -334,6 +334,16 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateManageView()
     {
+    	/*$xsl = new DomDocument();
+		$xsl->load('themes/3-cols/scansystems.xsl');
+    	$inputdom = new DomDocument();
+		$inputdom->load('data/newsletter/vorlage.en.xhtml');
+		$proc = new XsltProcessor();
+		$proc->registerPHPFunctions();
+		$xsl = $proc->importStylesheet($xsl);
+		$outputdom = $proc->transformToDoc($inputdom);  
+    	bx_helpers_debug::webdump($outputdom->saveXML());  */
+    	
     	// get information about the newsletters sent
 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_drafts";
@@ -587,8 +597,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	
     	// simplify date format (YYYYMMDDhhmmss) so we can compare it later within Xslt
 		$this->callbackDate = $feed["lastdate"];
-		$feedContent = preg_replace("/<dc:date>(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z<\/dc:date>/e", 
-									"'<dc:date>'.\$this->callbackFeedDate('$1$2$3$4$5$6').'</dc:date>'", 
+		$feedContent = preg_replace("/<dc:date>([^<]*)<\/dc:date>/e", 
+									"'<dc:date>'.\$this->callbackFeedDate(date('YmdHis', strtotime('$1'))).'</dc:date>'", 
 									$feedContent);
  
 		$xsl = new DomDocument();
