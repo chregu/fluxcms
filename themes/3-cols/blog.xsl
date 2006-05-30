@@ -377,13 +377,19 @@ var commentButtonName      = "bx[plugins][blog][_all]";
         <xsl:choose>
             <xsl:when test="$singlePost = 'true'">
                 <h2 class="post_title">
+                    <xsl:if test="../@blog:post_status != 1"> 
+                        <img src="{$webrootW}webinc/images/privat.gif"/>
+                    </xsl:if>
                     <xsl:apply-templates/>
                 </h2>
             </xsl:when>
             <xsl:otherwise>
                 <h2 class="post_title">
                     <a href="{../xhtml:div[@class='post_links']/xhtml:span[@class='post_uri']/xhtml:a/@href}">
-                        <xsl:apply-templates/>
+                    <xsl:if test="../@blog:post_status != 1"> 
+                        <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/privat.gif"/>
+                    </xsl:if>
+                    <xsl:apply-templates/>
                     </a>
                 </h2>
             </xsl:otherwise>
