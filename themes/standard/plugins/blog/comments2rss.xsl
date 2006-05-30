@@ -10,6 +10,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:variable name="blogroot" select="concat(substring($webroot,1,string-length($webroot)-1),$collectionUri)"/>
     <xsl:variable name="blogname" select="php:functionString('bx_helpers_config::getOption','blogname')"/>   
 <xsl:variable name="sitename" select="php:functionString('bx_helpers_config::getOption','sitename')"/>
+<xsl:variable name="ah" select="php:functionString('bx_helpers_globals::GET','ah')"/>
 
     <xsl:template match="/">
 
@@ -48,9 +49,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                             <xsl:value-of select="author"/>: <xsl:value-of select="post_title"/>
                         </title>
                         <link>
-                            <xsl:value-of select="$blogroot"/>archive/<xsl:value-of select="post_permauri"/>#comments</link>
+                            <xsl:value-of select="$blogroot"/>archive/<xsl:value-of select="post_permauri"/><xsl:if test="$ah !=''">?ah=<xsl:value-of select="$ah"/></xsl:if>#c<xsl:value-of select="@id"/></link>
                         <comments>
-                            <xsl:value-of select="$blogroot"/>archive/<xsl:value-of select="post_permauri"/>#comments</comments>
+                            <xsl:value-of select="$blogroot"/>archive/<xsl:value-of select="post_permauri"/><xsl:if test="$ah !=''">?ah=<xsl:value-of select="$ah"/></xsl:if>#c<xsl:value-of select="@id"/></comments>
                             
                         <author>
                             <xsl:value-of select="author"/> &lt;undisclosed@example.org&gt;

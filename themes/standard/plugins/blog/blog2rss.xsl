@@ -19,6 +19,7 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
     <xsl:variable name="sitename" select="php:functionString('bx_helpers_config::getOption','sitename')"/>
     <xsl:variable name="sitedescription" select="php:functionString('bx_helpers_config::getOption','sitedescription')"/>
     <xsl:variable name="ICBM" select="php:functionString('bx_helpers_config::getOption','ICBM')"/>
+<xsl:variable name="ah" select="php:functionString('bx_helpers_globals::GET','ah')"/>
 
 
     <xsl:template match="/">
@@ -80,6 +81,7 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
                                     <xsl:value-of select="xhtml:div[@class='post_links']/xhtml:span[@class='post_uri']/xhtml:a/@href"/>
                                </xsl:otherwise>
                             </xsl:choose>
+                            <xsl:if test="$ah !=''">?ah=<xsl:value-of select="$ah"/></xsl:if>
                         </link>   
                        
                        
