@@ -56,13 +56,15 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$year.$newTextFile);
 				$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
 				$this->addNewsletterProperties("/newsletter/archive/".$year.$newTextFile, $data["subject"]);
-			}			
+			}		
+			
+			$classname = $this->getConfigParameter($id, "sendclass");	
 
      		// Save all the information we received about the newsletter in the database for archiving purposes
      		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-     		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`)
+     		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `class`, `mailserver`, `embed`)
 						VALUES (
-						'".$data['from']."', '".$data['subject']."', '".$year.$newHtmlFile."', '".$year.$newTextFile."');";
+						'".$data['from']."', '".$data['subject']."', '".$year.$newHtmlFile."', '".$year.$newTextFile."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."');";
 			$GLOBALS['POOL']->dbwrite->exec($query);
 
 			$draftId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_drafts", "id");
@@ -81,13 +83,23 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$query = "SELECT DISTINCT u.* FROM ".$prefix."newsletter_users2groups u2g, ".$prefix."newsletter_drafts2groups d2g, ".$prefix."newsletter_users u WHERE d2g.fk_draft = ".$draftId." AND u.id=u2g.fk_user AND u2g.fk_group = d2g.fk_group AND u.status=1";
         	$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
 
-			// get news mailer instance
-			$classname = $this->getConfigParameter($id, "sendclass");
+			foreach($users as $recv) {
+				
+				$query = 	
+					"INSERT INTO `fluxcms_newsletter_cache` ( `fk_user` , `fk_draft` , `status` )
+					VALUES ('".$recv['id']."', '".$draftId."', '1')";
+
+				$GLOBALS['POOL']->dbwrite->exec($query);				
+			}
+
+			/*
+			// get news mailer instance			
 			$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($classname);
 
 			// Send it
 			$mailoptions = bx_editors_newsmailer_newsmailer::getMailserverOptions($data['mailserver']);
 			$newsmailer->sendNewsletter($draft, $users, $mailoptions, isset($data["embed"]));   
+			*/
      	}
      	else if($parts['name'] == "users/.")
      	{
@@ -302,7 +314,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$msg = "<b>ERROR: Select at least one group</b>";	
 		}
 		else if(isset($_POST["sent"])) {
-			$msg = "<b>Your message has been sent</b>";	
+			$msg = "<b>Your newsletter is being sent</b>";	
 		}
 
 		$xml = '<newsletter>
@@ -334,6 +346,28 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateManageView()
     {
+    	/*$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    	for($i=1; $i<1000; $i++) {
+    		
+    		$query = 
+"INSERT INTO `fluxcms_newsletter_users` ( `ID` , `firstname` , `lastname` , `email` , `gender` , `activation` , `created` , `status` , `bounced` , `lastevent` )
+VALUES (
+NULL , 'Test', 'User', 'test+".$i."@bitflux.ch', '0', '0', NOW(), '1', '0',
+CURRENT_TIMESTAMP
+);";
+    		$GLOBALS['POOL']->dbwrite->exec($query);	
+    		
+    		$userId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_users", "id");	
+    		
+    		$query = 
+"INSERT INTO `fluxcms_newsletter_users2groups` ( `ID` , `fk_user` , `fk_group` , `stamp` )
+VALUES (
+NULL , '".$userId."', '10',
+CURRENT_TIMESTAMP
+);";
+    		$GLOBALS['POOL']->dbwrite->exec($query);	
+    	}*/
+    	
     	/*$xsl = new DomDocument();
 		$xsl->load('themes/3-cols/scansystems.xsl');
     	$inputdom = new DomDocument();

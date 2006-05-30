@@ -1,5 +1,17 @@
 <?php
 
+function start_time_test() {
+      global $start_time_test;
+      $start_time_test = time() + microtime(true);
+}
+
+function stop_time_test() {
+      global $start_time_test;
+      $stop_time_test = time() + microtime(true);
+      $time = $stop_time_test - $start_time_test;
+      bx_helpers_debug::webdump($time);
+}
+
 /**
  * Factory and default class to send newsletters (using Mail_Queue)
  */
@@ -53,10 +65,102 @@ class bx_editors_newsmailer_newsmailer {
 	}
     
     /**
+     * Creates all the MIME mail bodies for the selected newsletter and saves them into the mail queue
+     */
+    public function autoPrepareNewsletter($draftId)
+    {
+    	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+		$query = "SELECT DISTINCT u.* FROM ".$prefix."newsletter_cache c, ".$prefix."newsletter_users u WHERE c.fk_draft=".$draftId." AND c.fk_user=u.id";
+    	$receivers = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+    	
+    	$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);
+    	$mailoptions = $this->getMailserverOptions($draft['mailserver']);
+    	
+    	// read in the newsletter templates if existing
+    	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
+		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
+
+		$dom = new DomDocument();
+		$dom->loadXML($htmlMessage);
+		
+		$dom = $this->transformHTML($dom);
+		
+		if($draft["embed"] == 1) {
+			self::$htmlImages = array();
+			$dom = $this->transformHTMLImages($dom);
+    	}
+
+		$htmlTransform = $dom->saveXML();
+	
+		$mail_queue = new Mail_Queue($this->db_options, $mailoptions);
+		$hdrs = array( 'From'    => $draft['from']);
+
+		$mime =& new Mail_mime();
+
+		if($draft["embed"] == 1) {
+			// Add images to MIME Body
+			foreach(self::$htmlImages as $image) {
+				$type = end(explode(".", $image["name"]));
+				$mime->addHTMLImage($image["content"], "image/".$type, $image["name"], false);
+			}
+		}
+
+		// Iterate over all newsletter receivers
+		foreach($receivers as $person)
+		{
+			// create the personalized email 
+			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile']);
+			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
+			
+			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
+			if($textMessage !== false)
+				$mime->setTXTBody(utf8_decode($customText));
+			if($htmlMessage !== false)
+				$mime->setHTMLBody(utf8_decode($customHtml));
+
+			$body = $mime->get();
+			$hdrs = $mime->headers($hdrs);			
+			$hdrs['Subject'] = $draft['subject'];
+			$hdrs['To'] = $person['email'];
+			$hdrs['Return-Path'] = $this->getBounceAddress($person);
+
+			// Put it in the queue (the message will be cached in the database)
+			$mail_queue->put($hdrs['From'], $person['email'], $hdrs, $body );
+			
+	    	$query = "UPDATE ".$prefix."newsletter_cache SET status='2' WHERE fk_user='".$person['id']."' AND fk_draft='".$draftId."'";
+	    	$GLOBALS['POOL']->dbwrite->exec($query);
+		}
+
+		// all mails for this draft were preprocessed successfully
+    	$query = "UPDATE ".$prefix."newsletter_drafts SET prepared=NOW() WHERE id=".$draftId;
+    	$GLOBALS['POOL']->dbwrite->exec($query);
+    }
+    
+    /**
+     * Send all the mails in the queue at once
+     */
+    public function autoSendNewsletter($draftId)
+    {
+    	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    	$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);
+    	$mailoptions = $this->getMailserverOptions($draft['mailserver']);
+    	
+    	$mail_queue = new Mail_Queue($this->db_options, $mailoptions);
+		$retval = $mail_queue->sendMailsInQueue();	
+		
+    	$query = "UPDATE ".$prefix."newsletter_drafts SET sent=NOW() WHERE id=".$draftId;
+    	$GLOBALS['POOL']->dbwrite->exec($query);
+		
+		return !$mail_queue->isError($retval);    	
+    }
+    
+    /**
      * Sends a bunch of mails
      */
     public function sendNewsletter($draft, $receivers, $mailoptions, $embedImages = false)
     {
+ 		$start_time_test = time() + microtime(true);
+ 		
     	// read in the newsletter templates if existing
     	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
 		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
@@ -72,42 +176,74 @@ class bx_editors_newsmailer_newsmailer {
     	}
 
 		$htmlTransform = $dom->saveXML();
-
-		// TODO: convert HTML to TXT with Lynx
 	
 		$mail_queue = new Mail_Queue($this->db_options, $mailoptions);
 		$hdrs = array( 'From'    => $draft['from']);
 
+		$mime =& new Mail_mime();
+
+		if($embedImages) {
+			// Add images to MIME Body
+			foreach(self::$htmlImages as $image) {
+				$type = end(explode(".", $image["name"]));
+				$mime->addHTMLImage($image["content"], "image/".$type, $image["name"], false);
+			}
+		}
+		
+		$stop_time_test = time() + microtime(true);
+      	$time = $stop_time_test - $start_time_test;
+      	bx_helpers_debug::webdump("Preparation " . $time);
+
 		// Iterate over all newsletter receivers
 		foreach($receivers as $person)
 		{
+			$start_time_test = time() + microtime(true);
+			
 			// create the personalized email 
 			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile']);
 			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
 			
+			$stop_time_test = time() + microtime(true);
+      		$time = $stop_time_test - $start_time_test;
+      		bx_helpers_debug::webdump("Custom " . $time);
+      		
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
-			$mime =& new Mail_mime();
 			if($textMessage !== false)
 				$mime->setTXTBody(utf8_decode($customText));
 			if($htmlMessage !== false)
 				$mime->setHTMLBody(utf8_decode($customHtml));
-				
-			if($embedImages) {
-				// Add images to MIME Body
-				foreach(self::$htmlImages as $image) {
-					$type = end(explode(".", $image["name"]));
-					$mime->addHTMLImage($image["content"], "image/".$type, $image["name"], false);
-				}
-			}
 
+			$stop_time_test = time() + microtime(true);
+      		$time = $stop_time_test - $start_time_test;
+      		bx_helpers_debug::webdump("Body " . $time);
+
+			// TODO: this method sucks
 			$body = $mime->get();
-			$hdrs = $mime->headers($hdrs);								
+			
+			$stop_time_test = time() + microtime(true);
+      		$time = $stop_time_test - $start_time_test;
+      		bx_helpers_debug::webdump("mime get " . $time);
+      		
+			$hdrs = $mime->headers($hdrs);			
+			
+						$stop_time_test = time() + microtime(true);
+      		$time = $stop_time_test - $start_time_test;
+      		bx_helpers_debug::webdump("create headers " . $time);
+      							
 			$hdrs['Subject'] = $draft['subject'];
 			$hdrs['To'] = $person['email'];
 			$hdrs['Return-Path'] = $this->getBounceAddress($person);
+
+			$stop_time_test = time() + microtime(true);
+      		$time = $stop_time_test - $start_time_test;
+      		bx_helpers_debug::webdump("hdrs " . $time);
 			
 			// Put it in the queue (the message will be cached in the database)
 			$mail_queue->put($hdrs['From'], $person['email'], $hdrs, $body );
+			
+			$stop_time_test = time() + microtime(true);
+      		$time = $stop_time_test - $start_time_test;
+      		bx_helpers_debug::webdump("Put " . $time);
 		}
 
 		// wait a second before we send, otherwise the queue seems to be empty (bug)
@@ -184,8 +320,7 @@ class bx_editors_newsmailer_newsmailer {
     	}
     	
     	$webfilename = str_replace(array('en.xhtml', 'de.xhtml'), 'html', $filename);
-    	bx_helpers_debug::webdump($webfilename); 
-    	
+
     	array_push($templates, '{title}', '{weblink}', '{activate}', '{unsubscribe}', '{publication}', '{date}');
     	
     	array_push($values, $person['gender'] == '0' ? 'Herr' : 'Frau');
@@ -203,7 +338,7 @@ class bx_editors_newsmailer_newsmailer {
      */
     protected function readNewsletterFile($name, $type)
     {
-    	return file_get_contents('data/newsletter/archive/'.$name);
+    	return @file_get_contents('data/newsletter/archive/'.$name);
     }
     
     /**

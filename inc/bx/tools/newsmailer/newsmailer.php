@@ -19,6 +19,7 @@ ini_set('html_errors', 0);
 define('ID', '$Id$');
 
 $commands = array(
+	'preparemails',
     'sendmails',
     'deletemails',
     'checkbounces',
@@ -40,8 +41,11 @@ $db = $GLOBALS['POOL']->db;
 
 
 function printHelp() {
-    echo "Flux CMS Newsmailer Command Line Interface, ".ID."\n";
+    echo "Flux CMS Newsmailer Command Line Interface\n";
     echo "Usage: newsmailer.php [options] <command> [parameters]
+
+prepare all mails and put them in queue:
+    newsmailer.php preparemails
 
 send all mails in queue:
     newsmailer.php sendmails
@@ -73,7 +77,7 @@ function _command_checkbounces($options, $arguments) {
 
 	checkArgumentCount($arguments, 3);    
 
-	 // e.g. {mail.bitflux.ch:143}bouncer", "milo", "xxx";
+	 // e.g. "{mail.bitflux.ch:143}bouncer", "milo", "xxx";
      $mailbox = imap_open($arguments[0], $arguments[1], $arguments[2]);
      
      print("There are ".imap_num_msg($mailbox)." message in ".$arguments[0]."\n");
@@ -112,7 +116,7 @@ function _command_checkbounces($options, $arguments) {
      			}
      		}
      		
-     		// TODO: delete somehow doesn't really work with IMAP
+     		// TODO: delete somehow doesn't always work with IMAP
      		imap_delete($mailbox, $i);	
      	}
      }
@@ -123,20 +127,52 @@ function _command_checkbounces($options, $arguments) {
 	
 }
 
+function _command_preparemails($options, $arguments) {
+
+	// get the unsent newsletters
+	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+	$query = "SELECT * FROM ".$prefix."newsletter_drafts WHERE prepared=TIMESTAMP('0000-00-00 00:00:00')";
+	$drafts = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+ 		
+    echo "starting to prepare newsletters\n";
+    $start_time_test = time() + microtime(true);
+    		
+    foreach($drafts as $draft) {
+    	
+    	$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($draft["class"]);
+		$newsmailer->autoPrepareNewsletter($draft["id"]);	
+    }
+
+	$stop_time_test = time() + microtime(true);
+  	$time = $stop_time_test - $start_time_test;
+
+	echo "newsletters were prepared successfully: $time seconds";
+
+    return TRUE;
+}
+
 function _command_sendmails($options, $arguments) {
 
-	$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory("newsmailer");
-	$mailserver = $newsmailer->getDefaultMailServer();
-    $options = $newsmailer->getMailserverOptions($mailserver);
+	// get the unsent newsletters
+	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+	$query = "SELECT * FROM ".$prefix."newsletter_drafts WHERE prepared!=TIMESTAMP('0000-00-00 00:00:00') AND sent=TIMESTAMP('0000-00-00 00:00:00')";
+	$drafts = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+	
+    echo "starting to send newsletters\n";
+    $start_time_test = time() + microtime(true);
     		
-    echo "starting to send mails\n";
-    		
-	if($newsmailer->finalizeSend($options, 200)) {
-		echo "your mails have been sent";
-	}
-	else {
-		echo "an unexpected error occured";
-	}
+    foreach($drafts as $draft) {
+    	$newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($draft["class"]);
+		if(!$newsmailer->autoSendNewsletter($draft["id"])) {
+			echo "an error occured while sending the newsletter";
+			return FALSE;
+		}    	
+    }
+
+	$stop_time_test = time() + microtime(true);
+  	$time = $stop_time_test - $start_time_test;
+
+	echo "newsletter sent successfully: $time seconds";
 
     return TRUE;
 }
@@ -144,8 +180,8 @@ function _command_sendmails($options, $arguments) {
 function _command_deletemails($options, $arguments) {
 
     $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-    $query = "TRUNCATE TABLE ".$prefix."feeds";
-    $GLOBALS['POOL']->dbwrite->query($query);	
+    $query = "TRUNCATE TABLE ".$prefix."mail_queue";
+    $GLOBALS['POOL']->dbwrite->exec($query);	
 
 	echo "your mails have been deleted";
 
