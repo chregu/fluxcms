@@ -50,6 +50,10 @@
             if(isset($row['comment_date_iso'])) {
                 $xml .= '<date_iso>'.$row['comment_date_iso'].'</date_iso>';
             }
+            if(isset($row['post_status'])) {
+                $xml .= '<post_status>'.$row['post_status'].'</post_status>';
+            }
+            
             if(isset($row['comment_rejectreason'])) {
                 $xml .= '<rejectreason>'.nl2br($row['comment_rejectreason']).'</rejectreason>';
             }
@@ -90,7 +94,7 @@
         post_title, post_uri, comment_content,  comment_author, comment_author_ip,
         date_add(comment_date, INTERVAL ". self::$timezone." SECOND) as comment_date,
         unix_timestamp(post_date) as unixtime,
-        unix_timestamp(comment_date) as lastmodified,";
+        unix_timestamp(comment_date) as lastmodified,post_status,";
         if ($status > 1) {
             $query .= "comment_rejectreason,";
         }
