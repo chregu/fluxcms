@@ -46,6 +46,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                 <xsl:for-each select="/bx/plugin[@name='blog']/comments/comment">
                     <item>
                         <title>
+                        <xsl:if test="post_status != 1"> 
+                                [o]
+                            </xsl:if>
+                            
                             <xsl:value-of select="author"/>: <xsl:value-of select="post_title"/>
                         </title>
                         <link>

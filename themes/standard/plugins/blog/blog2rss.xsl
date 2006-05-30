@@ -68,6 +68,10 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
                     <item>
 
                         <title>
+                        
+                            <xsl:if test="@blog:post_status != 1"> 
+                                [o]
+                            </xsl:if>
                             <xsl:value-of select="xhtml:h2[@class ='post_title']"/>
                         </title>
 
