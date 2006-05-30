@@ -40,7 +40,17 @@
           } else {
               return false;
           }
+        } else if (in_array('isuser',$actions) && $userId) {
+            return true;
+        } else if (in_array('ishashed',$actions)) {
+            if (!empty($_GET['ah']) && $_GET['ah'] == bx_helpers_perm::getAccessHash()) {
+                $_SESSION['fluxcms']['ah'] = $_GET['ah'];
+                return true;
+            } else if (!empty($_SESSION['fluxcms']['ah']) && $_SESSION['fluxcms']['ah'] == bx_helpers_perm::getAccessHash()) {
+                return true;
+            } 
         }
+        
         
         foreach ($actions as $action) {
             if (!isset($this->perms[$uri])) {

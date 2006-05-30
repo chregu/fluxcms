@@ -102,7 +102,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         
         $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
         $perm = bx_permm::getInstance();
-        if ($perm->isAllowed($path.$id,array('isuser'))) {
+        if ($perm->isAllowed($path.$id,array('ishashed','isuser'))) {
             $this->singlePostPerm = 7;
             if ($id == "_all/index") {
                 $this->overviewPerm = 7;
@@ -113,7 +113,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $this->singlePostPerm = 1;
             $this->overviewPerm = 1;
         }
-        
         $this->checkExpiry = $GLOBALS['POOL']->config->getConfProperty('blogPostsCheckExpiry');
          
         if (strpos($id,"plugin=") === 0) {
@@ -824,9 +823,17 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $dom->addLink("Edit Links and Linkcategories",'edit'.$path.'sub/blogroll/');
         $dom->addLink("Edit Comments",'dbforms2/blogcomments/');
         //if (!$mainOverview) {
-            $dom->addTab("Diversa");
+            $dom->addTab("RSS");
+            $dom->addLink("RSS Feed",BX_WEBROOT_W.$path."rss.xml");
+            $dom->addLink("RSS Comments",BX_WEBROOT_W.$path."latestcomments.xml");
+            $ah = bx_helpers_perm::getAccessHash();
+            $dom->addLink("RSS Feed (incl. private)",BX_WEBROOT_W.$path."rss.xml?ah=$ah");
+            $dom->addLink("RSS Comments (incl. private)",BX_WEBROOT_W.$path."latestcomments.xml?ah=$ah");
+            $dom->addLink("Generate new private key","javascript:if (confirm('Are you sure you want to generate a new private key? \n All your RSS feeds for private posts will change.')) {location.href='".BX_WEBROOT."admin/webinc/generatenewaccesshash/?path=".$path."'}");
+            $dom->addTab("Etc");
             $dom->addLink("Flux CMS Bookmarklet","javascript:%20var%20baseUrl%20=%20'".BX_WEBROOT."admin/edit/blog/newpost.xml?';%20var%20url=baseUrl;var%20title=document.title;%20url=url%20+%20'link_title='%20+%20encodeURIComponent(title);%20var%20currentUrl=document.location.href;%20url=url%20+%20'&link_href='%20+%20encodeURIComponent(currentUrl);%20var%20selectedText;%20selectedText=getSelection();%20if%20(selectedText%20!=%20'')%20url=url%20+%20'&text='%20+%20encodeURIComponent(selectedText);var win = window.open(null, '', 'width=700,height=500,scrollbars,resizable,location,toolbar');win.location.href=url;win.focus();"
             ,"Drag'n'drop to your bookmarks for immediate posting from your browser");
+            
         //}
         return $dom;
     }

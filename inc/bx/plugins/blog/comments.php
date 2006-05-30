@@ -78,17 +78,19 @@
             self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
         }
         $perm = bx_permm::getInstance();
-        if ($perm->isLoggedIn()) {
+        //FIXME use real url
+        if ($perm->isAllowed("/",array('ishashed','isuser'))) {
             $overviewPerm = 7;
         } else {
             $overviewPerm = 1;
         }
+        
         $query = "select blogcomments.id,
         DATE_FORMAT(comment_date,  '%Y-%m-%dT%H:%i:%SZ') as comment_date_iso,
         post_title, post_uri, comment_content,  comment_author, comment_author_ip,
         date_add(comment_date, INTERVAL ". self::$timezone." SECOND) as comment_date,
         unix_timestamp(post_date) as unixtime,
-        unix_timestamp(blogposts.changed) as lastmodified,";
+        unix_timestamp(comment_date) as lastmodified,";
         if ($status > 1) {
             $query .= "comment_rejectreason,";
         }
