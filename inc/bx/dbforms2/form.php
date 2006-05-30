@@ -113,11 +113,17 @@ class bx_dbforms2_form {
      */
     public function getFieldByName($name) {
         if (is_array($this->fields)) {
-            foreach($this->fields as $field) {
-                if($field instanceof bx_dbforms2_field && ($field->name == $name)) {
-                    return $field;
+            $sfield = null;
+            $arr = array_values($this->fields);
+            while(($field = current($arr))!=false) {
+                if ($field && $field->name == $name) {
+                    $sfield = $field;
+                    break;
                 }
-            }
+                next($arr);
+            } 
+            
+            return $sfield;
         }
     }
     
