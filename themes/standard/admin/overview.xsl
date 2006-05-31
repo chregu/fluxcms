@@ -92,6 +92,7 @@
                                                             <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
                                                             </xsl:if>
 
+
                                                     <xsl:choose>
                                                     <xsl:when test="@href =''">
                                                         <span i18n:attr="title">
@@ -116,6 +117,9 @@
                                                         
                                                         <xsl:when test="starts-with(@href,'http://')">
                                                          <a href="{@href}" i18n:attr="title">
+                                                             <xsl:if test="@style">
+                                                            <xsl:attribute name="style"><xsl:value-of select="@style"/></xsl:attribute>
+                                                            </xsl:if>
                                                             <xsl:if test="@target">
                                                             <xsl:attribute name="target"><xsl:value-of select="@target"/></xsl:attribute>
                                                             </xsl:if>

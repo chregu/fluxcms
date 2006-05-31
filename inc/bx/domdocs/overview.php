@@ -17,7 +17,7 @@ class bx_domdocs_overview extends domdocument {
     }
     
     
-    function addLink($title, $href = null, $helptext = null ) {
+    function addLink($title, $href = null, $helptext = null, $style = null ) {
         $link = $this->links->appendChild($this->createElement("link"));
         $link->setAttribute("href",$href);
         $link->appendChild($this->createElement("title",$title));
@@ -33,6 +33,9 @@ class bx_domdocs_overview extends domdocument {
         else if ($helptext) {
             $link->appendChild($this->createElement("helptext",$helptext));
         }
+	if ($style) {
+		$link->setAttribute("style",$style);
+	}
     }
     
     function addTab($title) {
