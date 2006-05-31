@@ -95,6 +95,7 @@
   <xsl:if test="php:functionString('bx_helpers_perm::isAdmin')  = 'true'">
   <br/>
   <a href="{$webroot}admin/">Go to Admin</a>
+  </xsl:if>
   <xsl:if test="/bx/plugin[@name='blog']">
   <br/>
   <br/>
@@ -102,7 +103,6 @@
   <a href="{$webrootW}{$collectionUri}rss.xml?ah={php:functionString('bx_helpers_perm::getAccessHash')}">RSS private feed</a><br/>
   <a href="{$webrootW}{$collectionUri}latestcomments.xml?ah={php:functionString('bx_helpers_perm::getAccessHash')}">RSS private comments</a><br/>
   
-  </xsl:if>
   
   
   
