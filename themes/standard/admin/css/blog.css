@@ -1,3 +1,4 @@
+
 .post_title {
         border-bottom: 1px solid #aaa;
         margin-bottom: 0px;
@@ -360,6 +361,8 @@ letter-spacing: 0.1em;
 #oneform input {
     width: inherit;
     margin-right: 2px;
+    color:red;
+    background:red;
 }
 
 #admin_blog_pager_prevnext {
