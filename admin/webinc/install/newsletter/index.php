@@ -34,7 +34,7 @@ $tablePrefix = $conf->getTablePrefix();
 // $tablePrefix = "mytest8_";
 
 echo "$tablePrefix";
-echo "starting install linklog";
+echo "starting install newsletter";
 
 print "<pre/>";
 $db = $GLOBALS['POOL']->dbwrite;
@@ -69,8 +69,13 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts` (
   `subject` varchar(100) NOT NULL,
   `htmlfile` varchar(50) NOT NULL,
   `textfile` varchar(50) NOT NULL,
-  `sent` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `sent` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `prepared` timestamp NOT NULL default '0000-00-00 00:00:00',
   `ID` int(10) unsigned NOT NULL auto_increment,
+  `class` varchar(60) NOT NULL,
+  `mailserver` int(10) unsigned NOT NULL,
+  `embed` tinyint(4) NOT NULL,
+  `baseurl` varchar(100) NOT NULL,
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
@@ -78,7 +83,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts2groups` (
   `fk_draft` int(10) unsigned NOT NULL,
   `fk_group` int(10) unsigned NOT NULL,
   `ID` int(10) unsigned NOT NULL auto_increment,
-  PRIMARY KEY  (`ID`)
+  PRIMARY KEY  (`ID`),
   KEY `fk_group` (`fk_group`),
   KEY `fk_draft` (`fk_draft`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
@@ -141,6 +146,14 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_users2groups` (
   UNIQUE KEY `fk_group` (`fk_group`,`fk_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0;";
 
+$queries[] = "CREATE TABLE `".$tablePrefix."newsletter_cache` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `fk_user` int(10) unsigned NOT NULL,
+  `fk_draft` int(10) unsigned NOT NULL,
+  `status` tinyint(4) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+
 
 foreach($queries as $query){
     $res = $db->query($query);
@@ -151,11 +164,11 @@ foreach($queries as $query){
 }
 
 echo "<h1>Success ;)</h1>";
-echo "<p>Newsletter-Plugin-Tables successfully created. Now you can create the newsletter collection with the following .configxml:</p>";
+echo "<p>Newsletter-Plugin-Tables successfully created. Now you can create the newsletter collection with the following .configxml (adjust the activation properties according to your environment):</p>";
 
 printConfigXML();
 
-echo "<p>Now create another collection called archive inside of the newsletter Collection. Also make sure, you have newsfeeds.xsl and htmlimage.xsl in your themes-folder. Defaults can be found in 3-cols.</p>";
+echo "<p>Now create the following collections inside of newsletter: archive, archive/YYYY (e.g 2006) and drafts. The archive path must be visible in order to view newsletters sent directly from the website. Also make sure, you have newsfeeds.xsl and htmlimage.xsl in your themes-folder. Defaults can be found in 3-cols.</p>";
 
 // Add resources
 
