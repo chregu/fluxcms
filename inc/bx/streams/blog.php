@@ -137,17 +137,21 @@ class bx_streams_blog extends bx_streams_buffer {
             $latestCommentsXML = $p->getContentByID("$colluri", 'plugin=comments(latest).xml');
             $latestCommentsNode = $xml->importNode($latestCommentsXML->documentElement, TRUE);
             $new = $xml->documentElement->appendChild($latestCommentsNode);
-            $new->setAttribute("status","1");
-            
+           if ($new instanceof DOMElement) {
+                   $new->setAttribute("status","1");
+            }    
             $latestCommentsXML = $p->getContentByID("$colluri", 'plugin=comments(latest,2).xml');
             $latestCommentsNode = $xml->importNode($latestCommentsXML->documentElement, TRUE);
             $new = $xml->documentElement->appendChild($latestCommentsNode);
-            $new->setAttribute("status","2");
-            
+           if ($new instanceof DOMElement) {
+                   $new->setAttribute("status","2");
+            }    
             $latestCommentsXML = $p->getContentByID("$colluri", 'plugin=comments(latest,3).xml');
             $latestCommentsNode = $xml->importNode($latestCommentsXML->documentElement, TRUE);
             $new = $xml->documentElement->appendChild($latestCommentsNode);
-            $new->setAttribute("status","3");
+           if ($new instanceof DOMElement) {
+               $new->setAttribute("status","3");
+           }
 
         } else if($appendPostComments === TRUE) {
             // append all comments of a post when viewing an existing entry
