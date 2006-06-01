@@ -40,7 +40,9 @@
     <xsl:when test="/bx/plugin/response[@status = 'ok']">
        <xsl:value-of select = "/bx/plugin/response[@status = 'ok']"/>
     </xsl:when>
-    
+    <xsl:when test="/bx/plugin/response/text() != 'failed'">
+        <xsl:value-of select = "/bx/plugin/response"/>
+    </xsl:when>
     <xsl:otherwise>
         Something went wrong!
     </xsl:otherwise>
