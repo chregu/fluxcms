@@ -23,16 +23,21 @@ class bx_plugins_admin_copy extends bx_plugins_admin implements bxIplugin {
         $parts = bx_collections::getCollectionAndFileParts($id,$this->mode);
         $dom = new domDocument();
         $response = $dom->createElement('response');
-        if ($move) {
-            $success = $parts['coll']->moveResourceById($parts['rawname'],$to);
-            $msg = "$id moved to $to!";
-           /* $response->setAttribute("updateTree","$id");
-            $response->setAttribute("updateTree2","$to");*/
-        } else {
-            $success = $parts['coll']->copyResourceById($parts['rawname'],$to);
-            $msg = "$id copied to $to!";
-            /*$response->setAttribute("updateTree","$id");
-            $response->setAttribute("updateTree2","$to");*/
+        try {
+            if ($move) {
+                $success = $parts['coll']->moveResourceById($parts['rawname'],$to);
+                $msg = "$id moved to $to!";
+               /* $response->setAttribute("updateTree","$id");
+                $response->setAttribute("updateTree2","$to");*/
+            } else {
+                $success = $parts['coll']->copyResourceById($parts['rawname'],$to);
+                $msg = "$id copied to $to!";
+                /*$response->setAttribute("updateTree","$id");
+                $response->setAttribute("updateTree2","$to");*/
+            }
+        } catch (PopoonFileNotFoundException $e) {
+            $success = false;
+            $msg = $e->getMessage() ." Please use a correct path.";
         }
         
         
@@ -41,7 +46,11 @@ class bx_plugins_admin_copy extends bx_plugins_admin implements bxIplugin {
             $response->appendChild($dom->createTextNode($msg));
         } else {
             $response->setAttribute("status","failed");
-            $response->appendChild($dom->createTextNode('failed'));
+            if ($msg) {
+                $response->appendChild($dom->createTextNode($msg));
+            } else {
+                $response->appendChild($dom->createTextNode('failed'));
+            }
         }
         $dom->appendChild($response);
         return $dom;

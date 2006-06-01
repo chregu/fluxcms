@@ -53,11 +53,17 @@ class bx_collection implements bxIresource {
 
     private function init() {
         //bx_log::log('bx_collection::init');
+        $this->uri = str_replace("..","",$this->uri);
         $parent = BX_DATA_DIR.bx_collections::sanitizeUrl(dirname($this->uri));
+        
+        if (!file_exists($parent)) {
+           throw new PopoonFileNotFoundException(dirname($this->uri));
+        }
         
         $name = basename($this->uri);
         // create directory on filesystem for new collection
         $collectionDirName = $parent.'/'.$name;
+       
         if(!file_exists($collectionDirName)) {
             $stat = mkdir ( $collectionDirName, 0755);
         }
@@ -76,6 +82,7 @@ class bx_collection implements bxIresource {
         $this->setProperty("parent-uri",$parentUri);
         $this->setProperty("display-name",$name, BX_PROPERTY_DEFAULT_NAMESPACE.BX_DEFAULT_LANGUAGE);
         $this->setProperty("display-order",0);
+        return true;
     }
     
     public function resourceExistsByRequest($filename,$ext) {
@@ -506,12 +513,12 @@ class bx_collection implements bxIresource {
                 continue;
             }
             if ($file->isDir()) {
-                rmdir(BX_DATA_DIR.$this->uri.$filename);
+                bx_helpers_file::rmdir(BX_DATA_DIR.$this->uri.$filename);
             } else {
                 unlink(BX_DATA_DIR.$this->uri.$filename);
             }
         }
-        rmdir(BX_DATA_DIR.$this->uri);
+        bx_helpers_file::rmdir(BX_DATA_DIR.$this->uri);
         $ps = $this->getChildrenPlugins();
         foreach ($ps as $p ) {
             $p->collectionDelete('after',$this->uri);
