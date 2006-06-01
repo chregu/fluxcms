@@ -1,0 +1,407 @@
+/* ... IN VALID CODE WE TRUST ...http://www.intensivstation.ch */
+/* css created by miss monorom 2005 http://www.monorom.to */
+/* This css is made specialy for BX-CMS  */
+/* css released under Creative Commons License - http://creativecommons.org/licenses/by/2.0/deed.en  */
+
+/* @import url(bx-additions.css); */
+
+/*body element, you can overwrite that with a custom stylesheet for example in mozilla*/
+
+#ng_bitflux_org, body {
+	background-color: #ffffff;
+	font-size: 12px;
+	font-family: "Trebuchet MS", Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;
+	color:#000000;  
+	padding:0px;
+	margin: 0px;
+}
+
+/* for iePC */ td{
+	font-size: 12px;
+}
+
+a {
+	color: #4d6c6c;
+	text-decoration: none;}
+	a:visited {color:#4d6c6c;}
+	a:hover {color: #FF4500;}
+	a:active { color:#4d6c6c;}
+
+h1{
+	font-size:18px;
+}
+h2{
+	font-size:16px;
+}
+h3{
+	font-size:14px;
+}
+h4{
+	font-size:12px;
+}
+
+form{
+	padding: 0px;
+	margin: 0px;
+}
+
+.form{
+	padding: 0px;
+	margin: 5px 25px 15px 25px;
+}
+
+textarea, .formgenerell input, input.formgenerell {
+	width:300px;
+	border: 1px solid #aaaaaa; 
+	margin-top: 5px;
+	padding: 2px;
+}
+
+.formbutton {
+	width:100px;
+	border: 1px solid #aaaaaa; 
+}
+
+.textarea{
+    height: 80px;
+}
+
+.captcha {
+width:100px;
+border: 1px solid #aaaaaa; 
+margin-top: 5px;
+padding: 2px;
+}
+
+/* patforms filter */
+.formErrors {
+    margin: 5px 25px 25px 25px;
+    padding: 5px 5px 5px 5px;
+    border: 1px solid ;
+    background-color: #FFBBBB;
+}
+
+.formlabelerror {
+    color: #BB1111;
+    font-weight: bold;
+}
+
+/* container to center the layout
+-------------------------------------- */
+#container {
+	width: 885px;
+	border: 1px solid gray;
+	margin: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #dde7e9;
+}
+
+/* head container for logo and metanavi
+-------------------------------------- */
+#banner {
+	padding: 0px;
+	margin: 0px;
+	background-color: #4d6c6c;
+}
+#banner a{
+	color: #dde7e9;
+	text-decoration:none; 
+}
+#banner  a:hover {
+	color: #ffffff;
+}
+
+#banner h1 {
+	font-size: 30px;
+	padding: 50px 0px 0px 200px;
+	margin: 0px;
+}
+#banner h2{
+	color: #ffffff;
+	font-size: 14px;
+	padding: 5px 0px 25px 200px;
+	margin: 0px;
+}
+
+#metanavi { 
+	float: right;
+	padding: 5px 15px 0px 0px;
+	margin: 0px;
+}
+
+/*main-navi
+-------------------------------------- */
+#topnavi {
+	background-color: #384F4F;
+	margin: 0px;
+	padding: 2px 0px;
+	border-bottom: 5px solid #ffffff;
+}
+#topnavi a { 
+	color: #dde7e9;
+	text-decoration: none; 
+	font-weight:bold;
+	margin: 0px;
+	padding: 2px 15px;
+}
+#topnavi a:visited {
+	color:#dde7e9;
+}
+#topnavi a:hover {
+	color: #5F9EA0;
+}
+#mainnavi a:active { 
+	color:#dde7e9;
+}
+
+#container  #topnavi a.selected {
+	background-color: #ffffff;
+	color: #5F9EA0;
+}
+
+/* content elements
+-------------------------------------- */
+#content {
+	padding: 15px  0px;
+	margin:0px;
+	margin-left: 175px;
+	margin-right: 100px;
+	background-color: #ffffff;
+}
+
+#content h1, #content h2, #content h3, #content h4 {
+	padding: 0px 25px 0px 25px;
+	margin:0px 0px 15px 0px;
+	color:#4d6c6c;
+}
+#content p{
+	line-height: 18px;
+	padding: 0px 25px 0px 25px;
+	margin:0px 0px 15px 0px;
+}
+#content p.center{
+	text-align:center;
+}
+
+/* elements for the gallery
+-------------------------------------- */
+#content #gallerie{
+	float:left;
+	padding: 0px 0px 10px 25px;
+	margin:0px 0px 20px 0px;
+}
+
+#content .thumbnail{
+	float:left;
+	width:100px;
+	margin: 15px 15px 0px 0px;
+	padding: 0px;
+}
+#content .thumbnail img{
+	border: 1px solid #778899;
+	padding: 1px;
+}
+
+#content  br.antileft {
+	clear: left;
+}
+.antifloat {
+	clear: both;
+	visibility: hidden;
+}
+
+
+/* elements for the gallery_preview-plugin
+--------------------------------------------*/
+#gallerie_preview{
+	padding: 0px 10px 10px 25px;
+	margin:0px 20px 20px 20px;
+	border: 1px solid #778899;
+}
+
+#gallerie_preview .thumbnail{
+	float:left;
+	width:100px;
+	margin: 10px 10px 0px 0px;
+	padding: 0px;
+}
+#gallerie_preview .thumbnail img{
+	border: 1px solid #778899;
+	padding: 1px;
+}
+
+#gallerie_preview_navi {
+	margin-top: 10px;
+}
+#gallerie_preview_info {
+	margin-top: 10px; 
+	visibility: visible;
+}
+ 
+
+/* elements for left and right navigation
+-------------------------------------- */
+#left {
+	float: left;
+	width: 175px;
+	margin: 0px;
+	padding: 15px 0px;
+}
+
+#right {
+	float: right;
+	width: 175px;
+	margin: 0px;
+	padding:15px 0px;
+}
+
+#right p{
+	padding: 0px 15px 15px 15px;
+	margin:0px;
+}
+#left a, #right a {
+	text-decoration: none;
+	color:#384F4F;
+}
+#left .selected, #right .selected {
+	text-decoration: underline;
+}
+
+#left ul, #right ul {
+	list-style-type: none;
+	margin: 0px 15px 20px 15px;
+	padding: 0px;
+} 
+#left li, #right li {
+	margin-bottom: 8px;
+}
+#left h3, #right h3, #left p{
+	margin: 0px 0px 5px 0px;
+	padding:0px 15px;
+}
+
+/*footer
+-------------------------------------- */
+#footer {
+	clear: both;
+	padding: 3px 15px;
+	color: #dde7e9;
+	font-weight: bold;
+	margin: 0px;
+	background-color: #4d6c6c;
+	border-top:5px solid #ffffff;
+}
+#footer a {
+	color: #dde7e9;
+}
+
+/* just used vor the blog
+-------------------------------------- */
+#content .post_title {
+	color: #333;
+	border-bottom: 1px solid #aaa;
+	margin: 0px 25px 3px 25px;
+	padding: 0px 0px 5px 0px;
+}
+
+#content .post_title a { 
+    color: #333;
+}
+
+.post_meta_data {
+	font-size: 11px;
+	padding-top: 0px;
+	margin: 5px 25px 15px 25px;
+}
+.right {
+	float: right;
+}
+.post_content {
+	line-height: 18px;
+	padding-top: 0px;
+	margin: 5px 25px 15px 25px;
+}
+
+#content .post_content p{
+	padding: 0px 0px 15px 0px;
+	margin: 0px;
+}
+
+.post_content_extended {
+	line-height: 18px;
+	padding-top: 0px;
+	margin: 5px 25px 15px 25px;
+}
+
+#content .post_content_extended p{
+	padding: 0px 0px 15px 0px;
+	margin: 0px;
+}
+
+h3.blog, #right  h3.blog {
+	color: #333;
+	margin-bottom: 5px;
+}
+
+.post_links, .post_tags, .post_related_entries {
+	text-align: right;
+	font-family: Verdana, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;
+	font-size: 10px;
+	padding: 0px 25px 20px 25px;
+	margin: 0px;
+}
+.post_more {
+    float: left;
+}
+
+.post_tags, .post_related_entries {
+    padding-bottom: 10px;
+}
+.blog_pager{
+	padding-top: 0px;
+	margin: 5px 25px 15px
+}
+
+#right .blog li {
+	line-height:  15px;
+	padding: 0px 15px 3px 15px;
+	margin: 0px;
+	text-indent: -1em;
+}
+#livesearch {
+	margin: 0px 15px 15px 15px;
+	padding:0px;
+	width: 140px;
+	display: block;
+}
+#right input#livesearch  {
+	padding:1px;
+	width: 120px;
+	border: 1px solid #aaaaaa; 
+}
+
+.formurl {
+	display: none;
+}
+
+.blog_gravatar {
+    float: right;
+    padding-left: 5px;
+}
+
+/*Events*/
+
+pre {
+
+	display: block;
+   	padding: 1em 7px 1em 5px;
+   	margin-top: 0px;
+    margin-bottom: 1em;
+    border: 1px dashed #aaa;
+    color: Black;            
+    background-color: #f9f9f9;
+    line-height: 1.1em;
+    overflow: auto;
+}
+
