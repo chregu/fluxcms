@@ -77,10 +77,12 @@ function _command_checkbounces($options, $arguments) {
 
 	checkArgumentCount($arguments, 3);    
 
+	$start_time_test = time() + microtime(true);
+
 	 // e.g. "{mail.bitflux.ch:143}bouncer", "milo", "xxx";
      $mailbox = imap_open($arguments[0], $arguments[1], $arguments[2]);
      
-     print("There are ".imap_num_msg($mailbox)." message in ".$arguments[0]."\n");
+     print("START: there are ".imap_num_msg($mailbox)." messages in ".$arguments[0]."\n");
      
      for($i =1; $i<=imap_num_msg($mailbox); $i++) {
      	
@@ -123,6 +125,10 @@ function _command_checkbounces($options, $arguments) {
      
      imap_close($mailbox); 
      
+	$stop_time_test = time() + microtime(true);
+  	$time = $stop_time_test - $start_time_test;
+     echo "DONE: bounces checked ($time seconds)";
+     
      return TRUE;	
 	
 }
@@ -134,7 +140,7 @@ function _command_preparemails($options, $arguments) {
 	$query = "SELECT * FROM ".$prefix."newsletter_drafts WHERE prepared=TIMESTAMP('0000-00-00 00:00:00')";
 	$drafts = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
  		
-    echo "starting to prepare newsletters\n";
+    echo "START: preparing newsletters\n";
     $start_time_test = time() + microtime(true);
     		
     foreach($drafts as $draft) {
@@ -146,7 +152,7 @@ function _command_preparemails($options, $arguments) {
 	$stop_time_test = time() + microtime(true);
   	$time = $stop_time_test - $start_time_test;
 
-	echo "newsletters were prepared successfully: $time seconds";
+	echo "DONE: newsletters prepared ($time seconds)";
 
     return TRUE;
 }
@@ -158,7 +164,7 @@ function _command_sendmails($options, $arguments) {
 	$query = "SELECT * FROM ".$prefix."newsletter_drafts WHERE prepared!=TIMESTAMP('0000-00-00 00:00:00') AND sent=TIMESTAMP('0000-00-00 00:00:00')";
 	$drafts = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
 	
-    echo "starting to send newsletters\n";
+    echo "START: sending newsletters\n";
     $start_time_test = time() + microtime(true);
     		
     foreach($drafts as $draft) {
@@ -172,7 +178,7 @@ function _command_sendmails($options, $arguments) {
 	$stop_time_test = time() + microtime(true);
   	$time = $stop_time_test - $start_time_test;
 
-	echo "newsletter sent successfully: $time seconds";
+	echo "DONE: newsletters sent ($time seconds)";
 
     return TRUE;
 }
@@ -183,7 +189,7 @@ function _command_deletemails($options, $arguments) {
     $query = "TRUNCATE TABLE ".$prefix."mail_queue";
     $GLOBALS['POOL']->dbwrite->exec($query);	
 
-	echo "your mails have been deleted";
+	echo "DONE: mail queue deleted";
 
     return TRUE;
 }

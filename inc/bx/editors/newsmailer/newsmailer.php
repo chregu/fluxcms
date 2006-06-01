@@ -1,17 +1,5 @@
 <?php
 
-function start_time_test() {
-      global $start_time_test;
-      $start_time_test = time() + microtime(true);
-}
-
-function stop_time_test() {
-      global $start_time_test;
-      $stop_time_test = time() + microtime(true);
-      $time = $stop_time_test - $start_time_test;
-      bx_helpers_debug::webdump($time);
-}
-
 /**
  * Factory and default class to send newsletters (using Mail_Queue)
  */
@@ -19,6 +7,7 @@ class bx_editors_newsmailer_newsmailer {
     
     protected static $htmlImages = array();
     protected $db_options;
+    protected $baseUrl = BX_WEBROOT;
     
     /**
      * Configure Mail_Queue database options
@@ -73,8 +62,11 @@ class bx_editors_newsmailer_newsmailer {
 		$query = "SELECT DISTINCT u.* FROM ".$prefix."newsletter_cache c, ".$prefix."newsletter_users u WHERE c.fk_draft=".$draftId." AND c.fk_user=u.id";
     	$receivers = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
     	
-    	$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);
+    	$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);	
     	$mailoptions = $this->getMailserverOptions($draft['mailserver']);
+    	
+    	// load baseurl from db, we are not running inside apache!
+    	$this->baseUrl = $draft["baseurl"];
     	
     	// read in the newsletter templates if existing
     	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
@@ -134,6 +126,9 @@ class bx_editors_newsmailer_newsmailer {
 		// all mails for this draft were preprocessed successfully
     	$query = "UPDATE ".$prefix."newsletter_drafts SET prepared=NOW() WHERE id=".$draftId;
     	$GLOBALS['POOL']->dbwrite->exec($query);
+    
+    	$query = "DELETE FROM ".$prefix."newsletter_cache WHERE fk_draft=".$draftId;
+    	$GLOBALS['POOL']->dbwrite->exec($query);
     }
     
     /**
@@ -159,8 +154,6 @@ class bx_editors_newsmailer_newsmailer {
      */
     public function sendNewsletter($draft, $receivers, $mailoptions, $embedImages = false)
     {
- 		$start_time_test = time() + microtime(true);
- 		
     	// read in the newsletter templates if existing
     	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
 		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
@@ -190,10 +183,6 @@ class bx_editors_newsmailer_newsmailer {
 			}
 		}
 		
-		$stop_time_test = time() + microtime(true);
-      	$time = $stop_time_test - $start_time_test;
-      	bx_helpers_debug::webdump("Preparation " . $time);
-
 		// Iterate over all newsletter receivers
 		foreach($receivers as $person)
 		{
@@ -203,47 +192,21 @@ class bx_editors_newsmailer_newsmailer {
 			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile']);
 			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
 			
-			$stop_time_test = time() + microtime(true);
-      		$time = $stop_time_test - $start_time_test;
-      		bx_helpers_debug::webdump("Custom " . $time);
-      		
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
 			if($textMessage !== false)
 				$mime->setTXTBody(utf8_decode($customText));
 			if($htmlMessage !== false)
 				$mime->setHTMLBody(utf8_decode($customHtml));
 
-			$stop_time_test = time() + microtime(true);
-      		$time = $stop_time_test - $start_time_test;
-      		bx_helpers_debug::webdump("Body " . $time);
-
-			// TODO: this method sucks
 			$body = $mime->get();
-			
-			$stop_time_test = time() + microtime(true);
-      		$time = $stop_time_test - $start_time_test;
-      		bx_helpers_debug::webdump("mime get " . $time);
-      		
 			$hdrs = $mime->headers($hdrs);			
-			
-						$stop_time_test = time() + microtime(true);
-      		$time = $stop_time_test - $start_time_test;
-      		bx_helpers_debug::webdump("create headers " . $time);
-      							
+	
 			$hdrs['Subject'] = $draft['subject'];
 			$hdrs['To'] = $person['email'];
 			$hdrs['Return-Path'] = $this->getBounceAddress($person);
 
-			$stop_time_test = time() + microtime(true);
-      		$time = $stop_time_test - $start_time_test;
-      		bx_helpers_debug::webdump("hdrs " . $time);
-			
 			// Put it in the queue (the message will be cached in the database)
 			$mail_queue->put($hdrs['From'], $person['email'], $hdrs, $body );
-			
-			$stop_time_test = time() + microtime(true);
-      		$time = $stop_time_test - $start_time_test;
-      		bx_helpers_debug::webdump("Put " . $time);
 		}
 
 		// wait a second before we send, otherwise the queue seems to be empty (bug)
@@ -324,10 +287,10 @@ class bx_editors_newsmailer_newsmailer {
     	array_push($templates, '{title}', '{weblink}', '{activate}', '{unsubscribe}', '{publication}', '{date}');
     	
     	array_push($values, $person['gender'] == '0' ? 'Herr' : 'Frau');
-    	array_push($values, BX_WEBROOT);
-    	array_push($values, BX_WEBROOT."newsletter/index.html?activate=".$person['activation']);
-    	array_push($values, BX_WEBROOT."newsletter/index.html?unsubscribe=".$person['email']);
-    	array_push($values, BX_WEBROOT."newsletter/archive/".$webfilename);
+    	array_push($values, $this->baseUrl);
+    	array_push($values, $this->baseUrl."newsletter/index.html?activate=".$person['activation']);
+    	array_push($values, $this->baseUrl."newsletter/index.html?unsubscribe=".$person['email']);
+    	array_push($values, $this->baseUrl."newsletter/archive/".$webfilename);
     	array_push($values, date("m/Y"));
     	
     	return str_replace($templates, $values, $message);
@@ -338,7 +301,10 @@ class bx_editors_newsmailer_newsmailer {
      */
     protected function readNewsletterFile($name, $type)
     {
-    	return @file_get_contents('data/newsletter/archive/'.$name);
+    	if(($content = @file_get_contents('data/newsletter/archive/'.$name)) == false) {
+    		$content = @file_get_contents('data/newsletter/'.$name);
+    	}
+    	return $content;
     }
     
     /**
@@ -346,9 +312,9 @@ class bx_editors_newsmailer_newsmailer {
      */
     protected function getBounceAddress($parameters)
     {
-		// Generate a special bounce address e.g. fluxcms-bounces+milo=bitflux.ch@bitflux.ch
+		// Generate a special bounce address e.g. bounces+milo=bitflux.ch@bitflux.ch
 		$bounceEmail = str_replace("@", "=", $parameters['email']);
-		return "milo+".$bounceEmail."@bitflux.ch";    	
+		return "bounces+".$bounceEmail."@bitflux.ch";    	
     }
     
     /**

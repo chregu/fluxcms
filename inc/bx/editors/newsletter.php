@@ -62,9 +62,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 
      		// Save all the information we received about the newsletter in the database for archiving purposes
      		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-     		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `class`, `mailserver`, `embed`)
+     		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `class`, `mailserver`, `embed`, `baseurl`)
 						VALUES (
-						'".$data['from']."', '".$data['subject']."', '".$year.$newHtmlFile."', '".$year.$newTextFile."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."');";
+						'".$data['from']."', '".$data['subject']."', '".$year.$newHtmlFile."', '".$year.$newTextFile."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."');";
 			$GLOBALS['POOL']->dbwrite->exec($query);
 
 			$draftId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_drafts", "id");
@@ -371,7 +371,7 @@ CURRENT_TIMESTAMP
     	/*$xsl = new DomDocument();
 		$xsl->load('themes/3-cols/scansystems.xsl');
     	$inputdom = new DomDocument();
-		$inputdom->load('data/newsletter/vorlage.en.xhtml');
+		$inputdom->load('data/newsletter/vorlage2.en.xhtml');
 		$proc = new XsltProcessor();
 		$proc->registerPHPFunctions();
 		$xsl = $proc->importStylesheet($xsl);

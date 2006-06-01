@@ -63,7 +63,11 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 			}
 		}
 		
-		if(isset($_POST["notfound"]))
+		if(isset($_POST["invemail"]))
+		{
+			$xml .= '<status>ERROR: Please supply a valid email address.</status>';
+		}		
+		else if(isset($_POST["notfound"]))
 		{
 			$xml .= '<status>ERROR: Your subscription could not be found!</status>';
 		}		
@@ -79,7 +83,6 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 		{
 			$xml .= '<status>Your subscription was added successfully.</status>';
 		}
-		
 
 		
 		// pass through the list of public groups to the static.xsl
@@ -110,6 +113,12 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 
         // write to db
         if(isset($data['subscribe'])){
+        	// validate email address
+        	if($this->checkEmailAddress($data['field_email']) == false) {
+				$_POST["invemail"] = "true";
+				return;	
+			}
+			
         	if($this->addSubscriber($data, $path) === false) {
         		$_POST["duplicate"] = "true";
         	}
@@ -156,7 +165,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
     	}
     	
     	// delete old entries with the same email address
-    	$email = $GLOBALS['POOL']->dbwrite->quote($email);
+    	$email = $GLOBALS['POOL']->dbwrite->quote($data['field_email']);
     	$query = "delete from ".$prefix."newsletter_users where email=".$email." AND status=3";
         $GLOBALS['POOL']->dbwrite->exec($query);
     	
@@ -275,6 +284,22 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->addLink("User Management",'edit'.$path.'users/');
         
         return $dom;
+    }
+    
+    /**
+     * Returns true if the supplied email address is valid and points to an existing DNS record
+     */
+    protected function checkEmailAddress($email) {
+    
+    	if(eregi(".+@.+\..+.", $email)) {
+    		// doesn't work on windows
+    		//list($userName, $mailDomain) = split("@", $email);
+    		//if(checkdnsrr($mailDomain, "MX")) { 
+    			return true;
+    		//}
+    	}
+    
+    	return false;	
     }
 }
 ?>
