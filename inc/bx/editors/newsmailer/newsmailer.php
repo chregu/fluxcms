@@ -281,12 +281,23 @@ class bx_editors_newsmailer_newsmailer {
     		array_push($templates, '{' . $key . '}');
     		array_push($values, $val);
     	}
+
+		// replace templates in the form {m|f:Text} with the included text in case 
+		// the gender matches the condition
+		if($person['gender'] == '0') {
+			$replace = array("$2", "");
+		} else {
+			$replace = array("", "$2");	
+		}
+    	$message = preg_replace(array("/{([m]{1}):([^\}]*)}/", "/{([f]{1}):([^\}]*)}/"), 
+									$replace, 
+									$message);  
     	
     	$webfilename = str_replace(array('en.xhtml', 'de.xhtml'), 'html', $filename);
 
-    	array_push($templates, '{title}', '{weblink}', '{activate}', '{unsubscribe}', '{publication}', '{date}');
+    	array_push($templates, '{weblink}', '{activate}', '{unsubscribe}', '{publication}', '{date}');
     	
-    	array_push($values, $person['gender'] == '0' ? 'Herr' : 'Frau');
+    	//array_push($values, $person['gender'] == '0' ? 'Herr' : 'Frau');
     	array_push($values, $this->baseUrl);
     	array_push($values, $this->baseUrl."newsletter/index.html?activate=".$person['activation']);
     	array_push($values, $this->baseUrl."newsletter/index.html?unsubscribe=".$person['email']);

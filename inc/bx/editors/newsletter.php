@@ -345,7 +345,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      * The manage view shows information about the newsletters created and a more detailed view in case they have already been sent
      */
     protected function generateManageView()
-    {
+    {   	
     	/*$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	for($i=1; $i<1000; $i++) {
     		
