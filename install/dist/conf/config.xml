@@ -2,6 +2,7 @@
 <config>
 
     <constants>
+        <!-- change http:// to http(s):// if you want to use a mixed https/http environment -->
         <constant name="BX_WEBROOT">http://{$_SERVER['HTTP_HOST']}/##DIR##</constant>
     </constants>
 <!-- set cacheDBOptions to false, if you don't want to write the options from the DB to

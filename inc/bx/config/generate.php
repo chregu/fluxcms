@@ -78,8 +78,10 @@ class bx_config_generate {
                 $const[(string) $node['name']] = (string) $node;
             }
         }
-        if (isset($const['BX_WEBROOT']) && $const['BX_WEBROOT'] == 'auto') {
-            $const['BX_WEBROOT'] = 'http://'.$_SERVER['HTTP_HOST'].'/';
+        if (isset($const['BX_WEBROOT'])) { 
+            if ($const['BX_WEBROOT'] == 'auto') {
+                $const['BX_WEBROOT'] = 'http(s)://'.$_SERVER['HTTP_HOST'].'/';
+            }
         }
         
         if (isset($const['BX_PROJECT_DIR']) && $const['BX_PROJECT_DIR'] == 'auto') {
@@ -106,9 +108,11 @@ class bx_config_generate {
         
 
         foreach ($const as $name => $c) {
+            $c  = "'".preg_replace("/\{([a-zA-Z0-9_\$'\[\]]*)\}/","'.$1.'",str_replace('\\','/',$c))."'";
+            $c = str_replace("'http(s)://","((!empty(\$_SERVER['HTTPS']))?'https':'http').'://", $c);
             fwrite($fd,"define('".$name."',"); 
-            fwrite($fd,"'".preg_replace("/\{([a-zA-Z0-9_\$'\[\]]*)\}/","'.$1.'",str_replace('\\','/',$c)));
-            fwrite($fd,"');\n");
+            fwrite($fd,$c);
+            fwrite($fd,");\n");
         }
         fwrite($fd,"define('BX_OS_WIN',"); 
         
