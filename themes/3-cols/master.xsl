@@ -148,7 +148,7 @@
                                 <xsl:value-of select="@relink"/>
                             </xsl:when>
                             <xsl:when test="local-name()='collection'">
-                                <xsl:if test="not(starts-with(uri,'http://'))">
+                                <xsl:if test="not(starts-with(uri,'http://') or starts-with(uri,'https://') )">
                                     <xsl:value-of select="$webrootLangW"/>
                                 </xsl:if>
                                 <xsl:value-of select="uri"/>
