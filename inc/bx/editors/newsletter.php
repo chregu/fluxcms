@@ -37,9 +37,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      			$_POST["sent"] = true;
      		}
      		
+     		list($htmlname, $htmllanguage, $htmltype) = explode(".", $data["htmlfile"]);
+     		list($textname, $textlanguage, $texttype) = explode(".", $data["textfile"]);
+     		
      		// archive the file
-     		$newHtmlFile = date("Ymd-").$data['subject'].".en.xhtml";
-			$newTextFile = date("Ymd-").$data['subject'].".en.txt.xhtml";
+     		$newHtmlFile = date("Ymd-").$data['subject'].".".$htmllanguage.".xhtml";
+			$newTextFile = date("Ymd-").$data['subject'].".".$textlanguage.".txt.xhtml";
 			$year = date("Y") . "/";
 			
 			if(!empty($data["htmlfile"])) {
