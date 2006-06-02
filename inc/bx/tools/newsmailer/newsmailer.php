@@ -127,7 +127,7 @@ function _command_checkbounces($options, $arguments) {
      
 	$stop_time_test = time() + microtime(true);
   	$time = $stop_time_test - $start_time_test;
-     echo "DONE: bounces checked ($time seconds)";
+     echo "DONE: bounces checked ($time seconds)\n";
      
      return TRUE;	
 	
@@ -152,7 +152,7 @@ function _command_preparemails($options, $arguments) {
 	$stop_time_test = time() + microtime(true);
   	$time = $stop_time_test - $start_time_test;
 
-	echo "DONE: newsletters prepared ($time seconds)";
+	echo "DONE: newsletters prepared ($time seconds)\n";
 
     return TRUE;
 }
@@ -178,7 +178,7 @@ function _command_sendmails($options, $arguments) {
 	$stop_time_test = time() + microtime(true);
   	$time = $stop_time_test - $start_time_test;
 
-	echo "DONE: newsletters sent ($time seconds)";
+	echo "DONE: newsletters sent ($time seconds)\n";
 
     return TRUE;
 }
@@ -189,7 +189,7 @@ function _command_deletemails($options, $arguments) {
     $query = "TRUNCATE TABLE ".$prefix."mail_queue";
     $GLOBALS['POOL']->dbwrite->exec($query);	
 
-	echo "DONE: mail queue deleted";
+	echo "DONE: mail queue deleted\n";
 
     return TRUE;
 }

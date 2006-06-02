@@ -41,11 +41,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      		list($textname, $textlanguage, $texttype) = explode(".", $data["textfile"]);
      		
      		// archive the file
-     		$newHtmlFile = date("Ymd-").$data['subject'].".".$htmllanguage.".xhtml";
-			$newTextFile = date("Ymd-").$data['subject'].".".$textlanguage.".txt.xhtml";
+     		$newHtmlFile = "";
+			$newTextFile = "";
 			$year = date("Y") . "/";
 			
 			if(!empty($data["htmlfile"])) {
+				$newHtmlFile = date("Ymd-").$data['subject'].".".$htmllanguage.".xhtml";
 				rename("data/newsletter/drafts/".$data["htmlfile"], "data/newsletter/archive/".$year.$newHtmlFile);
 				$this->removeNewsletterProperties("/newsletter/drafts/".$data["htmlfile"]);
 				$this->addNewsletterProperties("/newsletter/archive/".$year.$newHtmlFile, $data["subject"]);
@@ -56,6 +57,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				}
 			}
 			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
+				$newTextFile = date("Ymd-").$data['subject'].".".$textlanguage.".txt.xhtml";
 				rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$year.$newTextFile);
 				$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
 				$this->addNewsletterProperties("/newsletter/archive/".$year.$newTextFile, $data["subject"]);

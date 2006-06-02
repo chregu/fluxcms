@@ -73,14 +73,17 @@ class bx_editors_newsmailer_newsmailer {
 		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
 
 		$dom = new DomDocument();
-		$dom->loadXML($htmlMessage);
 		
-		$dom = $this->transformHTML($dom);
-		
-		if($draft["embed"] == 1) {
-			self::$htmlImages = array();
-			$dom = $this->transformHTMLImages($dom);
-    	}
+		if(!empty($draft['htmlfile'])) {
+			$dom->loadXML($htmlMessage);
+			
+			$dom = $this->transformHTML($dom);
+			
+			if($draft["embed"] == 1) {
+				self::$htmlImages = array();
+				$dom = $this->transformHTMLImages($dom);
+	    	}
+		}
 
 		$htmlTransform = $dom->saveXML();
 	
@@ -106,9 +109,9 @@ class bx_editors_newsmailer_newsmailer {
 			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
 			
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
-			if($textMessage !== false)
+			if(!empty($draft['textfile']))
 				$mime->setTXTBody(utf8_decode($customText));
-			if($htmlMessage !== false)
+			if(!empty($draft['htmlfile']))
 				$mime->setHTMLBody($customHtml);
 
 			$params = array('text_encoding' => '8bit',
@@ -162,14 +165,17 @@ class bx_editors_newsmailer_newsmailer {
 		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
 
 		$dom = new DomDocument();
-		$dom->loadXML($htmlMessage);
 		
-		$dom = $this->transformHTML($dom);
-		
-		if($embedImages) {
-			self::$htmlImages = array();
-			$dom = $this->transformHTMLImages($dom);
-    	}
+		if(!empty($draft['htmlfile'])) {
+			$dom->loadXML($htmlMessage);
+			
+			$dom = $this->transformHTML($dom);
+			
+			if($embedImages) {
+				self::$htmlImages = array();
+				$dom = $this->transformHTMLImages($dom);
+	    	}
+		}
 
 		$htmlTransform = $dom->saveXML();
 	
@@ -197,9 +203,9 @@ class bx_editors_newsmailer_newsmailer {
 			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
 			
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
-			if($textMessage !== false)
+			if(!empty($draft['textfile']))
 				$mime->setTXTBody(utf8_decode($customText));
-			if($htmlMessage !== false)
+			if(!empty($draft['htmlfile']))
 				$mime->setHTMLBody($customHtml);
 
 			$params = array('text_encoding' => '8bit',
