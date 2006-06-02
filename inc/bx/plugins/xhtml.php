@@ -164,11 +164,11 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
             
            $file = $this->getContentUriById($path,$id); 
            //FIXME: resource should handle the save, not the plugin, actually..
-            if (!file_put_contents($file,bx_helpers_string::utf2entities($data['fullxml']))) {
+            if (!file_put_contents($file,($data['fullxml']))) {
                 
                 print '<span style="color: red;">File '.$file.' could not be written</span><br/>';
                 print 'Here is your modified content (it was not saved...):<br/>';
-                print '<div style="border: 1px black solid; white-space: pre;">'.(htmlentities(bx_helpers_string::utf2entities($data['fullxml']))).'</div>';
+                print '<div style="border: 1px black solid; white-space: pre;">'.(htmlentities(($data['fullxml']))).'</div>';
                 return false;
             }
            

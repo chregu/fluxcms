@@ -134,7 +134,7 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
            //FIXME: resource should handle the save, not the plugin, actually..
            //remove dos linefeeds (fucks up svn diffs)
             $data['fullxml'] = preg_replace("#\r\n#","\n",$data['fullxml']);
-            if (!file_put_contents($file,bx_helpers_string::utf2entities($data['fullxml']))) {
+            if (!file_put_contents($file,($data['fullxml']))) {
                 print '<span style="color: red;">File '.$file.' could not be written</span>';
                 return false;
             } 
