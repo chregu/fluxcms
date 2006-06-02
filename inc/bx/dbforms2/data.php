@@ -139,7 +139,10 @@ class bx_dbforms2_data {
                     }
                 
                 } else {
+                    /*
                     
+                    Silvan: What's this for? It doubles all entries on the save return :)
+                    ----
                     $value = $field->getValue();
                 
                     if ($value && !empty($value)) {
@@ -159,7 +162,7 @@ class bx_dbforms2_data {
                         if ($node instanceof DOMElement) { 
                             $node->appendChild($xml->createTextNode(html_entity_decode($value, ENT_COMPAT, 'UTF-8')));
                         }
-                    }
+                    }*/
                 }
             }
 
