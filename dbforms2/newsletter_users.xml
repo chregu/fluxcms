@@ -33,6 +33,6 @@
         </dbform:field>
         
     </dbform:fields>    
-    <dbform:chooser namefield="concat(firstname,' ',lastname,' (',id,')')" wherefields="firstname, lastname, email, gender" limit="50"/>    
+    <dbform:chooser namefield="concat(firstname,' ',lastname,' (',id,')')" wherefields="firstname, lastname, email, gender" limit="5000"/>    
 
 </dbform:form>
