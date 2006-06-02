@@ -113,7 +113,8 @@
             </td>
         </tr>
     </xsl:template>
-
+        
+       
     <xsl:template match="*[@type='textfield']" mode="propertyfields">
         <tr>
             <td><div class="blackH5" title="{concat(../@namespace, ':', ../@name)}">
@@ -131,7 +132,56 @@
             </td>
         </tr>
     </xsl:template>
-
+    
+    <xsl:template match="*[@type='textfield' and tags/tag]" mode="propertyfields">
+        <tr>
+            <td><div class="blackH5" title="{concat(../@namespace, ':', ../@name)}">
+            <xsl:choose>
+            <xsl:when test="../@niceName">
+            <xsl:value-of select="../@niceName"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <xsl:value-of select="concat(../@namespace, ':', ../@name)"/>
+            </xsl:otherwise>
+            </xsl:choose>
+            </div></td>
+            <td class="blackH5">
+            <input type="text" id="tags" name="bx[plugins][{../../../@name}][{../../@path}][{../@fieldname}]" size="{@size}" maxlength="{@maxLength}" value="{../@value}" />
+            </td>
+        </tr>
+        
+        <xsl:if test="count(tags/tag) &gt; 0">
+        <tr>
+            <td></td>
+            <td>
+                <script type="text/javascript">
+                    function appendTag() {
+                        s = document.getElementById('taglist');
+                        if (s) {
+                            tag = s.options[s.options.selectedIndex].value;
+                            if (tag!="") {
+                                tag = (tag.indexOf(' ') &gt; 0) ? '"'+tag+'"' : tag;
+                                alert(tag);
+                                tagf = document.getElementById('tags');
+                                if (tagf) {
+                                    tagf.value = (tagf.value=="") ? tag : tagf.value + " " + tag;
+                                }
+                            }
+                        } 
+                    }
+                </script> 
+                <select id="taglist" onchange="appendTag()">
+                    <option value="">-------------------------------</option>
+                    <xsl:for-each select="tags/tag">
+                        <option value="{@tag}"><xsl:value-of select="@displayname" disable-output-escaping="yes"/></option>
+                    </xsl:for-each>
+                </select>
+            </td>
+        </tr>
+        </xsl:if>
+        
+    </xsl:template>
+     
     <xsl:template match="*[@type='textarea']" mode="propertyfields">
         <tr valign="top">
             <td><div class="blackH5" title="{concat(../@namespace, ':', ../@name)}">

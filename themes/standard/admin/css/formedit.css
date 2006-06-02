@@ -31,6 +31,19 @@ input, textarea, div[contentEditable], .scrollbox {
     padding-left: 5px;
     padding-right: 5px;
 }
+
+select {
+    font-size : 11px;    
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    border: solid #006486 1px;
+    padding-left: 3px;
+    background-color: white;
+    z-index: 10;
+    width:600px; 
+}
+
 .buttonStyle,  a.buttonStyle {
     padding-bottom: 2px;
     padding-top: 2px;
