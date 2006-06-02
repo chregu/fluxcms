@@ -73,9 +73,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$GLOBALS['POOL']->dbwrite->exec($query);
 
 			$draftId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_drafts", "id");
-			
+  			
 			$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);	
-			
+  
 			foreach($data['groups'] as $grp)
 			{
 				$query = 	"INSERT INTO ".$prefix."newsletter_drafts2groups (`fk_draft`,`fk_group`)
@@ -89,9 +89,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         	$users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
 
 			foreach($users as $recv) {
-				
+
 				$query = 	
-					"INSERT INTO `fluxcms_newsletter_cache` ( `fk_user` , `fk_draft` , `status` )
+					"INSERT INTO ".$prefix."newsletter_cache ( `fk_user` , `fk_draft` , `status` )
 					VALUES ('".$recv['id']."', '".$draftId."', '1')";
 
 				$GLOBALS['POOL']->dbwrite->exec($query);				
