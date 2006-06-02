@@ -77,6 +77,7 @@ class bx_metaindex {
                 $seqid = $dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix()."_sequences");
                 $query = "insert into ".$tablePrefix."tags (id, tag) VALUES ($seqid, ".$db->quote($value).")";
                 $ids[] = $seqid;
+                echo $query."<br/>";
                 $res = $dbwrite->query($query);
             }
         }
