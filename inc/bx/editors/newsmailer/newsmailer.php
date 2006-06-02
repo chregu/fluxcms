@@ -85,7 +85,8 @@ class bx_editors_newsmailer_newsmailer {
 		$htmlTransform = $dom->saveXML();
 	
 		$mail_queue = new Mail_Queue($this->db_options, $mailoptions);
-		$hdrs = array( 'From'    => $draft['from']);
+		$hdrs = array( 	'From'    => $draft['from'],
+						'Subject' => $draft['subject'] );
 
 		$mime =& new Mail_mime();
 
@@ -108,12 +109,16 @@ class bx_editors_newsmailer_newsmailer {
 			if($textMessage !== false)
 				$mime->setTXTBody(utf8_decode($customText));
 			if($htmlMessage !== false)
-				$mime->setHTMLBody(utf8_decode($customHtml));
+				$mime->setHTMLBody($customHtml);
 
-			$body = $mime->get();
+			$params = array('text_encoding' => '8bit',
+                            'html_encoding' => 'quoted-printable');
+
+			$body = $mime->get($params);
 			$hdrs = $mime->headers($hdrs);			
-			$hdrs['Subject'] = $draft['subject'];
+			//$hdrs['Subject'] = $draft['subject'];
 			$hdrs['To'] = $person['email'];
+			//$hdrs['Content-Transfer-Encoding'] = $person['8bit'];
 			$hdrs['Return-Path'] = $this->getBounceAddress($person);
 
 			// Put it in the queue (the message will be cached in the database)
