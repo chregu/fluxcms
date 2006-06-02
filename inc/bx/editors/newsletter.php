@@ -636,7 +636,7 @@ CURRENT_TIMESTAMP
 									$feedContent);
  
 		$xsl = new DomDocument();
-		$xsl->load('themes/3-cols/newsfeeds.xsl');
+		$xsl->load('themes/'.bx_helpers_config::getTheme().'/newsfeeds.xsl');
 		$inputdom = new DomDocument();
 		$inputdom->loadXML($feedContent);
 		$proc = new XsltProcessor();

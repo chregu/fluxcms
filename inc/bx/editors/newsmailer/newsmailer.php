@@ -267,7 +267,7 @@ class bx_editors_newsmailer_newsmailer {
     protected function transformHTMLimages($inputdom)
     {
 		$xsl = new DomDocument();
-		$xsl->load('themes/3-cols/htmlimage.xsl');
+		$xsl->load('themes/'.bx_helpers_config::getTheme().'/htmlimage.xsl');
 		$proc = new XsltProcessor();
 		$proc->registerPHPFunctions();
 		$xsl = $proc->importStylesheet($xsl);

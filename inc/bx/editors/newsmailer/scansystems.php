@@ -11,7 +11,7 @@ class bx_editors_newsmailer_scansystems extends bx_editors_newsmailer_newsmailer
     protected function transformHTML($inputdom)
     {
 		$xsl = new DomDocument();
-		$xsl->load('themes/3-cols/scansystems.xsl');
+		$xsl->load('themes/'.bx_helpers_config::getTheme().'/scansystems.xsl');
 		$proc = new XsltProcessor();
 		$xsl = $proc->importStylesheet($xsl);
 		return $proc->transformToDoc($inputdom);  	
