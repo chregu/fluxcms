@@ -56,10 +56,30 @@ class bx_propertyconfig {
                 $property['deleteOnEmpty'] = TRUE;
             }
             
-              if($node->hasAttribute('niceName') ) {
+            if($node->hasAttribute('niceName') ) {
                 $property['niceName'] = $node->getAttribute('niceName');
             }
+            
+            if ($node->hasAttribute('table')) {
+                $property['table'] = $node->getAttribute('table');    
+            }
 
+            if ($node->hasAttribute('idField')) {
+                $property['idfield'] = $node->getAttribute('idField');    
+            }
+            
+            if ($node->hasAttribute('displayField')) {
+                $property['displayfield'] = $node->getAttribute('displayField');    
+            }
+            
+            if ($node->hasAttribute('order')) {
+                $property['order'] = $node->getAttribute('order');    
+            }
+
+            if ($node->hasAttribute('nameField')) {
+                $property['namefield'] = $node->getAttribute('nameField');    
+            }
+            
             foreach($this->getXPathNodes("bxcms:metadata", $node) as $mdNode) {
                 $property['metadata'] = $mdNode->getAttribute('type');
             }
@@ -254,7 +274,7 @@ class bx_propertyconfig {
     public function getMetadatasByCategoryAndResourceName($category, $resource) {
         $metadatas = array();
         foreach($this->getPropertiesByCategoryAndResourceName($category, $resource) as $fullName => $property) {
-            $metadatas[$fullName] = $this->getMetadataInstance($property['metadata']);
+            $metadatas[$fullName] = $this->getMetadataInstance($property['metadata'], $property);
         }
         return $metadatas;
     }
@@ -265,16 +285,24 @@ class bx_propertyconfig {
     * @param name type description 
     * @return object 
     */
-    protected function getMetadataInstance($type) {
+    protected function getMetadataInstance($type, $property=array()) {
+        $mobj = null;
+        
         if ($type) {
             $className = "bx_metadatas_".$type;
-            return new $className;
         } else {
             $className = "bx_metadatas_text_textfield";
-            return new $className;
-        
-            
         }
+        
+        if (!empty($className)) {
+            $mobj = new $className;
+            if (($mobj instanceof bx_metadata)) {
+                $mobj->setProperties($property);
+            }
+        }        
+        
+        return $mobj;
+        
     }
 
     /**

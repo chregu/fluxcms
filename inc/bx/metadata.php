@@ -4,6 +4,51 @@ class bx_metadata {
 
     protected $value;
     
+    /**
+     * table of db datasource
+     * 
+     * @var
+     * @access protected  
+     */
+    protected $table = '';
+    
+    
+    /**
+     * idfield of db datasource table
+     * 
+     * @var 
+     * @access protected
+     */
+    protected $idfield = '';
+    
+    
+    /**
+     * namefield of db datasource table
+     *
+     * @var 
+     * @access protected
+     */
+    protected $namefield = '';
+    
+    
+    /**
+     * displayfield of db datasource table
+     * 
+     * @var
+     * @access protected
+     */
+    protected $displayfield = '';
+    
+    
+    /**
+     * order of db datasource table
+     * 
+     * @var 
+     * @access protected
+     */
+    protected $order = '';
+    
+    
     public function __construct() {
     }
 
@@ -48,7 +93,21 @@ class bx_metadata {
     public function isChangeable() {
         return FALSE;
     }
-
+    
+    
+    public function setProperties($props = array()) {
+        
+        if (sizeof($props) > 0 ) {
+            foreach($props as $propn => $propv) {
+                if (isset($this->$propn)) {
+                    $this->$propn = $propv;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
 }
 
 ?>

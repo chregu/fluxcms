@@ -45,7 +45,7 @@ class bx_plugins_admin_properties extends bx_component implements bxIplugin {
             $this->propConfig = new bx_propertyconfig($configFile);
             $this->lastConfigFile = $configFile;
         }
-
+            
         // get category from request var
         $categories = $this->propConfig->getCategories();
         $this->category = isset($_REQUEST['category']) ? $_REQUEST['category'] : NULL;
@@ -131,11 +131,14 @@ class bx_plugins_admin_properties extends bx_component implements bxIplugin {
                 // get all properties for the current category and resource name
                 $categoryProperties = $this->propConfig->getPropertiesByCategoryAndResourceName($this->category, $res->getMimeType());
                 $categoryMetadatas = $this->propConfig->getMetadatasByCategoryAndResourceName($this->category, $res->getMimeType());
-
+                
                 if(!empty($categoryProperties)) {
                     foreach($categoryProperties as $key => $property) {
 
                         $propNode = $dom->createElement('property');
+                        
+                        
+                        
                         $propNode->setAttribute('path', $fullPath);
                         $propNode->setAttribute('namespace', $property['namespace']);
                         $propNode->setAttribute('name', $property['name']);
