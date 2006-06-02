@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:i18n="http://apache.org/cocoon/i18n/2.1">
+<!DOCTYPE stylesheet [
+    <!ENTITY amp "&#252;" >
+]>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns:php="http://php.net/xsl">
     <xsl:output encoding="utf-8" method="xml" indent="yes" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"/>
     
     <xsl:param name="webroot" select="webroot"/>
@@ -161,7 +164,6 @@
                             tag = s.options[s.options.selectedIndex].value;
                             if (tag!="") {
                                 tag = (tag.indexOf(' ') &gt; 0) ? '"'+tag+'"' : tag;
-                                alert(tag);
                                 tagf = document.getElementById('tags');
                                 if (tagf) {
                                     tagf.value = (tagf.value=="") ? tag : tagf.value + " " + tag;
@@ -173,7 +175,22 @@
                 <select id="taglist" onchange="appendTag()">
                     <option value="">-------------------------------</option>
                     <xsl:for-each select="tags/tag">
-                        <option value="{@tag}"><xsl:value-of select="@displayname" disable-output-escaping="yes"/></option>
+                        <xsl:variable name="tagvar">
+                            <xsl:value-of select="@tag" disable-output-escaping="yes"/>
+                        </xsl:variable>
+                        <option>
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="@tag" disable-output-escaping="yes"/>
+                        </xsl:attribute>
+                        <xsl:choose>
+                            <xsl:when test="not(@displayname='')">
+                                <xsl:value-of select="@displayname" disable-output-escaping="yes"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="@tag" disable-output-escaping="yes"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        </option>
                     </xsl:for-each>
                 </select>
             </td>
