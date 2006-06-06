@@ -276,12 +276,12 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         
         // second tab
         $dom->addTab("Management");
+        $dom->addLink("User Management",'edit'.$path.'users/');
         $dom->addLink("Edit Users",'dbforms2/newsletter_users/');
         $dom->addLink("Edit Groups",'dbforms2/newsletter_groups/');
         $dom->addLink("Edit Senders",'dbforms2/newsletter_from/');
         $dom->addLink("Edit Mail Servers",'dbforms2/newsletter_mailservers/');
         $dom->addLink("Edit RSS Feeds",'dbforms2/newsletter_feeds/');
-        $dom->addLink("User Management",'edit'.$path.'users/');
         
         return $dom;
     }
