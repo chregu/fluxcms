@@ -142,6 +142,8 @@ class bx_editors_newsmailer_newsmailer {
      */
     public function autoSendNewsletter($draftId)
     {
+    	sleep(1);
+    	
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);
     	$mailoptions = $this->getMailserverOptions($draft['mailserver']);
