@@ -110,7 +110,8 @@ class bx_tree {
                 $el = $this->dom->createElement("collection");
 
                 $displayName = $entry->getProperty('display-name', $displayNamePropertyNS);
-                $displayNameNode = $this->dom->createElement('display-name', html_entity_decode($displayName, ENT_NOQUOTES, 'UTF-8'));
+                $displayNameNode = $this->dom->createElement('display-name');
+		$displayNameNode->appendChild($this->dom->createTextNode(html_entity_decode($displayName, ENT_NOQUOTES, 'UTF-8')));
                 $el->appendChild($displayNameNode);
 
             } elseif (in_array($mt, $this->mimetypes)) {
