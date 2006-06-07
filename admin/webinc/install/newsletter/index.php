@@ -172,29 +172,29 @@ echo "<p>Now create the following collections inside of newsletter: archive, arc
 
 // Add resources
 
-bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "parent-uri", "/newsletter/");
-bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "display-name", "Index");
-bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "display-order", "0");
-bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "mimetype", "text/html");
-bx_resourcemanager::setProperty("/newsletter/index.en.xhtml", "output-mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/index.de.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/index.de.xhtml", "display-name", "Index");
+bx_resourcemanager::setProperty("/newsletter/index.de.xhtml", "display-order", "0");
+bx_resourcemanager::setProperty("/newsletter/index.de.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/index.de.xhtml", "output-mimetype", "text/html");
 
-bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "parent-uri", "/newsletter/");
-bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "display-name", "Subscribe");
-bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "display-order", "1");
-bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "mimetype", "text/html");
-bx_resourcemanager::setProperty("/newsletter/subscribe.en.xhtml", "output-mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/subscribe.de.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/subscribe.de.xhtml", "display-name", "Subscribe");
+bx_resourcemanager::setProperty("/newsletter/subscribe.de.xhtml", "display-order", "1");
+bx_resourcemanager::setProperty("/newsletter/subscribe.de.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/subscribe.de.xhtml", "output-mimetype", "text/html");
 
-bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "parent-uri", "/newsletter/");
-bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "display-name", "Unsubscribe");
-bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "display-order", "2");
-bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "mimetype", "text/html");
-bx_resourcemanager::setProperty("/newsletter/unsubscribe.en.xhtml", "output-mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.de.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.de.xhtml", "display-name", "Unsubscribe");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.de.xhtml", "display-order", "2");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.de.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/unsubscribe.de.xhtml", "output-mimetype", "text/html");
 
-bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "parent-uri", "/newsletter/");
-bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "display-name", "Activation");
-bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "display-order", "0");
-bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "mimetype", "text/html");
-bx_resourcemanager::setProperty("/newsletter/activation.en.xhtml", "output-mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "display-name", "Activation");
+bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "display-order", "0");
+bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "output-mimetype", "text/html");
 
 /**
  * just prints the configxml used for linkplugin.
@@ -210,7 +210,7 @@ $configxml = '<bxcms xmlns ="http://bitflux.org/config">
   <parameter name="activation-server" value="Bitflux"/>
   <parameter name="activation-from" value="milo@bitflux.ch"/>
   <parameter name="activation-subject" value="Newsletter Activation"/>
-  <parameter name="activation-text" value="activation.en.xhtml"/>
+  <parameter name="activation-text" value="activation.de.xhtml"/>
 </plugin>
 
 <plugin type ="navitree"></plugin>
