@@ -17,12 +17,26 @@
                 <link rel="stylesheet" href="{$webroot}themes/standard/admin/css/formedit.css" type="text/css"/>
                 <script type="text/javascript" src="{$webroot}webinc/editors/oneform/save.js"> </script>
                 <script type="text/javascript" src="{$webroot}webinc/js/sarissa_dbform.js"></script>
+                <script type="text/javascript">
                 <xsl:if test="$returnPostCode = 201">
-                    <script type="text/javascript">
+                    
                     window.parent.navi.Navitree.reload('/<xsl:value-of select="substring($id,1,string-length($id)-1)"/>');
-                </script>
-                </xsl:if>
+                 
+            </xsl:if>
 
+      
+           
+                  
+                     <xsl:choose>
+                <xsl:when test=" contains($id,'-text.')">
+                    var noXMLCheck = true;
+                </xsl:when>
+                <xsl:otherwise>
+                    var noXMLCheck = false;
+                </xsl:otherwise>
+                </xsl:choose>
+                </script>
+                     
             </head>
             <body>
                 <h1 class="pageTitle">Edit  <xsl:value-of select="$id"/>
@@ -34,6 +48,7 @@
                 Changes made here will not be saved<br/>
                     <br/>
                 </xsl:if>
+                
                 <form action="{php:functionString('bx_helpers_uri::getRequestUri')}" enctype="multipart/form-data" method="post" >
                  <xsl:if test="not($isNotWritable)">
                  <xsl:attribute name="onsubmit">return liveSave(this,document.getElementById('area'),'<xsl:value-of select="$mimetype"/>');</xsl:attribute>
