@@ -13,6 +13,15 @@
      
      <message key="blogGravatarEnabled" asXML="yes"><![CDATA[This blog is <a href="http://www.gravatar.com/">gravatar</a> enabled.]]></message>
     
+    <message key="SUB_THANKS">Thank you.</message>
+    <message key="SUB_UNSUB_SUCCESS">Unsubscription successfull.</message>
+    <message key="SUB_OK">Your address has been added.</message>
+    <message key="SUB_CANCELED">Your address has been removed.</message>
+    <message key="SUB_ACT_OK">Your subscripton has been activated successfully.</message>
+    <message key="SUB_ACT_ID_NOTFOUND">No valid activation id found.</message>
+    <message key="SUB_EMAIL_INVAL">The supplied email adress is invalid.</message>
+    <message key="SUB_EMAIL_INUSE">The supplied email address is already in use.</message>
+    <message key="SUB_NOT_FOUND">There is no entry for the supplied email address.</message>
      
 </catalogue>
 

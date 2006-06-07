@@ -1,13 +1,17 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xhtml">
+<xsl:stylesheet version="1.0" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xhtml">
     <xsl:import href="master.xsl"/>
-    <xsl:import href="common.xsl"/>
+    <xsl:import href="../standard/common.xsl"/>
 
     <xsl:output encoding="utf-8" method="xml" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"/>
     
     <xsl:template name="content">
         <xsl:variable name="body" select="/bx/plugin[@name='xhtml']/xhtml:html/xhtml:body"/>
         <xsl:choose>
+            <xsl:when test="/bx/plugin[@name='newsletter']/newsletter/status">
+                <p><b><i18n:text><xsl:apply-templates select="/bx/plugin[@name='newsletter']/newsletter/status" mode="xhtml"/></i18n:text></b></p>
+                <p><i18n:text><xsl:apply-templates select="/bx/plugin[@name='newsletter']/newsletter/extended" mode="xhtml"/></i18n:text></p>
+            </xsl:when>
             <!-- if there is a <div id = 'content'> just take that -->
             <xsl:when test="$body/xhtml:div[@id = 'content']">
                 <xsl:apply-templates select="$body/xhtml:div[@id = 'content']/node()" mode="xhtml"/>
@@ -18,8 +22,6 @@
                 <xsl:apply-templates select="$body/node()" mode="xhtml"/>
             </xsl:otherwise>
         </xsl:choose>
-        
-
     </xsl:template>
     
     <!-- add everything from head to the output -->
@@ -39,10 +41,8 @@
     <xsl:template match="xhtml:head/xhtml:meta[not(@content)]" mode="xhtml">
     </xsl:template>
     
-    <xsl:template match="xhtml:span[@id='status']" mode="xhtml">
-    	<xsl:if test="/bx/plugin[@name='newsletter']/newsletter/status">
-    		<b><xsl:value-of select="/bx/plugin[@name='newsletter']/newsletter/status"/></b>
-    	</xsl:if>
+    <xsl:template name="body_attributes">
+    <xsl:apply-templates select="/bx/plugin[@name='xhtml']/xhtml:html/xhtml:body/@*" mode="xhtml"/>
     </xsl:template>
     
     <xsl:template match="xhtml:div[@id='newsletter_groups']" mode="xhtml">
@@ -50,7 +50,6 @@
         	<input type="checkbox" name="groups[]" checked="checked" value="{@id}"/>
         	<xsl:value-of select="."/><br/>
         </xsl:for-each>
-    </xsl:template>    
-    
+    </xsl:template>
     
 </xsl:stylesheet>
