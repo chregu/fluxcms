@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xhtml">
+<xsl:stylesheet version="1.0" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xhtml">
     <xsl:import href="master.xsl"/>
     <xsl:import href="../standard/common.xsl"/>
 
@@ -45,7 +45,7 @@
     
     <xsl:template match="xhtml:span[@id='status']" mode="xhtml">
     	<xsl:if test="/bx/plugin[@name='newsletter']/newsletter/status">
-    		<b><xsl:value-of select="/bx/plugin[@name='newsletter']/newsletter/status"/></b>
+    		<b><i18n:text><xsl:value-of select="/bx/plugin[@name='newsletter']/newsletter/status"/></i18n:text></b>
     	</xsl:if>
     </xsl:template>
     
