@@ -114,7 +114,7 @@ class bx_editors_newsmailer_newsmailer {
 			if(!empty($draft['htmlfile']))
 				$mime->setHTMLBody($customHtml);
 
-			$params = array('text_encoding' => '8bit',
+			$params = array('text_encoding' => 'base64',
                             'html_encoding' => 'quoted-printable');
 
 			$body = $mime->get($params);
@@ -210,7 +210,7 @@ class bx_editors_newsmailer_newsmailer {
 			if(!empty($draft['htmlfile']))
 				$mime->setHTMLBody($customHtml);
 
-			$params = array('text_encoding' => '8bit',
+			$params = array('text_encoding' => 'base64',
                             'html_encoding' => 'quoted-printable');
 
 			$body = $mime->get($params);
