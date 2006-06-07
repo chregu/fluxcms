@@ -8,6 +8,10 @@
     <xsl:template name="content">
         <xsl:variable name="body" select="/bx/plugin[@name='xhtml']/xhtml:html/xhtml:body"/>
         <xsl:choose>
+            <xsl:when test="/bx/plugin[@name='newsletter']/newsletter/status">
+                <p><b><i18n:text><xsl:apply-templates select="/bx/plugin[@name='newsletter']/newsletter/status" mode="xhtml"/></i18n:text></b></p>
+                <p><i18n:text><xsl:apply-templates select="/bx/plugin[@name='newsletter']/newsletter/extended" mode="xhtml"/></i18n:text></p>
+            </xsl:when>
             <!-- if there is a <div id = 'content'> just take that -->
             <xsl:when test="$body/xhtml:div[@id = 'content']">
                 <xsl:apply-templates select="$body/xhtml:div[@id = 'content']/node()" mode="xhtml"/>
@@ -18,8 +22,6 @@
                 <xsl:apply-templates select="$body/node()" mode="xhtml"/>
             </xsl:otherwise>
         </xsl:choose>
-        
-
     </xsl:template>
     
     <!-- add everything from head to the output -->
@@ -45,7 +47,7 @@
     
     <xsl:template match="xhtml:span[@id='status']" mode="xhtml">
     	<xsl:if test="/bx/plugin[@name='newsletter']/newsletter/status">
-    		<b><i18n:text><xsl:value-of select="/bx/plugin[@name='newsletter']/newsletter/status"/></i18n:text></b>
+    		<b><i18n:text><xsl:apply-templates select="/bx/plugin[@name='newsletter']/newsletter/status" mode="xhtml"/></i18n:text></b>
     	</xsl:if>
     </xsl:template>
     
