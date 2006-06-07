@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xhtml">
+<xsl:stylesheet version="1.0" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xhtml">
     <xsl:import href="master.xsl"/>
     <xsl:import href="../standard/common.xsl"/>
 
@@ -43,12 +43,6 @@
     
     <xsl:template name="body_attributes">
     <xsl:apply-templates select="/bx/plugin[@name='xhtml']/xhtml:html/xhtml:body/@*" mode="xhtml"/>
-    </xsl:template>
-    
-    <xsl:template match="xhtml:span[@id='status']" mode="xhtml">
-    	<xsl:if test="/bx/plugin[@name='newsletter']/newsletter/status">
-    		<b><i18n:text><xsl:apply-templates select="/bx/plugin[@name='newsletter']/newsletter/status" mode="xhtml"/></i18n:text></b>
-    	</xsl:if>
     </xsl:template>
     
     <xsl:template match="xhtml:div[@id='newsletter_groups']" mode="xhtml">
