@@ -12,7 +12,8 @@ function liveSaveSetStatus (text) {
 }
 
 function liveSave(form, focusField, mimetype) {
-	if (mimetype == "text/html" || mimetype == "text/xml") {
+	if ((mimetype == "text/html" || mimetype == "text/xml") && ! noXMLCheck) {
+		
 		liveSaveSetStatus("Checking Document ...");
 	
 		if (!xmlcheck(form)) {
