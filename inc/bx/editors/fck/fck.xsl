@@ -85,6 +85,7 @@
             ]]>
             </script>
             <input type="button" onclick="javascript:saveContent();" value="Save"/>
+             <span id="LSResult">Document saved ...</span>
         </form>
     </xsl:template>
 

@@ -67,3 +67,12 @@ body {
 .browserWarningRed {
      background-color: #FF6060;
 }
+
+#LSResult { background-color: #006486;
+    color: #ffffff;
+    border: 1px solid #000000;
+    padding: 1px 10px;
+    margin-left: 10px;
+    display: none;
+    
+}

@@ -92,7 +92,7 @@ loadContent = function() {
 }
 
 saveContent = function() {
-    window.status = "Parsing the document...";
+    liveSaveSetStatus("Parsing the document...");
     var oEditor = FCKeditorAPI.GetInstance("fluxfck") ;
     var xml = oEditor.GetXHTML(true);
     var request = new XMLHttpRequest();
@@ -128,18 +128,25 @@ saveContent = function() {
         if(request.readyState == 4) {
             if (request.status != '200' && request.status != '204'  && request.status != '1223'  && request.status != '201'){
                 alert('Error saving your data.\nResponse status: ' + request.status + '.\nCheck your server log for more information.');
-                window.status = "Error saving the document.";
+               liveSaveSetStatus( "Error saving the document.");
             } else {
-                window.status = "Document saved";
+               liveSaveSetStatus("Document saved");
             }
+			var  res = document.getElementById("LSResult");
+			window.setTimeout(function() {res.style.display = 'none';}, 3000);
         }
     }
 
     request.open('PUT', contentURI, true);
     request.onreadystatechange = saveContent_callback;
-    window.status = "Saving the document...";
+    liveSaveSetStatus("Saving the document...");
 
     request.send(Sarissa.serialize(contentDOM));
 }
 
+function liveSaveSetStatus (text) {
+	var  res = document.getElementById("LSResult");
+	res.style.display = "inline";
+	res.firstChild.nodeValue = text;
+}
 
