@@ -289,19 +289,27 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 
 		// show a list of newsletter templates created
 		$files = $this->getNewsletterFilenames();
+		foreach($files as $file)
+		{
+			if(strstr($file, "-txt.") !== FALSE) {
+				$txtEnum[] = $file;
+			}else {
+				$htmlEnum[] = $file;
+			}
+		}
 
 		$newsHTML = '<select name="htmlfile" size="1"><option/>';
-  		foreach($files as $file)
+  		foreach($htmlEnum as $entry)
   		{
-  			$newsHTML .= '<option value="'.$file.'">'.$file.'</option>';	
+  			$newsHTML .= '<option value="'.$entry.'">'.$entry.'</option>';	
   		}
 		$newsHTML .= '</select>';	
 		
 		// same but for the text version 
 		$newsText = '<select name="textfile" size="1"><option/>';
-  		foreach($files as $file)
+  		foreach($txtEnum as $entry)
   		{
-  			$newsText .= '<option value="'.$file.'">'.$file.'</option>';	
+  			$newsText .= '<option value="'.$entry.'">'.$entry.'</option>';	
   		}
 		$newsText .= '</select>';	
 
@@ -642,7 +650,7 @@ CURRENT_TIMESTAMP
 									$feedContent);
  
  		$filenameSimple = $feed["name"].'_'.date("Ymd-His");
-		$filename = $filenameSimple.'.en.xhtml';
+		$filename = $filenameSimple.'-txt.de.xhtml';
 			
  		if($data["html"] == "on") {
  			// HTML format
