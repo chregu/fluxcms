@@ -190,11 +190,11 @@ bx_resourcemanager::setProperty("/newsletter/unsubscribe.de.xhtml", "display-ord
 bx_resourcemanager::setProperty("/newsletter/unsubscribe.de.xhtml", "mimetype", "text/html");
 bx_resourcemanager::setProperty("/newsletter/unsubscribe.de.xhtml", "output-mimetype", "text/html");
 
-bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "parent-uri", "/newsletter/");
-bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "display-name", "Activation");
-bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "display-order", "0");
-bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "mimetype", "text/html");
-bx_resourcemanager::setProperty("/newsletter/activation.de.xhtml", "output-mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "display-name", "Activation");
+bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "display-order", "0");
+bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "mimetype", "text/html");
+bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "output-mimetype", "text/html");
 
 /**
  * just prints the configxml used for linkplugin.
@@ -210,7 +210,7 @@ $configxml = '<bxcms xmlns ="http://bitflux.org/config">
   <parameter name="activation-server" value="Bitflux"/>
   <parameter name="activation-from" value="milo@bitflux.ch"/>
   <parameter name="activation-subject" value="Newsletter Activation"/>
-  <parameter name="activation-text" value="activation.de.xhtml"/>
+  <parameter name="activation-text" value="activation-txt.de.xhtml"/>
 </plugin>
 
 <plugin type ="navitree"></plugin>
