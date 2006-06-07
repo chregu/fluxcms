@@ -56,37 +56,37 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 		else if(isset($_GET["activate"]))
 		{   
 			if($this->activateSubscriber($_GET['activate'])) {
-				$xml .= '<status>Your subscription has been activated.</status>';
+				$xml .= '<status>SUB_ACT_OK</status>';
 			}
 			else {
-				$xml .= '<status>ERROR: The provided activation id is invalid.</status>';
+				$xml .= '<status>SUB_ACT_ID_NOTFOUND</status>';
 			}
 		}
 		
 		if(isset($_POST["invemail"]))
 		{
-			$xml .= '<status>ERROR: Please supply a valid email address.</status>';
+			$xml .= '<status>SUB_EMAIL_INVAL</status>';
 		}		
 		else if(isset($_POST["notfound"]))
 		{
-			$xml .= '<status>ERROR: Your subscription could not be found!</status>';
+			$xml .= '<status>SUB_NOT_FOUND</status>';
 		}		
 		else if(isset($_GET["unsubscribe"]) or isset($_POST["unsubscribe"]))
 		{
-			$xml .= '<status>Your subscription has been canceled.</status>';
+			$xml .= '<status>SUB_UNSUB_SUCCESS</status>';
+			$xml .= '<extended>SUB_CANCELED</extended>';
 		}
 		else if(isset($_POST["duplicate"]))
 		{
-			$xml .= '<status>ERROR: Your email address is already in use!</status>';
+			$xml .= '<status>SUB_EMAIL_INUSE</status>';
 		}
 		else if(isset($_POST["subscribe"]))
 		{
-			$xml .= '<status>Your subscription was added successfully.</status>';
+			$xml .= '<status>SUB_THANKS</status>';
+			$xml .= '<extended>SUB_OK</extended>';
 		}
 
-		
-		// pass through the list of public groups to the static.xsl
-		
+		// pass through the list of public groups to the static.xsl	
 		foreach ($this->getGroups() as $row)
 		{
 			$xml .= '<group id="'.$row['id'].'">'.$row['name'].'</group>';

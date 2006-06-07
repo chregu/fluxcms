@@ -46,10 +46,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$year = date("Y") . "/";
 			
 			if(!empty($data["htmlfile"])) {
-				$newHtmlFile = date("Ymd-").$data['subject'].".".$htmllanguage.".xhtml";
-				rename("data/newsletter/drafts/".$data["htmlfile"], "data/newsletter/archive/".$year.$newHtmlFile);
+				$newHtmlFile = $year.date("Ymd-").$data['subject'].".".$htmllanguage.".xhtml";
+				rename("data/newsletter/drafts/".$data["htmlfile"], "data/newsletter/archive/".$newHtmlFile);
 				$this->removeNewsletterProperties("/newsletter/drafts/".$data["htmlfile"]);
-				$this->addNewsletterProperties("/newsletter/archive/".$year.$newHtmlFile, $data["subject"]);
+				$this->addNewsletterProperties("/newsletter/archive/".$newHtmlFile, $data["subject"]);
 				
 				if(isset($data['publish'])) {
 					// make the newsletter visible to the users
@@ -57,10 +57,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				}
 			}
 			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
-				$newTextFile = date("Ymd-").$data['subject'].".".$textlanguage.".txt.xhtml";
-				rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$year.$newTextFile);
+				$newTextFile = $year.date("Ymd-").$data['subject'].".".$textlanguage.".txt.xhtml";
+				rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$newTextFile);
 				$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
-				$this->addNewsletterProperties("/newsletter/archive/".$year.$newTextFile, $data["subject"]);
+				$this->addNewsletterProperties("/newsletter/archive/".$newTextFile, $data["subject"]);
 			}		
 			
 			$classname = $this->getConfigParameter($id, "sendclass");	
@@ -69,7 +69,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
      		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `class`, `mailserver`, `embed`, `baseurl`)
 						VALUES (
-						'".$data['from']."', '".$data['subject']."', '".$year.$newHtmlFile."', '".$year.$newTextFile."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."');";
+						'".$data['from']."', '".$data['subject']."', '".$newHtmlFile."', '".$newTextFile."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."');";
 			$GLOBALS['POOL']->dbwrite->exec($query);
 
 			$draftId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_drafts", "id");
@@ -545,8 +545,9 @@ CURRENT_TIMESTAMP
 			<table border="0" id="send">
 				<tr><td colspan="2"><h3>Generate Newsletter from RSS Feed</h3></td></tr>
 				<tr><td>Feed:</td><td>'.$feedsHTML.'</td></tr>
+				<tr><td>HTML Format:</td><td><input type="checkbox" name="html"/></td></tr>
 				<tr>
-					<td></td>
+					<td></td>					
 					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Generate" class="formbutton"/></td>
 				</tr>
 			</table>
@@ -640,20 +641,41 @@ CURRENT_TIMESTAMP
 									"'<dc:date>'.\$this->callbackFeedDate(date('YmdHis', strtotime('$1'))).'</dc:date>'", 
 									$feedContent);
  
-		$xsl = new DomDocument();
-		$xsl->load('themes/'.bx_helpers_config::getTheme().'/newsfeeds.xsl');
-		$inputdom = new DomDocument();
-		$inputdom->loadXML($feedContent);
-		$proc = new XsltProcessor();
-		$xsl = $proc->importStylesheet($xsl);
-		$proc->setParameter('', 'lastdate', $feed["lastdate"]);
-		$newdom = $proc->transformToDoc($inputdom);
-		
-		// save newsletter file
-		$filenameSimple = $feed["name"].'_'.date("Ymd-His");
+ 		$filenameSimple = $feed["name"].'_'.date("Ymd-His");
 		$filename = $filenameSimple.'.en.xhtml';
-		$newdom->save('data/newsletter/drafts/'.$filename);
-		
+			
+ 		if($data["html"] == "on") {
+ 			// HTML format
+			$xsl = new DomDocument();
+			$xsl->load('themes/'.bx_helpers_config::getTheme().'/newsfeeds.xsl');
+			$inputdom = new DomDocument();
+			$inputdom->loadXML($feedContent);
+			$proc = new XsltProcessor();
+			$xsl = $proc->importStylesheet($xsl);
+			$proc->setParameter('', 'lastdate', $feed["lastdate"]);
+			$newdom = $proc->transformToDoc($inputdom);
+
+			$newdom->save('data/newsletter/drafts/'.$filename);
+ 		}
+ 		else
+ 		{
+ 			// Plain Text format
+			$xsl = new DomDocument();
+			$xsl->load('themes/'.bx_helpers_config::getTheme().'/textfeeds.xsl');
+			$inputdom = new DomDocument();
+			$inputdom->loadXML($feedContent);
+			$proc = new XsltProcessor();
+			$xsl = $proc->importStylesheet($xsl);
+			$proc->setParameter('', 'lastdate', $feed["lastdate"]);
+			$newdom = $proc->transformToDoc($inputdom); 	
+			
+			// replace breaks with newline ASCII character
+			$nodeValue = $newdom->getElementsByTagName('div')->item(0)->nodeValue;
+			$nodeValue = str_replace("<br/>", "\n", $nodeValue);		
+			
+			file_put_contents('data/newsletter/drafts/'.$filename, $nodeValue);
+ 		}
+
 		// add as resource so it's visible inside the collection
 		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "parent-uri", "/newsletter/drafts/");
 		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "display-name", $filenameSimple);
