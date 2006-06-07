@@ -28,7 +28,7 @@
            
                   
                      <xsl:choose>
-                <xsl:when test=" contains($id,'-text.')">
+                <xsl:when test=" contains($id,'-txt.')">
                     var noXMLCheck = true;
                 </xsl:when>
                 <xsl:otherwise>
