@@ -45,8 +45,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$newTextFile = "";
 			$year = date("Y") . "/";
 			
+			// replace whitespaces to get a clean url
+			$clearSubject = str_replace(" ", "-", $data['subject']);
+			
 			if(!empty($data["htmlfile"])) {
-				$newHtmlFile = $year.date("Ymd-").$data['subject'].".".$htmllanguage.".xhtml";
+				$newHtmlFile = $year.date("Ymd-").$clearSubject.".".$htmllanguage.".xhtml";
 				rename("data/newsletter/drafts/".$data["htmlfile"], "data/newsletter/archive/".$newHtmlFile);
 				$this->removeNewsletterProperties("/newsletter/drafts/".$data["htmlfile"]);
 				$this->addNewsletterProperties("/newsletter/archive/".$newHtmlFile, $data["subject"]);
@@ -57,7 +60,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				}
 			}
 			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
-				$newTextFile = $year.date("Ymd-").$data['subject']."-txt.".$textlanguage.".xhtml";
+				$newTextFile = $year.date("Ymd-").$clearSubject."-txt.".$textlanguage.".xhtml";
 				rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$newTextFile);
 				$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
 				$this->addNewsletterProperties("/newsletter/archive/".$newTextFile, $data["subject"]);
