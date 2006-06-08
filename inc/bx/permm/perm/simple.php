@@ -40,7 +40,7 @@
           } else {
               return false;
           }
-        } else if (in_array('isuser',$actions) && $userId) {
+        } else if (in_array('isuser',$actions) && $userid) {
             return true;
         } else if (in_array('ishashed',$actions)) {
             if (!empty($_GET['ah']) && $_GET['ah'] == bx_helpers_perm::getAccessHash()) {
