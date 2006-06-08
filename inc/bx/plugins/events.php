@@ -83,12 +83,15 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
         $filename=preg_replace("#\.events$#","",$id);
         $prefix =  $GLOBALS['POOL']->config->getTablePrefix();
         $dateformat = $this->getParameter($path,"dateformat",BX_PARAMETER_TYPE_DEFAULT,"d/m/Y H:i");
-                
+        $attrFields = array('title','link', 'von', 'bis', 'uri');
+        
         if($filename == "index"){
+            
             $query="select * from ".$prefix."events order by von asc";
             $res =  $GLOBALS['POOL']->db->query($query);
             $dom = new DomDocument();
             $root=$dom->createElement("events");
+            $root->setAttribute('single','false');
             $dom->appendChild($root); // root node
             
             
@@ -112,17 +115,33 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
                 //$child->setAttribute("description", $row['description']);
                 //$dom->documentElement->appendChild($child);
                 
-                $desc = $dom->createElement("description", $row['description']);
-                $child->appendChild($desc);     
                 $child->setAttribute("uri", $row['uri']);
                 $dom->documentElement->appendChild($child);  
+            
+                foreach($row as $fieldn => $fieldv) {
+                    if (!in_array($fieldn,$attrFields)) {
+                        $fieldNode = $dom->createElement($fieldn);
+                        if ($fieldNode instanceof DOMNode) {
+                            $fieldNode->appendChild($dom->createTextNode($fieldv));
+                        
+                            $child->appendChild($fieldNode);
+                        
+                        }
+                    }
+                }
+            
+            
             }
+
+            
             return $dom;
         } else {
                 $query="select * from ".$prefix."events where uri = '".$filename."'";
                 $res =  $GLOBALS['POOL']->db->query($query);
                 $dom = new DomDocument();
                 $root=$dom->createElement("events");
+                $root->setAttribute('single','true');
+                
                 $dom->appendChild($root); // root 
                 $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
                 $child = $dom->createElement("event");
@@ -141,14 +160,21 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
                 $child->setAttribute("bis", $bis);
                 $dom->documentElement->appendChild($child);
                 
-                //$child->setAttribute("description", $row['description']);
-                //$dom->documentElement->appendChild($child);
-                
-                $desc = $dom->createElement("description", $row['description']);
-                $child->appendChild($desc);    
-                
                 $child->setAttribute("uri", $row['uri']);
                 $dom->documentElement->appendChild($child);                  
+                
+                foreach($row as $fieldn => $fieldv) {
+                    if (!in_array($fieldn,$attrFields)) {
+                        $fieldNode = $dom->createElement($fieldn);
+                        if ($fieldNode instanceof DOMNode) {
+                            $fieldNode->appendChild($dom->createTextNode($fieldv));
+                        
+                            $child->appendChild($fieldNode);
+                        
+                        }
+                    }
+                }
+                
                 return $dom;
         }
     }
