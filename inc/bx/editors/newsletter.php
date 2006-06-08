@@ -53,11 +53,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				
 				if(isset($data['publish'])) {
 					// make the newsletter visible to the users
-					bx_resourcemanager::setProperty("/newsletter/archive/".$year.$newHtmlFile, "display-order", "99");
+					bx_resourcemanager::setProperty("/newsletter/archive/".$newHtmlFile, "display-order", "99");
 				}
 			}
 			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
-				$newTextFile = $year.date("Ymd-").$data['subject'].".".$textlanguage.".txt.xhtml";
+				$newTextFile = $year.date("Ymd-").$data['subject']."-txt.".$textlanguage.".xhtml";
 				rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$newTextFile);
 				$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
 				$this->addNewsletterProperties("/newsletter/archive/".$newTextFile, $data["subject"]);
@@ -359,38 +359,6 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateManageView()
     {   	
-    	/*$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-    	for($i=1; $i<1000; $i++) {
-    		
-    		$query = 
-"INSERT INTO `fluxcms_newsletter_users` ( `ID` , `firstname` , `lastname` , `email` , `gender` , `activation` , `created` , `status` , `bounced` , `lastevent` )
-VALUES (
-NULL , 'Test', 'User', 'test+".$i."@bitflux.ch', '0', '0', NOW(), '1', '0',
-CURRENT_TIMESTAMP
-);";
-    		$GLOBALS['POOL']->dbwrite->exec($query);	
-    		
-    		$userId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_users", "id");	
-    		
-    		$query = 
-"INSERT INTO `fluxcms_newsletter_users2groups` ( `ID` , `fk_user` , `fk_group` , `stamp` )
-VALUES (
-NULL , '".$userId."', '10',
-CURRENT_TIMESTAMP
-);";
-    		$GLOBALS['POOL']->dbwrite->exec($query);	
-    	}*/
-    	
-    	/*$xsl = new DomDocument();
-		$xsl->load('themes/3-cols/scansystems.xsl');
-    	$inputdom = new DomDocument();
-		$inputdom->load('data/newsletter/vorlage2.en.xhtml');
-		$proc = new XsltProcessor();
-		$proc->registerPHPFunctions();
-		$xsl = $proc->importStylesheet($xsl);
-		$outputdom = $proc->transformToDoc($inputdom);  
-    	bx_helpers_debug::webdump($outputdom->saveXML());  */
-    	
     	// get information about the newsletters sent
 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_drafts";
@@ -650,10 +618,10 @@ CURRENT_TIMESTAMP
 									$feedContent);
  
  		$filenameSimple = $feed["name"].'_'.date("Ymd-His");
-		$filename = $filenameSimple.'-txt.de.xhtml';
-			
+
  		if($data["html"] == "on") {
  			// HTML format
+ 			$filename = $filenameSimple.'.de.xhtml';
 			$xsl = new DomDocument();
 			$xsl->load('themes/'.bx_helpers_config::getTheme().'/newsfeeds.xsl');
 			$inputdom = new DomDocument();
@@ -668,6 +636,7 @@ CURRENT_TIMESTAMP
  		else
  		{
  			// Plain Text format
+ 			$filename = $filenameSimple.'-txt.de.xhtml';
 			$xsl = new DomDocument();
 			$xsl->load('themes/'.bx_helpers_config::getTheme().'/textfeeds.xsl');
 			$inputdom = new DomDocument();
