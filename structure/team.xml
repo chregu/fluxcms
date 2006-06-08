@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
-        
-    <bxst:section name="team" orderby="id ASC">
-        <bxst:table name="team" fields="id, name, vorname, aufgabe, location"/>
-    </bxst:section>
-
-</bxst:structure>
