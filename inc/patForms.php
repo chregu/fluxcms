@@ -21,6 +21,8 @@ if( !defined( 'PATFORMS_INCLUDE_PATH' ) ) {
 	define( 'PATFORMS_INCLUDE_PATH', dirname( __FILE__ ). '/patForms' );
 }
 
+
+
 /**
  * location of global javascripts
  */
@@ -1274,7 +1276,6 @@ class patForms
 		
 		$moduleFile		=	PATFORMS_INCLUDE_PATH . '/'.$type.'/'.$pathName.'.php';
 		$moduleClass	=	'patForms_'.$type.'_'.$name;
-
 		if( !class_exists( $baseClass, FALSE ) )
 		{
 			if( !file_exists( $baseFile ) )
@@ -1293,7 +1294,16 @@ class patForms
 		{
 			if( !file_exists( $moduleFile ) )
 			{
-				return patErrorManager::raiseError( 
+				if (defined('PATFORMS_LOCAL_INCLUDE_PATH')) {
+                    $localModuleClass = PATFORMS_LOCAL_INCLUDE_PATH."/".$type."/".$pathName.".php";   
+                    if (file_exists($localModuleClass)) {
+                        include_once $localModuleClass;    
+                        $module = new $moduleClass();
+                        return $module;
+                    }
+                }
+                
+                return patErrorManager::raiseError( 
 					PATFORMS_ERROR_MODULE_NOT_FOUND, 
 					$type.' "'.$name.'" file "'.$moduleFile. '" could not be found.'
 				);
