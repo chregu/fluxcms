@@ -21,7 +21,6 @@ class bx_filters_patforms extends bx_filter {
     public function preHTML($xml) {
         require_once('patForms.php');
         $this->xml = $xml;
-
         // look for patForms:Form tag
         $formNS = $this->getXPathNodes('//patForms:Form');
         if($formNS->length > 0) {
@@ -53,10 +52,14 @@ class bx_filters_patforms extends bx_filter {
             $form = $parser->getForm();
             $form->setAutoValidate('save');
             $form->setRenderer( $parser );
-
+            
             // post to the current file
             $form->setAction('');
+            
+            $this->form =& $form;
+            
             // create datasources
+            
             foreach($this->getXPathNodes('//forms:form/forms:config/forms:datasource') as $srcNode) {
                 $type = $srcNode->getAttribute('type');
                 $fieldname = $srcNode->getAttribute('field');
@@ -139,7 +142,6 @@ class bx_filters_patforms extends bx_filter {
             // set values from external sources like $_GET
             $form->setValues($this->importExternalValues());
             $formXML = $form->renderForm();
-
             // quick hack to replace i18n(.*) references with i18n compliant XML-tags
             $formXML = preg_replace('/(\S+)="i18n\(([^)]*)\)"/', '$1="$2" i18n:attr="$1"', $formXML);
             $formXML = preg_replace("/i18n\(([^)]*)\)/", "<i18n:text>\$1</i18n:text>", $formXML);
@@ -150,7 +152,7 @@ class bx_filters_patforms extends bx_filter {
             if($classONS->length > 0) {
                 $classONode = $classONS->item(0);
             }
-
+            
             // check if form is valid
             if($form->valid == TRUE && !empty($this->className)) {
                 $formFields = $form->getValues();
@@ -192,11 +194,13 @@ class bx_filters_patforms extends bx_filter {
             if (function_exists('iconv')) {
              $formXML = @iconv("UTF-8", "UTF-8//IGNORE", $formXML);   
             }
-
+            
             $formDOM->loadXML($formXML);
             $newFormNodeXP = new DomXPath($formDOM);
             $newFormNodeNS = $newFormNodeXP->query('//form');
             $newFormNode = $xml->importNode($newFormNodeNS->item(0), TRUE);
+            
+            
             $formNS->item(0)->parentNode->parentNode->replaceChild($newFormNode, $formNS->item(0)->parentNode);
 
 
@@ -239,7 +243,21 @@ class bx_filters_patforms extends bx_filter {
         }
 
     }
-    
+   
+   
+    public function formHasElement($name) {
+        if ($this->form) {
+            foreach($this->form->getElements() as $element) {
+                if ($element->getAttribute('name') == $name) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }  
+
+   
     public function getFormErrorsXML($form) {
         $xml = '';
         
