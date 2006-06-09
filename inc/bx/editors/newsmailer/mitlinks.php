@@ -10,9 +10,10 @@ class bx_editors_newsmailer_mitlinks extends bx_editors_newsmailer_newsmailer {
     /**
      * Sends a bunch of mails
      */
-    public function sendNewsletter($draft, $receivers, $mailoptions, $embedImages = false)
+    public function autoPrepareNewsletter($draftId)
     {
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+    	$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);	
 
     	// mysqli(mysqli)://fluxcms:fluxcms@localhost/fluxcms
     	eregi("^([^//]*)//([^:]*):([^@]*)@([^/]*)/(.*)", $GLOBALS['POOL']->dbwrite->getDSN(), $dbparams);
@@ -34,7 +35,7 @@ Subject: '.$draft['subject'].'
 
 ';
 
-    	parent::sendNewsletter($draft, $receivers, $mailoptions, $embedImages);
+    	parent::autoPrepareNewsletter($draftId);
     }
    
     /**
