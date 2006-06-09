@@ -60,11 +60,12 @@ abstract class bx_permm_auth_common {
     
     protected function __construct($options) {
         if (is_array($options)) {
+            
             if (isset($options['auth_dbfields'])) {
                 if (trim($options['auth_dbfields']) == '' ) {
                     unset($options['auth_dbfields']); 
                 } else {
-                    $options['auth_dbfields'] .= "," .$this->auth_dbfields;
+                    //$options['auth_dbfields'] .= "," .$this->auth_dbfields;
                 }
             } 
             foreach ($options as $name => $value) {
