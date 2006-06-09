@@ -209,7 +209,7 @@ $configxml = '<bxcms xmlns ="http://bitflux.org/config">
   <parameter name="sendclass" value="newsmailer"/>
   <parameter name="activation-server" value="Bitflux"/>
   <parameter name="activation-from" value="milo@bitflux.ch"/>
-  <parameter name="activation-subject" value="Newsletter Activation"/>
+  <parameter name="activation-subject" value="Newsletter Aktivierung"/>
   <parameter name="activation-text" value="activation-txt.de.xhtml"/>
 </plugin>
 

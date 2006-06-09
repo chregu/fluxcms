@@ -7,8 +7,8 @@
   <parameter name="sendclass" value="newsmailer"/>
   <parameter name="activation-server" value="Bitflux"/>
   <parameter name="activation-from" value="milo@bitflux.ch"/>
-  <parameter name="activation-subject" value="Newsletter Activation"/>
-  <parameter name="activation-text" value="activation.en.xhtml"/>
+  <parameter name="activation-subject" value="Newsletter Aktivierung"/>
+  <parameter name="activation-text" value="activation-txt.de.xhtml"/>
 </plugin>
 
 <plugin type ="navitree"></plugin>

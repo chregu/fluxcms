@@ -22,12 +22,12 @@
 	
 	<xsl:template match="/rss/channel" mode="xhtml">
 		<xsl:for-each select="item">
-			<!--  xsl:if test="$lastdate &lt; dc:date" -->
+			<xsl:if test="$lastdate &lt; dc:date">
 				<xsl:value-of select="title"/><xsl:text>&#xa;&#xa;</xsl:text>
 				<xsl:apply-templates select="content:encoded/node()" mode="xhtml"/><xsl:text>&#xa;&#xa;</xsl:text>
 				<xsl:text>Link: &lt;</xsl:text><xsl:value-of select="link"/><xsl:text>&gt;&#xa;&#xa;</xsl:text>
 				<xsl:text>------------------------------------------------------------------------</xsl:text><xsl:text>&#xa;&#xa;</xsl:text>
-			<!-- /xsl:if -->
+			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
     
