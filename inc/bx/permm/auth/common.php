@@ -132,6 +132,7 @@ abstract class bx_permm_auth_common {
      */
     public function getAuth() {
         return $this->authObj->getAuth();
+    
     }
     
 
