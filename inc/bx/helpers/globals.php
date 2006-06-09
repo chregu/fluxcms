@@ -3,12 +3,13 @@
 class bx_helpers_globals {
     
     
-    static function GET($name) {
+    static function GET($name,$default = "") {
+        
         if (isset($_GET[$name])) {
             
             return popoon_classes_externalinput::basicClean($_GET[$name]);
         } else {
-            return "";
+            return $default;
         }
         
     }
