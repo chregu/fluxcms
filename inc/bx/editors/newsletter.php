@@ -209,6 +209,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	$query = "select COUNT(DISTINCT fk_user) from ".$prefix."newsletter_users2groups u2g, ".$prefix."newsletter_users u where fk_group in (".$groupIds.") AND fk_user=u.id AND u.status='1' ORDER BY fk_user";
     	$usercount = $GLOBALS['POOL']->db->queryOne($query); 
     	
+    	$htmlsrc = (!empty($_POST["htmlfile"]) ? BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["htmlfile"].'?editor=kupu' : "");
+		$textsrc = (!empty($_POST["textfile"]) ? BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["textfile"].'?editor=oneform' : "");
+    	
 		$xml = '<newsletter>
     	<form name="bx_news_send" action="#" method="post">
 			<h3>Newsletter Preview</h3>
@@ -236,10 +239,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				</tr>
 				<tr>
 					<td>
-						<iframe src="'.BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["htmlfile"].'?editor=kupu" width="100%" height="500" name="htmlfile"/>
+						<iframe src="'.$htmlsrc.'" width="100%" height="500" name="htmlfile"/>
 					</td>
 					<td>
-						<iframe src="'.BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["textfile"].'?editor=oneform" width="100%" height="500" name="textfile"/>
+						<iframe src="'.$textsrc.'" width="100%" height="500" name="textfile"/>
 					</td>
 				</tr>
 			</table>
