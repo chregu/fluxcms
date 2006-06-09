@@ -34,6 +34,8 @@ class bx_editors_newsmailer_newsmailer {
     
 	/**
 	 * Creates the mail_options structure for sending mails over Mail_Queue
+	 * @param id newsletter_mailserver id
+	 * @return array with mail_queue options
 	 */
 	final public static function getMailserverOptions($id)
 	{
@@ -54,7 +56,8 @@ class bx_editors_newsmailer_newsmailer {
 	}
     
     /**
-     * Creates all the MIME mail bodies for the selected newsletter and saves them into the mail queue
+     * Creates all the MIME mail bodies for the selected newsletter and saves them into the mail queue table
+     * @param draftId newsletter_drafts id 
      */
     public function autoPrepareNewsletter($draftId)
     {
@@ -139,6 +142,7 @@ class bx_editors_newsmailer_newsmailer {
     
     /**
      * Send all the mails in the queue at once
+     * @param draftId newsletter_drafts id which is needed to update the timestamps of the drafts sent
      */
     public function autoSendNewsletter($draftId)
     {
@@ -158,7 +162,11 @@ class bx_editors_newsmailer_newsmailer {
     }
     
     /**
-     * Sends a bunch of mails
+     * Sends mails directly without waiting for the cronjob
+     * @param draft array with a newsletter_drafts row
+     * @param receivers array newsletter_users entries
+     * @param mailoptions return value of getMailserverOptions()
+     * @param embedImages if true all images in the HTML document (src/background attributes) will be sent as attachments
      */
     public function sendNewsletter($draft, $receivers, $mailoptions, $embedImages = false)
     {
@@ -198,8 +206,6 @@ class bx_editors_newsmailer_newsmailer {
 		// Iterate over all newsletter receivers
 		foreach($receivers as $person)
 		{
-			$start_time_test = time() + microtime(true);
-			
 			// create the personalized email 
 			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile']);
 			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
@@ -210,10 +216,13 @@ class bx_editors_newsmailer_newsmailer {
 			if(!empty($draft['htmlfile']))
 				$mime->setHTMLBody($customHtml);
 
+			// b64 encode the text body to preserve linebreaks
 			$params = array('text_encoding' => 'base64',
                             'html_encoding' => 'quoted-printable');
 
+			// this call is time consuming because it aggregates the MIME parts 
 			$body = $mime->get($params);
+			
 			$hdrs = $mime->headers($hdrs);			
 	
 			$hdrs['To'] = $person['email'];
@@ -231,6 +240,12 @@ class bx_editors_newsmailer_newsmailer {
     
     /**
      * If double-opt-in is set, send the user an email in order to confirm his subscription
+     * @param person see sendNewsletter()
+     * @param mailserver name of the mailserver to be used from newsletter_mailservers
+     * @param mailfrom email address to be used as sender
+     * @param mailsub mail subject
+     * @param mailtext text body filename (to be located in the newsletter directory)
+     * @param mailhtml html body filename (to be located in the newsletter directory)
      */
     public function sendActivationMail($person, $mailserver, $mailfrom, $mailsub, $mailtext, $mailhtml)
     {
@@ -254,6 +269,9 @@ class bx_editors_newsmailer_newsmailer {
     
     /**
      * Is called to indicate all messages are saved in the queue
+     * @param mailoptions see getMailserverOptions()
+     * @param maxAmount sends up to 1000 emails (takes around 15 minutes)
+     * @return true if all mails could be sent
      */
     public function finalizeSend($mailoptions, $maxAmount = 1000)
     {
@@ -264,6 +282,8 @@ class bx_editors_newsmailer_newsmailer {
     
     /**
      * Add custom style to the HTML document
+     * @param inputdom DomDocument
+     * @return transformed DocDocument
      */
     protected function transformHTML($inputdom)
     {
@@ -271,7 +291,9 @@ class bx_editors_newsmailer_newsmailer {
     }
     
     /**
-     * Embedds images directly into the HTML document
+     * Collects the names and paths of the images embedded in the HTML document
+     * @param inputdom DomDocument
+     * @return transformed DocDocument
      */
     protected function transformHTMLimages($inputdom)
     {
@@ -285,7 +307,18 @@ class bx_editors_newsmailer_newsmailer {
     
     /**
      * Customized the message for a certain user
-     * tags in the form of {field} are replaced with its corresponding value from the database
+     * - {field} is replaced with its corresponding value from the database
+     * - {m|f:text} is only inserted if the gender of the user is matching
+     * - {weblink} link to the website base direcotry
+     * - {activate} user's subscription activation link
+     * - {unsubscribe} user's unsubscription link
+     * - {publication} archive link for this newsletter
+     * - {date} current date as MM/YYYY
+     * 
+     * @param message string with message
+     * @param person newsletter_users entry
+     * @param filename html newsletter filename 
+     * @return customized message
      */
     protected function customizeMessage($message, $person, $filename)
     {
@@ -307,7 +340,8 @@ class bx_editors_newsmailer_newsmailer {
 									$replace, 
 									$message);  
     	
-    	$webfilename = str_replace(array('en.xhtml', 'de.xhtml'), 'html', $filename);
+    	// remove language code from filename
+    	$webfilename = preg_replace('/(.*).(.{2}).xhtml/', '\1.html', $filename);
 
     	array_push($templates, '{weblink}', '{activate}', '{unsubscribe}', '{publication}', '{date}');
     	
@@ -323,9 +357,13 @@ class bx_editors_newsmailer_newsmailer {
 
     /**
      * Reads a newsletter resource file and returns its content
+     * @param name filename to be read
+     * @param type either text or html
+     * @return file content in a string
      */
     protected function readNewsletterFile($name, $type)
     {
+    	// normally the file is in the archive directory but activation e.g. is in the newsleter base directory
     	if(($content = @file_get_contents('data/newsletter/archive/'.$name)) == false) {
     		$content = @file_get_contents('data/newsletter/'.$name);
     	}
@@ -334,6 +372,8 @@ class bx_editors_newsmailer_newsmailer {
     
     /**
      * Creates the bounce (return-path) address for the message
+     * @param parameters newsletter_users entry
+     * @return bounce address for this email
      */
     protected function getBounceAddress($parameters)
     {
@@ -345,6 +385,8 @@ class bx_editors_newsmailer_newsmailer {
     /**
      * Callback function from htmlimage.xsl
      * Preloads the images found and returns a short filename in order to reference them as embedded HTML images
+     * @param path image location
+     * @return filename without a path needed to create the content-id (CID)
      */
     public static function adjustImagePath($path)
     {
