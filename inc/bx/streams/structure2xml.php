@@ -25,7 +25,14 @@ class bx_streams_structure2xml extends bx_streams_buffer {
         if ($this->getParameter("st2xmlCaching")) {
             $this->st2xmlCaching = $this->getParameter("st2xmlCaching");
         }
-        $st2xml = new popoon_classes_structure2xml($this,$GLOBALS['POOL']->config->getTablePrefix().$this->getParameter('secondtableprefix'));
+	$ptP = $this->getParameter('tableprefix');
+	if ($ptP) {
+		$prefix = $ptP;	
+	} else {
+		$prefix = $GLOBALS['POOL']->config->getTablePrefix().$this->getParameter('secondtableprefix');
+	}
+	
+        $st2xml = new popoon_classes_structure2xml($this,$prefix);
         $xml = $st2xml->showPage($table);
         return $xml->saveXML();
     }
