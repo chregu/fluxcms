@@ -143,7 +143,7 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
     
     protected function getPages($search) {
         $pages =  array();
-        $options = array ('searchStart' => 0 , 'searchNumber' => 2);
+        $options = array ('searchStart' => 0 , 'searchNumber' => 10);
         $p['fulltext'] = $this->getFulltextPages($search,$options);
         return $p;
     }
