@@ -164,6 +164,8 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
             
            $file = $this->getContentUriById($path,$id); 
            //FIXME: resource should handle the save, not the plugin, actually..
+           
+           
             if (!file_put_contents($file,($data['fullxml']))) {
                 
                 print '<span style="color: red;">File '.$file.' could not be written</span><br/>';
@@ -171,7 +173,9 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
                 print '<div style="border: 1px black solid; white-space: pre;">'.(htmlentities(($data['fullxml']))).'</div>';
                 return false;
             }
-           
+            
+           bx_metaindex::callIndexerFromFilename($file,$path.$id);
+
             return $ret;
         }
         
