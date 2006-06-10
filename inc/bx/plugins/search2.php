@@ -121,21 +121,23 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         
             $pages = $this->getPages($_GET['q']);
         
-        
-        foreach($pages as $key => $results) {
-            $res = $root->appendChild($dom->createElement("results"));
-            $res->setAttribute("type",$key);
-            $c = 1;
-            foreach($results['entries'] as $id => $v) {
-                $e = $res->appendChild($dom->createElement("entry"));
-                $e->appendChild($dom->createElement("count",$c++));
-                $e->appendChild($dom->createElement("url",$v['url']));
-                $e->appendChild($dom->createElement("title",$v['title']));
-                $e->appendChild($dom->createElement("text",$v['text']));
-                $e->appendChild($dom->createElement("mod",$v['lastModified']));
-                $e->appendChild($dom->createElement("id",$v['id']));
+            
+            foreach($pages as $key => $results) {
+                if ($results) {
+                    $res = $root->appendChild($dom->createElement("results"));
+                    $res->setAttribute("type",$key);
+                    $c = 1;
+                    foreach($results['entries'] as $id => $v) {
+                        $e = $res->appendChild($dom->createElement("entry"));
+                        $e->appendChild($dom->createElement("count",$c++));
+                        $e->appendChild($dom->createElement("url",$v['url']));
+                        $e->appendChild($dom->createElement("title",$v['title']));
+                        $e->appendChild($dom->createElement("text",$v['text']));
+                        $e->appendChild($dom->createElement("mod",$v['lastModified']));
+                        $e->appendChild($dom->createElement("id",$v['id']));
+                    }
+                }
             }
-        }
         }
         
         return $dom;
