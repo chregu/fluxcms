@@ -5,16 +5,19 @@ bx_init::start('conf/config.xml', '');
 
 //FIXME replace with PHP code...
 $files = `cd data && find . -name "*.xhtml" -print`;
+$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+$db = $GLOBALS['POOL']->db;
+$files = $db->queryAll("select path from ".$prefix."properties where path like '%xhtml' group by path"); 
 
-
-$files = explode("\n",trim($files));
 foreach ($files as $file) {
-    
-    $file = substr($file,2);
+    $file = $file[0];
+    //$file = substr($file,2);
     //print $file ."\n";
     
+    if (file_exists('data'.$file)) {
     print "index : ".$file ."\n";
-     bx_metaindex::callIndexerFromFilename(BX_DATA_DIR.$file,"/".$file);
+     bx_metaindex::callIndexerFromFilename('data'.$file,$file);
+    }
     
 }
 
