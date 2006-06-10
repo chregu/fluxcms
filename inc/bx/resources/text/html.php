@@ -161,6 +161,7 @@ class bx_resources_text_html extends bx_resource {
     }
     
      public function getOutputUri() {
+         
          if (!isset($this->outputUri)) {
              
              $this->parseName();
@@ -172,6 +173,7 @@ class bx_resources_text_html extends bx_resource {
              $this->outputUri .= $this->collUri.$this->getFileName() .".html";
              
          }
+         
          return $this->outputUri;
      }
      /* THIS ISN'T PERFECT 

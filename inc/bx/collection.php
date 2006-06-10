@@ -597,8 +597,11 @@ class bx_collection implements bxIresource {
        return filectime(BX_DATA_DIR.$this->uri); 
     }
     
-    public function getDisplayName() {
-        if ($d = $this->getProperty("display-name", sprintf("bx:%2s", $this->outputLanguage))) {
+    public function getDisplayName($lang = null) {
+        if (!$lang) {
+            $lang = $this->outputLanguage;
+        }
+        if ($d = $this->getProperty("display-name", sprintf("bx:%2s", $lang))) {
             return $d;
         } else {
             return preg_replace("#/(.*)/$#","$1",$this->id);

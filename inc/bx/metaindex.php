@@ -129,17 +129,7 @@ class bx_metaindex {
         return self::getRelatedInfoByIds($relatedIds);
     }
     
-    
-    /*
-    
-    public static function getRelatedInfoBySearch($search, $options = array()) {
-        $options = array('excludePath' => null,
-        'pathRestrictions' => null,
-        'searchStart' => 0,
-        'searchNumber' => 10);
-        
-        $excludePath = null, $pathRestriction = null
-    */
+   
     
     public static function getRelatedInfoBySearch($search, $options = array()) {
         /*$options = array(
