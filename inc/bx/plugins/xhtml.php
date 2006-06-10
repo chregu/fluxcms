@@ -174,8 +174,7 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
                 return false;
             }
             
-           bx_metaindex::callIndexerFromFilename($file,$path.$id);
-
+           
             return $ret;
         }
         

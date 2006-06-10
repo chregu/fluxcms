@@ -158,6 +158,7 @@ class bx_resources_text_html extends bx_resource {
                 $vers->commit($this->props['fileuri'], '');
             }
         }
+        bx_metaindex::callIndexerFromFilename($this->props['fileuri'],$this->id);
     }
     
      public function getOutputUri() {

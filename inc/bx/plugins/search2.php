@@ -149,12 +149,12 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
     }
     
     protected function getFulltextPages($search,$options) {
-        /*if (!empty($options['pathRestrictions'])) {
+        if (!empty($options['pathRestrictions'])) {
             $pathRestriction = $options['pathRestrictions'];
         } else {
             $pathRestriction = null;
         }
-        $excludePath = $options['excludePath'];
+        /*$excludePath = $options['excludePath'];
         */
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
@@ -163,11 +163,11 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         MATCH (value) AGAINST (" . $db->quote($search) ." ) ";
         /*if ($excludePath) {
             $query .= " and properties.path != ".$db->quote($excludePath) ." ";
-        }
-        if ($pathRestriction) {
-            $query .= " and (properties.path like ".$db->quote($pathRestriction) .") ";
         }*/
-        $query .= "group by properties.path order by cnt DESC LIMIT ".$options['searchStart'].",".$options['searchNumber'];
+        if ($pathRestriction) {
+            $query .= " and (properties.path like ".$db->quote($pathRestriction ."%") .") ";
+        }
+        $query .= "and name = 'fulltext' group by properties.path order by cnt DESC LIMIT ".$options['searchStart'].",".$options['searchNumber'];
         $res = $db->query($query);
         $ids = array();
         
