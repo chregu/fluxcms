@@ -75,6 +75,9 @@ class bx_plugins_blog_trackback {
             $emailFrom = "unknown <noadress@example.org>";
             $commentRejected .= "* No blogname given.\n";
         }
+        if ($title == $blogname) {
+		$commentRejected .= "* Title and BlogName are the same. \n";
+	}
         
         if (isset($data['url'])) {
             $emailBody .= "URL:      " . $data['url'] . "\n";
