@@ -87,12 +87,15 @@ class bx_plugins_blog_trackback {
         $emailBody .= "IP:       " . $_SERVER['REMOTE_ADDR'] . "\n";
         
         if (isset($data['excerpt'])) {
-            $emailBody .= "Excerpt:  " . strip_tags($data['excerpt']) . "\n";
-            $excerpt = $data['excerpt'];
+            $excerpt =   strip_tags($data['excerpt']);
+            $emailBody .= "Excerpt:  " . $excerpt; 
+	    if (strlen($excerpt) < 40) {
+		$commentRejected .= "* Excerpt too short (".strlen($excerpt).")\n";
+	    }
+            //$excerpt = $data['excerpt'];
         }  else {
             $excerpt = '';
-        }
-        
+        }        
         
         
         
