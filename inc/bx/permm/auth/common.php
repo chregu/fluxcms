@@ -68,6 +68,11 @@ abstract class bx_permm_auth_common {
                     //$options['auth_dbfields'] .= "," .$this->auth_dbfields;
                 }
             } 
+            
+            if (empty($options['auth_dbfields'])) {
+                $options['auth_dbfields'] = $this->auth_dbfields;    
+            }
+            
             foreach ($options as $name => $value) {
                 if (isset($this->$name)) {
                     $this->$name = $value;
