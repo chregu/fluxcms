@@ -45,6 +45,8 @@ class bx_dbforms2_fields_password_md5 extends bx_dbforms2_fields_password {
     public function getSQLName($type) {
         if ($type == 'select') {
             return "'' as " . $this->name;
+        } else if ($type == 'update' && trim($this->value) == '' ) {
+            return false;
         } else {
             return $this->name;
         }
@@ -58,7 +60,7 @@ class bx_dbforms2_fields_password_md5 extends bx_dbforms2_fields_password {
      *  @return type descr
      */
     public function getSQLValue() {
-        if (trim($this->value) != '' && strlen($this->value) != 32) {
+        if (strlen($this->value) != 32) {
             return md5($this->value);
         } else {
             return $this->value;
