@@ -155,8 +155,8 @@ class bx_plugins_blog_handlecomment {
         $commentRejected = "";
         
         if (strpos($_SERVER['REQUEST_URI'],"#") !== false) {
-               $commentRejected .= '* # in Uri... ('.$_SERVER['REQUEST_URI'].')';
-       }
+		$commentRejected .= '* # in Uri... ('.$_SERVER['REQUEST_URI'].").\n";
+	}
         //if uri in post is the same as in the session then do openid = true(1)
         @session_start();
         if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['openid_url']) {
