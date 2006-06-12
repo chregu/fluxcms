@@ -10,7 +10,6 @@ Class bx_permm_auth_pearauth extends bx_permm_auth_common {
         parent::__construct($options);
         $opts = array(
             'dsn'           => $this->dsn,
-            'table'         => $this->auth_table,
             'usernamecol'   => $this->auth_usernamecol,
             'passwordcol'   => $this->auth_passwordcol,
             'gupicol'       => $this->auth_gupicol,
@@ -20,6 +19,13 @@ Class bx_permm_auth_pearauth extends bx_permm_auth_common {
             'cryptType'     => $this->auth_crypttype,
             );
         
+        if (empty($options['auth_prependTablePrefix']) || $options['auth_prependTablePrefix'] == 'true') {
+          $opts['table'] =  $GLOBALS['POOL']->config->getTablePrefix().$this->auth_table;
+        } else {
+            $opts['table'] = $this->auth_table;
+        }
+        
+            
         // if someone tries to "login" via http_auth, let them do that :)
         if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $GLOBALS['POOL']->config->allowHTTPAuthentication == "true" ) {
             $opts['mode'] = '0644';

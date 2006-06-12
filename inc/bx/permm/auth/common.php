@@ -61,17 +61,16 @@ abstract class bx_permm_auth_common {
     protected function __construct($options) {
         if (is_array($options)) {
             
-            if (isset($options['auth_dbfields'])) {
-                if (trim($options['auth_dbfields']) == '' ) {
-                    unset($options['auth_dbfields']); 
-                } else {
-                    //$options['auth_dbfields'] .= "," .$this->auth_dbfields;
-                }
-            } 
             
-            if (empty($options['auth_dbfields'])) {
-                $options['auth_dbfields'] = $this->auth_dbfields;    
+            if (!empty($options['auth_overwriteDbFields']) && $options['auth_overwriteDbFields'] == 'true') {
+                //$options['auth_dbfields'] = 
+            } else if (!empty($options['auth_dbfields']) && trim($options['auth_dbfields']) != '' ) {
+                $options['auth_dbfields'] .= "," .$this->auth_dbfields;
+                
+            } else {
+                $options['auth_dbfields'] = $this->auth_dbfields;
             }
+            
             
             foreach ($options as $name => $value) {
                 if (isset($this->$name)) {
@@ -80,6 +79,7 @@ abstract class bx_permm_auth_common {
             }
             
         }
+        
     }
     
     
