@@ -41,7 +41,7 @@ select {
     padding-left: 3px;
     background-color: white;
     z-index: 10;
-    width:600px; 
+/*    width:600px;  */
 }
 
 .buttonStyle,  a.buttonStyle {
