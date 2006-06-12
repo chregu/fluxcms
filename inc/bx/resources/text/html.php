@@ -31,7 +31,8 @@ class bx_resources_text_html extends bx_resource {
         if (isset($_REQUEST['template'])) {
             
             $theme = $GLOBALS['POOL']->config->getConfProperty('theme');
-            $template = sprintf("%sthemes/%s/templates/%s", BX_PROJECT_DIR, $theme, $_REQUEST['template']);
+	    $template = sprintf("%s%s/templates/%s", BX_THEMES_DIR, $theme, $_REQUEST['template']);
+
             if (file_exists($template)) {
                 return $template;
             }
