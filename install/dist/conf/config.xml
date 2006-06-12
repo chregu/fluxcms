@@ -161,16 +161,28 @@
         
         <!--
             Uncomment this, if you want to use the simple perm module
+            
+            - set auth_overwriteDbFields to 'true', if the authmodule shouldn't
+              automatically append its own needed dbfields
+            - set auth_prependTablePrefix to 'false', if the authmodule shouldn'tt
+              automatically prepend the global table Prefix
             -->
         <!--
         <permm type="permm">
         
             <authModule>
                 <type>pearauth</type>
+                
                 <auth_table>users</auth_table>
+                <auth_prependTablePrefix>true</auth_prependTablePrefix>
+                
+                
                 <auth_usernamecol>user_login</auth_usernamecol>
                 <auth_passwordcol>user_pass</auth_passwordcol>
-                 <auth_dbfields></auth_dbfields>
+                
+                <auth_dbfields></auth_dbfields>
+                <auth_overwriteDbfields>false</auth_overwriteDbfields>
+                
                 <cryptType>md5</cryptType>
                 <dsn copy="auth_dsn"/>
             </authModule>
