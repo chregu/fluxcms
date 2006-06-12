@@ -186,7 +186,7 @@ class bx_plugins_blog_handlecomment {
             if(strpos($data['url'], "\n") !== FALSE or strpos($data['url'], "\r") !== FALSE) {
                 $commentReject .= "* Multi line hidden URL field \n";
             }
-            self::discardIt();
+            self::discardIt(" Hidden URL field was not empty, assuming bot: " . $data['url']);
             $deleteIt = true;
         }
         
@@ -389,9 +389,10 @@ class bx_plugins_blog_handlecomment {
         $subject = preg_replace($patterns, $replacements, $subject);
     }
     
-    static protected function discardIt() {
+    static protected function discardIt($msg) {
          
             print ("Comment rejected. Looks like blogspam.");
+	error_log("Blog Comment Discarded for " . BX_WEBROOT ." : ". $msg);
             die();
     }
 }
