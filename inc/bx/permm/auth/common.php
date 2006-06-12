@@ -62,7 +62,7 @@ abstract class bx_permm_auth_common {
         if (is_array($options)) {
             
             
-            if (!empty($options['auth_overwriteDbFields']) && $options['auth_overwriteDbFields'] == 'true') {
+            if (!empty($options['auth_overwriteDbfields']) && $options['auth_overwriteDbfields'] == 'true') {
                 //$options['auth_dbfields'] = 
             } else if (!empty($options['auth_dbfields']) && trim($options['auth_dbfields']) != '' ) {
                 $options['auth_dbfields'] .= "," .$this->auth_dbfields;
