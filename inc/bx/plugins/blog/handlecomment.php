@@ -392,7 +392,7 @@ class bx_plugins_blog_handlecomment {
     static protected function discardIt($msg) {
          
             print ("Comment rejected. Looks like blogspam.");
-	error_log("Blog Comment Discarded for " . BX_WEBROOT ." : ". $msg);
+	error_log("Flux: Blog Comment Discarded for " . BX_WEBROOT ." : ". $msg);
             die();
     }
 }
