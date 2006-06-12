@@ -83,7 +83,7 @@ class bx_plugins_blog_handlecomment {
         }
         
         //check remember stuff
-        if($data['remember'] != null) {
+        if(!empty($data['remember'])) {
             if($data['name']) {
                 setcookie("fluxcms_blogcomments[name]", $data['name'], time()+30*24*60*60, '/');
             }
@@ -154,6 +154,9 @@ class bx_plugins_blog_handlecomment {
         }
         $commentRejected = "";
         
+        if (strpos($_SERVER['REQUEST_URI'],"#") !== false) {
+               $commentRejected .= '* # in Uri... ('.$_SERVER['REQUEST_URI'].')';
+       }
         //if uri in post is the same as in the session then do openid = true(1)
         @session_start();
         if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['openid_url']) {
@@ -167,7 +170,9 @@ class bx_plugins_blog_handlecomment {
         /* known spammer user */
         $simplecache = popoon_helpers_simplecache::getInstance();
         $simplecache->cacheDir = BX_TEMP_DIR;
+        //deleteIt == true => Rejected comment
         $deleteIt = false;
+        //discardIt == true => don't even put it into the db
         //check for pineapleproxy
         if (isset($_SERVER['HTTP_VIA']) && stripos($_SERVER['HTTP_VIA'],'pinappleproxy') !== false) {
             $commentRejected .= "* Uses known spammer proxy: ". $_SERVER['HTTP_VIA'] . "\n";
@@ -175,12 +180,13 @@ class bx_plugins_blog_handlecomment {
         
         
         /* If url field is filled in, it was a bot ...*/
-        if (isset($data['url']) && $data['url'] != "" && !$username) {
+        if (isset($data['url']) && $data['url'] != "") {
             $commentRejected .= "* Hidden URL field was not empty, assuming bot: " . $data['url']."\n";
+            
             if(strpos($data['url'], "\n") !== FALSE or strpos($data['url'], "\r") !== FALSE) {
                 $commentReject .= "* Multi line hidden URL field \n";
             }
-        
+            self::discardIt();
             $deleteIt = true;
         }
         
@@ -248,8 +254,7 @@ class bx_plugins_blog_handlecomment {
             $commentRejected .= "* Notification value too long\n";
         }
             
-        
-        
+       
         
 
         $query =     'insert into '.$blogTablePrefix.'blogcomments (comment_posts_id, comment_author, comment_author_email, comment_author_ip,
@@ -326,25 +331,25 @@ class bx_plugins_blog_handlecomment {
                 if ($GLOBALS['POOL']->config->blogSendRejectedCommentNotification == "true" || !$deleteIt) {
                     bx_notificationmanager::sendToDefault($emailTo,$emailSubject, $emailBody,$emailFrom);
                 }
-            if(!$commentRejected) {
-                bx_plugins_blog_commentsnotification::sendNotificationMails($lastID,$row['id'],$parts['coll']->uri);
-                
-                header ('Location: '. bx_helpers_uri::getLocationUri($row["post_uri"]) . '.html?sent='.time().'#comment'.$lastID);
-            } else {
-                //put it in the db;
-                $query = 'update '.$blogTablePrefix.'blogcomments set comment_rejectreason = ' . $GLOBALS['POOL']->db->quote(htmlspecialchars($commentRejected)) . ' where id = ' . $lastID; 
-                $res = $GLOBALS['POOL']->dbwrite->query($query);
-                if ($deleteIt) {
-                    print ("Comment rejected. Looks like blogspam.");
+                if(!$commentRejected) {
+                    bx_plugins_blog_commentsnotification::sendNotificationMails($lastID,$row['id'],$parts['coll']->uri);
+                    
+                    header ('Location: '. bx_helpers_uri::getLocationUri($row["post_uri"]) . '.html?sent='.time().'#comment'.$lastID);
                 } else {
-                    print ("<h1>Possible blogspam</h1>Your comment is considered as possible blogspam and therefore moderated. <br/> If it's legitimate, the author will make it available later.<br/> Your message is not lost ;) <br/>Thanks for your understanding.<p/>");
-                    print ("The reasons are: <br/>");
-                    print nl2br(htmlspecialchars($commentRejected));
+                    //put it in the db;
+                    $query = 'update '.$blogTablePrefix.'blogcomments set comment_rejectreason = ' . $GLOBALS['POOL']->db->quote(htmlspecialchars($commentRejected)) . ' where id = ' . $lastID; 
+                    $res = $GLOBALS['POOL']->dbwrite->query($query);
+                    if ($deleteIt) {
+                        print ("Comment rejected. Looks like blogspam.");
+                    } else {
+                        print ("<h1>Possible blogspam</h1>Your comment is considered as possible blogspam and therefore moderated. <br/> If it's legitimate, the author will make it available later.<br/> Your message is not lost ;) <br/>Thanks for your understanding.<p/>");
+                        print ("The reasons are: <br/>");
+                        print nl2br(htmlspecialchars($commentRejected));
+                    }
                 }
-            }
-            exit();
-            return FALSE;
-    }
+                exit();
+                return FALSE;
+ }
 
     
     /* from formwizard php */
@@ -382,5 +387,11 @@ class bx_plugins_blog_handlecomment {
             $replacements[] = $value;
         }
         $subject = preg_replace($patterns, $replacements, $subject);
+    }
+    
+    static protected function discardIt() {
+         
+            print ("Comment rejected. Looks like blogspam.");
+            die();
     }
 }
