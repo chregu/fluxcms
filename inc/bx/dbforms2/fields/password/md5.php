@@ -58,7 +58,7 @@ class bx_dbforms2_fields_password_md5 extends bx_dbforms2_fields_password {
      *  @return type descr
      */
     public function getSQLValue() {
-        if (strlen($this->value) != 32) {
+        if (trim($this->value) != '' && strlen($this->value) != 32) {
             return md5($this->value);
         } else {
             return $this->value;
