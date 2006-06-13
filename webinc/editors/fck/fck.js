@@ -71,7 +71,13 @@ loadContent = function() {
                     var oEditor = FCKeditorAPI.GetInstance("fluxfck");
                     oEditor.SetHTML(xml);
                     oEditor._bxOriginalDocument = contentDOM;
-                    
+					if (_SARISSA_IS_MOZ) { 
+						var res = oEditor.EditorDocument.evaluate("/html/body//*[@_moz-userdefined]",oEditor.EditorDocument,null, 0, null);
+						if (res.iterateNext()) {
+							alert("This document contains non-HTML elements, please consider using the oneform or BXE editor.\nSaving here will remove those elements and lead to unexpected results.\n\n PLEASE DO NOT SAVE, unless you know what you are doing.");
+						}
+					}
+					die
                     window.status = "Document loaded.";
                     
                 } else {
