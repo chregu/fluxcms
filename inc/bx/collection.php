@@ -181,6 +181,7 @@ class bx_collection implements bxIresource {
         
         if (!isset($this->pluginMap[$filename.$ext])) {
             $plugins = $this->getPluginsByRequest($filename,$ext ,$first);
+            
              foreach ($plugins as $p) {
                 $id = str_replace("//","/",$p->getIdByRequest($this->uri,$filename,$ext));
                 if ($id) {
@@ -189,7 +190,7 @@ class bx_collection implements bxIresource {
                     $map['id'] = $id;
                     $this->pluginMap[$filename.$ext][$id] = $map;
                 } else {
-                    $this->pluginMap[$filename.$ext][$id] = array();
+                    //$this->pluginMap[$filename.$ext][$id] = array();
                 }
             }
             if (!isset($this->pluginMap[$filename.$ext])) {
@@ -335,7 +336,7 @@ class bx_collection implements bxIresource {
      * @returns array all plugins associated to this children
      */
       
-    protected function getChildrenPlugins() {
+    public function getChildrenPlugins() {
         if (count($this->childrenPlugins) == 0) {
             $this->childrenPlugins =  $this->config->getChildrenPlugins();
         } 
@@ -751,6 +752,7 @@ class bx_collection implements bxIresource {
         $dom->setIcon("collection");
         $dom->setPath($this->uri);
             $dom->addLink("Properties", "properties/".$this->uri);
+            $dom->addLink("Edit Permissions", "edit/permissions/".$this->uri);
             $dom->addSeperator();    
             $dom->addLink("Create new Collection", 'collection'.$this->uri);
             $resourceTypes = $this->getPluginResourceTypes();
