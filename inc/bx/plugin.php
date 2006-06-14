@@ -187,6 +187,10 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
     protected function setOverviewTitle($dom,$title) {
         
     }
+    
+    public function getPermissionList() {
+    	return array();	
+    }
 }
 
 ?>
