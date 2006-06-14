@@ -13,7 +13,7 @@
 
         <map:pipeline>
             <map:match type="uri" pattern="content/*">
-                <map:act type="bxcmsauth">
+                <map:act uri="{1}" type="bxcmsauth">
                     <map:parameter type="actions" name="action1" value="admin"/>
                     <map:parameter type="actions" name="action2" value="edit"/>
 
@@ -37,7 +37,7 @@
 
         <map:pipeline>
             <map:match type="uri" pattern="navi/popup*">
-                <map:act type="bxcmsauth">
+                <map:act uri="{1}" type="bxcmsauth">
                     <map:parameter type="actions" name="action1" value="admin"/>
                     <map:parameter type="actions" name="action2" value="edit"/>
 
@@ -48,7 +48,7 @@
 
         <map:pipeline>
             <map:match type="uri" pattern="navi/tree*">
-                <map:act type="bxcmsauth">
+                <map:act uri="{1}" type="bxcmsauth">
                     <map:parameter type="actions" name="action1" value="admin"/>
                     <map:parameter type="actions" name="action2" value="edit"/>
 
@@ -60,7 +60,7 @@
 
         <map:pipeline>
             <map:match type="uri" pattern="navi/kupu*">
-                <map:act type="bxcmsauth">
+                <map:act  uri="{1}" type="bxcmsauth">
                     <map:parameter type="actions" name="action1" value="admin"/>
                     <map:parameter type="actions" name="action2" value="edit"/>
 
@@ -97,7 +97,7 @@
 
         <map:pipeline>
             <map:match type="uri" pattern="i18n/*">
-                <map:act type="bxcmsauth">
+                <map:act uri="{1}" type="bxcmsauth">
                     <map:parameter type="actions" name="action1" value="admin"/>
                     <map:parameter type="actions" name="action2" value="edit"/>
                     <map:act type="bxcmsadmin" uri="{../1}">
@@ -111,7 +111,7 @@
         
         <map:pipeline>
             <map:match type="uri" matchtype="regex" pattern="#^/*$#">
-                <map:act type="bxcmsauth">
+                <map:act uri="{1}" type="bxcmsauth">
                     <map:parameter type="actions" name="action1" value="admin"/>
                     <map:parameter type="actions" name="action2" value="edit"/>
                     <map:parameter name="uri" value="phpglobals://_SERVER[REQUEST_URI]"/>
@@ -131,7 +131,7 @@
         
         <map:pipeline>
             <map:match type="uri" pattern="*">
-                <map:act type="bxcmsauth">
+                <map:act uri="{1}" type="bxcmsauth">
                     <map:parameter type="actions" name="action1" value="admin"/>
                     <map:parameter type="actions" name="action2" value="edit"/>
                     <map:act type="bxcmsadmin" uri="{../1}">
