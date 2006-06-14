@@ -40,7 +40,7 @@
           } else {
               return false;
           }
-        } else if (in_array('isuser',$actions) && $userid) {
+        } else if ($userid && in_array('isuser',$actions)) {
             return true;
         } else if (in_array('ishashed',$actions)) {
             if (!empty($_GET['ah']) && $_GET['ah'] == bx_helpers_perm::getAccessHash()) {
@@ -48,9 +48,10 @@
                 return true;
             } else if (!empty($_SESSION['fluxcms']['ah']) && $_SESSION['fluxcms']['ah'] == bx_helpers_perm::getAccessHash()) {
                 return true;
-            } 
+            } else {
+                return false;
+            }
         }
-        
         
         foreach ($actions as $action) {
             if (!isset($this->perms[$uri])) {

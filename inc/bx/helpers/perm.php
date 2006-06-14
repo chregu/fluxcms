@@ -23,7 +23,13 @@ class bx_helpers_perm {
             self::$accessHash = $db->queryOne($query);
             
             if (!self::$accessHash) {
+                $query = "delete from ".$px."options where name = 'accesshash'";
+                bx_helpers_debug::webdump($query);
+                $GLOBALS['POOL']->dbwrite->query($query);
+                
                 $id = $db->nextId($px."_sequences");
+                
+                
                 $h = md5(time() . rand(0,1000000000) . $GLOBALS['POOL']->config->magicKey.$id);
                 
                 $query = "insert into ".$px."options (id,name,value) values($id,'accesshash','$h')";
