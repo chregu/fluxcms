@@ -217,7 +217,6 @@ class Auth_Container_MDB2 extends Auth_Container
      */
     function fetchData($username, $password)
     {
-        
         // Prepare for a database query
         $err = $this->_prepare();
         if ($err !== true) {
@@ -244,7 +243,8 @@ class Auth_Container_MDB2 extends Auth_Container
             $this->activeUser = '';
             return false;
         }
-        if ($this->verifyPassword(trim($password, "\r\n"),
+       
+       if ($this->verifyPassword(trim($password, "\r\n"),
                                   trim($res[$this->options['passwordcol']], "\r\n"),
                                   $this->options['cryptType'],$username)) {
             // Store additional field values in the session
@@ -424,8 +424,12 @@ class Auth_Container_MDB2 extends Auth_Container
     
     function verifyPassword($password1, $password2, $cryptType = "md5", $username = '')
     {
-         return (md5($password1) == $password2 || $password1 == md5($username.$password2) );
-        
+         
+        if ($cryptType!='md5') {
+            return parent::verifyPassword($password1, $password2, $cryptType);    
+        } else {
+            return (md5($password1) == $password2 || $password1 == md5($username.$password2) );
+        } 
         
     }
 
