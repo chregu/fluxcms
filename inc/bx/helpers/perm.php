@@ -24,7 +24,6 @@ class bx_helpers_perm {
             
             if (!self::$accessHash) {
                 $query = "delete from ".$px."options where name = 'accesshash'";
-                bx_helpers_debug::webdump($query);
                 $GLOBALS['POOL']->dbwrite->query($query);
                 
                 $id = $db->nextId($px."_sequences");
