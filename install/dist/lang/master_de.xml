@@ -43,7 +43,7 @@
     <message key="SUB_THANKS">Vielen Dank.</message>
     <message key="SUB_UNSUB_SUCCESS">Abmeldung erfolgt.</message>
     <message key="SUB_OK">Ihre Adresse wurde in unsere Adressliste aufgenommen. In jeder E-Mail finden Sie jeweils einen Link, mit dem Sie den Newsletter abbestellen können.</message>
-    <message key="SUB_CANCELED">Ihre Adresse wurde erfolgreich aus unserer Adressliste gestrichen. Unter www.scansystems.ch können Sie den Newsletter jederzeit wieder bestellen.</message>
+    <message key="SUB_CANCELED">Ihre Adresse wurde erfolgreich aus unserer Adressliste gestrichen. Sie können den Newsletter jederzeit wieder bestellen.</message>
     <message key="SUB_ACT_OK">Ihr Abonnement wurde erfolgreich aktiviert.</message>
     <message key="SUB_ACT_ID_NOTFOUND">Die angegebene Aktivierungs-Id ist ungültig.</message>
     <message key="SUB_EMAIL_INVAL">Die angegebenen E-Mail Adresse ist ungültig.</message>
