@@ -111,11 +111,20 @@
     <message key="act_xhtml-back-edit_oneform">Editieren mit Oneform</message>
     <message key="act_xhtml-back-edit_kupu">Editieren mit Kupu</message>
     
-    <message key="act_permissions-back-manage">Berechtigungen editieren</message>
+    <message key="act_gallery-back-upload">Bilder hochladen</message>
+    <message key="act_gallery-back-edit_file">Editieren mit File</message>
+    <message key="act_gallery-back-edit_image">Editieren mit Image</message>
     
     <message key="act_blog-back-post">Blog Einträge erfassen</message>
+    <message key="act_blog-back-categories">Kategorien editieren</message>
+    <message key="act_blog-back-blogroll">Links editieren</message>
+    <message key="act_blog-back-gallery">Gallery editieren</message>
+    <message key="act_blog-back-files">Dateien editieren</message>
+    <message key="act_blog-back-options">Blog Optionen editieren</message>
+    <message key="act_blog-back-private">Privaten Feed editieren</message>
+    <message key="act_admin_dbforms2-back-blogcomments">Blog Kommentare editieren</message>
     
-    <message key="act_act_admin_dbforms2-back-newsletter_feeds">Feeds editieren</message>
+    <message key="act_admin_dbforms2-back-newsletter_feeds">Feeds editieren</message>
     <message key="act_admin_dbforms2-back-newsletter_from">Absender editieren</message>
     <message key="act_admin_dbforms2-back-newsletter_groups">Gruppen editieren</message>
     <message key="act_admin_dbforms2-back-newsletter_users">Benutzer editieren</message>
@@ -123,8 +132,10 @@
     <message key="act_admin_dbforms2-back-users">Benutzer editieren</message>
     <message key="act_admin_dbforms2-back-perm_groups">Gruppen editieren</message>
     
+    <message key="act_permissions-back-manage">Berechtigungen editieren</message>
     <message key="act_permissions-back-admin">Zugriff auf Admin Bereich</message>
     <message key="act_permissions-back-edit">Admin Bereich editieren</message>
+    
     <message key="act_collection-front-read">Collection anzeigen</message>
     <message key="act_collection-front-read_navi">Collection in Navigation</message>
     

@@ -16,7 +16,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
  		$parts = bx_collections::getCollectionUriAndFileParts($id);
 
 		$perm = bx_permm::getInstance();	
-		if (!$perm->isAllowed('/permissions/',array('permissions-back-edit'))) {
+		if (!$perm->isAllowed('/permissions/',array('permissions-back-manage'))) {
         	throw new BxPageNotAllowedException();
     	}
 
@@ -77,7 +77,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
     public function getEditContentById($id) {
 
 		$perm = bx_permm::getInstance();	
-		if (!$perm->isAllowed('/permissions/',array('permissions-back-edit'))) {
+		if (!$perm->isAllowed('/permissions/',array('permissions-back-manage'))) {
         	throw new BxPageNotAllowedException();
     	}
 

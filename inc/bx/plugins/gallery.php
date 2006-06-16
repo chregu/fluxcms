@@ -23,6 +23,12 @@ class bx_plugins_gallery extends bx_plugin {
     static private $instance = array();
     static private $idMapper = null;
     
+    public function getPermissionList() {
+    	return array(	"gallery-back-edit_image",
+    					"gallery-back-edit_file",
+    					"gallery-back-upload");	
+    }
+    
     public static function getInstance($mode) {
         if (!isset(bx_plugins_gallery::$instance[$mode])) {
             bx_plugins_gallery::$instance[$mode] = new bx_plugins_gallery($mode);
@@ -412,16 +418,22 @@ class bx_plugins_gallery extends bx_plugin {
     
     public function getAbsoluteFileRoot($uri) {
         return $this->getGalleryRoot($uri);
-    }
+    }    	
     
         public function getOverviewSections($path) {
+        $perm = bx_permm::getInstance();
+        	
         $sections = array();
         $dom = new bx_domdocs_overview();
         $dom->setTitle("Gallery");
         $dom->setPath($path);
         $dom->setIcon("gallery");
-        $dom->addLink("Upload single image",'addresource'.$path.'?type=file');
-        $dom->addLink("Upload multiple images in a zip",'addresource'.$path.'?type=archive');
+        
+        if($perm->isAllowed('/gallery/',array('gallery-back-upload'))) {
+	        $dom->addLink("Upload single image",'addresource'.$path.'?type=file');
+	        $dom->addLink("Upload multiple images in a zip",'addresource'.$path.'?type=archive');
+    	}	
+    	
         return $dom;
     }
 }

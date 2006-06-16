@@ -164,6 +164,14 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function getEditContentById($id) {
+    	
+    	$sub = substr($id, strrpos($id, '/', -2)+1, -1);
+    	
+    	$perm = bx_permm::getInstance();
+	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
+        	throw new BxPageNotAllowedException();
+    	}	
+    	
         if(($subEditor = $this->getSubEditorNameById($id)) !== FALSE) {
             if(($se = $this->getSubEditorInstance($subEditor)) !== FALSE) {
                 return $se->getEditContentById($id);

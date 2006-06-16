@@ -56,7 +56,14 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
     
     public function getPermissionList() {
-    	return array(	"blog-back-post");	
+    	return array(	"blog-back-post",
+    					"blog-back-options",
+    					"blog-back-files",
+    					"blog-back-gallery",
+    					"blog-back-blogroll",
+    					"blog-back-categories",
+    					"blog-back-private",
+    					"admin_dbforms2-back-blogcomments");	
     }
 
     /**
@@ -94,7 +101,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
 
     public function getContentById($path, $id) {
-                
+                      
         $perm = bx_permm::getInstance();
         if($id == "newpost") {
 	        if (!$perm->isAllowed($path,array('blog-back-post'))) {
@@ -816,9 +823,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         // print_r(self::$tree);
         return self::$tree;
     }
-
-
+    
     public function getOverviewSections($path,$mainOverview) {
+		$perm = bx_permm::getInstance();
 
         $sections = array();
         $dom = new bx_domdocs_overview();
@@ -826,24 +833,38 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $dom->setPath($path);
         $dom->setType("blog");
         $dom->setIcon("blog");
-        $dom->addLink("Make new Blog Entry",'edit'.$path."newpost.xml");
 
-        $dom->addLink("Blog Posts Overview / Latest Comments",'edit'.$path);
+        if($perm->isAllowed('/blog/',array('blog-back-post'))) {
+        	 $dom->addLink("Make new Blog Entry",'edit'.$path."newpost.xml");
+        	 $dom->addLink("Blog Posts Overview / Latest Comments",'edit'.$path);
+    	}	
+
         $dom->addTab("Edit Categories/Links");
-        $dom->addLink("Edit Categories",'edit'.$path.'sub/categories/');
-        $dom->addLink("Edit Links and Linkcategories",'edit'.$path.'sub/blogroll/');
-        $dom->addLink("Edit Comments",'dbforms2/blogcomments/');
+        if($perm->isAllowed('/blog/',array('blog-back-categories'))) {
+        	$dom->addLink("Edit Categories",'edit'.$path.'sub/categories/');
+        }
+        if($perm->isAllowed('/blog/',array('blog-back-blogroll'))) {
+        	$dom->addLink("Edit Links and Linkcategories",'edit'.$path.'sub/blogroll/');
+        }
+        if($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-blogcomments'))) {
+        	$dom->addLink("Edit Comments",'dbforms2/blogcomments/');
+        }
+        
         //if (!$mainOverview) {
             $dom->addTab("RSS");
             $dom->addLink("RSS Feed",BX_WEBROOT_W.$path."rss.xml");
             $dom->addLink("RSS Comments",BX_WEBROOT_W.$path."latestcomments.xml");
             $ah = bx_helpers_perm::getAccessHash();
+        if($perm->isAllowed('/blog/',array('blog-back-private'))) {
             $dom->addLink("RSS Feed (incl. private)",BX_WEBROOT_W.$path."rss.xml?ah=$ah");
             $dom->addLink("RSS Comments (incl. private)",BX_WEBROOT_W.$path."latestcomments.xml?ah=$ah");
             $dom->addLink("Generate new private key","javascript:if (confirm('Are you sure you want to generate a new private key? \n All your RSS feeds for private posts will change.')) {location.href='".BX_WEBROOT."admin/webinc/generatenewaccesshash/?path=".$path."'}");
+        }
             $dom->addTab("Etc");
+        if($perm->isAllowed('/blog/',array('blog-back-post'))) {
             $dom->addLink("Flux CMS Bookmarklet","javascript:%20var%20baseUrl%20=%20'".BX_WEBROOT."admin/edit/blog/newpost.xml?';%20var%20url=baseUrl;var%20title=document.title;%20url=url%20+%20'link_title='%20+%20encodeURIComponent(title);%20var%20currentUrl=document.location.href;%20url=url%20+%20'&link_href='%20+%20encodeURIComponent(currentUrl);%20var%20selectedText;%20selectedText=getSelection();%20if%20(selectedText%20!=%20'')%20url=url%20+%20'&text='%20+%20encodeURIComponent(selectedText);var win = window.open(null, '', 'width=700,height=500,scrollbars,resizable,location,toolbar');win.location.href=url;win.focus();"
             ,"Drag'n'drop to your bookmarks for immediate posting from your browser");
+        }
             
         //}
         return $dom;

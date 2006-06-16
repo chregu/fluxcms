@@ -81,7 +81,7 @@ echo "<p>Matrix-Plugin-Tables successfully created. Now you can create the permi
 
 printConfigXML();
 
-echo "<p>Create two groups called 'anonymous' and 'authenticated'. This allows you to give permissions based on the users role.</p>";
+echo "<p>Create two groups called 'anonymous' and 'authenticated'. This allows you to give permissions based on the users role. Make sure to give yourself access to the permissions plugin before you activate the matrix permission system, otherwise you won't be able to set any permissions</p>";
 
 
 /**

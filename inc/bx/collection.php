@@ -745,6 +745,7 @@ class bx_collection implements bxIresource {
             return;
         }
         
+        $perm = bx_permm::getInstance();
         $sections = array();
         $dom = new bx_domdocs_overview();
         $dom->setTitle("Collection" ,"Create/Edit");
@@ -752,14 +753,16 @@ class bx_collection implements bxIresource {
         $dom->setIcon("collection");
         $dom->setPath($this->uri);
             $dom->addLink("Properties", "properties/".$this->uri);
-            $dom->addLink("Edit Permissions", "edit/permissions/".$this->uri);
+            if ($perm->isAllowed('/permissions/',array('permissions-back-manage'))) {
+            	$dom->addLink("Edit Permissions", "edit/permissions/".$this->uri);
+            }
             $dom->addSeperator();    
             $dom->addLink("Create new Collection", 'collection'.$this->uri);
             $resourceTypes = $this->getPluginResourceTypes();
             if(!empty($resourceTypes)) {
                 foreach($resourceTypes as $resourceType) {
                 	if($resourceType == "xhtml") {
-                		$perm = bx_permm::getInstance();
+                		
                 		if (!$perm->isAllowed($this->uri, array('xhtml-back-create'))) {
 	        				continue;
 	    				}

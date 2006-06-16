@@ -273,6 +273,8 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
      * Admin view collection interface
      */
 	public function getOverviewSections($path) {
+		$perm = bx_permm::getInstance();
+
         $sections = array();
         $dom = new bx_domdocs_overview();
         
@@ -281,20 +283,40 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->setIcon("gallery");
 
 		// first tab
-        $dom->addLink("Create Newsletter",'addresource/newsletter/drafts/?type=xhtml');
-        $dom->addLink("Send Newsletter",'edit'.$path.'send/');
-        $dom->addLink("Newsletter Archive",'edit'.$path.'manage/');
-        $dom->addLink("Generate from Feed",'edit'.$path.'feed/');
-        
+	    if ($perm->isAllowed('/newsletter/drafts/',array('xhtml-back-create'))) {
+        	 $dom->addLink("Create Newsletter",'addresource/newsletter/drafts/?type=xhtml');
+    	}	
+	    if ($perm->isAllowed('/newsletter/',array('newsletter-back-send'))) {
+        	$dom->addLink("Send Newsletter",'edit'.$path.'send/');
+    	}	
+	    if ($perm->isAllowed('/newsletter/',array('newsletter-back-archive'))) {
+        	$dom->addLink("Newsletter Archive",'edit'.$path.'manage/');
+    	}	
+	    if ($perm->isAllowed('/newsletter/',array('newsletter-back-feed'))) {
+        	$dom->addLink("Generate from Feed",'edit'.$path.'feed/');
+    	}	
+
         // second tab
         $dom->addTab("Management");
-        $dom->addLink("User Management",'edit'.$path.'users/');
-        $dom->addLink("Edit Users",'dbforms2/newsletter_users/');
-        $dom->addLink("Edit Groups",'dbforms2/newsletter_groups/');
-        $dom->addLink("Edit Senders",'dbforms2/newsletter_from/');
-        $dom->addLink("Edit Mail Servers",'dbforms2/newsletter_mailservers/');
-        $dom->addLink("Edit RSS Feeds",'dbforms2/newsletter_feeds/');
-        
+	    if ($perm->isAllowed('/newsletter/',array('newsletter-back-manage'))) {
+        	$dom->addLink("User Management",'edit'.$path.'users/');
+    	}	
+	    if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-newsletter_users'))) {
+        	$dom->addLink("Edit Users",'dbforms2/newsletter_users/');
+    	}
+	    if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-newsletter_groups'))) {
+        	$dom->addLink("Edit Groups",'dbforms2/newsletter_groups/');
+    	}
+	    if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-newsletter_from'))) {
+        	$dom->addLink("Edit Senders",'dbforms2/newsletter_from/');
+    	}
+	    if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-newsletter_mailservers'))) {
+        	$dom->addLink("Edit Mail Servers",'dbforms2/newsletter_mailservers/');
+    	}
+	    if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-newsletter_feeds'))) {
+        	$dom->addLink("Edit RSS Feeds",'dbforms2/newsletter_feeds/');
+    	}        
+
         return $dom;
     }
     
