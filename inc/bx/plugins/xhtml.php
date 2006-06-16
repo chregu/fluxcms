@@ -18,9 +18,13 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
         return bx_plugins_xhtml::$instance[$mode];
     }
     
-    protected function __construct($mode) {
+    public function __construct($mode  = "output") {
          $this->mode = $mode;
     
+    }
+    
+    public function getPermissionList() {
+    	return array(	"xhtml-back-create" );	
     }
     
     /**
@@ -118,6 +122,14 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     */
     
     public function getResourceById($path, $id, $mock = false) {
+    	
+    	$perm = bx_permm::getInstance();
+    	if($id == "thisfiledoesnotexist.xhtml") {
+			if (!$perm->isAllowed($path, array('xhtml-back-create'))) {
+	        	throw new BxPageNotAllowedException();
+	    	}
+    	}
+    	
         $id = $path.$id;
         if (!isset($this->res[$id])) {
             $mimetype = bx_resourcemanager::getMimeType($id);
@@ -181,7 +193,7 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
         
     }
 
-    public function getAddResourceParams($type) {
+    public function getAddResourceParams($type,$uri) {
         
         $dom = new domDocument();
         
@@ -237,7 +249,7 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
                 $id = 'thisfiledoesnotexist.xhtml';
             break;
         }
-        foreach($this->getEditorsById('', $id) as $editor) {
+        foreach($this->getEditorsById($uri, $id) as $editor) {
             $editorOpt = $dom->createElement('option');
             $editorOpt->setAttribute("name", $editor);
             $editorOpt->setAttribute("value", $editor);
