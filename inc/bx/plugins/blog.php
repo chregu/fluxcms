@@ -41,7 +41,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         return bx_plugins_blog::$instance[$mode];
     }
 
-    protected function __construct($mode) {
+    public function __construct($mode) {
 /*        if (!defined('BX_WEBROOT_W')) {
             $lang = $GLOBALS['POOL']->config->getOutputLanguage();
             if ($lang != BX_DEFAULT_LANGUAGE) {
@@ -53,6 +53,10 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         }
 */        $this->mode = $mode;
         $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
+    }
+    
+    public function getPermissionList() {
+    	return array(	"blog-back-post");	
     }
 
     /**
@@ -90,6 +94,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
 
     public function getContentById($path, $id) {
+                
+        $perm = bx_permm::getInstance();
+        if($id == "newpost") {
+	        if (!$perm->isAllowed($path,array('blog-back-post'))) {
+	            throw new BxPageNotAllowedException();
+	        }
+        }
                 
         $blogid = $this->getParameter($path,"blogid");
         if (!$blogid) {$blogid = 1;}

@@ -27,16 +27,26 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         return self::$instance;
     }   
     
-    protected function __construct($mode) {
+    public function __construct($mode) {
         
         $this->mode = $mode;
     }
+    /*
+    public function getPermissionList() {
+    	return array(	"admin_dbforms2-back-edit");	
+    }*/
     
     public function getIdByRequest($path, $name = NULL, $ext  = NULL) {
         return $name;
     }
 
     public function getContentById($path, $id) {
+        
+        $perm = bx_permm::getInstance();
+        $urlParts = explode('/', $id);
+        if (!$perm->isAllowed('/dbforms2/', array('admin_dbforms2-back-'.$urlParts[1]))) {
+            throw new BxPageNotAllowedException();
+        }
         
         // get form name and mode from id
         $formName = $this->getFormNameByID($id);

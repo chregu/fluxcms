@@ -13,9 +13,21 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 		return self::$instance [ $mode ];
 	}
 
-	protected function __construct ( $mode ) {
+	public function __construct ( $mode  = "output") {
 		$this -> mode = $mode ;
 	}
+
+    public function getPermissionList() {
+    	return array(	"newsletter-back-feed",
+    					"newsletter-back-send",
+    					"newsletter-back-archive",
+    					"newsletter-back-manage",
+    					"admin_dbforms2-back-newsletter_feeds",
+    					"admin_dbforms2-back-newsletter_from",
+    					"admin_dbforms2-back-newsletter_groups",
+    					"admin_dbforms2-back-newsletter_users",
+    					"admin_dbforms2-back-newsletter_mailservers");	
+    }
 	
 	public function getEditorsById($path, $id) {
         return array("newsletter");
