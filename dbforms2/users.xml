@@ -12,6 +12,19 @@
         <!--<dbform:field name="user_gupi" type="text" descr="GUPI"/>
         <dbform:field name="user_gid" type="text" descr="GID"/>-->
 
+        <dbform:field 
+            name="name"
+            type="relation_n2m" 
+            relationtable="users2groups" 
+            thisidfield="fk_user"
+            thatidfield="fk_group"
+            descr="Groups">
+            
+            <dbform:datasource type="foreign" namefield="name" idfield="id" table="groups" />
+            <dbform:liveselect namefield="name" idfield="id" wherefields="name" table="groups"  limit="25"/>
+
+        </dbform:field>
+
     </dbform:fields>    
     <dbform:chooser namefield="concat(user_login,' (',id,')')" wherefields="user_login,user_email,user_fullname" limit="20"/>    
 
