@@ -31,5 +31,24 @@
     <message key="kupu">Kupu</message>
     <message key="fck">FCK</message>
     <message key="oneform">Oneform</message>
+
+    <message key="newsletter-back-feed">Create newsletter from feed</message>
+    <message key="newsletter-back-send">Send newsletter</message>
+    <message key="newsletter-back-archive">View newsletter archive</message>
+    <message key="newsletter-back-manage">View newsletter subscribers</message>
+    
+    <message key="xhtml-back-create">Create files</message>
+    
+    <message key="permissions-back-edit">Edit permissions</message>
+    
+    <message key="blog-back-post">Post blog entries</message>
+    
+    <message key="admin_dbforms2-back-newsletter_feeds">Edit feeds</message>
+    <message key="admin_dbforms2-back-newsletter_from">Edit senders</message>
+    <message key="admin_dbforms2-back-newsletter_groups">Edit groups</message>
+    <message key="admin_dbforms2-back-newsletter_users">Edit users</message>
+    <message key="admin_dbforms2-back-newsletter_mailservers">Edit mailservers</message>
+    <message key="admin_dbforms2-back-users">Edit users</message>
+    <message key="admin_dbforms2-back-perm_groups">Edit groups</message>
     
 </catalogue>

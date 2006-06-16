@@ -89,7 +89,7 @@
     
     <!-- newsletter -->
     <message key="Edit Groups">Gruppen editieren</message>
-    <message key="Edit Senders">Sender editieren</message>
+    <message key="Edit Senders">Absender editieren</message>
     <message key="Edit Mail Servers">Mail Server editieren</message>
     <message key="User Management">Benutzer Übersicht</message>
     <message key="Create Newsletter">Newsletter erstellen</message>
@@ -99,5 +99,24 @@
     <message key="Edit RSS Feeds">RSS Feeds editieren</message>
     <message key="Management">Verwaltung</message>
     <message key="Newsletters">Newsletter</message>
+    
+    <message key="newsletter-back-feed">Newsletter aus Feed erstellen</message>
+    <message key="newsletter-back-send">Newsletter senden</message>
+    <message key="newsletter-back-archive">Newsletter Archiv anzeigen</message>
+    <message key="newsletter-back-manage">Newsletter Abonnenten anzeigen</message>
+    
+    <message key="xhtml-back-create">Dateien erstellen</message>
+    
+    <message key="permissions-back-edit">Berechtigungen editieren</message>
+    
+    <message key="blog-back-post">Blog Einträge erfassen</message>
+    
+    <message key="admin_dbforms2-back-newsletter_feeds">Feeds editieren</message>
+    <message key="admin_dbforms2-back-newsletter_from">Absender editieren</message>
+    <message key="admin_dbforms2-back-newsletter_groups">Gruppen editieren</message>
+    <message key="admin_dbforms2-back-newsletter_users">Benutzer editieren</message>
+    <message key="admin_dbforms2-back-newsletter_mailservers">Mail Server editieren</message>
+    <message key="admin_dbforms2-back-users">Benutzer editieren</message>
+    <message key="admin_dbforms2-back-perm_groups">Gruppen editieren</message>
     
 </catalogue>
