@@ -25,8 +25,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 		$parts = bx_collections::getCollectionUriAndFileParts($id);
      	$url = trim('/'.$parts['rawname'], '.');
      	
-     	$collection = bx_collections::getCollection($url);
-     	$plugins = $collection->getChildrenPlugins();
+     	$plugins = $this->getPlugingList($url);
  	
      	foreach($plugins as $p) {
      		if(count($p->getPermissionList()) > 0) {
@@ -49,7 +48,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 			
 			if($plugin == 'admin_dbforms2') {
 				$localUrl = '/dbforms2/';
-			}
+			} 
 			
 			if($plugin != '_all') {
 				
@@ -92,20 +91,14 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      	
      	$parts = bx_collections::getCollectionUriAndFileParts($id);
      	$url = '/'.$parts['rawname'];
-     	$collection = bx_collections::getCollection($url);
-     	$plugins = $collection->getChildrenPlugins();
+     	$plugins = $this->getPlugingList($url);
      	
      	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
      	
 		$query = "	SELECT g.* 
 					FROM {$prefix}groups g";
     	$groups = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
-     	/*
-		$query = "	SELECT p.* 
-			FROM {$prefix}perms p 
-			WHERE p.uri='{$url}'";
-		$dbPerms = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
-     	*/
+
      	$xml = "
      	<permissions>
 		<h3>Permissions for {$url}</h3>
@@ -124,13 +117,15 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 	     	$xml .= "<th class='stdBorder'>{$grp['name']}</th>";
 	     	}
 	    $xml .= "</tr>";
+	    
      	foreach($plugins as $p) {
      		if(count($p->getPermissionList()) > 0) {
      			
      			$list = '\''.implode('\',\'', $p->getPermissionList()).'\'';
 	     		$query = "	SELECT p.* 
 							FROM {$prefix}perms p 
-							WHERE p.action IN ({$list})";
+							WHERE p.action IN ({$list}) 
+							AND (p.uri='{$url}' OR p.uri='/dbforms2/')";
 
 				$dbPerms = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
      			
@@ -141,7 +136,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 	     		$xml .= "<tr><td><b>{$p->name} plugin</b> (Inherit <input type='checkbox' name='{$p->name}+inherit' {$checked}/>)</td></tr>";
 	     		
 	     		foreach($p->getPermissionList() as $action) {
-	     			$translated = $i18n->getText($action);
+	     			$translated = $i18n->getText('act_'.$action);
 	     			$xml .= "<tr><td>{$translated}</td>";
 
 					$localPlugin = $p->name;
@@ -172,6 +167,18 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 		</permissions>";
      	
      	return domdocument::loadXML($xml);	
+    }
+    
+    protected function getPlugingList($url) {
+    	$collection = bx_collections::getCollection($url);
+     	$plugins = $collection->getChildrenPlugins();
+     	
+     	// add collection plugin by default
+     	$permColl = new bx_plugins_collection();
+     	$permColl->name = "collection";
+     	$plugins[] = $permColl;
+     	
+     	return $plugins;
     }
   
     protected function isChecked($dbPerms, $plugin, $group, $action)

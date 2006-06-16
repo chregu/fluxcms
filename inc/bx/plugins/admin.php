@@ -7,7 +7,6 @@
  * */
 abstract class bx_plugins_admin extends bx_component {
     
-    
     public function adminResourceExists($path, $id, $ext=null, $sample = false) {
         return true;
     }

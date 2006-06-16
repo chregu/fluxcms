@@ -5,6 +5,15 @@ class bx_plugins_collection extends bx_plugin {
     static private $instance = array();
     static private $idMapper = null;
     
+	public function __construct ( $mode  = "output") {
+		$this -> mode = $mode ;
+	}
+	
+    public function getPermissionList() {
+    	return array(	"collection-front-read",
+    					"collection-front-read_navi");	
+    }
+    
     public static function getInstance($mode) {
         if (!isset(bx_plugins_collection::$instance[$mode])) {
             bx_plugins_collection::$instance[$mode] = new bx_plugins_collection($mode);

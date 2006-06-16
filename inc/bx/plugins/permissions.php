@@ -16,9 +16,11 @@ class bx_plugins_permissions extends bx_plugin implements bxIplugin {
 	}
 	
     public function getPermissionList() {
-    	return array(	"permissions-back-edit", 
+    	return array(	"permissions-back-manage", 
     					"admin_dbforms2-back-users",
-    					"admin_dbforms2-back-perm_groups");	
+    					"admin_dbforms2-back-perm_groups",
+    					"permissions-back-admin",
+    					"permissions-back-edit");	
     }
 
 	public function getEditorsById($path, $id) {
