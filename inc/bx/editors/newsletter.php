@@ -20,11 +20,17 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     public function handlePOST($path, $id, $data) {
  		
+ 		$perm = bx_permm::getInstance();
+ 		
  		$parts = bx_collections::getCollectionUriAndFileParts($id);
 
      	// Send event
      	if($parts['name'] == "send/.")
      	{
+     		if (!$perm->isAllowed('/newsletter/',array('newsletter-back-send'))) {
+            	throw new BxPageNotAllowedException();
+        	}	
+     		
      		if($data["_all"] == "Preview") {
      			if($data['groups'] === null) {
      				$_POST["nogroups"] = true;
@@ -111,6 +117,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	}
      	else if($parts['name'] == "users/.")
      	{
+     		if (!$perm->isAllowed('/newsletter/',array('newsletter-back-manage'))) {
+            	throw new BxPageNotAllowedException();
+        	}	
+     		
      		if(!empty($_FILES))
      		{
      			// get the content of the uploaded file
@@ -121,6 +131,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	}
      	else if($parts['name'] == "feed/.")
      	{
+     		if (!$perm->isAllowed('/newsletter/',array('newsletter-back-feed'))) {
+            	throw new BxPageNotAllowedException();
+        	}	
+     		
      		// Generate a newsletter from a RSS feed
      		$this->createFromFeed($data);	
      	}
@@ -158,15 +172,25 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     public function getEditContentById($id) {
      	
      	$parts = bx_collections::getCollectionUriAndFileParts($id);
+		 
+        $perm = bx_permm::getInstance();	
 		
      	// Manage view requested
      	if($parts['name'] == "manage/")
      	{
+			if (!$perm->isAllowed('/newsletter/',array('newsletter-back-manage'))) {
+            	throw new BxPageNotAllowedException();
+        	}	
+     		
      		return $this->generateManageView();
      	}
      	// Send view requested
 		else if($parts['name'] == "send/")
 		{
+			if (!$perm->isAllowed('/newsletter/',array('newsletter-back-send'))) {
+            	throw new BxPageNotAllowedException();
+        	}	
+        
 			if(isset($_POST["preview"]) and !isset($_POST["nogroups"])) {
 				return $this->generatePreviewView();
 			}
@@ -176,12 +200,20 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	// Send view requested
 		else if($parts['name'] == "users/")
 		{
+			if (!$perm->isAllowed('/newsletter/',array('newsletter-back-archive'))) {
+            	throw new BxPageNotAllowedException();
+        	}	
+			
      		return $this->generateUsersView();
 		}
 		
      	// Send view requested
 		else if($parts['name'] == "feed/")
 		{
+			if (!$perm->isAllowed('/newsletter/',array('newsletter-back-feed'))) {
+            	throw new BxPageNotAllowedException();
+        	}	
+        	
      		return $this->generateFeedView();
 		}
     }
