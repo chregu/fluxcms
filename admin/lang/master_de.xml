@@ -105,7 +105,11 @@
     <message key="act_newsletter-back-archive">Newsletter Archiv anzeigen</message>
     <message key="act_newsletter-back-manage">Newsletter Abonnenten anzeigen</message>
     
-    <message key="act_xhtml-back-create">Dateien erstellen</message>
+    <message key="act_xhtml-back-create">XHTML Dateien erstellen</message>
+    <message key="act_xhtml-back-edit_bxe">Editieren mit BXE</message>
+    <message key="act_xhtml-back-edit_fck">Editieren mit FCKeditor</message>
+    <message key="act_xhtml-back-edit_oneform">Editieren mit Oneform</message>
+    <message key="act_xhtml-back-edit_kupu">Editieren mit Kupu</message>
     
     <message key="act_permissions-back-manage">Berechtigungen editieren</message>
     

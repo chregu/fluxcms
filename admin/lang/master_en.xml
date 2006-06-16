@@ -37,7 +37,11 @@
     <message key="act_newsletter-back-archive">View newsletter archive</message>
     <message key="act_newsletter-back-manage">View newsletter subscribers</message>
     
-    <message key="act_xhtml-back-create">Create files</message>
+    <message key="act_xhtml-back-create">Create XHTML files</message>
+    <message key="act_xhtml-back-edit_bxe">Edit in BXE</message>
+    <message key="act_xhtml-back-edit_fck">Edit in FCKeditor</message>
+    <message key="act_xhtml-back-edit_oneform">Edit in Oneform</message>
+    <message key="act_xhtml-back-edit_kupu">Edit in Kupu</message>
     
     <message key="act_permissions-back-manage">Edit permissions</message>
     

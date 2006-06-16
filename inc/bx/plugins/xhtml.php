@@ -24,7 +24,11 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     }
     
     public function getPermissionList() {
-    	return array(	"xhtml-back-create" );	
+    	return array(	"xhtml-back-create",
+    					"xhtml-back-edit_bxe",
+    					"xhtml-back-edit_fck",
+    					"xhtml-back-edit_kupu",
+    					"xhtml-back-edit_oneform" );	
     }
     
     /**

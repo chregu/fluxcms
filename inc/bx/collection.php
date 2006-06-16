@@ -758,6 +758,13 @@ class bx_collection implements bxIresource {
             $resourceTypes = $this->getPluginResourceTypes();
             if(!empty($resourceTypes)) {
                 foreach($resourceTypes as $resourceType) {
+                	if($resourceType == "xhtml") {
+                		$perm = bx_permm::getInstance();
+                		if (!$perm->isAllowed($this->uri, array('xhtml-back-create'))) {
+	        				continue;
+	    				}
+                	}
+                	
                     $dom->addLink($i18n->translate2("Create new {resourcetype}", array('resourcetype'=>$resourceType)), 'addresource'. $this->uri.'?type='.$resourceType);
                 }
             }

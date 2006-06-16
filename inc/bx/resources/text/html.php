@@ -98,12 +98,31 @@ class bx_resources_text_html extends bx_resource {
      }
      
     public function getEditors() {
-        $e = array('oneform', 'fck','ooo');
+    	
+    	$perm = bx_permm::getInstance();
+    	$localUri = substr($this->id, 0, strrpos($this->id, '/')+1);
+    	
+    	$e = array();
+ 		if($perm->isAllowed($localUri,array('xhtml-back-edit_oneform'))) {
+        	$e[] = "oneform";
+    	}	
+ 		if($perm->isAllowed($localUri,array('xhtml-back-edit_fck'))) {
+        	$e[] = "fck";
+    	}	
+ 		$e[] = "ooo";
+    	
         if (popoon_classes_browser::isMozilla()) {
-            array_unshift($e, 'bxe','kupu');
+        	if($perm->isAllowed($localUri,array('xhtml-back-edit_kupu'))) {
+        		array_unshift($e, 'kupu');
+    		}	
+        	if($perm->isAllowed($localUri,array('xhtml-back-edit_bxe'))) {
+        		array_unshift($e, 'bxe');
+    		}	
         }
         else if (popoon_classes_browser::isMSIEWin()) {
-            array_unshift($e, 'kupu');
+        	if($perm->isAllowed($localUri,array('xhtml-back-edit_kupu'))) {
+        		array_unshift($e, 'kupu');
+    		}	
         } 
         
         $v = $GLOBALS['POOL']->config->getConfProperty('versioning');
@@ -129,6 +148,12 @@ class bx_resources_text_html extends bx_resource {
      
      
      public function addResource($name, $parentUri, $options=array()) {
+    	$perm = bx_permm::getInstance();
+    	$localUri = substr($this->id, 0, strrpos($this->id, '/')+1);
+ 		if (!$perm->isAllowed($localUri,array('xhtml-back-edit_'.$options['editor']))) {
+        	throw new BxPageNotAllowedException();
+    	}	
+    	
          $template = (isset($options['template'])) ? $options['template'] : 'default.xhtml';
          $editor = isset($options['editor']) ? '&editor='.$options['editor'] : '';
          $location = sprintf("%sadmin/edit%s?template=%s%s", BX_WEBROOT, $this->fulluri, $template, $editor);
@@ -153,12 +178,15 @@ class bx_resources_text_html extends bx_resource {
 
     public function onSave() {
         $vconfig = $GLOBALS['POOL']->config->getConfProperty('versioning');
+
         if ($vconfig && !empty($vconfig)) {
             $vers = bx_versioning::versioning($vconfig);
+
             if ($vers) {
                 $vers->commit($this->props['fileuri'], '');
             }
         }
+
         bx_metaindex::callIndexerFromFilename($this->props['fileuri'],$this->id);
     }
     
