@@ -33,8 +33,8 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      			$list = '\''.implode('\',\'', $p->getPermissionList()).'\'';
 	     		$query = "	DELETE  
 							FROM {$prefix}perms 
-							WHERE {$prefix}perms.action IN ({$list}) 
-							AND ({$prefix}perms.uri='{$url}' OR {$prefix}perms.uri='/dbforms2/')";
+							WHERE ({$prefix}perms.uri='{$url}' OR {$prefix}perms.uri='/dbforms2/')  
+							AND ({$prefix}perms.action IN ({$list}) OR {$prefix}perms.inherit!='')";
 				
 				$GLOBALS['POOL']->dbwrite->exec($query);
      		}
@@ -124,10 +124,12 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      			$list = '\''.implode('\',\'', $p->getPermissionList()).'\'';
 	     		$query = "	SELECT p.* 
 							FROM {$prefix}perms p 
-							WHERE p.action IN ({$list}) 
-							AND (p.uri='{$url}' OR p.uri='/dbforms2/')";
+							WHERE (p.uri='{$url}' OR p.uri='/dbforms2/') 
+							AND (p.action IN ({$list}) OR p.inherit!='')";
 
 				$dbPerms = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+     			
+     			//bx_helpers_debug::webdump($dbPerms); 
      			
      			$checked = "";
      			if($this->isInherited($dbPerms, $p->name) !== false) {
