@@ -58,6 +58,7 @@ FCKConfig.ToolbarStartExpanded	= true ;
 FCKConfig.ToolbarCanCollapse	= true ;
 FCKConfig.IgnoreEmptyParagraphValue = true ;
 FCKConfig.AutoDetectPasteFromWord = true ;
+FCKConfig.ToolbarLocation = 'In' ;
 
 FCKConfig.ToolbarSets["Default2"] = [
 	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
