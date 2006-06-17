@@ -20,6 +20,8 @@
 include_once("inc/bx/init.php");
 bx_init::start('conf/config.xml');
 
+
+
 $BX_config['popoon']['sm2php_xsl_dir'] = BX_POPOON_DIR.'/sitemap';
 $BX_config['popoon']['cacheDir'] = BX_PROJECT_DIR.'tmp/';
 
