@@ -1,6 +1,7 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
  * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2005 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
  * 
  * Licensed under the terms of the GNU Lesser General Public License:
  * 		http://www.opensource.org/licenses/lgpl-license.php
@@ -16,8 +17,7 @@
  * File Authors:
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
 -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="robots" content="noindex, nofollow" />
@@ -32,22 +32,22 @@ if ( !window.dialogArguments )
 document.write( '<link href="' + window.dialogArguments.Editor.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;
 
 // Sets the language direction.
-if ( window.dialogArguments.Editor.FCKLang) {
-    window.document.dir = window.dialogArguments.Editor.FCKLang.Dir ;
-}
+window.document.dir = window.dialogArguments.Editor.FCKLang.Dir ;
 
 var sTitle = window.dialogArguments.Title ;
 document.write( '<title>' + sTitle + '<\/title>' ) ;
 
 function LoadInnerDialog()
 {
+	// The following value is set, so the editor can check that the dialog has been correctly opened.
+	window.setTimeout( function() { window.returnValue = true ; }, 100 ) ;
+
 	if ( window.onresize )
 		window.onresize() ;
 
 	// First of all, translate the dialog box contents.
-	if (window.dialogArguments.Editor.FCKLanguageManager) {
-        window.dialogArguments.Editor.FCKLanguageManager.TranslatePage( document ) ;
-    }
+	window.dialogArguments.Editor.FCKLanguageManager.TranslatePage( document ) ;
+
 	window.frames["frmMain"].document.location.href = window.dialogArguments.Page ;
 }
 
@@ -56,9 +56,7 @@ function InnerDialogLoaded()
 	var oInnerDoc = document.getElementById('frmMain').contentWindow.document ;
 
 	// Set the language direction.
-    if (window.dialogArguments.Editor.FCKLang) {
-	    oInnerDoc.dir = window.dialogArguments.Editor.FCKLang.Dir ;
-    }
+	oInnerDoc.dir = window.dialogArguments.Editor.FCKLang.Dir ;
 
 	// Sets the Skin CSS.
 	oInnerDoc.write( '<link href="' + window.dialogArguments.Editor.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;
@@ -116,6 +114,9 @@ function Ok()
 
 function Cancel()
 {
+	// All dialog windows will fire the "OnSelectionChange" event, not matter
+	// the Ok or Cancel button have being pressed.
+	window.dialogArguments.Editor.FCK.Events.FireEvent( 'OnSelectionChange' ) ;
 	window.close() ;
 }
 
@@ -253,11 +254,6 @@ if ( ! window.dialogArguments.Editor.FCKBrowserInfo.IsIE )
 	}
 }
 
-window.onfocus = function()
-{
-	document.getElementById('frmMain').contentWindow.focus() ;
-}
-
 if ( window.dialogArguments.Editor.FCKBrowserInfo.IsIE )
 {
 	function Window_OnBeforeUnload()
@@ -269,6 +265,14 @@ if ( window.dialogArguments.Editor.FCKBrowserInfo.IsIE )
 	}
 	window.attachEvent( "onbeforeunload", Window_OnBeforeUnload ) ;
 }
+
+function Window_OnClose()
+{
+	window.dialogArguments.Editor.FCKFocusManager.Unlock() ;
+}
+
+if ( window.addEventListener )
+	window.addEventListener( 'unload', Window_OnClose, false ) ;
 
 		</script>
 	</head>

@@ -1,7 +1,7 @@
 <?php 
 /*
  * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2005 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
  * 
  * Licensed under the terms of the GNU Lesser General Public License:
  * 		http://www.opensource.org/licenses/lgpl-license.php
@@ -66,7 +66,7 @@ function DoResponse()
 	$sCurrentFolder	= $_GET['CurrentFolder'] ;
 
 	// Check if it is an allowed type.
-	if ( !in_array( $sResourceType, array('files','gallery') ) )
+	if ( !in_array( $sResourceType, array('File','Image','Flash','Media') ) )
 		return ;
 
 	// Check the current folder syntax (must begin and start with a slash).
