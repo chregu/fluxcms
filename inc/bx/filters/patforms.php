@@ -37,6 +37,36 @@ class bx_filters_patforms extends bx_filter {
                 }
                 $this->configParams = $this->getConfigParameters($configNode);
             }
+            
+            //check for Wysiwyg
+            
+            if ($this->getXPathNodes('//forms:form//patForms:Wysiwyg[1]')->length > 0) {
+                
+                $xp = new Domxpath($this->xml);
+                $xp->registerNamespace("xhtml","http://www.w3.org/1999/xhtml");
+                
+                $head = $xp->query("/bx/plugin/xhtml:html/xhtml:head");
+                if ($head->length > 0) {
+                    $str = ' 
+                    <script type="text/javascript" src="'.BX_WEBROOT.'webinc/fck/fckeditor.js">
+                    
+                    </script>
+                    <script type="text/javascript" src="'.BX_WEBROOT.'webinc/plugins/patforms/fck.js">
+                    
+                    </script>
+                    <script type="text/javascript">
+                    var fckBasePath	= "'.BX_WEBROOT.'webinc/fck/";
+                    var bx_webroot = "'.BX_WEBROOT.'";
+                    var contentURI = null;
+                    </script>
+                    ';
+                    $scripts = bx_helpers_xml::getFragment($str,$this->xml);
+                    $head = $head->item(0);
+                    $head->appendChild($scripts);
+                }
+                
+                
+            }
 
             $formDOM = new DomDocument();
             $formNode = $formDOM->importNode($formNS->item(0)->parentNode, TRUE);

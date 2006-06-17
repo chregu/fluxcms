@@ -242,7 +242,7 @@ class patForms_Element_Text extends patForms_Element
 	*/
 	function serializeHtmlDefault( $value )
 	{
-		if( $this->attributes['display'] == 'no' )
+        if( $this->attributes['display'] == 'no' )
 		{
 			return $this->createDisplaylessTag( $value );
 		}

@@ -79,6 +79,13 @@ FCKConfig.ToolbarSets["Basic"] = [
 	['Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','About','Source']
 ] ;
 
+
+FCKConfig.ToolbarSets["patforms"] = [
+	['Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','Table','Source']
+] ;
+
+
+
 FCKConfig.ToolbarSets["fluxfck"] = [
 	['Source'],
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
