@@ -11,7 +11,8 @@
                     <map:parameter type="options" name="registerPhpFunctions" value="true"/>
                     <map:parameter type="options" name="textOutput" value="true"/>
                 </map:transform>
-                <map:serialize type="text"/>
+                <map:serialize type="text" httpExpires="1800"/>
+                
             </map:match>
         </map:pipeline>
 
