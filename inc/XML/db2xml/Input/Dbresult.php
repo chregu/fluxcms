@@ -140,7 +140,6 @@ Class XML_db2xml_Input_Dbresult {
 
             foreach ($res as $key => $val) 
             {
-
                 if ($resold[$tableInfo['parent_key'][$tableInfo[$key]['table']]] != $res[$tableInfo['parent_key'][$tableInfo[$key]['table']]] || !$this->parent->nested)
                 {
                     if ($tableInfo['parent_key'][$tableInfo[$key]['table']] == $key )
@@ -151,6 +150,7 @@ Class XML_db2xml_Input_Dbresult {
                         }
                         else
                         {
+                            
                             $parent[$tableInfo[$key]['table']]= $parent[strtolower($tableInfo['parent_table'][$tableInfo[$key]['table']])];
                         }
 
@@ -164,7 +164,7 @@ Class XML_db2xml_Input_Dbresult {
                         }
 
                     }
-                    if ( $parent[$tableInfo[$key]['table']] != Null)
+                    if ( $parent[$tableInfo[$key]['table']] !== Null)
                     {
                         $this->parent->Format->insertNewElement($parent[$tableInfo[$key]['table']], $res, $key, $tableInfo, $subrow);
                     }
