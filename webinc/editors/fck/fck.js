@@ -77,7 +77,7 @@ loadContent = function() {
 							alert("This document contains non-HTML elements, please consider using the oneform or BXE editor.\nSaving here will remove those elements and lead to unexpected results.\n\n PLEASE DO NOT SAVE, unless you know what you are doing.");
 						}
 					}
-					die
+					
                     window.status = "Document loaded.";
                     
                 } else {
