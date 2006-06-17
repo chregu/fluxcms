@@ -60,7 +60,7 @@ FCKConfig.ShowBorders	= true ;
 FCKConfig.UseBROnCarriageReturn	= false ;
 FCKConfig.ToolbarStartExpanded	= true ;
 FCKConfig.ToolbarCanCollapse	= true ;
-
+FCKConfig.ToolbarLocation = 'In' ;
 FCKConfig.ToolbarSets["Default"] = [
 	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
