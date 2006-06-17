@@ -60,6 +60,11 @@ FCKConfig.IgnoreEmptyParagraphValue = true ;
 FCKConfig.AutoDetectPasteFromWord = true ;
 FCKConfig.ToolbarLocation = 'In' ;
 
+
+
+var sOtherPluginPath = '/webinc/editors/fck/plugins/' ;
+FCKConfig.Plugins.Add( 'test', '', sOtherPluginPath ) ;
+
 FCKConfig.ToolbarSets["Default2"] = [
 	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
@@ -96,7 +101,8 @@ FCKConfig.ToolbarSets["fluxfck"] = [
 	'/',
 	['Style','FontFormat'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript']
+	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
+    ['Properties']
 ] ;
 
 FCKConfig.ToolbarSets["fluxfckblog"] = [

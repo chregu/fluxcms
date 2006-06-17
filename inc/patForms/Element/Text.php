@@ -311,7 +311,25 @@ class patForms_Element_Text extends patForms_Element
 		}
 		
 		// check for tags
-		if( strlen( $this->attributes['allowedtags'] ) )
+        $this->checkForTags($value);
+		// minlength
+		if( isset( $this->attributes['minlength'] ) && strlen( $value ) < $this->attributes['minlength'] )
+		{
+			$this->addValidationError( 3, array( 'minlength' => $this->attributes['minlength'] ) );
+			return false;
+		}
+		
+		// maxlength
+		if( isset( $this->attributes['maxlength'] ) && strlen( $value ) > $this->attributes['maxlength'] )
+		{
+			$this->addValidationError( 4, array( 'maxlength' => $this->attributes['maxlength'] ) );
+			return false;
+		}
+		return true;
+	}
+    
+    protected function checkForTags($value) {
+        if( strlen( $this->attributes['allowedtags'] ) )
 		{
 			$allowed	=	explode( ',', $this->attributes['allowedtags'] );
 			for( $i = 0; $i < count( $allowed ); ++$i )
@@ -336,21 +354,7 @@ class patForms_Element_Text extends patForms_Element
 			}
 		}
 
-		// minlength
-		if( isset( $this->attributes['minlength'] ) && strlen( $value ) < $this->attributes['minlength'] )
-		{
-			$this->addValidationError( 3, array( 'minlength' => $this->attributes['minlength'] ) );
-			return false;
-		}
-		
-		// maxlength
-		if( isset( $this->attributes['maxlength'] ) && strlen( $value ) > $this->attributes['maxlength'] )
-		{
-			$this->addValidationError( 4, array( 'maxlength' => $this->attributes['maxlength'] ) );
-			return false;
-		}
-		return true;
-	}
+    }
 }
 
 ?>

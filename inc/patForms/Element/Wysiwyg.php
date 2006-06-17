@@ -27,7 +27,16 @@ class patForms_Element_Wysiwyg extends patForms_Element_Text
 	public $elementName = 'Wysiwyg';
     
     
-    
+    function __construct( $format = false ) {
+        
+        $this->attributeDefinitions['allowedtags'] = array(
+			'required'		=>	false,
+			'format'		=>	'string',
+			'default'		=>	'',
+			'outputFormats'	=>	array( ),
+		);
+        parent::__construct($format);
+    }
 	
    /**
 	* element creation method for the 'HTML' format in the 'default' form mode.
@@ -49,6 +58,9 @@ class patForms_Element_Wysiwyg extends patForms_Element_Text
         }
 		return parent::serializeHtmlDefault($value);
 	}
+    
+        protected function checkForTags($value) {
+        }
     
 }
 
