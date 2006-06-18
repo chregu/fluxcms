@@ -34,11 +34,8 @@ Class bx_permm_auth_pearauth extends bx_permm_auth_common {
             
         } else {
             
-            if (isset($GLOBALS['POOL']->config->sxip_homesite)) {
-                $this->authObj = new Auth("sxip", $opts, "bxLoginFunction");
-            } else {
-                $this->authObj = new Auth("MDB2", $opts, "bxLoginFunction");
-            }
+            $this->authObj = new Auth("MDB2", $opts, "bxLoginFunction");
+            
         }
         
     }
