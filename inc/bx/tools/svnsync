@@ -11,7 +11,7 @@ cd div/db/
 ./dbexport.sh
 cd ../..
 
-dirs="data files themes"
+dirs="data files themes structure dbforms2"
 modifiedDirs="div/db/ "
 
 uid=`id -u`
