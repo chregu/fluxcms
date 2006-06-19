@@ -126,32 +126,9 @@ class bx_plugins_blog_handlecomment {
         $data['uri'] = BX_WEBROOT_W.$parts['coll']->uri.'archive/'.date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).'/'.$row['post_uri'].'.html';
         
         // clean up comment
-        if (class_exists('tidy')) {
-            $tidy = new tidy();
-            if(!$tidy) {
-                throw new Exception("Something went wrong with tidy initialisation. Maybe you didn't enable ext/tidy in your PHP installation. Either install it or remove the tidy transformer from your sitemap.xml");
-            }
-        } else {
-            $tidy = false;
-        }
+        $data['comments'] = self::cleanUpComment($data['comments']);
         
-        // this preg escapes all not allowed tags...
         
-        $_tags = implode("|",self::$allowedTags).")])#i";
-        $data['comments'] = preg_replace("#\<(/[^(".$_tags,"&lt;$1", $data['comments']);
-        $data['comments'] = preg_replace("#\<([^(/|".$_tags,"&lt;$1", $data['comments']);
-        $allowedTagsString = "<".implode("><",self::$allowedTags).">";
-        if ($tidy) {
-            $tidy->parseString(strip_tags(nl2br($data['comments']),$allowedTagsString ),self::$tidyOptions,"utf8");
-            $tidy->cleanRepair();
-            $data['comments'] = popoon_classes_externalinput::basicClean((string) $tidy);
-            // and tidy it again 
-            $tidy->parseString($data['comments']);
-            $tidy->cleanRepair();
-            $data['comments'] = (string) $tidy;
-        } else {
-            $data['comments'] =  popoon_classes_externalinput::basicClean(strip_tags(nl2br($data['comments']),$allowedTagsString));
-        }
         $commentRejected = "";
         
         if (strpos($_SERVER['REQUEST_URI'],"#") !== false) {
@@ -395,4 +372,37 @@ class bx_plugins_blog_handlecomment {
 	error_log("Flux: Blog Comment Discarded for " . BX_WEBROOT ." : ". $msg);
             die();
     }
+    
+    static public function cleanUpComment($body) {
+        
+        if (class_exists('tidy')) {
+            $tidy = new tidy();
+            if(!$tidy) {
+                throw new Exception("Something went wrong with tidy initialisation. Maybe you didn't enable ext/tidy in your PHP installation. Either install it or remove the tidy transformer from your sitemap.xml");
+            }
+        } else {
+            $tidy = false;
+        }
+        
+        // this preg escapes all not allowed tags...
+        
+        $_tags = implode("|",self::$allowedTags).")])#i";
+        $body = preg_replace("#\<(/[^(".$_tags,"&lt;$1", $body);
+        $body = preg_replace("#\<([^(/|".$_tags,"&lt;$1", $body);
+        $allowedTagsString = "<".implode("><",self::$allowedTags).">";
+        if ($tidy) {
+            $tidy->parseString(strip_tags(nl2br($body),$allowedTagsString ),self::$tidyOptions,"utf8");
+            $tidy->cleanRepair();
+            $body = popoon_classes_externalinput::basicClean((string) $tidy);
+            // and tidy it again 
+            $tidy->parseString($body);
+            $tidy->cleanRepair();
+            $body = (string) $tidy;
+        } else {
+            $body =  popoon_classes_externalinput::basicClean(strip_tags(nl2br($body),$allowedTagsString));
+        }
+    return $body;    
+    }
+    
+    
 }
