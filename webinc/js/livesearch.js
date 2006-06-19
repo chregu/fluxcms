@@ -173,7 +173,7 @@ function preview(request){
     var previewNode = $('previewComment');
 
     if (!previewNode) {
-        var lastComment = $('commentForm');
+        var lastComment = $('bx_foo');
         var previewNode = document.createElement("div");
         previewNode.id = 'previewComment';
         previewNode.className = 'post_content';
@@ -190,7 +190,7 @@ function previewSubmit(test) {
     var name = document.getElementById('name').value;
     var mail = document.getElementById('email').value;
     var uri = document.getElementById('openid_url').value;
-    var text = document.getElementById('comment_text').value;
+    var text = document.forms['bx_foo']['comments'].value;
 
     var f = document.forms['commentForm'];
 
