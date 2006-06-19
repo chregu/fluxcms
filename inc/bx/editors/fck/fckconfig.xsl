@@ -61,10 +61,10 @@ FCKConfig.AutoDetectPasteFromWord = true ;
 FCKConfig.ToolbarLocation = 'In' ;
 
 
-
+/*
 var sOtherPluginPath = '/webinc/editors/fck/plugins/' ;
 FCKConfig.Plugins.Add( 'test', '', sOtherPluginPath ) ;
-
+*/
 FCKConfig.ToolbarSets["Default2"] = [
 	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
