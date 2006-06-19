@@ -172,7 +172,10 @@ class bx_collection implements bxIresource {
                     $xml->documentElement->appendChild($plugin);
                 }
                 
-                $javascripts = array_merge($javascripts,$p['plugin']->getJavaScriptSources());
+                if (method_exists($p['plugin'],"getJavaScriptSources")) {
+                   $javascripts = 
+array_merge($javascripts,$p['plugin']->getJavaScriptSources());
+                }
             }    
         }
         if (count($javascripts) > 0) {
