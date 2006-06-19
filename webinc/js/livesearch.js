@@ -181,8 +181,6 @@ function preview(request){
 
     }
     previewNode.innerHTML = request.responseText;
-    location.hash = 'previewComment';
-    //document.getElementById('preview').value =request.responseText;
 }
 
 
