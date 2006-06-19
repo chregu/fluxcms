@@ -108,7 +108,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 	            throw new BxPageNotAllowedException();
 	        }
         }
-                
+        $this->setJavaScriptSource('webinc/js/livesearch.js');
+        $this->setJavaScriptSource('webinc/js/openId.js');
+        
         $blogid = $this->getParameter($path,"blogid");
         if (!$blogid) {$blogid = 1;}
         $maxposts_param = $this->getParameter($path,'maxposts');
@@ -1025,7 +1027,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                </form>
                </div>
                ';
-               
+        $this->setJavaScriptSource('webinc/js/prototype.lite.js');
+        $this->setJavaScriptSource('webinc/js/moo.ajax.js');
+        
         return $xml;
     }
     
