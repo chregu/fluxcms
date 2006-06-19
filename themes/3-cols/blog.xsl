@@ -272,18 +272,6 @@ and adjust the delicious template itself
         <link rel="EditURI" type="application/rsd+xml" title="RSD" href="{$blogroot}xmlrpc.rsd"/>
         <xsl:text>
 </xsl:text>
-        <script type="text/javascript" src="{$webroot}webinc/js/livesearch.js"></script>
-        <xsl:text>
-</xsl:text>
-        <script type="text/javascript" src="{$webroot}webinc/js/openId.js"></script>
-        <xsl:text>
-</xsl:text>
-        <script type="text/javascript" src="{$webroot}webinc/js/prototype.lite.js"></script>
-        <xsl:text>
-</xsl:text>
-        <script type="text/javascript" src="{$webroot}webinc/js/moo.ajax.js"></script>
-        <xsl:text>
-</xsl:text>
     
     <meta name="DC.title" content="{$dctitle}"/>
         <xsl:text>

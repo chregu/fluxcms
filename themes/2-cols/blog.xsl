@@ -276,10 +276,6 @@ and adjust the delicious template itself
         <link rel="EditURI" type="application/rsd+xml" title="RSD" href="{$blogroot}xmlrpc.rsd"/>
         <xsl:text>
 </xsl:text>
-        <script type="text/javascript" src="{$webroot}webinc/js/livesearch.js"></script>
-        <xsl:text>
-</xsl:text>
-    
     <meta name="DC.title" content="{$dctitle}"/>
         <xsl:text>
 </xsl:text>
@@ -353,7 +349,7 @@ var commentButtonName      = "bx[plugins][blog][_all]";
     <xsl:template match="xhtml:span[@class='openid']" mode="xhtml">
         &#160;
         <a target="_blank" href="http://openid.net/">
-            <img src="{$webroot}{'files/images/opendid.gif'}" alt="open_id"/>
+            <img src="{$webroot}{'webinc/images/openid.png'}" alt="open_id"/>
         </a>
     </xsl:template>
 
