@@ -1016,7 +1016,10 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 
                 $xml .= '<tr>
                 <td></td>
-                <td><br /><input type="submit" i18n:attr="value" name="bx[plugins][blog][_all]" value="Send" class="formbutton" /></td>
+                <td><br /><input type="submit" i18n:attr="value" name="bx[plugins][blog][_all]" value="Send" class="formbutton" />
+                <input onclick="javascript:previewSubmit(this.parentNode);" type="button" i18n:attr="value" name="bx[plugins][blog][_all]" value="Preview" class="formbutton" />
+                
+                </td>
                 </tr>
                </table>
                </form>
