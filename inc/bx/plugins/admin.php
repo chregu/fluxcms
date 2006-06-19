@@ -25,6 +25,9 @@ abstract class bx_plugins_admin extends bx_component {
     public function getResourceByType($type, $path, $id) {}
 
 		public function getPipelineParametersById($path, $id) { return array(); }
+    public function getJavaScriptSources() {
+	return array();
+	}
 }
 
 

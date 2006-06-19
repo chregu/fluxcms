@@ -138,6 +138,7 @@ class bx_collection implements bxIresource {
         $xml = new DomDocument(); 
         $xml->appendChild($xml->createElement("bx"));
         if (is_array($pluginMap)) {
+            $javascripts= array();
         foreach ($pluginMap as $p) {
             
             if(isset($p['plugin']) && $p['plugin'] instanceof bxIplugin) {
@@ -170,9 +171,20 @@ class bx_collection implements bxIresource {
                 } else {
                     $xml->documentElement->appendChild($plugin);
                 }
+                
+                $javascripts = array_merge($javascripts,$p['plugin']->getJavaScriptSources());
             }    
         }
+        if (count($javascripts) > 0) {
+            $jsroot = $xml->documentElement->appendChild($xml->createElement("javascripts"));
+            foreach($javascripts as $js) {
+                $jsroot->appendChild($xml->createElement("src",$js));
+            }
+            
         }
+        }
+        
+       
         
        return $xml;
     }
@@ -797,6 +809,9 @@ class bx_collection implements bxIresource {
         }
     }
 
+    public function getJavaScriptSources() {
+	return array();
+	}
 }
 
 ?>

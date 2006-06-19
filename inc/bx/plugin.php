@@ -19,7 +19,7 @@
 
 abstract class bx_plugin extends bx_component implements bxIplugin {
     protected $mode;
-    
+    protected $javascriptsources = array();
     protected function __construct($mode = "output") {
         
         $this->mode = $mode;
@@ -191,6 +191,19 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
     public function getPermissionList() {
     	return array();	
     }
+    
+    public function getJavaScriptSources() {
+        return $this->javascriptsources;
+       
+    }
+    
+    protected function setJavaScriptSource($src) {
+        if (!in_array($src,$this->javascriptsources)) {
+            $this->javascriptsources[] = $src;
+        }
+        
+    }
+        
 }
 
 ?>
