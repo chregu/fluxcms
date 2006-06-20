@@ -5,6 +5,11 @@ class bx_permm_perm_true {
         
     }
     
+    public function isEditable()
+    {
+    	return false;	
+    }
+    
     function isAllowed($uri, $actions,$userId) {
         
         if (in_array('admin',$actions)) {

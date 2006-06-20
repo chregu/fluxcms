@@ -150,6 +150,17 @@ Class bx_permm {
         }
     }
     
+    /*
+     * Check if the permission systems allows to edit permissions online
+     */
+    public function isEditable() {
+        if ($this->permObj) {
+            return $this->permObj->isEditable();
+        } else {
+            return false;
+        }    	
+    }
+    
     public function checkPassword($password) {
         
         return $this->authObj->checkPassword($password);

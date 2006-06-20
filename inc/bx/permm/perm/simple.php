@@ -11,6 +11,11 @@
         
     }
     
+    public function isEditable()
+    {
+    	return false;	
+    }
+    
     function isAllowed($uri, $actions, $userid) {
         // FIXME: this code needs to be rewritten, it's getting messy. (there are 
         // too many "return false;"

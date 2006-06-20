@@ -36,7 +36,10 @@ abstract class bx_permm_perm_common {
     protected $perm_propertiesidcol = '';
     
 
-    
+    public function isEditable()
+    {
+    	return false;	
+    }    
     
     protected function __construct($options) {
         

@@ -10,6 +10,11 @@
         
     }
     
+    public function isEditable()
+    {
+    	return false;	
+    }
+    
     function isAllowed($uri, $actions, $userid) {
         if (in_array('admin',$actions)) {
           //if not logged in, not allowed to be admin...

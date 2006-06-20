@@ -768,8 +768,10 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
         $dom->setIcon("collection");
         $dom->setPath($this->uri);
             $dom->addLink("Properties", "properties/".$this->uri);
-            if ($perm->isAllowed('/permissions/',array('permissions-back-manage'))) {
-            	$dom->addLink("Edit Permissions", "edit/permissions/".$this->uri);
+            if ($perm->isEditable()) {
+	            if ($perm->isAllowed('/permissions/',array('permissions-back-manage'))) {
+	            	$dom->addLink("Edit Permissions", "edit/permissions/".$this->uri);
+	            }
             }
             $dom->addSeperator();    
             $dom->addLink("Create new Collection", 'collection'.$this->uri);
