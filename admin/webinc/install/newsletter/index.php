@@ -69,6 +69,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts` (
   `subject` varchar(100) NOT NULL,
   `htmlfile` varchar(50) NOT NULL,
   `textfile` varchar(50) NOT NULL,
+  `attachment` varchar(150) NOT NULL,
   `sent` timestamp NOT NULL default '0000-00-00 00:00:00',
   `prepared` timestamp NOT NULL default '0000-00-00 00:00:00',
   `ID` int(10) unsigned NOT NULL auto_increment,
@@ -108,6 +109,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_groups` (
   `name` varchar(100) NOT NULL,
   `public` tinyint(4) NOT NULL default '1',
   `optin` tinyint(4) NOT NULL default '0',
+  `test` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`ID`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
