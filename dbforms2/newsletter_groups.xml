@@ -14,6 +14,10 @@
             <dbform:value name="0">false</dbform:value>
             <dbform:value name="1">true</dbform:value>
         </dbform:field>
+        <dbform:field name="test" type="select" descr="Test Group">   
+            <dbform:value name="0">false</dbform:value>
+            <dbform:value name="1">true</dbform:value>
+        </dbform:field>
 
     </dbform:fields>    
     <dbform:chooser namefield="concat(name,' (',id,')')" wherefields="name" limit="50"/>    
