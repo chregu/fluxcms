@@ -101,8 +101,7 @@ FCKConfig.ToolbarSets["fluxfck"] = [
 	'/',
 	['Style','FontFormat'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
-    ['Properties']
+	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript']
 ] ;
 
 FCKConfig.ToolbarSets["fluxfckblog"] = [
