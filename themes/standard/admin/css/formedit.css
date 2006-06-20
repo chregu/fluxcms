@@ -201,5 +201,22 @@ body#upload{
     background-color: #f3f3f3;
 }
 
-    
+#openIdTrust {
+    background-color:#f3f3f3;
+    width: 94%;
+    padding: 5px;
+    padding-top:10px;
+    padding-left: 15px;
+    border: 5px solid #006486;
+}
 
+h1.pageTitle, h1.page, h2.openIdPage {
+    margin:0px;
+    background-color: #006486 ! important;
+    color: white;
+    font-size: 12px;
+    padding: 5px;
+    padding-left: 15px;
+    width: 95%;
+    
+}
