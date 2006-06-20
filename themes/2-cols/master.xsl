@@ -8,6 +8,7 @@
 	exclude-result-prefixes="xhtml forms php i18n"
 	
 	>
+    <xsl:import href="../standard/mastercommon.xsl" />
     <xsl:output encoding="utf-8" method="xml" 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" 
     doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"/>
@@ -68,6 +69,7 @@
                 </title>
                 <link rel="shortcut icon" href="{$webroot}favicon.ico" type="image/x-icon"/>
                 <xsl:call-template name="html_head"/>
+                <xsl:call-template name="html_head_scripts"/>
             </head>
 
             <body id="ng_bitflux_org">
