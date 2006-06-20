@@ -67,6 +67,7 @@
                 </title>
                 <link rel="shortcut icon" href="{$webroot}favicon.ico" type="image/x-icon"/>
                 <xsl:call-template name="html_head"/>
+                <xsl:call-template name="html_head_scripts"/>
             </head>
 
             <body id="ng_bitflux_org">
