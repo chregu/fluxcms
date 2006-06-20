@@ -23,11 +23,49 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/
             <script type="text/javascript">
             window.parent.navi.Navitree.reload('/<xsl:value-of select="substring($dataUri,1,string-length($dataUri)-1)"/>');
             </script>
+
             </xsl:if>
-            
-			
+            <script type="text/javascript">
+            <![CDATA[
+		        dbforms2_fBrowserFieldId = '';
+				dbforms2_fBrowserLastLocation = '';
+
+				openFileBrowser = function(fieldId) {
+				    var fBrowserUrl = bx_webroot + 'webinc/fck/editor/filemanager/browser/default/browser.html?Type=files&Connector=connectors/php/connector.php';
+				
+				    var currentFile = document.getElementById(fieldId).value;
+				    if (currentFile == '' && dbforms2_fBrowserLastLocation) {
+				        currentFile = dbforms2_fBrowserLastLocation;
+				    }
+				    var filesDir = '/files';
+				    sParentFolderPath = currentFile.substring(filesDir.length, currentFile.lastIndexOf('/', currentFile.length - 2) + 1);
+				
+				    if(sParentFolderPath != '' && (sParentFolderPath.indexOf('/') != -1))
+				        fBrowserUrl += '&RootPath=' + escape(sParentFolderPath);
+				    
+				    if(typeof fBrowserWindow != 'undefined' && !fBrowserWindow.closed) {
+				        fBrowserWindow.location.href = fBrowserUrl;
+				    } else {
+				        fBrowserWindow = window.open(fBrowserUrl, 'fBrowser', 'width=800,height=600,location=no,menubar=no');
+				    }
+				
+				    fBrowserWindow.focus();
+				
+				    dbforms2_fBrowserFieldId = fieldId;
+				    
+				    SetUrl = function(url) {
+				        if(dbforms2_fBrowserFieldId != '') {
+				           document.getElementById(fieldId).value = url;
+				            dbforms2_fBrowserLastLocation = url;
+				        }
+				        dbforms2_fBrowserFieldId = '';
+				    }
+				}
+				]]>
+            </script>
             </head>
-            <body>
+            <body onload="			dbforms2.form = document.getElementById('bx_news_send');
+			alert(dbforms2.form);">
             
             <xsl:copy>
     			<xsl:apply-templates select="/bx/plugin/newsletter" mode="xhtml"/>

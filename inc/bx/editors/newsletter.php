@@ -20,6 +20,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     public function handlePOST($path, $id, $data) {
  		
+ 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+ 		
  		$perm = bx_permm::getInstance();
  		
  		$parts = bx_collections::getCollectionUriAndFileParts($id);
@@ -43,6 +45,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      			$_POST["sent"] = true;
      		}
      		
+     		// check if this is a testmail
+	    	$groupIds = implode(",", $data["groups"]);
+	        $query = "select COUNT(*) from ".$prefix."newsletter_groups where id in (".$groupIds.") and test=1";
+	        $testMode = $GLOBALS['POOL']->db->queryOne($query); 
+     		
      		list($htmlname, $htmllanguage, $htmltype) = explode(".", $data["htmlfile"]);
      		list($textname, $textlanguage, $texttype) = explode(".", $data["textfile"]);
      		
@@ -55,30 +62,37 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$clearSubject = str_replace(" ", "-", $data['subject']);
 			
 			if(!empty($data["htmlfile"])) {
-				$newHtmlFile = $year.date("Ymd-").$clearSubject.".".$htmllanguage.".xhtml";
-				rename("data/newsletter/drafts/".$data["htmlfile"], "data/newsletter/archive/".$newHtmlFile);
-				$this->removeNewsletterProperties("/newsletter/drafts/".$data["htmlfile"]);
-				$this->addNewsletterProperties("/newsletter/archive/".$newHtmlFile, $data["subject"]);
-				
-				if(isset($data['publish'])) {
-					// make the newsletter visible to the users
-					bx_resourcemanager::setProperty("/newsletter/archive/".$newHtmlFile, "display-order", "99");
+				if($testMode == 0) {
+					$newHtmlFile = $year.date("Ymd-").$clearSubject.".".$htmllanguage.".xhtml";
+					rename("data/newsletter/drafts/".$data["htmlfile"], "data/newsletter/archive/".$newHtmlFile);
+					$this->removeNewsletterProperties("/newsletter/drafts/".$data["htmlfile"]);
+					$this->addNewsletterProperties("/newsletter/archive/".$newHtmlFile, $data["subject"]);
+					
+					if(isset($data['publish'])) {
+						// make the newsletter visible to the users
+						bx_resourcemanager::setProperty("/newsletter/archive/".$newHtmlFile, "display-order", "99");
+					}
+				} else {
+					$newHtmlFile = "drafts/".$data["htmlfile"];
 				}
 			}
 			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
-				$newTextFile = $year.date("Ymd-").$clearSubject."-txt.".$textlanguage.".xhtml";
-				rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$newTextFile);
-				$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
-				$this->addNewsletterProperties("/newsletter/archive/".$newTextFile, $data["subject"]);
+				if($testMode == 0) {	
+					$newTextFile = $year.date("Ymd-").$clearSubject."-txt.".$textlanguage.".xhtml";
+					rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$newTextFile);
+					$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
+					$this->addNewsletterProperties("/newsletter/archive/".$newTextFile, $data["subject"]);
+				} else {
+					$newTextFile = "drafts/".$data["textfile"];
+				}
 			}		
 			
 			$classname = $this->getConfigParameter($id, "sendclass");	
 
      		// Save all the information we received about the newsletter in the database for archiving purposes
-     		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-     		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `class`, `mailserver`, `embed`, `baseurl`)
+     		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `attachment`, `class`, `mailserver`, `embed`, `baseurl`)
 						VALUES (
-						'".$data['from']."', '".$data['subject']."', '".$newHtmlFile."', '".$newTextFile."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."');";
+						'".$data['from']."', '".$data['subject']."', '".$newHtmlFile."', '".$newTextFile."', '".$data['attachment']."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."');";
 			$GLOBALS['POOL']->dbwrite->exec($query);
 
 			$draftId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_drafts", "id");
@@ -250,8 +264,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			<table border="0" id="send">
 				<tr><td>From:</td><td>'.$_POST["from"].'</td></tr>
 				<tr><td style="vertical-align:top">To:</td><td>'.$groups.' ('.$usercount.' subscribers)'.'</td></tr>
-				<tr><td>Subject:</td><td>'.$_POST["subject"].'</td></tr>
-				<tr><td>Mail Server:</td><td>'.$mailserver["descr"].' ('.$mailserver["host"].')'.'</td></tr>
+				<tr><td>Subject:</td><td>'.$_POST["subject"].'</td></tr>';
+		if(!empty($_POST["attachment"])) {
+			$xml .= '<tr><td>Attachment:</td><td>'.$_POST["attachment"].'</td></tr>';
+		}
+		$xml .= '<tr><td>Mail Server:</td><td>'.$mailserver["descr"].' ('.$mailserver["host"].')'.'</td></tr>
 				<tr><td>Embed Images:</td><td>'.$_POST["embed"].'</td></tr>
 				<tr><td>Publish Online:</td><td>'.$_POST["publish"].'</td></tr>
 				<tr>
@@ -265,22 +282,31 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 					<col width="700"/>
 					<col width="500"/>
 				</cols>
-				<tr>
-					<td><b>'.$_POST["htmlfile"].'</b></td>
-					<td><b>'.$_POST["textfile"].'</b></td>
-				</tr>
-				<tr>
-					<td>
+				<tr>';
+		if(!empty($_POST["htmlfile"])) {
+		$xml .= '   <td><b>'.$_POST["htmlfile"].'</b></td>';
+		}
+		if(!empty($_POST["textfile"])) {
+		$xml .= '	<td><b>'.$_POST["textfile"].'</b></td>';
+		}
+		$xml .=	'</tr>
+				<tr>';
+		if(!empty($_POST["htmlfile"])) {
+		$xml .= '   <td>
 						<iframe src="'.$htmlsrc.'" width="100%" height="500" name="htmlfile"/>
-					</td>
-					<td>
+					</td>';
+		}
+		if(!empty($_POST["textfile"])) {
+		$xml .= '	<td>
 						<iframe src="'.$textsrc.'" width="100%" height="500" name="textfile"/>
-					</td>
-				</tr>
+					</td>';
+		}
+		$xml .=	'</tr>
 			</table>
 
 			<input type="hidden" name="from" value="'.$_POST["from"].'"/>
 			<input type="hidden" name="subject" value="'.$_POST["subject"].'"/>
+			<input type="hidden" name="attachment" value="'.$_POST["attachment"].'"/>
 			<input type="hidden" name="htmlfile" value="'.$_POST["htmlfile"].'"/>
 			<input type="hidden" name="textfile" value="'.$_POST["textfile"].'"/>
 			<input type="hidden" name="mailserver" value="'.$_POST["mailserver"].'"/>';
@@ -369,7 +395,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		}
 
 		$xml = '<newsletter>
-    	<form name="bx_news_send" action="#" method="post">
+		<script type="text/javascript">
+			bx_webroot = "'.BX_WEBROOT.'";
+		</script>
+    	<form id="bx_news_send" name="bx_news_send" action="#" method="post">
 			<h3>Send Newsletter</h3>';
 		$xml .= $msg;
 		$xml .= '<table border="0" id="send">
@@ -378,6 +407,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				<tr><td>Subject:</td><td><input type="text" name="subject"/></td></tr>
 				<tr><td>HTML Body:</td><td>'.$newsHTML.'</td></tr>
 				<tr><td>Text Body:</td><td>'.$newsText.'</td></tr>
+				<tr><td>Add Attachment:</td><td><input type="text" id="attachment" name="attachment"/><input type="button" onclick="openFileBrowser(\'attachment\')" value="..."/></td></tr>
 				<tr><td>Mail Server:</td><td>'.$serversHtml.'</td></tr>
 				<tr><td>Embed Images:</td><td><input type="checkbox" name="embed"/></td></tr>
 				<tr><td>Publish Online:</td><td><input type="checkbox" name="publish" checked="checked"/></td></tr>

@@ -103,6 +103,14 @@ class bx_editors_newsmailer_newsmailer {
 				$mime->addHTMLImage($image["content"], "image/".$type, $image["name"], false);
 			}
 		}
+		
+		if(!empty($draft['attachment'])) {
+			$path = ltrim($draft['attachment'], "/");
+			if(($attachment = @file_get_contents($path)) == true) {
+    			$shortname = end(preg_split("[\\/]", $path));
+				$mime->addAttachment($attachment, 'application/octet-stream', $shortname, false);	
+			}
+		}
 
 		// Iterate over all newsletter receivers
 		foreach($receivers as $person)
@@ -168,7 +176,7 @@ class bx_editors_newsmailer_newsmailer {
      * @param mailoptions return value of getMailserverOptions()
      * @param embedImages if true all images in the HTML document (src/background attributes) will be sent as attachments
      */
-    public function sendNewsletter($draft, $receivers, $mailoptions, $embedImages = false)
+    public function sendNewsletter($draft, $receivers, $mailoptions)
     {
     	// read in the newsletter templates if existing
     	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
@@ -181,7 +189,7 @@ class bx_editors_newsmailer_newsmailer {
 			
 			$dom = $this->transformHTML($dom);
 			
-			if($embedImages) {
+		if($draft["embed"] == 1) {
 				self::$htmlImages = array();
 				$dom = $this->transformHTMLImages($dom);
 	    	}
@@ -195,11 +203,19 @@ class bx_editors_newsmailer_newsmailer {
 
 		$mime =& new Mail_mime();
 
-		if($embedImages) {
+		if($draft["embed"] == 1) {
 			// Add images to MIME Body
 			foreach(self::$htmlImages as $image) {
 				$type = end(explode(".", $image["name"]));
 				$mime->addHTMLImage($image["content"], "image/".$type, $image["name"], false);
+			}
+		}
+		
+		if(!empty($draft['attachment'])) {
+			$path = ltrim($draft['attachment'], "/");
+			if(($attachment = @file_get_contents($path)) == true) {
+    			$shortname = end(preg_split("[\\/]", $path));
+				$mime->addAttachment($attachment, 'application/octet-stream', $shortname, false);	
 			}
 		}
 		
