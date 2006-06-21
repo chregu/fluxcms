@@ -25,7 +25,6 @@ class bx_plugins_gallery extends bx_plugin {
     
     public function getPermissionList() {
     	return array(	"gallery-back-edit_image",
-    					"gallery-back-edit_file",
     					"gallery-back-gallery");	
     }
     

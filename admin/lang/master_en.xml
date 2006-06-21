@@ -43,7 +43,6 @@
     <message key="act_xhtml-back-edit_kupu">Edit in Kupu</message>
     
     <message key="act_gallery-back-gallery">Show gallery</message>
-    <message key="act_gallery-back-edit_file">Edit in File</message>
     <message key="act_gallery-back-edit_image">Edit in Image</message>
     
     <message key="act_blog-back-post">Post blog entries</message>
@@ -76,5 +75,6 @@
     <message key="act_collection-back-create">Create resources</message>
     <message key="act_collection-back-copy">Copy resources</message>
     <message key="act_collection-back-delete">Delete resources</message>
+	<message key="act_collection-back-edit_file">Edit resources in File</message>
     
 </catalogue>

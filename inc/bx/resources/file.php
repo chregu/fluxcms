@@ -89,16 +89,19 @@ class bx_resources_file extends bx_resource {
     	
     	$perm = bx_permm::getInstance();
     	$localUri = substr($this->id, 0, strrpos($this->id, '/')+1);
+    	
     	// remove the /files/_galleries prefix
 		$localUri = substr($localUri, strrpos($localUri, '/gallery/'));
 
         $mt = $this->getMimeType();
         if (strpos($mt,"text") === 0) {
-            return array("oneform","file");
+        	if($perm->isAllowed($localUri,array('collection-back-edit_file'))) {
+            	return array("oneform","file");
+        	}
         }
         if (strpos($mt,"image") === 0) {
 	    	$e = array();
-	 		if($perm->isAllowed($localUri,array('gallery-back-edit_file'))) {
+	 		if($perm->isAllowed($localUri,array('collection-back-edit_file'))) {
 	        	$e[] = "file";
 	    	}
 	 		if($perm->isAllowed($localUri,array('gallery-back-edit_image'))) {
@@ -107,7 +110,9 @@ class bx_resources_file extends bx_resource {
 	    	return $e;
         }
         if ($mt != "httpd/unix-directory") {
-            return array("file");
+        	if($perm->isAllowed($localUri,array('collection-back-edit_file'))) {
+            	return array("file");
+        	}
         }
     }
 

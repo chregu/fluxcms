@@ -111,7 +111,6 @@
     <message key="act_xhtml-back-edit_kupu">Editieren mit Kupu</message>
     
     <message key="act_gallery-back-gallery">Gallery anzeigen</message>
-    <message key="act_gallery-back-edit_file">Editieren mit File</message>
     <message key="act_gallery-back-edit_image">Editieren mit Image</message>
     
     <message key="act_blog-back-post">Blog Einträge erfassen</message>
@@ -144,5 +143,6 @@
     <message key="act_collection-back-create">Ressourcen erstellen</message>
     <message key="act_collection-back-copy">Ressourcen kopieren</message>
     <message key="act_collection-back-delete">Ressourcen löschen</message>
+    <message key="act_collection-back-edit_file">Ressourcen mit File editieren</message>
     
 </catalogue>

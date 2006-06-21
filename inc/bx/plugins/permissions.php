@@ -53,10 +53,14 @@ class bx_plugins_permissions extends bx_plugin implements bxIplugin {
         $dom->setPath($path);
         $dom->setIcon("gallery");
         
+        $perm = bx_permm::getInstance();
+        if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-users'))) {
+	        $dom->addLink("Edit Users","../admin/dbforms2/users/");
+        }    
+        if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-perm_groups'))) {
+	        $dom->addLink("Edit Groups","../admin/dbforms2/perm_groups/");
+        }   
         
-        $dom->addLink("Edit Users","../admin/dbforms2/users/");
-        $dom->addLink("Edit Groups","../admin/dbforms2/perm_groups/");
-
         return $dom;
     }
 }
