@@ -20,15 +20,20 @@ class bx_editors_assets extends bx_editor implements bxIeditor {
 		return array('pipelineName'=>'assets');
     }   
     
+    
     public function getEditContentById($id) {
         $content = new DomDocument();
         if ($content instanceof DOMDocument) {
             $content->loadXML('<assets/>');    
-        }
+            
+            $content->documentElement->setAttribute('path', $id);
         
-        $assets = $this->getAssetsById($id);
-        if (is_array($assets)) {
-            bx_helpers_xml::array2Dom($assets, $content, $content->documentElement);
+        
+            $assets = $this->getAssetsById($id);
+            if (is_array($assets)) {
+                bx_helpers_xml::array2Dom($assets, $content, $content->documentElement);
+            }
+        
         }
         
         return $content; 

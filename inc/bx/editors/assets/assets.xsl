@@ -12,10 +12,24 @@
  doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"/>
 
 <xsl:param name="webroot"/>
-
+<xsl:variable name="assetpath" select="/bx/plugin/assets/@path"/>
 
 <xsl:template match="/">
-    assets
+    <html>
+    	<head>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<link rel="stylesheet" type="text/css" media="screen" href="{$webroot}/themes/admin/css/assets.css"/>
+    	</head>
+    	<body>
+    		<h2>Edit Assets for <xsl:value-of select="$assetpath"/></h2>
+    		
+    		<div id="form">
+    			<form name="assetsform" id="assetsform">
+    				
+    			</form>
+    		</div>
+    	</body>
+    </html>
 </xsl:template>
 
 </xsl:stylesheet>
