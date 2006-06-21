@@ -21,7 +21,19 @@
     	<link rel="stylesheet" type="text/css" href="http://berggebiete/themes/standard/admin/css/formedit.css" />
     	<link rel="stylesheet" type="text/css" href="http://berggebiete/themes/standard/admin/css/admin.css" />
     	<link rel="stylesheet" type="text/css" media="screen" href="{$webroot}/themes/admin/css/assets.css"/>
-    	
+    	<script type="text/javascript" src="{$webroot}webinc/fck/fckeditor.js"/>
+    	<script type="text/javascript" src="{$webroot}webinc/fck/editor/js/fckeditorcode_gecko.js"/>
+    	<script type="text/javascript" src="{$webroot}webinc/editors/fck/fck.js"> </script>
+    	<script type="text/javascript" src="{$webroot}webinc/js/sarissa.js"> </script>
+    	<script type="text/javascript" src="{$webroot}webinc/js/bx/helpers.js"/> 
+    	<script type="text/javascript" language="javascript">
+    	var webroot = '<xsl:value-of select="$webroot"/>';
+    	 
+    	B=new FCKDialogCommand('Link','Create Asset', 'dialog/fck_link.html',400,330,FCK.GetNamedCommandState,'CreateLink');
+    	FCKConfig.BasePath = '/webinc/fck/editor/';
+    	B.Execute();
+    	 
+    	</script>
     	</head>
     	<body>
     		<div id="admincontent">
@@ -55,6 +67,8 @@
 		Download
 		</option>
 	</select>
+	&#160;
+	
 	</p>
 </xsl:template>
 
