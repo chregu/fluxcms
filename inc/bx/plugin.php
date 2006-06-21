@@ -188,6 +188,10 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         
     }
     
+    /**
+     * Returns a list of permissions for this plugin.
+     * @return If an empty array is returned no permissions can be defined for this plugin.
+     */
     public function getPermissionList() {
     	return array();	
     }

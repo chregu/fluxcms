@@ -1,16 +1,30 @@
 <?php
 
+/**
+ * The permissions matrix class autorizes actions based on the perms table
+ */
 class bx_permm_perm_matrix {
 
     function __construct() {
 
     }
     
+    /**
+     * If true a permissions link is created in each collection's overview
+     */
     public function isEditable()
     {
     	return true;	
     }
 
+	/**
+	 * Check if the requested actions may be performed by the user
+	 * 
+	 * @param uri requested uri (most be a collection)
+	 * @param actions array of actions
+	 * @param userId reference to tabel users
+	 * @return true if all actions may be performed
+	 */
     public static function isAllowed($uri, $actions, $userId) {
 
     	//bx_helpers_debug::webdump($uri . ' ' . implode(',',$actions) . ' ' . $userId);  
@@ -56,6 +70,7 @@ class bx_permm_perm_matrix {
 					$localUri = "/blog/";
 				}
 			}
+			// admin and edit permissions are global
     		else if($action == "admin" or $action == "edit") {
     			$localUri = '/permissions/';
     			$action = "permissions-back-".$action;
@@ -107,7 +122,8 @@ class bx_permm_perm_matrix {
 	    		
 	    		
 	    		if($perms === null) {
-	    			// last chance, check permissions for the predefined roles
+	    			// no permission found, try again with the predefined roles
+	    			// TODO: merge the two of them into one query
 				   	$query = "	SELECT p.id 
 					FROM {$prefix}perms p 
 					JOIN {$prefix}groups g ON g.id=p.fk_group 
@@ -120,6 +136,7 @@ class bx_permm_perm_matrix {
 	    			
 	    			if($perms === null) {
 			    		// deny by default
+			    		
 			    		//file_put_contents("debug.txt", $localUri . ' ' . implode(',',$actions) . ' ' . $userId);
 			    		//bx_helpers_debug::webdump($uri . ' ' . implode(',',$actions) . ' ' . $userId);  
 			    		return false;
@@ -129,10 +146,10 @@ class bx_permm_perm_matrix {
         	}
         	
         	if($cache !== false) {
+        		// read/navi permission granted, cache it
     			$_SESSION["perms"][$cache] = true;
     			$cache = false;
     		}
-        	
     	}
     	
     	return true;

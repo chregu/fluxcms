@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * This class allows to edit the matrix permissions
+ */
 class bx_editors_permissions extends bx_editor implements bxIeditor {    
     
     public function getDisplayName() {
@@ -11,6 +14,9 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 		return array('pipelineName'=>'permissions');
     }
     
+    /**
+     * Save permissions
+     */
     public function handlePOST($path, $id, $data) {
 
  		$parts = bx_collections::getCollectionUriAndFileParts($id);
@@ -27,6 +33,8 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      	
      	$plugins = $this->getPlugingList($url);
  	
+ 		// remove the permissions set first 
+ 		// because the post request doesn't tell us if the user ungranted a permission
      	foreach($plugins as $p) {
      		if(count($p->getPermissionList()) > 0) {
      			
@@ -40,12 +48,14 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      		}
      	}
 		        	
+		// iterate through the selected permissions
 		foreach(array_keys($data) as $selection) {
 			
 			$localUrl = $url;
 			
 			list($plugin, $action, $grpid) = explode('+', $selection);	
 			
+			// dbforms2 permissions are global and not url bound
 			if($plugin == 'admin_dbforms2') {
 				$localUrl = '/dbforms2/';
 			} 
@@ -74,6 +84,9 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 		}
     }
     
+    /**
+     * User requested the matrix permission system gui
+     */
     public function getEditContentById($id) {
 
 		$perm = bx_permm::getInstance();	
@@ -85,6 +98,9 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      	return $this->generateMatrixView($id);
     }
  
+	/**
+	 * Creates the permissions editor view
+	 */
     protected function generateMatrixView($id)
     {
 		$i18n = $GLOBALS['POOL']->i18nadmin;
@@ -99,6 +115,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 					FROM {$prefix}groups g";
     	$groups = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
 
+		// create a matrix with the collection's plugin permissions and the available groups
      	$xml = "
      	<permissions>
 		<h3>Permissions for {$url}</h3>
@@ -129,8 +146,6 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 
 				$dbPerms = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
      			
-     			//bx_helpers_debug::webdump($dbPerms); 
-     			
      			$checked = "";
      			if($this->isInherited($dbPerms, $p->name) !== false) {
      				$checked = "checked='checked'";
@@ -143,6 +158,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 
 					$localPlugin = $p->name;
 
+					// dbforms2 is a special case because the forms are global and not url bound
      				list($actPlugin, $actLevel, $actName) = explode('-', $action);
 					if($actPlugin == 'admin_dbforms2') {
 						$localPlugin = 'admin_dbforms2';
@@ -171,6 +187,12 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      	return domdocument::loadXML($xml);	
     }
     
+    /**
+     * Get the list of plugins associated with this url
+     * 
+     * @param url requested url
+     * @return array of plugin instances
+     */
     protected function getPlugingList($url) {
     	$collection = bx_collections::getCollection($url);
      	$plugins = $collection->getChildrenPlugins();
@@ -183,6 +205,9 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      	return $plugins;
     }
   
+  	/**
+  	 * Check if the permission is currently granted
+  	 */
     protected function isChecked($dbPerms, $plugin, $group, $action)
     {
     	foreach($dbPerms as $perm) {
@@ -194,6 +219,9 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
     	return false;
     }
     
+  	/**
+  	 * Check if the plugin permissions are currenty inherited from its parent
+  	 */
     protected function isInherited($dbPerms, $plugin)
     {
     	foreach($dbPerms as $perm) {

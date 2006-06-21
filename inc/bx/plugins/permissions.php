@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * matrix permission system plugin
+ */
 class bx_plugins_permissions extends bx_plugin implements bxIplugin {
 
 	static public $instance = array ();
@@ -15,6 +18,9 @@ class bx_plugins_permissions extends bx_plugin implements bxIplugin {
 		$this -> mode = $mode ;
 	}
 	
+	/**
+	 * list of available permissions
+	 */
     public function getPermissionList() {
     	return array(	"permissions-back-manage", 
     					"admin_dbforms2-back-users",
@@ -53,6 +59,8 @@ class bx_plugins_permissions extends bx_plugin implements bxIplugin {
         $dom->setPath($path);
         $dom->setIcon("gallery");
         
+        // fluxcms is currently using another dbforms for the user management, but this one
+        // supports group assignment
         $perm = bx_permm::getInstance();
         if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-users'))) {
 	        $dom->addLink("Edit Users","../admin/dbforms2/users/");
