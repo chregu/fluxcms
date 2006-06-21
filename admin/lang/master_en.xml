@@ -43,7 +43,10 @@
     <message key="act_xhtml-back-edit_oneform">Edit in Oneform</message>
     <message key="act_xhtml-back-edit_kupu">Edit in Kupu</message>
     
+    <message key="act_file-back-upload">Upload files</message>
+    
     <message key="act_gallery-back-upload">Upload images</message>
+    <message key="act_gallery-back-gallery">Show gallery</message>
     <message key="act_gallery-back-edit_file">Edit in File</message>
     <message key="act_gallery-back-edit_image">Edit in Image</message>
     
@@ -67,8 +70,15 @@
     <message key="act_permissions-back-manage">Edit permissions</message>
     <message key="act_permissions-back-admin">Access admin section</message>
     <message key="act_permissions-back-edit">Edit admin section</message>
-    
+    <message key="act_permissions-back-themes">Download themes</message>
+    <message key="act_permissions-back-siteoptions">Site options</message>
+        
     <message key="act_collection-front-read">Read collection</message>
     <message key="act_collection-front-read_navi">Collection in navigation</message>
+    <message key="act_collection-back-properties">Edit properties</message>
+    <message key="act_collection-back-configxml">Edit .configxml</message>
+    <message key="act_collection-back-create">Create resources</message>
+    <message key="act_collection-back-copy">Copy resources</message>
+    <message key="act_collection-back-delete">Delete resources</message>
     
 </catalogue>

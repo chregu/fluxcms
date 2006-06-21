@@ -111,7 +111,10 @@
     <message key="act_xhtml-back-edit_oneform">Editieren mit Oneform</message>
     <message key="act_xhtml-back-edit_kupu">Editieren mit Kupu</message>
     
+    <message key="act_file-back-upload">Dateien hochladen</message>
+    
     <message key="act_gallery-back-upload">Bilder hochladen</message>
+    <message key="act_gallery-back-gallery">Gallery anzeigen</message>
     <message key="act_gallery-back-edit_file">Editieren mit File</message>
     <message key="act_gallery-back-edit_image">Editieren mit Image</message>
     
@@ -135,8 +138,15 @@
     <message key="act_permissions-back-manage">Berechtigungen editieren</message>
     <message key="act_permissions-back-admin">Zugriff auf Admin Bereich</message>
     <message key="act_permissions-back-edit">Admin Bereich editieren</message>
-    
+    <message key="act_permissions-back-themes">Themes herunterladen</message>
+    <message key="act_permissions-back-siteoptions">Seitenoptionen</message>
+        
     <message key="act_collection-front-read">Collection anzeigen</message>
     <message key="act_collection-front-read_navi">Collection in Navigation</message>
+    <message key="act_collection-back-properties">Properties editieren</message>
+    <message key="act_collection-back-configxml">.configxml editieren</message>
+    <message key="act_collection-back-create">Ressourcen erstellen</message>
+    <message key="act_collection-back-copy">Ressourcen kopieren</message>
+    <message key="act_collection-back-delete">Ressourcen löschen</message>
     
 </catalogue>
