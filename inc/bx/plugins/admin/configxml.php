@@ -47,6 +47,12 @@ class bx_plugins_admin_configxml extends bx_plugin implements bxIplugin {
     }
     
     public function handlePOST($path, $id, $data, $mode = null) {
+    	
+       	$perm = bx_permm::getInstance();
+		if (!$perm->isAllowed($path, array('collection-back-configxml'))) { 
+			throw new BxPageNotAllowedException();
+		}
+    	
         if ($mode == "FullXML") {
             if (trim($data['fullxml']) == "") { 
                 $res = $this->getResourceById($path,$id);

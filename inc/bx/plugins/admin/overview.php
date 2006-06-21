@@ -46,13 +46,18 @@ class bx_plugins_admin_overview extends bx_plugin {
                 
                 $this->getSubSections($dom,$coll);
 
+				$perm = bx_permm::getInstance();
                 if($permObj->isAllowed('/',array('admin'))) {
                     $opt = new bx_domdocs_overview();
                     $opt->setTitle("General Options");
                     $opt->setIcon("options");
-                    $opt->addLink("Edit Site-Options","siteoptions/");
+                    if ($perm->isAllowed('/permissions/',array('permissions-back-siteoptions'))) {
+                    	$opt->addLink("Edit Site-Options","siteoptions/");
+                    }
                     $opt->addLink("Edit Users","../forms/users/");
-                    $opt->addLink("Download more themes","/themes/");
+                    if ($perm->isAllowed('/permissions/',array('permissions-back-themes'))) {
+                    	$opt->addLink("Download more themes","/themes/");
+                    }
                     
                     $root->appendChild($dom->importNode($opt->documentElement,true));
                 }

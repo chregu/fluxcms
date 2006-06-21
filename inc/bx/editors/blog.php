@@ -34,6 +34,13 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function handlePOST($path, $id, $data) {
+    	
+    	$sub = substr($id, strrpos($id, '/', -3)+1, -2);
+    	$perm = bx_permm::getInstance();
+	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
+        	throw new BxPageNotAllowedException();
+    	}	
+    	
         $parts =  bx_collections::getCollectionAndFileParts($id, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
@@ -164,7 +171,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function getEditContentById($id) {
-    	
+
     	$sub = substr($id, strrpos($id, '/', -2)+1, -1);
     	
     	$perm = bx_permm::getInstance();

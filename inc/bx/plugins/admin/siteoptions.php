@@ -27,6 +27,11 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
     }
     
     public function getContentById($path, $id) {
+		$perm = bx_permm::getInstance();
+		if (!$perm->isAllowed('/permissions/',array('permissions-back-siteoptions'))) {
+    		throw new BxPageNotAllowedException();
+    	}
+    	
         $coll =  bx_collections::getCollection($id,"output");
         $resourceType = "siteoptions";
         $xml = $this->getAddResourceParams($resourceType,$coll->uri);
@@ -225,6 +230,11 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
     
     /* FIXME:: this should be cleaned up. arguments are $path,$id,$data,$mode */
     public function handlePost($path, $name, $ext, $data=null) {
+        
+		$perm = bx_permm::getInstance();
+		if (!$perm->isAllowed('/permissions/',array('permissions-back-siteoptions'))) {
+    		throw new BxPageNotAllowedException();
+    	}
         
         if ($data == NULL) {
             $data = $_REQUEST['bx']['plugins']['admin_siteoptions'];

@@ -11,7 +11,12 @@ class bx_plugins_collection extends bx_plugin {
 	
     public function getPermissionList() {
     	return array(	"collection-front-read",
-    					"collection-front-read_navi");	
+    					"collection-front-read_navi",
+    					"collection-back-properties",
+    					"collection-back-configxml",
+    					"collection-back-create",
+    					"collection-back-delete",
+    					"collection-back-copy");	
     }
     
     public static function getInstance($mode) {

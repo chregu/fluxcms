@@ -269,30 +269,40 @@ abstract class bx_resource implements bxIresource {
         $permObj = bx_permm::getInstance(bx_config::getInstance()->getConfProperty('permm'));
 
         if($permObj->isAllowed('/',array('admin'))) {
-
-        //$dom->setIcon("resource");
-         $dom->setType("resource");
-         $dom->setPath($this->id);
-         
-         $dom->addSeperator();
-         $dom->addLink("Properties", "properties".$this->id);
-         
-             if ($coll && $this->getMimetype() == 'httpd/unix-directory') {
-                 $dom->addSeperator();
-                 $dom->addLink("Create new Collection", 'collection'.$this->id);
-                 $resourceTypes = $coll->getPluginResourceTypes();
-                 if(!empty($resourceTypes)) {
-                     foreach($resourceTypes as $resourceType) {
-                         $dom->addLink("Create new " . $resourceType,'addresource'. $this->id.'?type='.$resourceType);
-                     }
-                 }
-             }
-             
-           
-             $dom->addTab("Operations");
-             $dom->addLink("Copy",'javascript:parent.navi.admin.copyResource("'.$this->id.'");');
-             $dom->addLink("Move/Rename",'javascript:parent.navi.admin.copyResource("'.$this->id.'",true);');
-             $dom->addLink("Delete",'javascript:parent.navi.admin.deleteResource("'.$this->id.'");');
+        	
+	        $perm = bx_permm::getInstance();
+	       	$permId = substr($this->id, 0, strrpos($this->id, '/', -1)+1);
+	
+	        //$dom->setIcon("resource");
+	         $dom->setType("resource");
+	         $dom->setPath($this->id);
+	         
+	         $dom->addSeperator();
+	         if ($perm->isAllowed($permId, array('collection-back-properties'))) {
+	         	$dom->addLink("Properties", "properties".$this->id);
+	         }
+	             if ($coll && $this->getMimetype() == 'httpd/unix-directory') {
+	                 $dom->addSeperator();
+	                 $dom->addLink("Create new Collection", 'collection'.$this->id);
+	                 $resourceTypes = $coll->getPluginResourceTypes();
+	                 if(!empty($resourceTypes)) {
+	                     foreach($resourceTypes as $resourceType) {
+	                         $dom->addLink("Create new " . $resourceType,'addresource'. $this->id.'?type='.$resourceType);
+	                     }
+	                 }
+	             }
+	             
+	           
+	             $dom->addTab("Operations");
+	             if ($perm->isAllowed($permId,array('collection-back-copy'))) {
+	             	$dom->addLink("Copy",'javascript:parent.navi.admin.copyResource("'.$this->id.'");');
+	             }
+	             if ($perm->isAllowed($permId,array('collection-back-copy', 'collection-back-delete'))) {
+	             	$dom->addLink("Move/Rename",'javascript:parent.navi.admin.copyResource("'.$this->id.'",true);');
+	             }
+	             if ($perm->isAllowed($permId,array('collection-back-delete'))) {
+	             	$dom->addLink("Delete",'javascript:parent.navi.admin.deleteResource("'.$this->id.'");');
+	             }
          }
     }
 }

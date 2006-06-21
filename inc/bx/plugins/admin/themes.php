@@ -25,6 +25,12 @@ class bx_plugins_admin_themes extends bx_plugins_admin implements bxIplugin  {
     }
     
     public function getContentById($path, $id) {
+    	
+		$perm = bx_permm::getInstance();
+		if (!$perm->isAllowed('/permissions/',array('permissions-back-themes'))) {
+    		throw new BxPageNotAllowedException();
+    	}
+    	
         $url = bx_helpers_config::getOption('themesDownloadUrl',true);
         
         $sc = popoon_helpers_simplecache::getInstance();

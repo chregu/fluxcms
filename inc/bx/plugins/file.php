@@ -29,9 +29,13 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
         return self::$instance[$mode];
     }
 
-    protected function __construct($mode) {
+    public function __construct($mode) {
         $this->mode = $mode;
 
+    }
+
+    public function getPermissionList() {
+    	return array(	"file-back-upload" );	
     }
 
     public function getIdByRequest($path, $name = NULL, $ext =NULL) {

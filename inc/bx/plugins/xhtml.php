@@ -1,7 +1,6 @@
 <?php
 
 class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
-    
     protected $res = array();
     
     static public $instance = array();
@@ -126,13 +125,13 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     */
     
     public function getResourceById($path, $id, $mock = false) {
-    	
+    	/*
     	$perm = bx_permm::getInstance();
     	if($id == "thisfiledoesnotexist.xhtml") {
 			if (!$perm->isAllowed($path, array('xhtml-back-create'))) {
 	        	throw new BxPageNotAllowedException();
 	    	}
-    	}
+    	}*/
     	
         $id = $path.$id;
         if (!isset($this->res[$id])) {

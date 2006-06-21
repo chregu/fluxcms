@@ -26,8 +26,10 @@ class popoon_components_readers_adminpopup extends popoon_components_reader {
     
     
     public function start() {
+
         $i18n = $GLOBALS['POOL']->i18nadmin;
         $permObj = bx_permm::getInstance(bx_config::getInstance()->getConfProperty('permm'));
+        $perm = bx_permm::getInstance();
         
         
         if (!empty($this->requestUri)) {
@@ -38,8 +40,11 @@ class popoon_components_readers_adminpopup extends popoon_components_reader {
             }
         }
         
+        $permId = substr($path, 0, strrpos($path, '/', -1)+1);
+        
         $req = bx_collections::getCollectionAndFileParts($path);
         $col = $req['coll'];
+ 
         
         if ($col instanceof bx_collection) {
             
@@ -77,13 +82,15 @@ class popoon_components_readers_adminpopup extends popoon_components_reader {
             }
             
             if($permObj->isAllowed('/',array('admin'))) {
-                $elem = $dom->createElement('editor');
-                $elem->setAttribute('name', "Properties");
-                $elem->setAttribute('href', BX_WEBROOT.'admin/properties'.$path);
-                $elem->setAttribute('target', 'edit');
-                $editorsNode->appendChild($elem);
+            	if ($perm->isAllowed($permId,array('collection-back-properties'))) {
+	                $elem = $dom->createElement('editor');
+	                $elem->setAttribute('name', "Properties");
+	                $elem->setAttribute('href', BX_WEBROOT.'admin/properties'.$path);
+	                $elem->setAttribute('target', 'edit');
+	                $editorsNode->appendChild($elem);
+            	}     	
             }
-            
+   
             $dom->documentElement->appendChild($editorsNode);
             
             if ($type == "collection" && $permObj->isAllowed('/',array('admin'))) {
@@ -91,15 +98,27 @@ class popoon_components_readers_adminpopup extends popoon_components_reader {
                 $resourceTypes = $coll->getPluginResourceTypes();
                 $resourceTypesNode = $dom->createElement('resourceTypes');
                 
-                $nc = $dom->createElement('resourceType');
-                $nc->setAttribute('name', 'Collection');
-                $nc->setAttribute('target', 'edit');
-                $nc->setAttribute('src', "javascript:admin.addNewCollection('$path');");
-                $resourceTypesNode->appendChild($nc);
+                if ($perm->isAllowed($permId, array('collection-back-create'))) {
+	                $nc = $dom->createElement('resourceType');
+	                $nc->setAttribute('name', 'Collection');
+	                $nc->setAttribute('target', 'edit');
+	                $nc->setAttribute('src', "javascript:admin.addNewCollection('$path');");
+	                $resourceTypesNode->appendChild($nc);
+                }
                 
                 if(!empty($resourceTypes)) {
                     
                     foreach($resourceTypes as $resourceType) {
+                        
+	                	if($resourceType == "xhtml") {
+	                		if (!$perm->isAllowed($permId, array('xhtml-back-create'))) {
+		        				continue;
+		    				}
+	                	} else if($resourceType == "file" or $resourceType == "archive" or $resourceType == "gallery") {
+	                		if (!$perm->isAllowed($permId, array('gallery-back-upload'))) {
+		        				continue;
+		    				}
+	                	}                        
                         
                         $e = $dom->createElement('resourceType');
                         $e->setAttribute('name', $resourceType);
@@ -120,26 +139,30 @@ class popoon_components_readers_adminpopup extends popoon_components_reader {
                 
                 if ($path != "/") {
                     
-                     $actionCopy = $dom->createElement('action');
-                    $actionCopy->setAttribute('name', $i18n->translate('Copy'));
-                    $actionCopy->setAttribute('src', 'javascript:admin.copyResource("'.$path.'");');
-                    $actionsNode->appendChild($actionCopy);
+                	if ($perm->isAllowed($permId,array('collection-back-copy'))) {
+	                     $actionCopy = $dom->createElement('action');
+	                    $actionCopy->setAttribute('name', $i18n->translate('Copy'));
+	                    $actionCopy->setAttribute('src', 'javascript:admin.copyResource("'.$path.'");');
+	                    $actionsNode->appendChild($actionCopy);
+                	}
                     
-                    $actionCopy = $dom->createElement('action');
-                    $actionCopy->setAttribute('name', $i18n->translate('Move'));
-                    $actionCopy->setAttribute('src', 'javascript:admin.copyResource("'.$path.'",true);');
-                    $actionCopy->setAttribute('lineAfter', 'true');
-                    $actionsNode->appendChild($actionCopy);
-                   
-                    
-                    // delete
-                    
-                    
-                    $actionDelete = $dom->createElement('action');
-                    $actionDelete->setAttribute('name', $i18n->translate('Delete'));
-                    
-                    $actionDelete->setAttribute('src', 'javascript:admin.deleteResource("'.$path.'");');
-                    $actionsNode->appendChild($actionDelete);
+                    if ($perm->isAllowed($permId,array('collection-back-delete', 'collection-back-copy'))) {
+	                    $actionCopy = $dom->createElement('action');
+	                    $actionCopy->setAttribute('name', $i18n->translate('Move'));
+	                    $actionCopy->setAttribute('src', 'javascript:admin.copyResource("'.$path.'",true);');
+	                    $actionCopy->setAttribute('lineAfter', 'true');
+	                    $actionsNode->appendChild($actionCopy);
+                    }
+	                if ($perm->isAllowed($permId,array('collection-back-delete'))) {    
+	                    // delete
+	                    
+	                    
+	                    $actionDelete = $dom->createElement('action');
+	                    $actionDelete->setAttribute('name', $i18n->translate('Delete'));
+	                    
+	                    $actionDelete->setAttribute('src', 'javascript:admin.deleteResource("'.$path.'");');
+	                    $actionsNode->appendChild($actionDelete);
+                    }
                 }
                 $dom->documentElement->appendChild($actionsNode);
             }

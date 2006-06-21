@@ -472,6 +472,7 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
     }
     
     public function copy($to, $move = false) {
+    	
         $to = str_replace("//","/",$to);
         if (substr($to , -1) != "/") {
             $to .= "/";
@@ -513,6 +514,7 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
     
     
     public function delete() {
+    	
         if($this->uri == '/')
             return FALSE;
             
@@ -767,23 +769,37 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
         $dom->setType("collection");
         $dom->setIcon("collection");
         $dom->setPath($this->uri);
-            $dom->addLink("Properties", "properties/".$this->uri);
+        	if ($perm->isAllowed($this->uri,array('collection-back-properties'))) {
+            	$dom->addLink("Properties", "properties/".$this->uri);
+        	}
             if ($perm->isEditable()) {
 	            if ($perm->isAllowed('/permissions/',array('permissions-back-manage'))) {
 	            	$dom->addLink("Edit Permissions", "edit/permissions/".$this->uri);
 	            }
             }
-            $dom->addSeperator();    
-            $dom->addLink("Create new Collection", 'collection'.$this->uri);
+            $dom->addSeperator();
+            if ($perm->isAllowed($this->uri, array('collection-back-create'))) {
+            	$dom->addLink("Create new Collection", 'collection'.$this->uri);
+            }
             $resourceTypes = $this->getPluginResourceTypes();
             if(!empty($resourceTypes)) {
                 foreach($resourceTypes as $resourceType) {
+ 
                 	if($resourceType == "xhtml") {
-                		
                 		if (!$perm->isAllowed($this->uri, array('xhtml-back-create'))) {
 	        				continue;
 	    				}
-                	}
+                	} else if($resourceType == "gallery") {
+                		 
+                		if (!$perm->isAllowed($this->uri, array('gallery-back-gallery'))) {
+	        				continue;
+	    				}
+                	} else if($resourceType == "file" or $resourceType == "archive") {
+                		 
+                		if (!$perm->isAllowed($this->uri, array('file-back-upload')) and !$perm->isAllowed($this->uri, array('gallery-back-upload'))) {
+	        				continue;
+	    				}
+                	}               
                 	
                     $dom->addLink($i18n->translate2("Create new {resourcetype}", array('resourcetype'=>$resourceType)), 'addresource'. $this->uri.'?type='.$resourceType);
                 }
@@ -797,9 +813,15 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
         
         if ($this->uri != "/") {
             $dom->addTab("Operations");
-            $dom->addLink("Copy",'javascript:parent.navi.admin.copyResource("'.$this->uri.'");');
-            $dom->addLink("Move/Rename",'javascript:parent.navi.admin.copyResource("'.$this->uri.'",true);');
-            $dom->addLink("Delete",'javascript:parent.navi.admin.deleteResource("'.$this->uri.'",true);');
+            if ($perm->isAllowed($this->uri,array('collection-back-copy'))) {
+	            $dom->addLink("Copy",'javascript:parent.navi.admin.copyResource("'.$this->uri.'");');
+            }
+            if ($perm->isAllowed($this->uri,array('collection-back-copy', 'collection-back-delete'))) {
+            	$dom->addLink("Move/Rename",'javascript:parent.navi.admin.copyResource("'.$this->uri.'",true);');
+            }
+            if ($perm->isAllowed($this->uri,array('collection-back-delete'))) {
+	            $dom->addLink("Delete",'javascript:parent.navi.admin.deleteResource("'.$this->uri.'",true);');
+            }
         }
 
         return $dom;
@@ -807,11 +829,14 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
     
     protected function overviewAddEditConfigXML($dom, $file) {
        
-        if (file_exists(BX_DATA_DIR.$this->uri.$file)) {
-            $dom->addLink("Edit $file", 'edit'.$this->uri.$file.'?editor=oneform');
-        } else {
-            $dom->addLink( "Add $file", 'edit'.$this->uri.$file.'?editor=oneform');
-        }
+       $perm = bx_permm::getInstance();
+		if ($perm->isAllowed($this->uri,array('collection-back-configxml'))) {       
+	        if (file_exists(BX_DATA_DIR.$this->uri.$file)) {
+	            $dom->addLink("Edit $file", 'edit'.$this->uri.$file.'?editor=oneform');
+	        } else {
+	            $dom->addLink( "Add $file", 'edit'.$this->uri.$file.'?editor=oneform');
+	        }
+		}
     }
 
     public function getJavaScriptSources() {

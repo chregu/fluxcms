@@ -23,6 +23,7 @@ class bx_plugins_admin_collection extends bx_plugin {
     }
 
     protected function getAddResourceParams($path) {
+    	
         $dom = new domDocument();
     
         $fields = $dom->createElement('fields');
@@ -58,6 +59,13 @@ class bx_plugins_admin_collection extends bx_plugin {
     }
 
     public function handlePost($path, $id, $data) {
+    	
+    	$perm = bx_permm::getInstance();
+    	$permId = (strlen($id) > 1 ? '/'.$id : $id);
+		if (!$perm->isAllowed($permId ,array('collection-back-create'))) {
+        	throw new BxPageNotAllowedException();
+    	}
+    	
         if(!empty($data['name']) && !empty($data['resource'])) {
             $id = '/'.$id;
             $name = bx_helpers_string::makeUri($data['name']);

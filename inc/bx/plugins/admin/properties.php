@@ -79,6 +79,11 @@ class bx_plugins_admin_properties extends bx_component implements bxIplugin {
     
     public function getContentById($path, $id) {
 
+		$perm = bx_permm::getInstance();
+		if (!$perm->isAllowed(substr($id, 0, strrpos($id, '/', -1)+1),array('collection-back-properties'))) {
+    		throw new BxPageNotAllowedException();
+    	}
+
         $fullPath = $id;
         $dom = new domDocument();
         $dom->appendChild($dom->createElement('properties'));
@@ -176,6 +181,12 @@ class bx_plugins_admin_properties extends bx_component implements bxIplugin {
     }
     
     public function handlePOST($path, $id, $data) {
+    	
+    	$perm = bx_permm::getInstance();
+    	if (!$perm->isAllowed('/'.substr($id, 0, strrpos($id, '/', -1)+1),array('collection-back-properties'))) {
+    		throw new BxPageNotAllowedException();
+    	}
+    	
         // rewrite name and extension from extracted fullpath
         $fullPath = str_replace("//","/","/".$id);
         

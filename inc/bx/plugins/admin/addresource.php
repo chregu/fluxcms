@@ -29,8 +29,14 @@ class bx_plugins_admin_addresource extends bx_plugins_admin implements bxIplugin
     }
     
     public function getContentById($path, $id) {
+    	   
         $coll =  bx_collections::getCollection($id,"output");
         $resourceType = $this->getResourceType();
+        
+        $perm = bx_permm::getInstance();
+		if (!$perm->isAllowed($id ,array('collection-back-create'))) {
+        	throw new BxPageNotAllowedException();
+    	}
         
         if (($plugin = $coll->getPluginByResourceType($resourceType)) !== NULL ) {
              
@@ -49,6 +55,13 @@ class bx_plugins_admin_addresource extends bx_plugins_admin implements bxIplugin
     
     /* FIXME:: this should be cleaned up. arguments are $path,$id,$data,$mode */
     public function handlePost($path, $name, $ext, $data=null) {
+    	
+    	$perm = bx_permm::getInstance();
+    	$permId = (strlen($name) > 1 ? '/'.$name : $name);
+		if (!$perm->isAllowed($permId ,array('collection-back-create'))) {
+        	throw new BxPageNotAllowedException();
+    	}
+    	
         if ($data == NULL) {
             $data = $_REQUEST['bx']['plugins']['admin_addresource'];
         }

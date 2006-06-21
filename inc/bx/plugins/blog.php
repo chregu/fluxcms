@@ -103,7 +103,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     public function getContentById($path, $id) {
                       
         $perm = bx_permm::getInstance();
-        if($id == "newpost") {
+        if($id == "newpost" or $id == "_all/index") {
 	        if (!$perm->isAllowed($path,array('blog-back-post'))) {
 	            throw new BxPageNotAllowedException();
 	        }
