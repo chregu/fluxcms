@@ -23,7 +23,7 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     }
     
     public function getPermissionList() {
-    	return array(	"xhtml-back-create",
+    	return array(
     					"xhtml-back-edit_bxe",
     					"xhtml-back-edit_fck",
     					"xhtml-back-edit_kupu",
@@ -125,14 +125,7 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     */
     
     public function getResourceById($path, $id, $mock = false) {
-    	/*
-    	$perm = bx_permm::getInstance();
-    	if($id == "thisfiledoesnotexist.xhtml") {
-			if (!$perm->isAllowed($path, array('xhtml-back-create'))) {
-	        	throw new BxPageNotAllowedException();
-	    	}
-    	}*/
-    	
+
         $id = $path.$id;
         if (!isset($this->res[$id])) {
             $mimetype = bx_resourcemanager::getMimeType($id);
