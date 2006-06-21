@@ -54,7 +54,10 @@ class bx_plugins_admin_overview extends bx_plugin {
                     if ($perm->isAllowed('/permissions/',array('permissions-back-siteoptions'))) {
                     	$opt->addLink("Edit Site-Options","siteoptions/");
                     }
-                    $opt->addLink("Edit Users","../forms/users/");
+			        if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-users'))) {
+				        $opt->addLink("Edit Users","../forms/users/");
+			        }                     
+                    
                     if ($perm->isAllowed('/permissions/',array('permissions-back-themes'))) {
                     	$opt->addLink("Download more themes","/themes/");
                     }
