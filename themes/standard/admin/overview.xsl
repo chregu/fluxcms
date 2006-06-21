@@ -26,7 +26,7 @@
                 <xsl:variable name="opentabs" select="php:function('bx_helpers_config::getOpenTabs')"/>
 
                 <div id="container">
-                    <xsl:for-each select="/bx/plugin/overview/section">
+                    <xsl:for-each select="/bx/plugin/overview/section[count(tab/links/link) &gt; 0]">
                         <xsl:variable name="openTabType" select="$opentabs/opentabs/tab[@type = current()/@type]"/>
                         <xsl:variable name="openTab" select="tab[@title = $openTabType/text()]"/>
                         <fieldset>
@@ -42,7 +42,7 @@
                                 <ul>
                                     <xsl:choose>
                                         <xsl:when test="count(tab) > 1">
-                                            <xsl:for-each select="tab">
+                                            <xsl:for-each select="tab[count(links/link) &gt; 0]">
                                                 <li id="li_{generate-id()}">
                                                     <a href="#" onclick="switchTab('{generate-id()}')">
                                                         <xsl:choose>
