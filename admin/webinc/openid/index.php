@@ -12,6 +12,7 @@ if (!$permObj->isAllowed('/',array('admin')) &&  !(isset($_POST['openid_mode']) 
     if (isset($_GET["openid_mode"]) && $_GET["openid_mode"]== 'checkid_immediate') {
         $server = bx_helpers_openid::getServer();
         $answer = $server->getOpenIDResponse(false,"GET");
+        
         if ($answer[0] == "redirect") {
             header("Location: " .$answer[1]);
         } else {
@@ -21,6 +22,7 @@ if (!$permObj->isAllowed('/',array('admin')) &&  !(isset($_POST['openid_mode']) 
     } else {
         header("Location: " . BX_WEBROOT."admin/?back=".urlencode($_SERVER['REQUEST_URI']));
     }
+    
     die();
 } 
 $mode = "default";
@@ -64,20 +66,25 @@ switch ($mode) {
             die();
             break;
         case 'remote_error':
-            header( 'HTTP/1.1 400 Bad Request');
-            header('Connection: close');
-            header('Content-Type: text/plain; charset=us-ascii');
-            print $answer[1];
-            die();
+            if (isset($_POST['username'])) {
+                print '<meta http-equiv="refresh" content="1; URL=http://'.$_SERVER['HTTP_HOST'].'/admin/webinc/openid">';
+            } else {
+                header( 'HTTP/1.1 400 Bad Request');
+                header('Connection: close');
+                header('Content-Type: text/plain; charset=us-ascii');
+                print $answer[1];
+                die();
+            }
             break;
         case 'do_about':
-            mysql_connect('localhost', 'root') or die("no host");
+    
+        mysql_connect('localhost', 'root') or die("no host");
             mysql_select_db('fluxcms') or die("no db");
             
             if(isset($_GET['id'])) {
                 $dquery = "delete from fluxcms_openid_uri where id = '".$_GET['id']."'";
                 mysql_query($dquery) or die("false delete query");
-                header("Location:http://fluxcms/admin/webinc/openid/");
+                print '<meta http-equiv="refresh" content="1; URL=http://'.$_SERVER['HTTP_HOST'].'/admin/webinc/openid">';
             }
             
             $query = "select * from fluxcms_openid_uri";
@@ -96,6 +103,7 @@ switch ($mode) {
             print $answer[0] ."<h2 class='openIdPage'> mode not implemented.</h2>";
             
     }
+
     print "</html>";
     }
 
