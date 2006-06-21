@@ -37,15 +37,11 @@
     <message key="act_newsletter-back-archive">View newsletter archive</message>
     <message key="act_newsletter-back-manage">View newsletter subscribers</message>
     
-    <message key="act_xhtml-back-create">Create XHTML files</message>
     <message key="act_xhtml-back-edit_bxe">Edit in BXE</message>
     <message key="act_xhtml-back-edit_fck">Edit in FCKeditor</message>
     <message key="act_xhtml-back-edit_oneform">Edit in Oneform</message>
     <message key="act_xhtml-back-edit_kupu">Edit in Kupu</message>
     
-    <message key="act_file-back-upload">Upload files</message>
-    
-    <message key="act_gallery-back-upload">Upload images</message>
     <message key="act_gallery-back-gallery">Show gallery</message>
     <message key="act_gallery-back-edit_file">Edit in File</message>
     <message key="act_gallery-back-edit_image">Edit in Image</message>
