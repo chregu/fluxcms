@@ -8,8 +8,43 @@ startFCK = function() {
     oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'admin/fck/fckconfig.js';
     oFCKeditor.Config['FullPage'] = false;
     oFCKeditor.ToolbarSet = 'fluxfck';
-    oFCKeditor.Height = 500;
+
+	var winH = getHeight();
+	oFCKeditor.Height = winH ;
+    
     oFCKeditor.Create() ;
+	
+	var _f = document.getElementById('fluxfck___Frame');
+	_f.style.height = getHeight() + "px";
+	
+	window.onresize = onResize;
+	
+	
+
+}
+
+function onResize() {
+	
+	var oEditor = FCKeditorAPI.GetInstance("fluxfck") ;
+	var _f = document.getElementById('fluxfck___Frame');
+	_f.style.height = getHeight() + "px";
+	
+}
+
+function getHeight() {
+	
+		
+	var winH;
+    if (self.innerHeight) {
+        winH = self.innerHeight;
+    }
+    else if (document.documentElement && document.documentElement.clientHeight) {
+        winH = document.documentElement.clientHeight;
+    }
+    else if (document.body) {
+        winH = document.body.clientHeight;
+    }
+	return winH - 30 ;
 }
 
 loadContent = function() {
