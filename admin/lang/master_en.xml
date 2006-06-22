@@ -64,7 +64,6 @@
     
     <message key="act_permissions-back-manage">Edit permissions</message>
     <message key="act_permissions-back-admin">Access admin section</message>
-    <message key="act_permissions-back-edit">Edit admin section</message>
     <message key="act_permissions-back-themes">Download themes</message>
     <message key="act_permissions-back-siteoptions">Site options</message>
         

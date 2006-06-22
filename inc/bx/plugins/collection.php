@@ -16,7 +16,8 @@ class bx_plugins_collection extends bx_plugin {
     					"collection-back-configxml",
     					"collection-back-create",
     					"collection-back-delete",
-    					"collection-back-copy");	
+    					"collection-back-copy",
+    					"collection-back-edit_file");	
     }
     
     public static function getInstance($mode) {

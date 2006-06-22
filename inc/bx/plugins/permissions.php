@@ -26,7 +26,6 @@ class bx_plugins_permissions extends bx_plugin implements bxIplugin {
     					"admin_dbforms2-back-users",
     					"admin_dbforms2-back-perm_groups",
     					"permissions-back-admin",
-    					"permissions-back-edit",
     					"permissions-back-siteoptions",
     					"permissions-back-themes");	
     }

@@ -132,7 +132,6 @@
     
     <message key="act_permissions-back-manage">Berechtigungen editieren</message>
     <message key="act_permissions-back-admin">Zugriff auf Admin Bereich</message>
-    <message key="act_permissions-back-edit">Admin Bereich editieren</message>
     <message key="act_permissions-back-themes">Themes herunterladen</message>
     <message key="act_permissions-back-siteoptions">Seitenoptionen</message>
         

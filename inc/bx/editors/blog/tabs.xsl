@@ -19,41 +19,55 @@
         <xsl:param name="selected" select="'overview'"/>
         <div class="navitabs" id="navitabs">
             <ul>
-                <xsl:call-template name="doTab">
-                    <xsl:with-param name="name" select="'Overview'"/> 
-                    <xsl:with-param name="uri" select="'.'"/> 
-                    <xsl:with-param name="selected" select="$selected"/>
-                </xsl:call-template>
-                <xsl:call-template name="doTab">
-                    <xsl:with-param name="name" select="'Post'"/> 
-                    <xsl:with-param name="uri" select="'newpost.xml'"/> 
-                    <xsl:with-param name="selected" select="$selected"/>
-                </xsl:call-template>
-                <xsl:call-template name="doTab">
-                    <xsl:with-param name="name" select="'Categories'"/> 
-                    <xsl:with-param name="uri" select="'sub/categories/'"/> 
-                    <xsl:with-param name="selected" select="$selected"/>
-                </xsl:call-template>
-                <xsl:call-template name="doTab">
-                    <xsl:with-param name="name" select="'Links'"/> 
-                    <xsl:with-param name="uri" select="'sub/blogroll/'"/> 
-                    <xsl:with-param name="selected" select="$selected"/>
-                </xsl:call-template>
-                <xsl:call-template name="doTab">
-                    <xsl:with-param name="name" select="'Gallery'"/> 
-                    <xsl:with-param name="uri" select="'sub/gallery/'"/> 
-                    <xsl:with-param name="selected" select="$selected"/>
-                </xsl:call-template>
-                <xsl:call-template name="doTab">
-                    <xsl:with-param name="name" select="'Files'"/> 
-                    <xsl:with-param name="uri" select="'sub/files/'"/> 
-                    <xsl:with-param name="selected" select="$selected"/>
-                </xsl:call-template>
-                <xsl:call-template name="doTab">
-                    <xsl:with-param name="name" select="'Blog Options'"/> 
-                    <xsl:with-param name="uri" select="'sub/options/'"/> 
-                    <xsl:with-param name="selected" select="$selected"/>
-                </xsl:call-template>
+            	<xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','post') = 'true'">
+	                <xsl:call-template name="doTab">
+	                    <xsl:with-param name="name" select="'Overview'"/> 
+	                    <xsl:with-param name="uri" select="'.'"/> 
+	                    <xsl:with-param name="selected" select="$selected"/>
+	                </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','post') = 'true'">
+	                <xsl:call-template name="doTab">
+	                    <xsl:with-param name="name" select="'Post'"/> 
+	                    <xsl:with-param name="uri" select="'newpost.xml'"/> 
+	                    <xsl:with-param name="selected" select="$selected"/>
+	                </xsl:call-template>
+	            </xsl:if>
+                <xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','categories') = 'true'">
+	                <xsl:call-template name="doTab">
+	                    <xsl:with-param name="name" select="'Categories'"/> 
+	                    <xsl:with-param name="uri" select="'sub/categories/'"/> 
+	                    <xsl:with-param name="selected" select="$selected"/>
+	                </xsl:call-template>
+	            </xsl:if>
+                <xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','blogroll') = 'true'">
+	                <xsl:call-template name="doTab">
+	                    <xsl:with-param name="name" select="'Links'"/> 
+	                    <xsl:with-param name="uri" select="'sub/blogroll/'"/> 
+	                    <xsl:with-param name="selected" select="$selected"/>
+	                </xsl:call-template>
+	            </xsl:if>
+                <xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','gallery') = 'true'">     
+	                <xsl:call-template name="doTab">
+	                    <xsl:with-param name="name" select="'Gallery'"/> 
+	                    <xsl:with-param name="uri" select="'sub/gallery/'"/> 
+	                    <xsl:with-param name="selected" select="$selected"/>
+	                </xsl:call-template>
+	            </xsl:if>
+                <xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','files') = 'true'">    
+	                <xsl:call-template name="doTab">
+	                    <xsl:with-param name="name" select="'Files'"/> 
+	                    <xsl:with-param name="uri" select="'sub/files/'"/> 
+	                    <xsl:with-param name="selected" select="$selected"/>
+	                </xsl:call-template>
+	            </xsl:if>
+                <xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','options') = 'true'">    
+	                <xsl:call-template name="doTab">
+	                    <xsl:with-param name="name" select="'Blog Options'"/> 
+	                    <xsl:with-param name="uri" select="'sub/options/'"/> 
+	                    <xsl:with-param name="selected" select="$selected"/>
+	                </xsl:call-template>
+	            </xsl:if>   
             </ul>
               <br clear="all"/>
         </div>

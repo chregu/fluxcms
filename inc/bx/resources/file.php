@@ -89,13 +89,15 @@ class bx_resources_file extends bx_resource {
     	
     	$perm = bx_permm::getInstance();
     	$localUri = substr($this->id, 0, strrpos($this->id, '/')+1);
+    	$localUri = str_replace('/data//', '/', $localUri);
     	
     	// remove the /files/_galleries prefix
 		$localUri = substr($localUri, strrpos($localUri, '/gallery/'));
 
         $mt = $this->getMimeType();
         if (strpos($mt,"text") === 0) {
-        	if($perm->isAllowed($localUri,array('collection-back-edit_file'))) {
+        	if(strpos($this->id, ".configxml") !== false or
+        		$perm->isAllowed($localUri,array('collection-back-edit_file'))) {
             	return array("oneform","file");
         	}
         }

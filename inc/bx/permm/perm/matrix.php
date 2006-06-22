@@ -38,6 +38,11 @@ class bx_permm_perm_matrix {
    			$uri = '/'.$uri;
    		}
    		
+   		// files' subdirs are not managed by the CMS
+   		if(strpos($uri, '/files/') === 0) {
+   			$uri = '/files/';
+   		}
+   		
    		// predefined roles
 		if($userId) {
 			$roles = "'anonymous', 'authenticated'";	
@@ -55,11 +60,11 @@ class bx_permm_perm_matrix {
     		if($action == "read" or $action == "read_navi") {
     			
     			// real simple caching for frontend read requests
-    			if(isset($_SESSION["perms"][$uri.'-'.$action.'-'.$userId])) {  
-    				return $_SESSION["perms"][$uri.'-'.$action.'-'.$userId];
+    			if(isset($_SESSION['_authsession'][$uri.'-'.$action.'-'.$userId])) {  
+    				return $_SESSION['_authsession'][$uri.'-'.$action.'-'.$userId];
     			} else { 
     				$cache = $uri.'-'.$action.'-'.$userId;
-    				$_SESSION["perms"][$cache] = false;
+    				$_SESSION['_authsession'][$cache] = false;
     			}
   
 				$localUri = substr($uri, 0, strrpos($uri, '/')+1);
@@ -73,7 +78,7 @@ class bx_permm_perm_matrix {
 			// admin and edit permissions are global
     		else if($action == "admin" or $action == "edit") {
     			$localUri = '/permissions/';
-    			$action = "permissions-back-".$action;
+    			$action = "permissions-back-admin";
     		}
     		else if($action == "isuser") {
     			if(!$userId) {
@@ -147,7 +152,7 @@ class bx_permm_perm_matrix {
         	
         	if($cache !== false) {
         		// read/navi permission granted, cache it
-    			$_SESSION["perms"][$cache] = true;
+    			$_SESSION['_authsession'][$cache] = true;
     			$cache = false;
     		}
     	}

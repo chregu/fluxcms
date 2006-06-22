@@ -193,6 +193,15 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
         return FALSE;
     }
     
+    public static function isTabAllowed($sub) {
+    	
+    	$perm = bx_permm::getInstance();
+	    if ($perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
+        	return true;
+    	}	
+    	return false;
+    }
+    
     protected function getStylesheetNameBySubEditor($editor) {
         return "sub/xsl/$editor.xsl";
     }
