@@ -27,7 +27,8 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     					"xhtml-back-edit_bxe",
     					"xhtml-back-edit_fck",
     					"xhtml-back-edit_kupu",
-    					"xhtml-back-edit_oneform" );	
+                        "xhtml-back-edit_assets",
+                        "xhtml-back-edit_oneform" );	
     }
     
     /**
@@ -125,7 +126,13 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     */
     
     public function getResourceById($path, $id, $mock = false) {
-
+    	$perm = bx_permm::getInstance();
+    	if($id == "thisfiledoesnotexist.xhtml") {
+			if (!$perm->isAllowed($path, array('xhtml-back-create'))) {
+                throw new BxPageNotAllowedException();
+	    	}
+    	}
+    	
         $id = $path.$id;
         if (!isset($this->res[$id])) {
             $mimetype = bx_resourcemanager::getMimeType($id);
