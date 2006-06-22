@@ -1,5 +1,6 @@
 FCKeditor_OnComplete = function(inst) {
     loadContent();
+	onResize();
 }
 
 startFCK = function() {
@@ -15,13 +16,14 @@ startFCK = function() {
     oFCKeditor.Create() ;
 	
 	var _f = document.getElementById('fluxfck___Frame');
-	_f.style.height = getHeight() + "px";
+	_f.style.height = (getHeight() - 1) + "px";
 	
 	window.onresize = onResize;
 	
 	
 
 }
+
 
 function onResize() {
 	
