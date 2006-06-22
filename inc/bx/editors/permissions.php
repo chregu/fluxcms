@@ -105,9 +105,19 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
     {
 		$i18n = $GLOBALS['POOL']->i18nadmin;
      	
+     	$txtInherit = $i18n->getText("Inherit");
+     	$txtPerm = $i18n->getText("Permission");
+     	$txtPermFor = $i18n->getText("Permissions for");
+     	$txtUpdate = $i18n->getText("Update");
+     	
+     	// get plugins
      	$parts = bx_collections::getCollectionUriAndFileParts($id);
      	$url = '/'.$parts['rawname'];
      	$plugins = $this->getPlugingList($url);
+
+		// get parent plugins
+		$parent = substr($url, 0, strrpos($url, '/', -2)+1);
+		$parentPlugins = $this->getPlugingList($parent);
      	
      	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
      	
@@ -118,7 +128,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 		// create a matrix with the collection's plugin permissions and the available groups
      	$xml = "
      	<permissions>
-		<h3>Permissions for {$url}</h3>
+		<h3>{$txtPermFor} {$url}</h3>
 		<form name='bx_perms' action='#' method='post'>
 		<table>
 		<cols>
@@ -129,11 +139,13 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
 		$xml .= "
 		</cols>
 		<tr>
-			<th class='stdBorder'>Permission</th>";
+			<th class='stdBorder'>{$txtPerm}</th>";
 	     	foreach($groups as $grp) {
 	     	$xml .= "<th class='stdBorder'>{$grp['name']}</th>";
 	     	}
 	    $xml .= "</tr>";
+	    
+	    
 	    
      	foreach($plugins as $p) {
      		if(count($p->getPermissionList()) > 0) {
@@ -150,7 +162,13 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      			if($this->isInherited($dbPerms, $p->name) !== false) {
      				$checked = "checked='checked'";
      			}
-	     		$xml .= "<tr><td><b>{$p->name} plugin</b> (Inherit <input type='checkbox' name='{$p->name}+inherit' {$checked}/>)</td></tr>";
+	     		$xml .= "<tr><td><b>{$p->name} plugin</b> ";
+	
+	     		if($url != "/" and in_array($p, $parentPlugins)) {
+	     			// can't inherit from root or if parent doesn't have the same plugin
+					$xml .= "({$txtInherit} <input type='checkbox' name='{$p->name}+inherit' {$checked}/>)";
+	     		}
+				$xml .= "</td></tr>";
 	     		
 	     		foreach($p->getPermissionList() as $action) {
 	     			$translated = $i18n->getText('act_'.$action);
@@ -180,7 +198,7 @@ class bx_editors_permissions extends bx_editor implements bxIeditor {
      	}
      	$xml .= "
 	    </table><br/>
-		<input type='submit' name='bx[plugins][admin_edit][_all]' value='Update' class='formbutton'/>
+		<input type='submit' name='bx[plugins][admin_edit][_all]' value='{$txtUpdate}' class='formbutton'/>
 		</form>
 		</permissions>";
      	

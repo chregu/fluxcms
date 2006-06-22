@@ -33,7 +33,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             	throw new BxPageNotAllowedException();
         	}	
      		
-     		if($data["_all"] == "Preview") {
+     		$i18n = $GLOBALS['POOL']->i18nadmin;
+     		if($data["_all"] == $i18n->getText("Preview")) {
      			if($data['groups'] === null) {
      				$_POST["nogroups"] = true;
      			}
@@ -237,6 +238,16 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generatePreviewView()
     {
+    	$i18n = $GLOBALS['POOL']->i18nadmin;
+     	$txtFrom = $i18n->getText("From");
+     	$txtTo = $i18n->getText("To");
+     	$txtSub = $i18n->getText("Subject");
+     	$txtAttachment = $i18n->getText("Add Attachment");
+     	$txtEmbed = $i18n->getText("Embed Images");
+     	$txtPublish = $i18n->getText("Publish Online");
+     	$txtSend = $i18n->getText("Send");    	
+     	$txtNewsPrev = $i18n->getText("Newsletter Preview");    	
+    	
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
         $query = "select * from ".$prefix."newsletter_mailservers where id=".$_POST["mailserver"];
         $mailserver = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC); 
@@ -260,20 +271,20 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	
 		$xml = '<newsletter>
     	<form name="bx_news_send" action="#" method="post">
-			<h3>Newsletter Preview</h3>
+			<h3>'.$txtNewsPrev.'</h3>
 			<table border="0" id="send">
-				<tr><td>From:</td><td>'.$_POST["from"].'</td></tr>
-				<tr><td style="vertical-align:top">To:</td><td>'.$groups.' ('.$usercount.' subscribers)'.'</td></tr>
-				<tr><td>Subject:</td><td>'.$_POST["subject"].'</td></tr>';
+				<tr><td>'.$txtFrom.':</td><td>'.$_POST["from"].'</td></tr>
+				<tr><td style="vertical-align:top">'.$txtTo.':</td><td>'.$groups.' ('.$usercount.' subscribers)'.'</td></tr>
+				<tr><td>'.$txtSub.':</td><td>'.$_POST["subject"].'</td></tr>';
 		if(!empty($_POST["attachment"])) {
-			$xml .= '<tr><td>Attachment:</td><td>'.$_POST["attachment"].'</td></tr>';
+			$xml .= '<tr><td>'.$txtAttachment.':</td><td>'.$_POST["attachment"].'</td></tr>';
 		}
 		$xml .= '<tr><td>Mail Server:</td><td>'.$mailserver["descr"].' ('.$mailserver["host"].')'.'</td></tr>
-				<tr><td>Embed Images:</td><td>'.$_POST["embed"].'</td></tr>
-				<tr><td>Publish Online:</td><td>'.$_POST["publish"].'</td></tr>
+				<tr><td>'.$txtEmbed.':</td><td>'.$_POST["embed"].'</td></tr>
+				<tr><td>'.$txtPublish.':</td><td>'.$_POST["publish"].'</td></tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Send" class="formbutton"/></td>
+					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="'.$txtSend.'" class="formbutton"/></td>
 				</tr>
 			</table><br/>
 
@@ -330,6 +341,18 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateSendView()
     {
+    	$i18n = $GLOBALS['POOL']->i18nadmin;
+     	$txtNews = $i18n->getText("Send Newsletter");
+     	$txtFrom = $i18n->getText("From");
+     	$txtTo = $i18n->getText("To");
+     	$txtSub = $i18n->getText("Subject");
+     	$txtAttachment = $i18n->getText("Add Attachment");
+     	$txtEmbed = $i18n->getText("Embed Images");
+     	$txtPublish = $i18n->getText("Publish Online");
+     	$txtSending = $i18n->getText("Your newsletter is being sent");
+     	$txtNoGrp = $i18n->getText("ERROR: Select at least one group");
+     	$txtPrev = $i18n->getText("Preview");
+    	
     	// show a list of available groups
  		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_groups";
@@ -388,32 +411,32 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		$serversHtml .= '</select>';				
 
 		if(isset($_POST["nogroups"])) {
-			$msg = "<b>ERROR: Select at least one group</b>";	
+			$msg = "<b>".$txtNoGrp."</b>";	
 		}
 		else if(isset($_POST["sent"])) {
-			$msg = "<b>Your newsletter is being sent</b>";	
+			$msg = "<b>".$txtSending."</b>";	
 		}
-
+		
 		$xml = '<newsletter>
 		<script type="text/javascript">
 			bx_webroot = "'.BX_WEBROOT.'";
 		</script>
     	<form id="bx_news_send" name="bx_news_send" action="#" method="post">
-			<h3>Send Newsletter</h3>';
+			<h3>'.$txtNews.'</h3>';
 		$xml .= $msg;
 		$xml .= '<table border="0" id="send">
-				<tr><td>From:</td><td>'.$sendersHTML.'</td></tr>
-				<tr><td style="vertical-align:top">To:</td><td>'.$groupsHTML.'</td></tr>
-				<tr><td>Subject:</td><td><input type="text" name="subject"/></td></tr>
+				<tr><td>'.$txtFrom.':</td><td>'.$sendersHTML.'</td></tr>
+				<tr><td style="vertical-align:top">'.$txtTo.':</td><td>'.$groupsHTML.'</td></tr>
+				<tr><td>'.$txtSub.':</td><td><input type="text" name="subject"/></td></tr>
 				<tr><td>HTML Body:</td><td>'.$newsHTML.'</td></tr>
 				<tr><td>Text Body:</td><td>'.$newsText.'</td></tr>
-				<tr><td>Add Attachment:</td><td><input type="text" id="attachment" name="attachment"/><input type="button" onclick="openFileBrowser(\'attachment\')" value="..."/></td></tr>
+				<tr><td>'.$txtAttachment.':</td><td><input type="text" id="attachment" name="attachment"/><input type="button" onclick="openFileBrowser(\'attachment\')" value="..."/></td></tr>
 				<tr><td>Mail Server:</td><td>'.$serversHtml.'</td></tr>
-				<tr><td>Embed Images:</td><td><input type="checkbox" name="embed"/></td></tr>
-				<tr><td>Publish Online:</td><td><input type="checkbox" name="publish" checked="checked"/></td></tr>
+				<tr><td>'.$txtEmbed.':</td><td><input type="checkbox" name="embed"/></td></tr>
+				<tr><td>'.$txtPublish.':</td><td><input type="checkbox" name="publish" checked="checked"/></td></tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Preview" class="formbutton"/></td>
+					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="'.$txtPrev.'" class="formbutton"/></td>
 				</tr>
 			</table>
 		</form>
@@ -427,6 +450,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateManageView()
     {   	
+    	$i18n = $GLOBALS['POOL']->i18nadmin;
+     	$txtArchive = $i18n->getText("Newsletter Archive");
+    	
     	// get information about the newsletters sent
 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_drafts";
@@ -436,7 +462,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		$newsletters = $this->getNewsletterFilenames();
 
  		$xml = '<newsletter>
-		<h3>Newsletter Archive</h3>
+		<h3>'.$txtArchive.'</h3>
 		<form name="bx_news_manage" action="#" method="post">
 		<table>
 		<cols>
@@ -493,6 +519,13 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateUsersView()
     {
+    	$i18n = $GLOBALS['POOL']->i18nadmin;
+     	$txtUserMan = $i18n->getText("User Management");
+     	$txtImportUsers = $i18n->getText("Import Users");
+     	$txtCSV = $i18n->getText("CSV-File");
+     	$txtGroup = $i18n->getText("Group");
+     	$txtImport = $i18n->getText("Import");
+    	
 		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_groups";
     	$groups = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	    	
@@ -519,7 +552,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	$cols .= '</tr>';
     	
  		$xml = '<newsletter>
-		<h2>User Management</h2>
+		<h2>'.$txtUserMan.'</h2>
 		<form enctype="multipart/form-data" name="bx_news_users" action="#" method="post">';
 		
 		foreach($groups as $group)
@@ -553,12 +586,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		$groupsHTML .= '</select>';
 		
 		// fiel upload to import a user list
-		$xml .= '<br/><h2>Import Users</h2>
+		$xml .= '<br/><h2>'.$txtImportUsers.'</h2>
 		<input type="hidden" name="MAX_FILE_SIZE" value="1000000"/>
 		<table>
-		<tr><td>CSV-File:</td><td><input name="userfile" type="file"/></td></tr>
-		<tr><td>Group:</td><td>'.$groupsHTML.'</td></tr>
-		<tr><td></td><td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Import" class="formbutton"/></td></tr>
+		<tr><td>'.$txtCSV.':</td><td><input name="userfile" type="file"/></td></tr>
+		<tr><td>'.$txtGroup.':</td><td>'.$groupsHTML.'</td></tr>
+		<tr><td></td><td><input type="submit" name="bx[plugins][admin_edit][_all]" value="'.$txtImport.'" class="formbutton"/></td></tr>
 		</table>
 		</form>
 		</newsletter>';
@@ -571,6 +604,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function generateFeedView()
     {
+    	$i18n = $GLOBALS['POOL']->i18nadmin;
+     	$txtFromFeed = $i18n->getText("Generate from Feed");
+     	$txtGen = $i18n->getText("Generate");
+     	
     	// show a list of available feeds
  		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "select * from ".$prefix."newsletter_feeds";
@@ -587,12 +624,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		$xml = '<newsletter>
     	<form name="bx_news_send" action="#" method="post">
 			<table border="0" id="send">
-				<tr><td colspan="2"><h3>Generate Newsletter from RSS Feed</h3></td></tr>
+				<tr><td colspan="2"><h3>'.$txtFromFeed.'</h3></td></tr>
 				<tr><td>Feed:</td><td>'.$feedsHTML.'</td></tr>
 				<tr><td>HTML Format:</td><td><input type="checkbox" name="html"/></td></tr>
 				<tr>
 					<td></td>					
-					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="Generate" class="formbutton"/></td>
+					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="'.$txtGen.'" class="formbutton"/></td>
 				</tr>
 			</table>
 		</form>

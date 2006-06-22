@@ -108,6 +108,10 @@ class bx_permm_perm_matrix {
         	$inherit = $GLOBALS['POOL']->db->queryOne($query);
 
         	if($inherit !== null) {
+        		// we got a loop
+        		if($inherit == $localUri) {
+        			return false;
+        		}
     			if(bx_permm_perm_matrix::isAllowed($inherit, array($action), $userId) == false) {
     				return false;	        		
     			}

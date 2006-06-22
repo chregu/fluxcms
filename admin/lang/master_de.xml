@@ -59,6 +59,7 @@
     <message key="Edit in fck">Im FCKEditor editieren</message>
     <message key="Edit in oneform">Als Text editieren</message>
     <message key="Properties">Eigenschaften</message>
+    <message key="Edit Permissions">Berechtigungen</message>
 
     
     <message key="bxe">BXE</message>
@@ -87,6 +88,13 @@
     
     <message key="Edit Properties for {0}.">Bearbeiten der Eigenschaften für {0}.</message>
     
+     <!-- permissions -->
+    <message key="Permissions for">Berechtigungen für</message>
+    <message key="Permission">Berechtigung</message>
+    <message key="Inherit">Erben</message>
+    <message key="Update">Aktualisieren</message>
+    
+    
     <!-- newsletter -->
     <message key="Edit Groups">Gruppen editieren</message>
     <message key="Edit Senders">Absender editieren</message>
@@ -99,7 +107,23 @@
     <message key="Edit RSS Feeds">RSS Feeds editieren</message>
     <message key="Management">Verwaltung</message>
     <message key="Newsletters">Newsletter</message>
-    
+    <message key="Newsletter Preview">Newsletter Vorschau</message>
+    <message key="Preview">Vorschau</message>
+    <message key="Send">Senden</message>
+    <message key="Import Users">Benutzer importieren</message>
+    <message key="CSV-File">CSV-Datei</message>
+    <message key="Group">Gruppe</message>
+    <message key="Import">Importieren</message>
+    <message key="Generate">Generieren</message>
+    <message key="From">Absender</message>
+    <message key="To">Empfänger</message>
+    <message key="Subject">Subjekt</message>
+    <message key="Add Attachment">Anhang</message>
+    <message key="Embed Images">Bilder einbetten</message>
+    <message key="Publish Online">Online publizieren</message>
+    <message key="Your newsletter is being sent">Ihr Newsletter wird verschickt</message>
+    <message key="ERROR: Select at least one group">FEHLER: Wählen Sie mindestens eine Gruppe aus</message>
+
     <message key="act_newsletter-back-feed">Newsletter aus Feed erstellen</message>
     <message key="act_newsletter-back-send">Newsletter senden</message>
     <message key="act_newsletter-back-archive">Newsletter Archiv anzeigen</message>
@@ -136,7 +160,7 @@
     <message key="act_permissions-back-siteoptions">Seitenoptionen</message>
         
     <message key="act_collection-front-read">Collection anzeigen</message>
-    <message key="act_collection-front-read_navi">Collection in Navigation</message>
+    <message key="act_collection-front-read_navi">In Navigation anzeigen</message>
     <message key="act_collection-back-properties">Properties editieren</message>
     <message key="act_collection-back-configxml">.configxml editieren</message>
     <message key="act_collection-back-create">Ressourcen erstellen</message>

@@ -68,7 +68,7 @@
     <message key="act_permissions-back-siteoptions">Site options</message>
         
     <message key="act_collection-front-read">Read collection</message>
-    <message key="act_collection-front-read_navi">Collection in navigation</message>
+    <message key="act_collection-front-read_navi">Show in navigation</message>
     <message key="act_collection-back-properties">Edit properties</message>
     <message key="act_collection-back-configxml">Edit .configxml</message>
     <message key="act_collection-back-create">Create resources</message>
