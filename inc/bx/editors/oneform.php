@@ -14,8 +14,13 @@ class bx_editors_oneform extends bx_editor implements bxIeditor {
         
     public function handlePOST($path, $id, $data) {
      
-        $parts = bx_collections::getCollectionAndFileParts($id,"admin");
-       return $parts['coll']->handlePostById($parts['rawname'],$data,"FullXML");
+     $url = substr($id, 0, strrpos($id, '/', -2)+1);
+     $perm = bx_permm::getInstance();
+     if($perm->isAllowed($url, array('collection-back-edit_file'))) {
+     
+	        $parts = bx_collections::getCollectionAndFileParts($id,"admin");
+	       return $parts['coll']->handlePostById($parts['rawname'],$data,"FullXML");
+     }
     }
     
 }
