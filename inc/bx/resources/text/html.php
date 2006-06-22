@@ -125,6 +125,11 @@ class bx_resources_text_html extends bx_resource {
     		}	
         } 
         
+        $a = $GLOBALS['POOL']->config->getConfProperty('assets');
+        if (!empty($a)) {
+            array_push($e, 'assets');
+        }
+        
         $v = $GLOBALS['POOL']->config->getConfProperty('versioning');
         if (!empty($v)) {
             array_push($e,'versioning');
