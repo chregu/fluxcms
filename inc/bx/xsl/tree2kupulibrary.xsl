@@ -112,10 +112,10 @@
 
 <xsl:template match="item[@mimetype='text/html']">
 
-    <xsl:variable name="fileurl" select="concat($webroot, substring-after(/navitree/path, '/data/'), @uri)"/>
+    <xsl:variable name="fileurl" select="concat($webroot, /navitree/path, @uri)"/>
     
     <resource id="res{concat(translate(/navitree/path, '/', '_'), translate(@uri, '.', '_'))}">
-        <uri><xsl:value-of select="concat($webroot, substring-after(/navitree/path, '/data/'), @uri)"/></uri>
+        <uri><xsl:value-of select="concat($webroot, /navitree/path, @uri)"/></uri>
         <title><xsl:value-of disable-output-escaping="yes"  select="@title"/></title>
         <icon><xsl:value-of select="@icon"/></icon>
         <src><xsl:value-of select="$fileurl"/></src>
