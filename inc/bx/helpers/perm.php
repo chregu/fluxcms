@@ -8,6 +8,11 @@ class bx_helpers_perm {
         return $perm->getUsername();
     }
     
+    static function getUserGid() {
+        $perm = bx_permm::getInstance();
+        return $perm->getUserGid();
+    }
+    
     static function isAdmin() {
         $perm = bx_permm::getInstance();
         return $perm->isAllowed('/',array('admin'));
