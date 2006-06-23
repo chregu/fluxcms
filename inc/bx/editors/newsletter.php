@@ -247,6 +247,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	$txtPublish = $i18n->getText("Publish Online");
      	$txtSend = $i18n->getText("Send");    	
      	$txtNewsPrev = $i18n->getText("Newsletter Preview");    	
+    	$txtTemps = $i18n->getText("WARNING: The following templates do not match a database field, you should correct them before sending the newsletter:");
     	
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
         $query = "select * from ".$prefix."newsletter_mailservers where id=".$_POST["mailserver"];
@@ -269,6 +270,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	$htmlsrc = (!empty($_POST["htmlfile"]) ? BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["htmlfile"].'?editor=kupu' : "");
 		$textsrc = (!empty($_POST["textfile"]) ? BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["textfile"].'?editor=oneform' : "");
     	
+    	$htmlContent = @file_get_contents('data/newsletter/drafts/'.$_POST["htmlfile"]);
+    	$textContent = @file_get_contents('data/newsletter/drafts/'.$_POST["textfile"]);
+    	$htmlMissing = $this->checkTemplates($htmlContent);
+    	$textMissing = $this->checkTemplates($textContent);
+    	
 		$xml = '<newsletter>
     	<form name="bx_news_send" action="#" method="post">
 			<h3>'.$txtNewsPrev.'</h3>
@@ -286,9 +292,13 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 					<td></td>
 					<td><input type="submit" name="bx[plugins][admin_edit][_all]" value="'.$txtSend.'" class="formbutton"/></td>
 				</tr>
-			</table><br/>
+			</table><br/>';
 
-			<table>
+		if(count($htmlMissing) > 0 or count($textMissing) > 0) {
+			$xml .= "<p><b>{$txtTemps} ".implode(',',array_merge($textMissing,$htmlMissing))."</b></p>";
+		}
+
+		$xml .=	'<table>
 				<cols>
 					<col width="700"/>
 					<col width="500"/>
@@ -810,6 +820,37 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      		}
      	}
      	return $plugin->getParameter($collection->uri,$name);	
+	}
+	
+	/**
+	 * Find all templates that don't match a dbfield from the newsletter_users table
+	 */
+	protected function checkTemplates($content)
+	{
+		// templates in the form of {text}
+		preg_match_all("/{([^\}:]*)}/", $content, $matches);
+
+		// get column names
+		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+		$query = "SHOW COLUMNS FROM ".$prefix."newsletter_users";
+    	$cols = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	 
+    	
+    	// find the matching fields
+    	$found = array();
+    	foreach($matches[1] as $match) {
+    		foreach($cols as $col) {
+	    		if($col['field'] == $match) {
+	    			$found[] = $match;
+	    		}
+    		}
+    	}
+    	
+    	// default templates
+    	array_push($found, 'weblink', 'activate', 'unsubscribe', 'publication', 'date');
+    	
+    	// compute difference
+    	$missing = array_diff($matches[1], $found);
+    	return $missing;
 	}
 }
 

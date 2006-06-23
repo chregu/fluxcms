@@ -123,6 +123,7 @@
     <message key="Publish Online">Online publizieren</message>
     <message key="Your newsletter is being sent">Ihr Newsletter wird verschickt</message>
     <message key="ERROR: Select at least one group">FEHLER: Wählen Sie mindestens eine Gruppe aus</message>
+    <message key="WARNING: The following templates do not match a database field, you should correct them before sending the newsletter:">ACHTUNG: Die folgenden Templates konnten in der Datenbank nicht gefunden werden und sollten vor dem Versenden korrigiert werden:</message>
 
     <message key="act_newsletter-back-feed">Newsletter aus Feed erstellen</message>
     <message key="act_newsletter-back-send">Newsletter senden</message>
