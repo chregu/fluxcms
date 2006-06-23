@@ -20,7 +20,6 @@
         // FIXME: this code needs to be rewritten, it's getting messy. (there are 
         // too many "return false;"
         // The more actions there are, the bigger the chaos well be. 
-        
         if (in_array('edit', $actions)) {
           //if not logged in, not allowed to be admin...
           if (!$userid) {

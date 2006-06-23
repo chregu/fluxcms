@@ -43,10 +43,11 @@ abstract class bx_permm_auth_common {
     protected $auth_passwordcol = 'password';
     
     protected $specialencoding = '';
-    
+    protected $auth_gidcol = 'user_gid'; 
     protected $auth_gupicol = 'user_gupi';
     protected $auth_emailcol = 'user_email';
     protected $auth_dbfields = 'user_adminlang, user_gid, user_email';
+    protected $auth_sessname = '_authsession';
     
     protected $auth_idcol = 'id';
     /**
@@ -57,7 +58,7 @@ abstract class bx_permm_auth_common {
      */
     protected $auth_crypttype = 'md5';
     
-    
+     
     protected function __construct($options) {
         if (is_array($options)) {
             
@@ -101,7 +102,6 @@ abstract class bx_permm_auth_common {
                     $_COOKIE['fluxcms_login'] = $hash;
                 }
         }
-        
         $this->authObj->assignData();
         $u = $this->specialEncode($this->authObj->username);
         $p = $this->specialEncode($this->authObj->password);
@@ -170,6 +170,10 @@ abstract class bx_permm_auth_common {
     
     public function getUsername() {
         return $this->authObj->getUsername();
+    }
+    
+    public function getUserGid() {
+        return @$_SESSION[$this->auth_sessname]['data'][$this->auth_gidcol];    
     }
     
     public function getUserId() {

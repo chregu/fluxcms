@@ -25,7 +25,6 @@ Class bx_permm_auth_pearauth extends bx_permm_auth_common {
             $opts['table'] = $this->auth_table;
         }
         
-            
         // if someone tries to "login" via http_auth, let them do that :)
         if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $GLOBALS['POOL']->config->allowHTTPAuthentication == "true" ) {
             $opts['mode'] = '0644';
