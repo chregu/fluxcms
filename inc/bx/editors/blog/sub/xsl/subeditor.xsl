@@ -21,7 +21,7 @@
     <xsl:variable name="formName" select="'bx[plugins][admin_edit]'"/>
     <xsl:variable name="opentabs" select="php:function('bx_helpers_config::getOpenTabs')"/>
     
-    <xsl:template match="/">
+    <xsl:template match="/" name="root">
         <html>
             <head>
                 <link rel="stylesheet" href="{$webroot}themes/standard/admin/css/blog.css" type="text/css"/>
