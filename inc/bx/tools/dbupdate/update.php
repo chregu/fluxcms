@@ -285,10 +285,35 @@ if ($lastVersion < 6760) {
     updateLastVersion(6760);
 }
 if ($lastVersion < 6991) {
-    addCol("blogcomments","comment_username"," VARCHAR( 100 ) NOT NULL ");
+    addCol("blogcomments","comment_username"," VARCHAR( 100 ) NOT NULL ","", false);
     updateLastVersion(6991);
 }
 
+if ($lastVersion < 7312) {
+    $res = doQueryTable("
+   CREATE TABLE `".$tablePrefix."sidebar` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(200) NOT NULL default '',
+  `content` text NOT NULL,
+  `sidebar` int(11) NOT NULL default '0',
+  `position` int(11) NOT NULL default '0',
+  `changed` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `isxml` tinyint(4) NOT NULL default '1',
+  PRIMARY KEY  (`id`)
+) ",'sidebar');
+
+
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'links', '<bloglinks/>', 2, 1,  1);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'buttons', '<buttons/>', 2, 3,  1);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'html', '<h3 class=\"blog\">More HTML ideas here</h3>\n', 0, 0,1);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'html2', '<h3 class=\"blog\">\nPlace your content here\n</h3>', 0, 1, 1);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'livesearch', '<livesearch/>', 2, 0,  1);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'del.icio.us', '<delicious link=\"tag/freeflux/\"/>', 0, 2, 1);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'login', '<login/>', 2, 4, 1);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'archive', '<archive/>', 2, 2, 0);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'categories', '<categories/>', 1, 0, 1);",false);     
+      updateLastVersion(7312);
+}
 
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");

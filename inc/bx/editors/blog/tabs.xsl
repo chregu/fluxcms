@@ -64,7 +64,7 @@
                 
                    <xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','sidebar') = 'true'">    
 	                <xsl:call-template name="doTab">
-	                    <xsl:with-param name="name" select="'Sidebar'"/> 
+	                    <xsl:with-param name="name" select="'Sidebars'"/> 
 	                    <xsl:with-param name="uri" select="'sub/sidebar/'"/> 
 	                    <xsl:with-param name="selected" select="$selected"/>
 	                </xsl:call-template>
