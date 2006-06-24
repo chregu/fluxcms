@@ -1,33 +1,33 @@
 <?php
 
 class bx_editors_blog extends bx_editor implements bxIeditor {
-		
+    
     public function getDisplayName() {
         return "Blog";
     }
     
-		/** bx_editor::getPipelineParametersById */
-		public function getPipelineParametersById($path, $id) {
-			$params=array();
-			$params['pipelineName'] = 'blog';
-      $parts = bx_collections::getCollectionUriAndFileParts($id,'admin');
-      $params['xslt'] = $this->getStylesheetName($parts['colluri'], $parts['rawname']);
-			return $params;
-		}
-
+    /** bx_editor::getPipelineParametersById */
+    public function getPipelineParametersById($path, $id) {
+        $params=array();
+        $params['pipelineName'] = 'blog';
+        $parts = bx_collections::getCollectionUriAndFileParts($id,'admin');
+        $params['xslt'] = $this->getStylesheetName($parts['colluri'], $parts['rawname']);
+        return $params;
+    }
+    
     protected function getStylesheetName($path,$id) {
         switch ($id) {
             case ".":
             return "start.xsl";
-
+            
             case "uploadimage.xml":
             return "uploadimage.xsl";
         }
         
         if(($subEditor = $this->getSubEditorNameById($id)) !== FALSE) {
             if(($se = $this->getSubEditorInstance($subEditor)) !== FALSE)
-                return $this->getStylesheetNameBySubEditor($subEditor);
-                
+            return $this->getStylesheetNameBySubEditor($subEditor);
+            
         }
         return "post-fck.xsl"; // very strange default value... -- qmax
         
@@ -61,17 +61,17 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
             
             $this->deletePosts($data['deleteposts'],bx_streams_blog::getTablePrefix($id));
         }
-            
+        
         if(!empty($data['uri'])) {
             if ($data['delete'] == 1 && $data['id']) {
-                   bx_streams_blog::deleteEntryDirect($data['id'],$id);
-                   header("Location: ./newpost.xml");
-                   die();
+                bx_streams_blog::deleteEntryDirect($data['id'],$id);
+                header("Location: ./newpost.xml");
+                die();
             } else {
                 if(!empty($data['newcategory'])) {
                     $dbwrite = $GLOBALS['POOL']->dbwrite;
                     $tableprefix = $GLOBALS['POOL']->config->getTablePrefix();
-
+                    
                     $quoted = array();
                     $dataN['name'] = $data['newcategory'];
                     $dataN['uri'] = bx_helpers_string::makeUri($data['newcategory']);
@@ -171,7 +171,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function getEditContentById($id) {
-
+        
     	$sub = substr($id, strrpos($id, '/', -2)+1, -1);
     	
     	$perm = bx_permm::getInstance();
@@ -230,7 +230,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
         $res = $GLOBALS['POOL']->dbwrite->query("delete from ". $tablePrefix."blogposts where id in ($ids)");
     }
     
-        protected function getCategoriesXML($blogid) {
+    protected function getCategoriesXML($blogid) {
         $query = "SELECT * FROM ".$GLOBALS['POOL']->tableprefix."blogcategories AS blogcategories where blog_id = $blogid ORDER BY l";
         return bx_helpers_db2xml::getXMLByQuery($query, TRUE);
     }
