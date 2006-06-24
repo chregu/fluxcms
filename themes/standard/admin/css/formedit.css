@@ -220,3 +220,29 @@ h1.pageTitle, h1.page, h2.openIdPage {
     width: 95%;
     
 }
+
+.sortable {
+    
+    min-height: 2.6em;
+    //height: 2,6em;
+    border: 1px solid #006486;
+    
+    
+}
+
+.sortableContainer {
+    float: left;
+    margin-right: 20px;   
+}
+
+.sortable li {
+    border: 1px solid #006486;
+    margin-bottom: 2px;
+    min-height: 1.4em;
+    //height: 1.4em;
+    padding: 0.2em;
+    vertical-align: middle;
+    cursor: pointer;
+    margin: 5px;
+}
+
