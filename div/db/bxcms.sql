@@ -167,7 +167,7 @@ CREATE TABLE `##bxcms_##blogposts` (
   KEY `post_status` (`post_status`),
   KEY `blog_id` (`blog_id`),
   FULLTEXT KEY `post_content` (`post_content`,`post_title`)
-);
+) TYPE=MyISAM;;
 
 --
 -- Dumping data for table `##bxcms_##blogposts`
@@ -260,7 +260,7 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('outp
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('image_allowed_sizes','',1,5);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('defaultLanguage','',0,6);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitedescription','',0,7);
-INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','6991',0,8);
+INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','7312',0,8);
 
 --
 -- Table structure for table `##bxcms_##properties`
@@ -278,7 +278,7 @@ CREATE TABLE `##bxcms_##properties` (
   KEY `path` (`path`),
   KEY `name-ns` (`name`,`ns`),
   FULLTEXT KEY `value` (`value`)
-);
+) TYPE=MyISAM;;
 
 --
 -- Dumping data for table `##bxcms_##properties`
@@ -425,6 +425,36 @@ CREATE TABLE `##bxcms_##users` (
 --
 
 INSERT INTO `##bxcms_##users` (`ID`, `user_login`, `user_pass`, `user_email`, `user_fullname`, `user_gupi`, `user_gid`, `user_tmphash`, `user_adminlang`, `plazes_username`, `plazes_password`) VALUES (1,'admin','f56107fb349a099199f394d5890293ae','','',NULL,1,'','',NULL,NULL);
+
+
+-- 
+-- Table structure for table `fluxcms_sidebar`
+-- 
+
+CREATE TABLE `##bxcms_##sidebar` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(200) NOT NULL default '',
+  `content` text NOT NULL,
+  `sidebar` int(11) NOT NULL default '0',
+  `position` int(11) NOT NULL default '0',
+  `changed` timestamp NOT NULL,
+  `isxml` tinyint(4) NOT NULL default '1',
+  PRIMARY KEY  (`id`)
+) ;
+
+-- 
+-- Dumping data for table `##bxcms_##sidebar`
+-- 
+
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (1, 'links', '<bloglinks/>', 2, 1, '2006-06-25 01:18:55', 1);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (2, 'buttons', '<buttons/>', 2, 3, '2006-06-25 01:18:55', 1);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (3, 'html', '<h3 class="blog">More HTML ideas here</h3>\n', 0, 0, '2006-06-25 01:18:55', 1);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (4, 'html2', '<h3 class="blog">\nPlace your content here\n</h3>', 0, 1, '2006-06-25 01:18:55', 1);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (5, 'livesearch', '<livesearch/>', 2, 0, '2006-06-25 01:18:55', 1);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (6, 'del.icio.us', '<delicious link="tag/freeflux/"/>', 0, 2, '2006-06-25 01:18:55', 1);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (7, 'login', '<login/>', 2, 4, '2006-06-25 01:18:55', 1);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (8, 'archive', '<archive/>', 2, 2, '2006-06-25 01:18:55', 0);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (9, 'categories', '<categories/>', 1, 0, '2006-06-25 01:18:55', 1);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
