@@ -70,6 +70,11 @@ function showEdit(request) {
 	
 	$('name').value = data.name;
 	$('content').value = data.content;
+	if (data.isxml == 1) {
+		$('isxml').checked = true;
+	} else {
+		$('isxml').checked = false;
+	}
 	$('id').value = data.id;
 }
 
@@ -92,6 +97,7 @@ function createNew() {
 	$('sidebar_edit').style.display="block";
 	$('name').value = "noname";
 	$('content').value = "";
+	$('isxml').value = "on";
 	$('id').value = "";
 }
 
