@@ -401,6 +401,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml = str_replace("§amp;","&amp;",$xml);
             $dom->loadXML($xml);
         }
+        $this->getSidebarData($dom->documentElement);
         return $dom;
     }
     
@@ -1041,6 +1042,34 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         } else {
             $this->newCommentError = false;
         }
+    }
+    
+        
+    protected function getSidebarData($root) {
+        $query = "SELECT sidebar, name, content, isxml FROM ".$this->tablePrefix."sidebar AS sidebar WHERE sidebar != '0' order by sidebar,position";
+        $res = $GLOBALS['POOL']->db->query($query);
+        while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+            
+            $s = $root->appendChild($root->ownerDocument->createElement("sidebar"));
+            $s->setAttribute("sidebar",$row['sidebar']);
+            $s->setAttribute("name",$row['name']);
+            if ($row['isxml']) {
+                $node = bx_helpers_xml::getFragment($row['content'],$root->ownerDocument);
+                if ($node->firstChild) {
+                    $s->appendChild($node);
+                } else {
+                    $s->appendChild($root->ownerDocument->createTextNode($row['content']));
+                    $row['isxml'] = 0;
+                }
+            } else {
+                $s->appendChild($root->ownerDocument->createTextNode($row['content']));
+            }
+            $s->setAttribute('isxml',$row['isxml']);
+        }
+        
+        
+        
+        
     }
     
     

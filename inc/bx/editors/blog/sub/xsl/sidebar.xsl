@@ -79,8 +79,9 @@ initLists();
                     <label>Content:</label>
                     <textarea id="content" name="bx[plugins][admin_edit][edit][content]"/>
                     <br/>
+                    <label>is XML:</label> <input style="width: 1em;" type="checkbox" id="isxml" name="bx[plugins][admin_edit][edit][isxml]"/><br/>
                     <input type="submit" style="width: 50px; margin-right: 10px;" value="Save"/>
-                    <input type="submit" onclick="$('sidebar_edit').style.display = 'none'"  style="width: 100px; margin-right: 10px;" value="Save &amp; close"/>
+                    <input type="submit" accesskey="s" onclick="$('sidebar_edit').style.display = 'none'"  style="width: 100px; margin-right: 10px;" value="Save &amp; close"/>
                     <input type="button" style="width: 50px; margin-right: 10px;" value="Close" onclick="$('sidebar_edit').style.display = 'none'"/>
                     <input type="button" style="width: 50px;" value="Delete" onclick="deleteEntry(); $('sidebar_edit').style.display = 'none'"/>
                 </form>

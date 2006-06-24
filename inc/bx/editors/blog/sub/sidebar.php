@@ -64,7 +64,7 @@ class bx_editors_blog_sub_sidebar extends bx_editors_blog_sub {
     public function handlePOST($path, $id, $data) {
         $db = $GLOBALS['POOL']->dbwrite;
         
-        if (isset($data['sitebar'])) {
+        if (isset($data['sidebar'])) {
             foreach($data['sidebar'] as $lid => $value) {
                 // $db->query("update ".$this->tablePrefix."sidebar set sidebar = 0 where sidebar = $lid");
                 foreach ($value as $pos => $id) {
@@ -73,17 +73,22 @@ class bx_editors_blog_sub_sidebar extends bx_editors_blog_sub {
                 
             }
         } else if (isset($data['edit'])) {
+            if (!empty($data['edit']['isxml'])) {
+                $data['edit']['isxml'] = 1;
+            } else {
+                $data['edit']['isxml'] = 0;
+            }
             $quoted = $this->quotePostData($data['edit']);
             if (!empty($data['edit']['id'])) {
                 
-                $query = $this->getUpdateQuery('sidebar', $quoted, array('name', 'content'), $data['edit']['id']);
+                $query = $this->getUpdateQuery('sidebar', $quoted, array('name', 'content','isxml'), $data['edit']['id']);
                 $id = $data['edit']['id'];
                 
             } else {
                 $id = $db->nextID($this->tablePrefix."_sequences");
                 $pos = $db->queryOne("select max(position) from ".$this->tablePrefix."sidebar where sidebar = 0");
                 $quoted['position'] = $pos + 1;
-                $query = $this->getInsertQuery('sidebar', $quoted, array('name', 'content','position'),$id);
+                $query = $this->getInsertQuery('sidebar', $quoted, array('name', 'content','position', 'isxml'),$id);
                 
             }
             $this->newEntry = array('id'=>$id,'content'=>'
