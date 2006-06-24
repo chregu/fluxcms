@@ -2,8 +2,21 @@
 
 class bx_editors_blog_sub_files {
 
+    static protected $instance = null;
+    
     public function __construct() {
         $this->filesRoot = '/files/';
+    }
+    
+    
+        
+    public function getInstance() {
+        if (!self::$instance) {
+            self::$instance = new bx_editors_blog_sub_files();
+        }
+        
+        return self::$instance;
+        
     }
 
     public function getEditContentById($id) {

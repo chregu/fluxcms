@@ -23,8 +23,18 @@
     <xsl:template match="/">
         <xsl:choose>
             <xsl:when test="/bx/plugin/ajaxpost">
-List updated
-</xsl:when>
+                List updated
+            </xsl:when>
+            <xsl:when test="/bx/plugin/sendedit">
+                <xsl:value-of select="/bx/plugin/sendedit/text()" disable-output-escaping="yes"/>
+                
+            </xsl:when>
+            <xsl:when test="/bx/plugin/edit">
+                <xsl:value-of select="/bx/plugin/edit/text()" disable-output-escaping="yes"/>
+            </xsl:when>
+    <xsl:when test="/bx/plugin/delete">
+                <xsl:value-of select="/bx/plugin/delete/text()" disable-output-escaping="yes"/>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:call-template name="root"/>
             </xsl:otherwise>
@@ -43,9 +53,9 @@ initLists();
 
 ]]></script>
 
-        <script src="/webinc/js/prototype.js" type="text/javascript"></script>
-        <script src="/webinc/js/scriptaculous/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>
-        <script src="/webinc/plugins/blog/sidebar.js" type="text/javascript"></script>
+        <script src="{$webroot}webinc/js/prototype.js" type="text/javascript"></script>
+        <script src="{$webroot}webinc/js/scriptaculous/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>
+        <script src="{$webroot}webinc/plugins/blog/sidebar.js" type="text/javascript"></script>
 
 
     </xsl:template>
@@ -59,53 +69,75 @@ initLists();
         <div id="subeditor">
             <div id="subeditorright"></div>
             <div id="subeditorleft">
-            
-           
-<div class="sortableContainer">
-<h1>Left</h1>
-                <ul class="sortable" id="list1">
-                    <xsl:for-each select="/bx/plugin/data/sidebar[@id = '1']/sidebar">
-                        <li id="item_{id}">
-                        <a href="#editItem{id}" onclick="return editItem({id})" style="float: right">[+]</a>
-                        
-                            <xsl:value-of select="name"/>
-                        </li>
-                    </xsl:for-each>
-                </ul>
-                </div>
-                
-                 <div class="sortableContainer">
-            <h1>Not assigned</h1>
-                <ul class="sortable" id="list0">
-                    <xsl:for-each select="/bx/plugin/data/sidebar[@id = '0']/sidebar">
-                        <li id="item_{id}">
-                        <a href="#editItem{id}" onclick="return editItem({id})" style="float: right">[+]</a>
-                        
-                            <xsl:value-of select="name"/>
-                        </li>
-                    </xsl:for-each>
-                </ul>
-</div>
-                <div class="sortableContainer">
-<h1>Right</h1>
-
-
-                <ul class="sortable" id="list2">
-                    <xsl:for-each select="/bx/plugin/data/sidebar[@id = '2']/sidebar">
-                        <li id="item_{id}">
-                        <a href="#editItem{id}" onclick="return editItem({id})"  style="float: right">[+]</a>
-                            <xsl:value-of select="name"/>
-                        </li>
-                    </xsl:for-each>
-                </ul>
-
-      
-
-</div>
-<br clear="all"/>
-          <p id="list-info"></p>
+              <div id="sidebar_edit" style="display: none;">
+<h3 class="blog">Edit entry</h3>
+                <form id="editform" name="edit" onsubmit="return sendEdit();">
+                    <input id="id" name="bx[plugins][admin_edit][edit][id]" type="hidden" value=""/>
+                    <label>Name:</label>
+                    <input id="name" name="bx[plugins][admin_edit][edit][name]" type="text" value=""/>
+                    <br/>
+                    <label>Content:</label>
+                    <textarea id="content" name="bx[plugins][admin_edit][edit][content]"/>
+                    <br/>
+                    <input type="submit" style="width: 50px; margin-right: 10px;" value="Save"/>
+                    <input type="submit" onclick="$('sidebar_edit').style.display = 'none'"  style="width: 100px; margin-right: 10px;" value="Save &amp; close"/>
+                    <input type="button" style="width: 50px; margin-right: 10px;" value="Close" onclick="$('sidebar_edit').style.display = 'none'"/>
+                    <input type="button" style="width: 50px;" value="Delete" onclick="deleteEntry(); $('sidebar_edit').style.display = 'none'"/>
+                </form>
             </div>
+
+                <xsl:call-template name="list">
+                    <xsl:with-param name="title">Left</xsl:with-param>
+                    <xsl:with-param name="id" select="1"/>
+                </xsl:call-template>
+                
+
+                <xsl:call-template name="list">
+                    <xsl:with-param name="title">Not assigned</xsl:with-param>
+                    <xsl:with-param name="id" select="0"/>
+                </xsl:call-template>
+
+
+                <xsl:call-template name="list">
+                    <xsl:with-param name="title">Right</xsl:with-param>
+                    <xsl:with-param name="id" select="2"/>
+                </xsl:call-template>
+
+
+                <br clear="all"/>
+                <p id="list-info"></p>
+                <p>
+                    <a href="#create" onclick="return createNew();">Create new entry</a>
+                </p>
+            </div>
+
+            
         </div>
+    </xsl:template>
+
+    <xsl:template name="list">
+        <xsl:param name="title"/>
+        <xsl:param name="id"/>
+
+        <div class="sortableContainer">
+            <h1>
+                <xsl:value-of select="$title"/>
+            </h1>
+
+
+            <ul class="sortable" id="list{$id}">
+                <xsl:for-each select="/bx/plugin/data/sidebar[@id = $id]/sidebar">
+                    <li id="item_{id}">
+                        <a href="#editItem{id}" onclick="return editItem({id})" style="float: right">[...]</a>
+                        <xsl:value-of select="name"/>
+                    </li>
+                </xsl:for-each>
+            </ul>
+
+
+
+        </div>
+
     </xsl:template>
 
 </xsl:stylesheet>

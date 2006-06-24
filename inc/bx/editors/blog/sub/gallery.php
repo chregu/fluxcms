@@ -6,11 +6,22 @@ class bx_editors_blog_sub_gallery {
     protected $virtualRoot = '';
     static protected $currentImageId = FALSE;
     static protected $switchToTab = 'properties';
+    static protected $instance = null;
     
     public function __construct() {
         $this->virtualRoot = '/files/_galleries/gallery/';
         $this->absoluteRoot = BX_OPEN_BASEDIR.$this->virtualRoot;
         $this->baseCollection = '/gallery/';
+    }
+
+    
+    public function getInstance() {
+        if (!self::$instance) {
+            self::$instance = new bx_editors_blog_sub_gallery();
+        }
+        
+        return self::$instance;
+        
     }
     
     public function getEditContentById($id) {

@@ -3,12 +3,14 @@
 class bx_editors_blog_sub {
     protected $tablePrefix;
     public $lastInsertId = FALSE;
-
+    static protected $instance = null;
+    
     public function __construct() {
         $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $this->dbwrite = $GLOBALS['POOL']->dbwrite;
     }
-
+    
+    
     public function handlePOST($path, $id, $data) {
     }
     

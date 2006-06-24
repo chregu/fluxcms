@@ -211,7 +211,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
         $class = "bx_editors_blog_sub_$editor";
         
         if(class_exists($class)) {
-            $editor = new $class();
+            $editor = call_user_func(array($class,"getInstance"));
             $editor->blogEditor = $this;
             return $editor;
         }

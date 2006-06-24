@@ -7,6 +7,17 @@ class bx_editors_blog_sub_options extends bx_editors_blog_sub {
         'blogDefaultEditor'
     );
     
+        
+    public function getInstance() {
+        if (!self::$instance) {
+            self::$instance = new bx_editors_blog_sub_options();
+        }
+        
+        return self::$instance;
+        
+    }
+    
+    
     public function getEditContentById($id) {
         $dom = new DomDocument();
         $i18n = $GLOBALS['POOL']->i18nadmin;

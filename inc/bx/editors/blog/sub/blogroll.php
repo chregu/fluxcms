@@ -4,6 +4,16 @@ class bx_editors_blog_sub_blogroll extends bx_editors_blog_sub {
     static protected $currentCategoryId = FALSE;
     static protected $currentLinkId = FALSE;
     
+        
+    public function getInstance() {
+        if (!self::$instance) {
+            self::$instance = new bx_editors_blog_sub_blogroll();
+        }
+        
+        return self::$instance;
+        
+    }
+    
     public function getEditContentById($id) {
         $parts =  bx_collections::getCollectionAndFileParts($id, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");

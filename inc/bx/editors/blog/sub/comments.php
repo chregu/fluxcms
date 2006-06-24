@@ -4,6 +4,16 @@ class bx_editors_blog_sub_comments extends bx_editors_blog_sub {
     
     static protected $id = FALSE;
     
+        
+    public function getInstance() {
+        if (!self::$instance) {
+            self::$instance = new bx_editors_blog_sub_comments();
+        }
+        
+        return self::$instance;
+        
+    }
+    
     public function getEditContentById($id) {
         if(self::$id == FALSE) 
             self::$id = isset($_GET['id']) ? $_GET['id'] : 0;
