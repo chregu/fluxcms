@@ -55,7 +55,7 @@ function editItem(id) {
 	{
 		
 		parameters: 'id='+ id,
-		onComplete: showEdit,
+		onComplete: showEdit
 		
 	}
 	);
