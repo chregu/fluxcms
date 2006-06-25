@@ -111,7 +111,8 @@ if ($GLOBALS['POOL']->config->adminDeleteTmp == 'true') {
 <?php if(popoon_classes_browser::isSafari()) { ?>
 <div class="browserWarning">Safari works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
 <?php } else if(popoon_classes_browser::isOpera8()) { ?>
-<div class="browserWarning">Opera 8 works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
+<div class="browserWarning">Opera 8/9 works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a 
+Mozilla based browser.</div>
 <?php } else if(popoon_classes_browser::isKonqueror34()) { ?>
 <div class="browserWarning">Konqueror works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
 <?php } else if(popoon_classes_browser::isMSIEWin()) {?>
