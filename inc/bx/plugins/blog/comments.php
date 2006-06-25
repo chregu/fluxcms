@@ -28,7 +28,7 @@
         }
     }
     
-    protected function getCommentXML($res) {
+    static protected function getCommentXML($res) {
         $xml = '';
         $lastModified = 0;
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
@@ -72,7 +72,7 @@
     }
     
     
-    protected function getLatestComments($status = 1, $tablePrefix = null, $blogid) {
+    static protected function getLatestComments($status = 1, $tablePrefix = null, $blogid) {
         
         $gmnow = gmdate("Y-m-d H:i:00",time() + 60);
         if (!$tablePrefix) {
