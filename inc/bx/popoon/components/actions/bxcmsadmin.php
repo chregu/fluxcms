@@ -62,6 +62,9 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
                 }
             }
         */
+        
+        define('BX_WEBROOT_LANG' ,BX_WEBROOT);
+        
         if($collection === FALSE) {
             print "not found in admin";
             return array();
