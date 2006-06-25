@@ -109,16 +109,16 @@ if ($GLOBALS['POOL']->config->adminDeleteTmp == 'true') {
 ?>
 </span>
 <?php if(popoon_classes_browser::isSafari()) { ?>
-<div class="browserWarning">Safari works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
+<div onclick="this.style.display = 'none'" class="browserWarning">Safari works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
 <?php } else if(popoon_classes_browser::isOpera8()) { ?>
-<div class="browserWarning">Opera 8/9 works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a 
+<div  onclick="this.style.display = 'none'"  class="browserWarning">Opera 8/9 works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a 
 Mozilla based browser.</div>
 <?php } else if(popoon_classes_browser::isKonqueror34()) { ?>
-<div class="browserWarning">Konqueror works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
+<div  onclick="this.style.display = 'none'"  class="browserWarning">Konqueror works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
 <?php } else if(popoon_classes_browser::isMSIEWin()) {?>
-<div class="browserWarning">Not all features and esp. WYSIWYG editors are supported on MSIE/Win. <br/>We highly recommend using a Mozilla based browser.</div>
+<div  onclick="this.style.display = 'none'"  class="browserWarning">Not all features and esp. WYSIWYG editors are supported on MSIE/Win. <br/>We highly recommend using a Mozilla based browser.</div>
 <?php } else if(!popoon_classes_browser::isMozilla()) { ?>
-<div class="browserWarningRed">Your browser is not supported in  Flux CMS Admin. <br/>We highly recommend using a Mozilla based browser.</div>
+<div  onclick="this.style.display = 'none'"  class="browserWarningRed">Your browser is not supported in  Flux CMS Admin. <br/>We highly recommend using a Mozilla based browser.</div>
 <?php } else {
    /* print "Version : ";
     print BXCMS_VERSION."/";
