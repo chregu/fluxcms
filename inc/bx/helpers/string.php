@@ -287,8 +287,13 @@ class bx_helpers_string {
         "numeric-entities" => true,
         "drop-proprietary-attributes" => true
         );
-        $tidy = new tidy();
-        if(!$tidy) {
+        
+        if (class_exists("tidy")) {
+            $tidy = new tidy();
+            if(!$tidy) {
+                return $string;
+            }
+        } else {
             return $string;
         }
         
