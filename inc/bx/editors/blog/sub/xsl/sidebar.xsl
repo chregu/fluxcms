@@ -86,7 +86,7 @@ initLists();
                     <input type="button" style="width: 50px;" value="Delete" onclick="deleteEntry(); $('sidebar_edit').style.display = 'none'"/>
                 </form>
             </div>
-
+<br clear="all"/>
                 <xsl:call-template name="list">
                     <xsl:with-param name="title">Left</xsl:with-param>
                     <xsl:with-param name="id" select="1"/>
@@ -121,9 +121,9 @@ initLists();
         <xsl:param name="id"/>
 
         <div class="sortableContainer">
-            <h1>
+            <h3 class="blog">
                 <xsl:value-of select="$title"/>
-            </h1>
+            </h3>
 
 
             <ul class="sortable" id="list{$id}">
