@@ -430,6 +430,8 @@ INSERT INTO `##bxcms_##users` (`ID`, `user_login`, `user_pass`, `user_email`, `u
 -- 
 -- Table structure for table `fluxcms_sidebar`
 -- 
+DROP TABLE IF EXISTS `##bxcms_##sidebar`;
+
 
 CREATE TABLE `##bxcms_##sidebar` (
   `id` int(11) NOT NULL auto_increment,
