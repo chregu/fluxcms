@@ -84,14 +84,22 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
         $prefix =  $GLOBALS['POOL']->config->getTablePrefix();
         $dateformat = $this->getParameter($path,"dateformat",BX_PARAMETER_TYPE_DEFAULT,"d/m/Y H:i");
         $attrFields = array('title','link', 'von', 'bis', 'uri');
+        
         $sqlWhere = $this->getParameter($path, "sqlwhere", BX_PARAMETER_TYPE_DEFAULT); 
+        $sqlOrder = $this->getParameter($path, "sqlorder", BX_PARAMETER_TYPE_DEFAULT);
         if($filename == "index"){
             
             $query="select * from ".$prefix."events"; 
             if ($sqlWhere && !empty($sqlWhere)) {
                 $query.= " WHERE ".$sqlWhere;    
             }
-            $query.= " order by von asc";
+            
+            if ($sqlOrder && !empty($sqlOrder)) {
+                $query.= " ORDER BY ".$sqlOrder;
+            } else {
+                $query.= " order by von asc";
+            }
+             
             $res =  $GLOBALS['POOL']->db->query($query);
             $dom = new DomDocument();
             $root=$dom->createElement("events");
