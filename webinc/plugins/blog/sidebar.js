@@ -140,7 +140,11 @@ function deleteCompleted(request) {
 	
 	var li = $('item_'+data.id);
 	if (li) {
-		li.parentNode.removeChild(li);
+		var par = li.parentNode;
+		
+		par.removeChild(li);
+		initList(par.id.replace(/list/,''));
 	}
+	
 }
 
