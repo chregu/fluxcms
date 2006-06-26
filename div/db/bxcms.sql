@@ -455,7 +455,7 @@ INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`,
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (5, 'livesearch', '<livesearch/>', 2, 0, '2006-06-25 01:18:55', 1);
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (6, 'del.icio.us', '<delicious link="tag/freeflux/"/>', 0, 2, '2006-06-25 01:18:55', 1);
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (7, 'login', '<login/>', 2, 4, '2006-06-25 01:18:55', 1);
-INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (8, 'archive', '<archive/>', 2, 2, '2006-06-25 01:18:55', 0);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (8, 'archive', '<archive/>', 2, 2, '2006-06-25 01:18:55', 1);
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (9, 'categories', '<categories/>', 1, 0, '2006-06-25 01:18:55', 1);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
