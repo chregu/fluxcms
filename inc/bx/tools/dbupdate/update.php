@@ -310,7 +310,7 @@ if ($lastVersion < 7312) {
     doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'livesearch', '<livesearch/>', 2, 0,  1);",false);
     doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'del.icio.us', '<delicious link=\"tag/freeflux/\"/>', 0, 2, 1);",false);
     doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'login', '<login/>', 2, 4, 1);",false);
-    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'archive', '<archive/>', 2, 2, 0);",false);
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'archive', '<archive/>', 2, 2, 1);",false);
     doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'categories', '<categories/>', 1, 0, 1);",false);     
       updateLastVersion(7312);
 }
