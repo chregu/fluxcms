@@ -30,6 +30,13 @@
   <xsl:variable name="defaultLanguage" select="php:functionString('constant','BX_DEFAULT_LANGUAGE')"/>
 
     <xsl:variable name="navitreePlugin" select="/bx/plugin[@name='navitree']"/>
+    <!-- uncomment this, if you want meta description and keywords from collection properties
+           and also adjust the html_head_keywords and html_head_description templates
+    -->
+    <!--
+    <xsl:variable name="selectedCollections" select="$navitreePlugin/collection//items/collection[@selected='selected']"/>
+    -->
+    
     <xsl:variable name="webrootW" select="substring($webroot,1,string-length($webroot)-1)"/>
     <xsl:variable name="webrootLangW" select="substring($webrootLang,1,string-length($webrootLang)-1)"/>
     <xsl:template match="/">
@@ -56,16 +63,32 @@
                     </xsl:attribute>
                 </meta>
                 -->
-                <meta name="keywords" content=""/> 
-                <meta name="description" content="{$sitedescription}"/>
-                <meta http-equiv="imagetoolbar" content="no"/>
-                <link rel="openid.server" href="{$webroot}admin/webinc/openid/" />
-                <link type="text/css" href="{$webroot}themes/{$theme}/css/{$themeCss}" rel="stylesheet" media="screen"/>
-                <link type="text/css" href="{$webroot}themes/{$theme}/css/mobile.css" rel="stylesheet" media="handheld"/>
-                
+
+<xsl:text>
+</xsl:text>                
+                <xsl:call-template name="html_head_keywords"/>
+<xsl:text>
+</xsl:text>                
+                <xsl:call-template name="html_head_description"/>
+<xsl:text>
+</xsl:text>                
                 <title>
                     <xsl:call-template name="html_head_title"/>
                 </title>
+<xsl:text>
+</xsl:text>                
+                <meta http-equiv="imagetoolbar" content="no"/>
+<xsl:text>
+</xsl:text>                
+                <link rel="openid.server" href="{$webroot}admin/webinc/openid/" />
+<xsl:text>
+</xsl:text>                
+                <link type="text/css" href="{$webroot}themes/{$theme}/css/{$themeCss}" rel="stylesheet" media="screen"/>
+<xsl:text>
+</xsl:text>                
+                <link type="text/css" href="{$webroot}themes/{$theme}/css/mobile.css" rel="stylesheet" media="handheld"/>
+<xsl:text>
+</xsl:text>                
                 <link rel="shortcut icon" href="{$webroot}favicon.ico" type="image/x-icon"/>
                 <xsl:call-template name="html_head"/>
                 <xsl:call-template name="html_head_scripts"/>
@@ -248,8 +271,46 @@
             <xsl:if test="position() = last() and $filename != 'index'">
                 :: <xsl:value-of select="items/*[filename=$filename]/title"/>
             </xsl:if>
+            
+            <xsl:call-template name="html_head_title_end"/>
+            
         </xsl:for-each>
     </xsl:template>
+    
     <xsl:template name="body_attributes"/>
+    
+    <xsl:template name="html_head_title_end"/>
+
+    <xsl:template name="html_head_keywords">
+    <!-- uncomment this, if you want meta description and keywords from collection properties
+           and also adjust the html_head_keywords and html_head_description templates
+    -->
+    <!--
+        <meta name="keywords">
+        <xsl:variable name="k" select="$selectedCollections/properties/property[@name='subject']"/> 
+        <xsl:attribute name="content"><xsl:value-of select="$k[position() = last()]/@value"/> </xsl:attribute>
+        </meta>
+    -->
+    </xsl:template>
+    
+    <xsl:template name="html_head_description">
+    <!-- uncomment this, if you want meta description and keywords from collection properties
+           and also adjust the html_head_keywords and html_head_description templates
+    -->
+    <!--
+        <xsl:variable name="k" select="$selectedCollections/properties/property[@name='description']"/>
+        <xsl:variable name="last" select="$k[position() = last()]/@value"/>
+        <xsl:choose>
+            <xsl:when test="$last != ''" >
+                  <meta name="description" content="{$last}"/>
+            </xsl:when>
+            <xsl:otherwise>
+                 <meta name="description" content="{$sitedescription}"/>
+            </xsl:otherwise>
+        </xsl:choose>
+     -->
+    <meta name="description" content="{$sitedescription}"/>
+    </xsl:template>
+     
 </xsl:stylesheet>
 
