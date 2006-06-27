@@ -18,6 +18,7 @@
             <property id="redirect"/>
             <property id="relink"/>
             <property id="dc_subject"/>
+            <property id="dc_description"/>
             <property id="kMDItem_AudioBitRate"/>
             <property id="dc_creator"/>
             <property id="dc_date"/>
@@ -98,6 +99,8 @@
             <property id="parent-uri"/>
             <property id="relink"/>
             <property id="display-name-multilang"/>
+            <property id="dc_subject"/>
+            <property id="dc_description"/>
             
             <!--
               Uncomment this, if you want to use the simple-perm properties
@@ -115,8 +118,13 @@
     -->
     <properties>
     
-       <property id="dc_subject" name="subject" niceName="dc:subject (tags)" ns="http://purl.org/dc/elements/1.1/">
+       <property id="dc_subject" name="subject" niceName="subject (tags)" ns="http://purl.org/dc/elements/1.1/">
             <metadata type="text_tags"/>
+            <validate type="nonempty"/>
+        </property>
+        
+         <property id="dc_description" name="description" niceName="description" ns="http://purl.org/dc/elements/1.1/">
+            <metadata type="text_textfield"/>
             <validate type="nonempty"/>
         </property>
        
