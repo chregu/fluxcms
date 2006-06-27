@@ -118,17 +118,17 @@
     -->
     <properties>
     
-       <property id="dc_subject" name="subject" niceName="subject (tags)" ns="http://purl.org/dc/elements/1.1/">
+       <property id="dc_subject" name="subject" niceName="keywords" ns="http://purl.org/dc/elements/1.1/" deleteOnEmpty="true">
             <metadata type="text_tags"/>
             <validate type="nonempty"/>
         </property>
         
-         <property id="dc_description" name="description" niceName="description" ns="http://purl.org/dc/elements/1.1/">
+         <property id="dc_description" name="description" niceName="description" ns="http://purl.org/dc/elements/1.1/" deleteOnEmpty="true">
             <metadata type="text_textfield"/>
             <validate type="nonempty"/>
         </property>
        
-       <property id="dc_creator" name="creator" niceName="dc:creator" ns="http://purl.org/dc/elements/1.1/">
+       <property id="dc_creator" name="creator" niceName="dc:creator" ns="http://purl.org/dc/elements/1.1/" deleteOnEmpty="true">
             <metadata type="text_textfield"/>
             <validate type="nonempty"/>
         </property>
