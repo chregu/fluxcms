@@ -17,7 +17,7 @@ class bx_metadatas_text_tags extends bx_metadatas_text_textfield {
         $textField = $dom->createElement('metadata');
         $textField->setAttribute('type', 'textfield');
         $textField->setAttribute('size', $this->size);
-        $textField->setAttribute('maxLength', $this->maxLength);    
+        $textField->setAttribute('maxLength', 255);    
             
         
         if (!empty($this->table)) {
