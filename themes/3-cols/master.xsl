@@ -243,7 +243,7 @@
     </xsl:template>
     <xsl:template name="contentRight">
     <!-- we should add the rss feed here... for later-->
-     <!--<h3>Latest Blog Posts</h3>
+     <h3>Latest Blog Posts</h3>
         <ul>
             <xsl:for-each select="document('portlet://blog/rss.xml')/bx/plugin/xhtml:html/xhtml:body/xhtml:div[@class='entry' and position() &lt; 6]">
                 <li>
@@ -254,11 +254,12 @@
                 </li>
             </xsl:for-each>
         </ul>
+
 <p>
         <a href="{$webroot}blog/rss.xml">
             <img border="0" src="{$webroot}themes/{$theme}/buttons/rss.png" alt="RSS 2.0 feed"/>
         </a>
-</p>-->
+</p>
     </xsl:template>
     <xsl:template name="html_head">
         <link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="{$webroot}blog/rss.xml"/>
