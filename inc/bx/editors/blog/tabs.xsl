@@ -10,7 +10,8 @@
     xmlns:rss="http://purl.org/rss/1.0"
     xmlns:blog="http://bitflux.org/doctypes/blog"
     xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
-    exclude-result-prefixes="rdf dc xhtml rss bxf blog"
+    xmlns:php="http://php.net/xsl"
+    exclude-result-prefixes="rdf dc xhtml rss bxf blog php"
 >
 
     <xsl:output encoding="utf-8" method="xml" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"/>
