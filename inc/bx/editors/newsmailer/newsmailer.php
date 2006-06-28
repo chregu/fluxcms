@@ -70,10 +70,10 @@ class bx_editors_newsmailer_newsmailer {
     	
     	// load baseurl from db, we are not running inside apache!
     	$this->baseUrl = $draft["baseurl"];
-    	
+    //FIXME.... colluri is missing, has to go into the db somehow... 
     	// read in the newsletter templates if existing
-    	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
-		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
+    	   $htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html", $draft['colluri']);
+		$textMessage = $this->readNewsletterFile($draft['textfile'], "text", $draft['colluri']);
 
 		$dom = new DomDocument();
 		
@@ -179,6 +179,7 @@ class bx_editors_newsmailer_newsmailer {
     public function sendNewsletter($draft, $receivers, $mailoptions)
     {
     	// read in the newsletter templates if existing
+        
     	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
 		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
 
@@ -377,11 +378,11 @@ class bx_editors_newsmailer_newsmailer {
      * @param type either text or html
      * @return file content in a string
      */
-    protected function readNewsletterFile($name, $type)
+    protected function readNewsletterFile($name, $typem, $colluri)
     {
     	// normally the file is in the archive directory but activation e.g. is in the newsleter base directory
-    	if(($content = @file_get_contents('data/newsletter/archive/'.$name)) == false) {
-    		$content = @file_get_contents('data/newsletter/'.$name);
+    	if(($content = @file_get_contents('data'.$colluri.'archive/'.$name)) == false) {
+    		$content = @file_get_contents('data'.$colluri.$name);
     	}
     	return $content;
     }

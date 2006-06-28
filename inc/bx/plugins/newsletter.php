@@ -283,22 +283,22 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         $dom->setIcon("gallery");
 
 		// first tab
-	    if ($perm->isAllowed('/newsletter/drafts/',array('xhtml-back-create'))) {
-        	 $dom->addLink("Create Newsletter",'addresource/newsletter/drafts/?type=xhtml');
+	    if ($perm->isAllowed($path.'drafts/',array('xhtml-back-create'))) {
+        	 $dom->addLink("Create Newsletter",'addresource'.$path.'drafts/?type=xhtml');
     	}	
-	    if ($perm->isAllowed('/newsletter/',array('newsletter-back-send'))) {
+	    if ($perm->isAllowed($path,array('newsletter-back-send'))) {
         	$dom->addLink("Send Newsletter",'edit'.$path.'send/');
     	}	
-	    if ($perm->isAllowed('/newsletter/',array('newsletter-back-archive'))) {
+	    if ($perm->isAllowed($path,array('newsletter-back-archive'))) {
         	$dom->addLink("Newsletter Archive",'edit'.$path.'manage/');
     	}	
-	    if ($perm->isAllowed('/newsletter/',array('newsletter-back-feed'))) {
+	    if ($perm->isAllowed($path,array('newsletter-back-feed'))) {
         	$dom->addLink("Generate from Feed",'edit'.$path.'feed/');
     	}	
 
         // second tab
         $dom->addTab("Management");
-	    if ($perm->isAllowed('/newsletter/',array('newsletter-back-manage'))) {
+	    if ($perm->isAllowed($path,array('newsletter-back-manage'))) {
         	$dom->addLink("User Management",'edit'.$path.'users/');
     	}	
 	    if ($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-newsletter_users'))) {
@@ -327,10 +327,10 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
     
     	if(eregi(".+@.+\..+.", $email)) {
     		// doesn't work on windows
-    		//list($userName, $mailDomain) = split("@", $email);
-    		//if(checkdnsrr($mailDomain, "MX")) { 
+    		list($userName, $mailDomain) = split("@", $email);
+    		if(checkdnsrr($mailDomain, "MX")) { 
     			return true;
-    		//}
+    		}
     	}
     
     	return false;	

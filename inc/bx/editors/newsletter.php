@@ -60,7 +60,6 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			
 			// replace whitespaces to get a clean url
 			$clearSubject = str_replace(" ", "-", $data['subject']);
-			
 			if(!empty($data["htmlfile"])) {
 				if($testMode == 0) {
 					$newHtmlFile = $year.date("Ymd-").$clearSubject.".".$htmllanguage.".xhtml";
@@ -90,9 +89,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$classname = $this->getConfigParameter($id, "sendclass");	
 
      		// Save all the information we received about the newsletter in the database for archiving purposes
-     		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `attachment`, `class`, `mailserver`, `embed`, `baseurl`)
+            // FIXME... add also colluri 
+     		$query = 	"INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `colluri`,`attachment`, `class`, `mailserver`, `embed`, `baseurl`)
 						VALUES (
-						'".$data['from']."', '".$data['subject']."', '".$newHtmlFile."', '".$newTextFile."', '".$data['attachment']."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."');";
+						'".$data['from']."', '".$data['subject']."', '".$newHtmlFile."', '".$newTextFile."','".$colluri."', '".$data['attachment']."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."');";
 			$GLOBALS['POOL']->dbwrite->exec($query);
 
 			$draftId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_drafts", "id");
@@ -385,7 +385,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		$sendersHTML .= '</select>';
 
 		// show a list of newsletter templates created
-		$files = $this->getNewsletterFilenames();
+		$files = $this->getNewsletterFilenames($colluri);
 		foreach($files as $file)
 		{
 			if(strstr($file, "-txt.") !== FALSE) {
@@ -469,7 +469,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	$drafts = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);	
 
 		// get a list of all current newsletter templates
-		$newsletters = $this->getNewsletterFilenames();
+		$newsletters = $this->getNewsletterFilenames($colluri);
 
  		$xml = '<newsletter>
 		<h3>'.$txtArchive.'</h3>
@@ -651,14 +651,14 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     /**
      * Gets all newsletters saved in the collection
      */
-    protected function getNewsletterFilenames()
+    protected function getNewsletterFilenames($colluri)
     {
         
         
     	$newsletters = array();
         
     	$counter = 0;
-    	$files = scandir("data'.$colluri.'drafts/");
+    	$files = scandir("data".$colluri."drafts/");
     	
     	foreach($files as $file)
     	{
