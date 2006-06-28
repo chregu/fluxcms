@@ -19,17 +19,15 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      * Gathers a list of subscriptors for the newsletter the user wishes to send. 
      */
     public function handlePOST($path, $id, $data) {
- 		
  		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
  		
  		$perm = bx_permm::getInstance();
- 		
  		$parts = bx_collections::getCollectionUriAndFileParts($id);
-
-     	// Send event
+        $colluri = $parts['colluri'];
+        // Send event
      	if($parts['name'] == "send/.")
      	{
-     		if (!$perm->isAllowed('/newsletter/',array('newsletter-back-send'))) {
+     		if (!$perm->isAllowed($colluri,array('newsletter-back-send'))) {
             	throw new BxPageNotAllowedException();
         	}	
      		
@@ -47,6 +45,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      		}
      		
      		// check if this is a testmail
+            
 	    	$groupIds = implode(",", $data["groups"]);
 	        $query = "select COUNT(*) from ".$prefix."newsletter_groups where id in (".$groupIds.") and test=1";
 	        $testMode = $GLOBALS['POOL']->db->queryOne($query); 
@@ -65,13 +64,13 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			if(!empty($data["htmlfile"])) {
 				if($testMode == 0) {
 					$newHtmlFile = $year.date("Ymd-").$clearSubject.".".$htmllanguage.".xhtml";
-					rename("data/newsletter/drafts/".$data["htmlfile"], "data/newsletter/archive/".$newHtmlFile);
-					$this->removeNewsletterProperties("/newsletter/drafts/".$data["htmlfile"]);
-					$this->addNewsletterProperties("/newsletter/archive/".$newHtmlFile, $data["subject"]);
+					rename("data".$colluri."drafts/".$data["htmlfile"], "data".$colluri."archive/".$newHtmlFile);
+					$this->removeNewsletterProperties($colluri."drafts/".$data["htmlfile"]);
+					$this->addNewsletterProperties($colluri."archive/".$newHtmlFile, $data["subject"],$colluri);
 					
 					if(isset($data['publish'])) {
 						// make the newsletter visible to the users
-						bx_resourcemanager::setProperty("/newsletter/archive/".$newHtmlFile, "display-order", "99");
+						bx_resourcemanager::setProperty($colluri."archive/".$newHtmlFile, "display-order", "99");
 					}
 				} else {
 					$newHtmlFile = "drafts/".$data["htmlfile"];
@@ -80,9 +79,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
 				if($testMode == 0) {	
 					$newTextFile = $year.date("Ymd-").$clearSubject."-txt.".$textlanguage.".xhtml";
-					rename("data/newsletter/drafts/".$data["textfile"], "data/newsletter/archive/".$newTextFile);
-					$this->removeNewsletterProperties("/newsletter/drafts/".$data["textfile"]);
-					$this->addNewsletterProperties("/newsletter/archive/".$newTextFile, $data["subject"]);
+					rename("data".$colluri."drafts/".$data["textfile"], "data".$colluri."archive/".$newTextFile);
+					$this->removeNewsletterProperties($colluri."drafts/".$data["textfile"]);
+					$this->addNewsletterProperties($colluri."archive/".$newTextFile, $data["subject"],$colluri);
 				} else {
 					$newTextFile = "drafts/".$data["textfile"];
 				}
@@ -132,10 +131,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	}
      	else if($parts['name'] == "users/.")
      	{
-     		if (!$perm->isAllowed('/newsletter/',array('newsletter-back-manage'))) {
-            	throw new BxPageNotAllowedException();
-        	}	
-     		
+     		if (!$perm->isAllowed($colluri,array('newsletter-back-manage'))) {
+            	   throw new BxPageNotAllowedException();
+        	   }	
      		if(!empty($_FILES))
      		{
      			// get the content of the uploaded file
@@ -146,21 +144,21 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      	}
      	else if($parts['name'] == "feed/.")
      	{
-     		if (!$perm->isAllowed('/newsletter/',array('newsletter-back-feed'))) {
+     		if (!$perm->isAllowed($colluri,array('newsletter-back-feed'))) {
             	throw new BxPageNotAllowedException();
         	}	
      		
      		// Generate a newsletter from a RSS feed
-     		$this->createFromFeed($data);	
+     		$this->createFromFeed($data,$colluri);	
      	}
     }
     
     /**
      * Removes all properties of the given resource
      */
-    protected function addNewsletterProperties($path, $display) 
+    protected function addNewsletterProperties($path, $display,$colluri) 
     {
-		bx_resourcemanager::setProperty($path, "parent-uri", "/newsletter/archive/".date("Y")."/");
+     	bx_resourcemanager::setProperty($path, "parent-uri", $colluri."archive/".date("Y")."/");
 		bx_resourcemanager::setProperty($path, "display-name", $display);
 		bx_resourcemanager::setProperty($path, "display-order", "0");
 		bx_resourcemanager::setProperty($path, "mimetype", "text/html");
@@ -172,7 +170,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function removeNewsletterProperties($path) 
     {
-    	bx_resourcemanager::removeProperty($path, "parent-uri");
+    	   bx_resourcemanager::removeProperty($path, "parent-uri");
 		bx_resourcemanager::removeProperty($path, "display-name");
 		bx_resourcemanager::removeProperty($path, "display-order");
 		bx_resourcemanager::removeProperty($path, "mimetype");
@@ -187,57 +185,59 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     public function getEditContentById($id) {
      	
      	$parts = bx_collections::getCollectionUriAndFileParts($id);
-		 
+		$colluri = $parts['colluri'];
         $perm = bx_permm::getInstance();	
 		
      	// Manage view requested
      	if($parts['name'] == "manage/")
      	{
-			if (!$perm->isAllowed('/newsletter/',array('newsletter-back-manage'))) {
+			if (!$perm->isAllowed($colluri,array('newsletter-back-manage'))) {
             	throw new BxPageNotAllowedException();
         	}	
      		
-     		return $this->generateManageView();
+     		return $this->generateManageView($colluri);
      	}
      	// Send view requested
 		else if($parts['name'] == "send/")
 		{
-			if (!$perm->isAllowed('/newsletter/',array('newsletter-back-send'))) {
+			if (!$perm->isAllowed($colluri,array('newsletter-back-send'))) {
             	throw new BxPageNotAllowedException();
         	}	
         
 			if(isset($_POST["preview"]) and !isset($_POST["nogroups"])) {
-				return $this->generatePreviewView();
+				return $this->generatePreviewView($colluri);
 			}
-     		return $this->generateSendView();
+     		return $this->generateSendView($colluri);
 		}
 		
      	// Send view requested
 		else if($parts['name'] == "users/")
 		{
-			if (!$perm->isAllowed('/newsletter/',array('newsletter-back-archive'))) {
+			if (!$perm->isAllowed($colluri,array('newsletter-back-archive'))) {
             	throw new BxPageNotAllowedException();
         	}	
 			
-     		return $this->generateUsersView();
+     		return $this->generateUsersView($colluri);
 		}
 		
      	// Send view requested
 		else if($parts['name'] == "feed/")
 		{
-			if (!$perm->isAllowed('/newsletter/',array('newsletter-back-feed'))) {
+			if (!$perm->isAllowed($colluri,array('newsletter-back-feed'))) {
             	throw new BxPageNotAllowedException();
         	}	
         	
-     		return $this->generateFeedView();
+     		return $this->generateFeedView($colluri);
 		}
     }
   
     /**
      * The send view lets the user enter information about the newsletter to be sent
      */
-    protected function generatePreviewView()
+    protected function generatePreviewView($colluri)
     {
+        
+        
     	$i18n = $GLOBALS['POOL']->i18nadmin;
      	$txtFrom = $i18n->getText("From");
      	$txtTo = $i18n->getText("To");
@@ -267,16 +267,16 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	$query = "select COUNT(DISTINCT fk_user) from ".$prefix."newsletter_users2groups u2g, ".$prefix."newsletter_users u where fk_group in (".$groupIds.") AND fk_user=u.id AND u.status='1' ORDER BY fk_user";
     	$usercount = $GLOBALS['POOL']->db->queryOne($query); 
     	
-    	$htmlsrc = (!empty($_POST["htmlfile"]) ? BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["htmlfile"].'?editor=kupu' : "");
-		$textsrc = (!empty($_POST["textfile"]) ? BX_WEBROOT.'admin/edit/newsletter/drafts/'.$_POST["textfile"].'?editor=oneform' : "");
+    	$htmlsrc = (!empty($_POST["htmlfile"]) ? BX_WEBROOT.'admin/edit'.$colluri.'drafts/'.$_POST["htmlfile"].'?editor=kupu' : "");
+		$textsrc = (!empty($_POST["textfile"]) ? BX_WEBROOT.'admin/edit'.$colluri.'drafts/'.$_POST["textfile"].'?editor=oneform' : "");
     	
-    	$htmlContent = @file_get_contents('data/newsletter/drafts/'.$_POST["htmlfile"]);
-    	$textContent = @file_get_contents('data/newsletter/drafts/'.$_POST["textfile"]);
+    	$htmlContent = @file_get_contents('data'.$colluri.'drafts/'.$_POST["htmlfile"]);
+    	$textContent = @file_get_contents('data'.$colluri.'drafts/'.$_POST["textfile"]);
     	$htmlMissing = $this->checkTemplates($htmlContent);
     	$textMissing = $this->checkTemplates($textContent);
     	
 		$xml = '<newsletter>
-    	<form name="bx_news_send" action="#" method="post">
+    	<form name="bx_news_send" action="./" method="post">
 			<h3>'.$txtNewsPrev.'</h3>
 			<table border="0" id="send">
 				<tr><td>'.$txtFrom.':</td><td>'.$_POST["from"].'</td></tr>
@@ -349,7 +349,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     /**
      * The send view lets the user enter information about the newsletter to be sent
      */
-    protected function generateSendView()
+    protected function generateSendView($colluri)
     {
     	$i18n = $GLOBALS['POOL']->i18nadmin;
      	$txtNews = $i18n->getText("Send Newsletter");
@@ -431,7 +431,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 		<script type="text/javascript">
 			bx_webroot = "'.BX_WEBROOT.'";
 		</script>
-    	<form id="bx_news_send" name="bx_news_send" action="#" method="post">
+    	<form id="bx_news_send" name="bx_news_send" action="./" method="post">
 			<h3>'.$txtNews.'</h3>';
 		$xml .= $msg;
 		$xml .= '<table border="0" id="send">
@@ -458,7 +458,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     /**
      * The manage view shows information about the newsletters created and a more detailed view in case they have already been sent
      */
-    protected function generateManageView()
+    protected function generateManageView($colluri)
     {   	
     	$i18n = $GLOBALS['POOL']->i18nadmin;
      	$txtArchive = $i18n->getText("Newsletter Archive");
@@ -473,7 +473,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 
  		$xml = '<newsletter>
 		<h3>'.$txtArchive.'</h3>
-		<form name="bx_news_manage" action="#" method="post">
+		<form name="bx_news_manage" action="./" method="post">
 		<table>
 		<cols>
 			<col width="200"/>
@@ -506,7 +506,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 				$groupstring .= $groups[$i]["name"];	
 			}
 
-			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="'.BX_WEBROOT.'admin/edit/newsletter/archive/'.$row['htmlfile'].'?editor=kupu">%s</a></td><td><a href="'.BX_WEBROOT.'admin/edit/newsletter/archive/'.$row['textfile'].'?editor=oneform">%s</a></td><td>%s</td></tr>', 
+			$xml .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td><a href="'.BX_WEBROOT.'admin/edit'.$colluri.'archive/'.$row['htmlfile'].'?editor=kupu">%s</a></td><td><a href="'.BX_WEBROOT.'admin/edit'.$colluri.'archive/'.$row['textfile'].'?editor=oneform">%s</a></td><td>%s</td></tr>', 
 							$row['from'], $groupstring, $row['subject'], $row['htmlfile'], $row['textfile'], $row['sent']);
 					
 			// remove the element if it was already sent from the extra list
@@ -527,7 +527,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     /**
      * The user view shows information about the existing users and lets the admin import a list of new users
      */
-    protected function generateUsersView()
+    protected function generateUsersView($colluri)
     {
     	$i18n = $GLOBALS['POOL']->i18nadmin;
      	$txtUserMan = $i18n->getText("User Management");
@@ -563,7 +563,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     	
  		$xml = '<newsletter>
 		<h2>'.$txtUserMan.'</h2>
-		<form enctype="multipart/form-data" name="bx_news_users" action="#" method="post">';
+		<form enctype="multipart/form-data" name="bx_news_users" action="./" method="post">';
 		
 		foreach($groups as $group)
 		{
@@ -576,7 +576,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     		
     		foreach($users as $user) {
     			$user['gender'] = $user['gender'] == 0 ? "male" : "female";
-    			$user['email'] = '<a href="../../../dbforms2/newsletter_users/?id='.$user['id'].'">'.$user['email'].'</a>';
+    			$user['email'] = '<a href="'.BX_WEBROOT.'admin/dbforms2/newsletter_users/?id='.$user['id'].'">'.$user['email'].'</a>';
 
     			$xml .= '<tr>';
     			foreach($columns as $col=>$val) {
@@ -612,7 +612,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     /**
      * The feed view lets the user generate a html newsletter from a RSS feed
      */
-    protected function generateFeedView()
+    protected function generateFeedView($colluri)
     {
     	$i18n = $GLOBALS['POOL']->i18nadmin;
      	$txtFromFeed = $i18n->getText("Generate from Feed");
@@ -632,7 +632,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 					
 
 		$xml = '<newsletter>
-    	<form name="bx_news_send" action="#" method="post">
+    	<form name="bx_news_send" action="./" method="post">
 			<table border="0" id="send">
 				<tr><td colspan="2"><h3>'.$txtFromFeed.'</h3></td></tr>
 				<tr><td>Feed:</td><td>'.$feedsHTML.'</td></tr>
@@ -653,9 +653,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      */
     protected function getNewsletterFilenames()
     {
+        
+        
     	$newsletters = array();
+        
     	$counter = 0;
-    	$files = scandir("data/newsletter/drafts/");
+    	$files = scandir("data'.$colluri.'drafts/");
     	
     	foreach($files as $file)
     	{
@@ -716,8 +719,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
      * Generates a HTML newsletter file from the given RSS feed. Only new entries since the feed was read last
      * time are included in the message.
      */
-    protected function createFromFeed($data)
+    protected function createFromFeed($data,$colluri)
     {
+        
+        
  		$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     	$query = "SELECT * FROM ".$prefix."newsletter_feeds WHERE id=".$data["feed"];
     	$feed = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);	    	
@@ -746,7 +751,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$proc->setParameter('', 'lastdate', $feed["lastdate"]);
 			$newdom = $proc->transformToDoc($inputdom);
 
-			$newdom->save('data/newsletter/drafts/'.$filename);
+			$newdom->save('data'.$colluri.'drafts/'.$filename);
  		}
  		else
  		{
@@ -765,15 +770,15 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
 			$nodeValue = $newdom->getElementsByTagName('div')->item(0)->nodeValue;
 			$nodeValue = str_replace("<br/>", "\n", $nodeValue);		
 			
-			file_put_contents('data/newsletter/drafts/'.$filename, $nodeValue);
+			file_put_contents('data'.$colluri.'drafts/'.$filename, $nodeValue);
  		}
 
 		// add as resource so it's visible inside the collection
-		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "parent-uri", "/newsletter/drafts/");
-		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "display-name", $filenameSimple);
-		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "display-order", "0");
-		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "mimetype", "text/html");
-		bx_resourcemanager::setProperty("/newsletter/drafts/".$filename, "output-mimetype", "text/html");
+		bx_resourcemanager::setProperty($colluri."drafts/".$filename, "parent-uri", $colluri."drafts/");
+		bx_resourcemanager::setProperty($colluri."drafts/".$filename, "display-name", $filenameSimple);
+		bx_resourcemanager::setProperty($colluri."drafts/".$filename, "display-order", "0");
+		bx_resourcemanager::setProperty($colluri."drafts/".$filename, "mimetype", "text/html");
+		bx_resourcemanager::setProperty($colluri."drafts/".$filename, "output-mimetype", "text/html");
 		
 		// update table with the date of the most recent feed entry
     	$query = "UPDATE ".$prefix."newsletter_feeds SET lastdate='".$this->callbackDate."' WHERE id=".$data["feed"];
