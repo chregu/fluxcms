@@ -117,9 +117,12 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         
         $dom = new domdocument();
         $root = $dom->appendChild($dom->createElement("search2"));
-        if (!empty($_GET['q'])) {
-        
-            $pages = $this->getPages($_GET['q']);
+        $q = (empty($_GET['q'])) ? '' : $_GET['q'];
+        $tag = (empty($_GET['tag'])) ? '' : $_GET['tag'];
+        if ($q  || $tag) {
+            
+             
+            $pages = $this->getPages($q,$tag);
         
             
             foreach($pages as $key => $results) {
@@ -143,14 +146,14 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         return $dom;
     }
     
-    protected function getPages($search) {
+    protected function getPages($search,$tag) {
         $pages =  array();
         $options = array ('searchStart' => 0 , 'searchNumber' => 10);
-        $p['fulltext'] = $this->getFulltextPages($search,$options);
+        $p['fulltext'] = $this->getFulltextPages($search,$tag,$options);
         return $p;
     }
     
-    protected function getFulltextPages($search,$options) {
+    protected function getFulltextPages($search,$tag,$options) {
         if (!empty($options['pathRestrictions'])) {
             $pathRestriction = $options['pathRestrictions'];
         } else {
@@ -161,16 +164,25 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
         $query = "select  properties.path, properties.value, sum(MATCH (value) AGAINST (". $db->quote($search) .")) as cnt
-        from ".$tablePrefix."properties as properties  where 
-        MATCH (value) AGAINST (" . $db->quote($search) ." ) ";
+        from ".$tablePrefix."properties as properties  where 1 = 1 ";
+        
+        if ($search) {
+            $query .= " and MATCH (value) AGAINST (" . $db->quote($search) ." ) ";
+        }
         /*if ($excludePath) {
             $query .= " and properties.path != ".$db->quote($excludePath) ." ";
         }*/
         if ($pathRestriction) {
             $query .= " and (properties.path like ".$db->quote($pathRestriction ."%") .") ";
         }
+        if ($tag) {
+            $query .= ' and properties.path in (select path from '.$tablePrefix.'properties2tags left join '.$tablePrefix.'tags on tag_id =  '.$tablePrefix.'tags.id where tag = '.$db->quote($tag).') ';
+        }
+            
+        
         $query .= "and name = 'fulltext' group by properties.path order by cnt DESC LIMIT ".$options['searchStart'].",".$options['searchNumber'];
         $res = $db->query($query);
+        
         $ids = array();
         
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
