@@ -41,6 +41,8 @@ class bx_domdocs_overview extends domdocument {
     function addTab($title) {
         $this->tab = $this->documentElement->appendChild($this->createElement("tab"));
         $this->tab->setAttribute("title",$title);
+        $this->tab->setAttribute("id",bx_helpers_string::makeUri($title));
+        
         $this->links = $this->tab->appendChild($this->createElement("links"));
 
     }
