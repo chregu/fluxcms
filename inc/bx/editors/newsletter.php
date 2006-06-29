@@ -442,8 +442,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         <tr><td>Text Body:</td><td>'.$newsText.'</td></tr>
         <tr><td>'.$txtAttachment.':</td><td><input type="text" id="attachment" name="attachment"/><input type="button" onclick="openFileBrowser(\'attachment\')" value="..."/></td></tr>
         <tr><td>Mail Server:</td><td>'.$serversHtml.'</td></tr>
-        <tr><td>'.$txtEmbed.':</td><td><input type="checkbox" name="embed"/></td></tr>
-        <tr><td>'.$txtPublish.':</td><td><input type="checkbox" name="publish" checked="checked"/></td></tr>
+        <tr><td>'.$txtEmbed.':</td><td><input type="checkbox" name="embed" checked="checked"/></td></tr>
+        <tr><td>'.$txtPublish.':</td><td><input type="checkbox" name="publish"/></td></tr>
         <tr>
         <td></td>
         <td><input type="submit" name="bx[plugins][admin_edit][_all]" value="'.$txtPrev.'" class="formbutton"/></td>
