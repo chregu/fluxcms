@@ -28,7 +28,7 @@
                 <div id="container">
                     <xsl:for-each select="/bx/plugin/overview/section[count(tab/links/link) &gt; 0]">
                         <xsl:variable name="openTabType" select="$opentabs/opentabs/tab[@type = current()/@type]"/>
-                        <xsl:variable name="openTab" select="tab[@title = $openTabType/text()]"/>
+                        <xsl:variable name="openTab" select="tab[concat('li_',@id) = $openTabType/text()]"/>
                         <fieldset>
                             <legend>
                                 <xsl:if test="@icon">
@@ -39,12 +39,13 @@
 
 
                             <div class="navitab" name="{@type}">
+                                                    
                                 <ul>
                                     <xsl:choose>
                                         <xsl:when test="count(tab) > 1">
                                             <xsl:for-each select="tab[count(links/link) &gt; 0]">
-                                                <li id="li_{generate-id()}">
-                                                    <a href="#" onclick="switchTab('{generate-id()}')">
+                                                <li id="li_{@id}">
+                                                    <a href="#" onclick="switchTab('{@id}')">
                                                         <xsl:choose>
                                                             <xsl:when test="current() = $openTab or (not($openTab) and position() = 1) ">
                                                                 <xsl:attribute name="class">selected</xsl:attribute>
@@ -73,7 +74,7 @@
                             
 
                             <xsl:for-each select="tab">
-                                <div id="tab_{generate-id()}" class="tabcontent">
+                                <div id="tab_{@id}" class="tabcontent">
                                     <xsl:choose>
                                         <xsl:when test="current() = $openTab or (not($openTab) and position() = 1) ">
 

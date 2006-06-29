@@ -5,8 +5,9 @@ function switchTab(id, all, direct ) {
 	var ExpireDate = new Date ();
 	 //7days
 	 ExpireDate.setTime(ExpireDate.getTime() + (7 * 24 * 3600 * 1000));
+	 
 	 if (!direct) {
-		 document.cookie = "openTabs["+type + "]=" + escape(tab.firstChild.firstChild.nodeValue) + "; path=/; expires=" + ExpireDate.toGMTString();
+		 document.cookie = "openTabs["+type + "]=" + escape(tab.id) + "; path=/; expires=" + ExpireDate.toGMTString();
 	 } else {
 		 document.cookie = "openTabs["+type + "]=" + escape(id) + "; path=/; expires=" + ExpireDate.toGMTString();
 	 }
