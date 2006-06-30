@@ -140,7 +140,7 @@
         <element name="var" ns="http://www.w3.org/1999/xhtml"/>
          <!-- block elements -->
         <element name="address" ns="http://www.w3.org/1999/xhtml"/>
-        <element name="blockquote" ns="http://www.w3.org/1999/xhtml"/>
+<!--        <element name="blockquote" ns="http://www.w3.org/1999/xhtml"/>-->
          <!-- <element name="div" ns="http://www.w3.org/1999/xhtml"/>-->
         <element name="dl" ns="http://www.w3.org/1999/xhtml"/>
         <element name="fieldset" ns="http://www.w3.org/1999/xhtml"/>
