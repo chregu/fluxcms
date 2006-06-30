@@ -198,7 +198,7 @@
 <define name="blockquote">
   <element name="blockquote">
     <ref name="blockquote.attlist"/>
-    <ref name="Block.model"/>
+    <ref name="Inline.model"/>
   </element>
 </define>
 
