@@ -194,13 +194,13 @@ class bx_plugins_blog_handlecomment {
         } else {
             $xblcheck = '';
         }
-        //askimet 
+        //akismet 
         
-        $askimetkey = $GLOBALS['POOL']->config->blogAskimetKey;
-        if ($askimetkey) {
-            include_once(BX_LIBS_DIR.'plugins/blog/askimet.php');
+        $akismetkey = $GLOBALS['POOL']->config->blogAkismetKey;
+        if ($akismetkey) {
+            include_once(BX_LIBS_DIR.'plugins/blog/akismet.php');
             
-            $akismet = new Akismet(BX_WEBROOT.$path,$askimetkey);
+            $akismet = new Akismet(BX_WEBROOT.$path,$akismetkey);
             $akismet->setCommentAuthor($data['name']);
             $akismet->setCommentAuthorEmail($data['email']);
             $akismet->setCommentAuthorURL($data['openid_url']);
