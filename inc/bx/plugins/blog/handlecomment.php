@@ -65,6 +65,7 @@ class bx_plugins_blog_handlecomment {
         $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
         
         $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
+        
         $isCaptcha = bx_helpers_captcha::isCaptcha($days, (int) $row['unixtime']);
         
         //if captcha is active
@@ -193,6 +194,22 @@ class bx_plugins_blog_handlecomment {
         } else {
             $xblcheck = '';
         }
+        //askimet 
+        
+        $askimetkey = $GLOBALS['POOL']->config->blogAskimetKey;
+        if ($askimetkey) {
+            include_once(BX_LIBS_DIR.'plugins/blog/askimet.php');
+            
+            $akismet = new Akismet(BX_WEBROOT.$path,$askimetkey);
+            $akismet->setCommentAuthor($data['name']);
+            $akismet->setCommentAuthorEmail($data['email']);
+            $akismet->setCommentAuthorURL($data['openid_url']);
+            $akismet->setCommentContent($data['comments']);
+            $akismet->setPermalink(BX_WEBROOT.$path.$id);
+            if($akismet->isCommentSpam()) {
+                $commentRejected .= "* akismet.com thinks, this is spam";
+            }
+        }
         
         if (!$commentRejected) {
             // insert comment
@@ -203,11 +220,11 @@ class bx_plugins_blog_handlecomment {
             $comment_status = 2;
         }
         //delete all rejected comments older than 3 days...
-        $query = 'delete from '.$blogTablePrefix.'blogcomments where comment_status = 3 and now() - comment_date > 3600 * 24 * 3';
+        $query = 'delete from '.$blogTablePrefix.'blogcomments where comment_status = 3 and (now() - comment_date) > 3600 * 24 * 3';
         $res = $GLOBALS['POOL']->dbwrite->query($query);
 
         //delete all moderated comments older than 14 days...
-        $query = 'delete from '.$blogTablePrefix.'blogcomments where comment_status = 2 and now() - comment_date > 3600 * 24 * 14';
+        $query = 'delete from '.$blogTablePrefix.'blogcomments where comment_status = 2 and (now() - comment_date) > 3600 * 24 * 14';
         $res = $GLOBALS['POOL']->dbwrite->query($query);        
         
         $emailFrom = str_replace(":"," ",html_entity_decode($data['name'],ENT_QUOTES,'ISO-8859-1'));
