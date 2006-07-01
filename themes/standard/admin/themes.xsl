@@ -56,7 +56,7 @@
                 </td>
                 <td>
                     <h3><xsl:value-of select="title"/></h3>
-                    <p>Provided by: <a href="{@authorlink}" target="_blank"><xsl:value-of select="author"/></a></p>
+                    <p>Provided by: <a href="{authorLink}" target="_blank"><xsl:value-of select="author"/></a></p>
                     <p><a href="{$webroot}admin/themes/?downloadlink={downloadLink}">install and activate</a></p>
                     <p><a href="{view}" target="_blank">preview</a></p>
                 </td>
