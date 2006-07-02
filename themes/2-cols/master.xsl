@@ -277,9 +277,10 @@
                 :: <xsl:value-of select="items/*[filename=$filename]/title"/>
             </xsl:if>
             
-            <xsl:call-template name="html_head_title_end"/>
+            
             
         </xsl:for-each>
+        <xsl:call-template name="html_head_title_end"/>
     </xsl:template>
     
     <xsl:template name="body_attributes"/>
