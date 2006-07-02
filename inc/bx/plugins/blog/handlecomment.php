@@ -218,12 +218,12 @@ class bx_plugins_blog_handlecomment {
         } else {
             $comment_status = 2;
         }
-        //delete all rejected comments older than 3 days...
-        $query = 'delete from '.$blogTablePrefix.'blogcomments where comment_status = 3 and (now() - comment_date) > 3600 * 24 * 3';
+        //delete all rejected comments older than 5 days...
+        $query = 'delete from '.$blogTablePrefix.'blogcomments where comment_status = 3 and DATE_SUB(now(), INTERVAL 5 DAY) > comment_date ';
         $res = $GLOBALS['POOL']->dbwrite->query($query);
 
         //delete all moderated comments older than 14 days...
-        $query = 'delete from '.$blogTablePrefix.'blogcomments where comment_status = 2 and (now() - comment_date) > 3600 * 24 * 14';
+        $query = 'delete from '.$blogTablePrefix.'blogcomments where comment_status = 2 and DATE_SUB(now(), INTERVAL 14 DAY) > comment_date ';
         $res = $GLOBALS['POOL']->dbwrite->query($query);        
         
         $emailFrom = str_replace(":"," ",html_entity_decode($data['name'],ENT_QUOTES,'ISO-8859-1'));
