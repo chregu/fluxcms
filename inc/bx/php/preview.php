@@ -1,4 +1,4 @@
-<?
+<?php
 include_once("../../../inc/bx/init.php");
 bx_init::start('conf/config.xml', "../../..");
 
