@@ -11,7 +11,7 @@
                             <div class="comment_meta_data">
                                 <span class="comment_author_email">{{mail}}</span>
                                 <span class="comment_author">
-                                    <a href="{{uri}}">{{name}}</a>
+                                    <a href="{{url}}">{{name}}</a>
                                 </span>
                                 <span class="comment_date">now</span>
                                 <span class="comment_type"/>
