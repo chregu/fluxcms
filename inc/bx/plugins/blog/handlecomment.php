@@ -150,7 +150,6 @@ class bx_plugins_blog_handlecomment {
         $simplecache->cacheDir = BX_TEMP_DIR;
         //deleteIt == true => Rejected comment
         $deleteIt = false;
-        //discardIt == true => don't even put it into the db
         //check for pineapleproxy
         if (isset($_SERVER['HTTP_VIA']) && stripos($_SERVER['HTTP_VIA'],'pinappleproxy') !== false) {
             $commentRejected .= "* Uses known spammer proxy: ". $_SERVER['HTTP_VIA'] . "\n";
@@ -261,7 +260,9 @@ class bx_plugins_blog_handlecomment {
             "'.$comment_notification_hash.'",'.$db->quote($data['openid_url'],'text').', '.$openid.',
             '.$db->quote($username).')';
         
-        
+        if (!trim($data['name'])) {
+		 $commentRejected .= "* Name was empty: '".$data['name']."'\n";
+	}
         $res = $GLOBALS['POOL']->dbwrite->query($query);
         $GLOBALS['POOL']->dbwrite->loadModule('Extended',null,false); 
         $lastID = $GLOBALS['POOL']->dbwrite->getAfterID(null,$blogTablePrefix.'blogcomments');
