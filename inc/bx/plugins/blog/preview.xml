@@ -9,7 +9,7 @@
                         <div class="comment" id="2">
                             <a name="comment2"/>
                             <div class="comment_meta_data">
-                                <span class="comment_author_email"/>
+                                <span class="comment_author_email">{{mail}}</span>
                                 <span class="comment_author">
                                     <a href="{{uri}}">{{name}}</a>
                                 </span>

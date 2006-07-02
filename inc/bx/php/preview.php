@@ -9,7 +9,7 @@ $xslt = new xsltprocessor();
 $xml = file_get_contents(BX_LIBS_DIR.'plugins/blog/preview.xml');
 $_POST['text'] = bx_helpers_string::makeLinksClickable(bx_plugins_blog_handlecomment::cleanUpComment($_POST['text']));
 
-$xmls = str_replace(array("{{name}}","{{text}}","{{url}}"),array($_POST['name'],$_POST['text'],$_POST['name']),$xml);
+$xmls = str_replace(array("{{mail}}","{{name}}","{{text}}","{{url}}"),array($_POST['mail'],$_POST['name'],$_POST['text'],$_POST['name']),$xml);
 $xml = new domdocument();
 $xml->loadXML($xmls);
 libxml_use_internal_errors(true);
@@ -24,7 +24,7 @@ $xsl->loadXML($xsls);
 $xslt->importStylesheet($xsl);
 
 $xslt->registerPHPFunctions();
-print $xslt->transformToXML($xml);
+print ( $xslt->transformToXML($xml));
 
 ?>
 
