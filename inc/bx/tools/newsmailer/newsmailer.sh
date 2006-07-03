@@ -1,6 +1,6 @@
 #/bin/bash
 
-cd /www-data/kunden/scansystems/test/
+cd /Users/chregu/clients/scansystems/
 
-php inc/bx/tools/newsmailer/newsmailer.php preparemails
-php inc/bx/tools/newsmailer/newsmailer.php sendmails
+php5 inc/bx/tools/newsmailer/newsmailer.php preparemails
+php5 inc/bx/tools/newsmailer/newsmailer.php sendmails

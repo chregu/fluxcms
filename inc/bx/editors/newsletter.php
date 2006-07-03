@@ -187,7 +187,6 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $parts = bx_collections::getCollectionUriAndFileParts($id);
         $colluri = $parts['colluri'];
         $perm = bx_permm::getInstance();    
-        
         // Manage view requested
         if($parts['name'] == "manage/")
         {
@@ -208,6 +207,16 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
                 return $this->generatePreviewView($colluri);
             }
             return $this->generateSendView($colluri);
+        }
+        else if($parts['name'] == "preview/")
+        {
+            if (!$perm->isAllowed($colluri,array('newsletter-back-send'))) {
+                throw new BxPageNotAllowedException();
+            }    
+            
+            return $this->generatePreviewMailView($colluri);
+            
+            //return $this->generateSendView($colluri);
         }
         
         // Send view requested
@@ -267,7 +276,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $query = "select COUNT(DISTINCT fk_user) from ".$prefix."newsletter_users2groups u2g, ".$prefix."newsletter_users u where fk_group in (".$groupIds.") AND fk_user=u.id AND u.status='1' ORDER BY fk_user";
         $usercount = $GLOBALS['POOL']->db->queryOne($query); 
         
-        $htmlsrc = (!empty($_POST["htmlfile"]) ? BX_WEBROOT.'admin/edit'.$colluri.'drafts/'.$_POST["htmlfile"].'?editor=kupu' : "");
+        $htmlsrc = (!empty($_POST["htmlfile"]) ? BX_WEBROOT.'admin/edit'.$colluri.'preview/?file=drafts/'.$_POST["htmlfile"].'' : "");
         $textsrc = (!empty($_POST["textfile"]) ? BX_WEBROOT.'admin/edit'.$colluri.'drafts/'.$_POST["textfile"].'?editor=oneform' : "");
         
         $htmlContent = @file_get_contents('data'.$colluri.'drafts/'.$_POST["htmlfile"]);
@@ -346,6 +355,24 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         return domdocument::loadXML($xml);
     }
     
+    
+    protected function generatePreviewMailView($colluri) {
+        $xhtml = new domdocument();
+        $xhtml->load(BX_DATA_DIR.$colluri.$_GET['file']);        
+            
+        $classname = $this->getConfigParameter($colluri,"sendclass");
+        $newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($classname);
+        $tr =  $newsmailer->transformHTML($xhtml);
+        
+        $xml = new domdocument();
+        
+        $root = $xml->appendChild($xml->createElement("newsletter"));
+        
+        $root->appendChild($xml->importNode($tr->documentElement,true));
+        
+         return $xml;
+        
+    }
     /**
     * The send view lets the user enter information about the newsletter to be sent
     */

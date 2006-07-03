@@ -64,8 +64,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/
 				]]>
             </script>
             </head>
-            <body onload="			dbforms2.form = document.getElementById('bx_news_send');
-			alert(dbforms2.form);">
+            <body onload="			dbforms2.form = document.getElementById('bx_news_send');">
             
             <xsl:copy>
     			<xsl:apply-templates select="/bx/plugin/newsletter" mode="xhtml"/>

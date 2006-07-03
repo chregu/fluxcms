@@ -8,7 +8,7 @@ class bx_editors_newsmailer_scansystems extends bx_editors_newsmailer_newsmailer
     /**
      * Add custom style to the HTML document to replace the missing .css style sheet
      */
-    protected function transformHTML($inputdom)
+    public function transformHTML($inputdom)
     {
 		$xsl = new DomDocument();
 		$xsl->load('themes/'.bx_helpers_config::getTheme().'/scansystems.xsl');
