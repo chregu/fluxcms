@@ -8,7 +8,7 @@
     <message key="help_removefilepath">If you want to unpack all files in that 
     ZIP archive into the same directory (instead of creating the whole directory
     structure), check the box below.</message>
-    <message key="help_unlikedfiles">BxCMS doesn't like some filenames, this 
+    <message key="help_unlikedfiles">Flux CMS doesn't like some filenames, this 
     options fixes them automatically.</message>
     
     
