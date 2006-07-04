@@ -6,7 +6,9 @@ include_once("../../../../inc/bx/init.php");
 bx_init::start('conf/config.xml', "../../../..");
 
 $db = $GLOBALS['POOL']->db;
-bx_helpers_debug::webdump($db);
+
+
+$db->query("ALTER DATABASE `".$db->database_name."` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
 foreach ($db->queryCol("show tables ") as $tbl) {
     
     $query = "ALTER TABLE `".$tbl."` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
