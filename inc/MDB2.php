@@ -323,13 +323,15 @@ class MDB2
             return $err;
         }
         $class_name = 'MDB2_Driver_'.$dsninfo['phptype'];
-
         if (!class_exists($class_name)) {
+        
             $file_name = str_replace('_', DIRECTORY_SEPARATOR, $class_name).'.php';
             if (is_array($options) && array_key_exists('debug', $options) && $options['debug']) {
+        
                 $include = include_once($file_name);
             } else {
-                $include = @include_once($file_name);
+        
+                $include = include_once($file_name);
             }
             if (!$include) {
                 if (!MDB2::fileExists($file_name)) {
@@ -341,7 +343,7 @@ class MDB2
                 return $err;
             }
         }
-
+        
         $db =& new $class_name();
         $db->setDSN($dsninfo);
         $err = MDB2::setOptions($db, $options);
@@ -383,6 +385,7 @@ class MDB2
      */
     static function &connect($dsn, $options = false)
     {
+        
         $db =& MDB2::factory($dsn, $options);
         if (PEAR::isError($db)) {
             return $db;
@@ -395,7 +398,6 @@ class MDB2
             $err->addUserInfo($dsn);
             return $err;
         }
-
         return $db;
     }
 
@@ -1201,9 +1203,12 @@ class MDB2_Driver_Common extends PEAR
      *
      * @see PEAR_Error
      */
-    function &raiseError($code = null, $mode = null, $options = null, $userinfo = null)
+    function &raiseError( $code = null, $mode = null, $options = null, $userinfo = null,  $error_class = null, $foo= null,
+                         $skipmsg = false)
     {
         // The error is yet a MDB2 error object
+
+
         if (PEAR::isError($code)) {
             // because we use the static PEAR::raiseError, our global
             // handler should be used if it is set
@@ -1870,7 +1875,7 @@ class MDB2_Driver_Common extends PEAR
      * @return the new (modified) query
      * @access protected
      */
-    function _modifyQuery($query)
+    function _modifyQuery($query, $is_manip, $limit, $offset)
     {
         return $query;
     }
