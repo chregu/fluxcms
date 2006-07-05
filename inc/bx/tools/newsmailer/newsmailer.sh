@@ -1,6 +1,6 @@
 #/bin/bash
 
-cd /Users/chregu/clients/scansystems/
+cd /var/www/kolibri-seminare.ch/
 
-php5 inc/bx/tools/newsmailer/newsmailer.php preparemails
-php5 inc/bx/tools/newsmailer/newsmailer.php sendmails
+/usr/local/bin/php inc/bx/tools/newsmailer/newsmailer.php preparemails
+/usr/local/bin/php inc/bx/tools/newsmailer/newsmailer.php sendmails
