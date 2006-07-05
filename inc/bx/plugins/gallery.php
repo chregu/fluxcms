@@ -419,7 +419,7 @@ class bx_plugins_gallery extends bx_plugin {
         return $this->getGalleryRoot($uri);
     }    	
     
-    public function getOverviewSections($path) {
+    public function getOverviewSections($path,$mainOverview) {
 	    $perm = bx_permm::getInstance();
 	    	
 	    $sections = array();

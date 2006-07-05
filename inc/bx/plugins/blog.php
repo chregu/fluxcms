@@ -668,12 +668,12 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         return false;
     }
 
-    public function isRealResource() {
+    public function isRealResource($path, $id) {
 
         return true;
     }
 
-    public function getChildren() {
+    public function getChildren($uri,$id) {
         return array();
         //this could be an implementation for getChildren
         // but I decided to do it with a portlet ;)

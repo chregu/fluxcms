@@ -180,7 +180,7 @@ abstract class bx_plugin extends bx_component implements bxIplugin {
         return true;   
     }
     
-    public function getOverviewSections($path) {
+    public function getOverviewSections($path,$mainOverview) {
         return null;
     }
     
