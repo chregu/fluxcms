@@ -204,6 +204,7 @@ class bx_config_generate {
                 print "<br/>";
                 die ("no DB connection possible. please check your permissions");  
             }
+            @$db->query("set names 'utf8'");
             $res = @$db->query("select * from ".$dsn['tableprefix']."options");
            
             if (!@MDB2::isError($res)) { 
