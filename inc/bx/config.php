@@ -5,7 +5,9 @@ class bx_config extends popoon_classes_config {
     public $theme;
     public $timezoneSeconds = null;
     public $timezoneString = null;
+    public $advancedRedirect = null;
     private $language;
+    
     private $editorsByPlugin = array();
     // 63 is MDB2 default
     // 31 = 63 &~ MDB2_PORTABILITY_EMPTY_TO_NULL
