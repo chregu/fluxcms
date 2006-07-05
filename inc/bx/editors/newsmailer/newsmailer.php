@@ -302,7 +302,7 @@ class bx_editors_newsmailer_newsmailer {
      * @param inputdom DomDocument
      * @return transformed DocDocument
      */
-    protected function transformHTML($inputdom)
+    public function transformHTML($inputdom)
     {
 		return $inputdom;   	  	
     }
