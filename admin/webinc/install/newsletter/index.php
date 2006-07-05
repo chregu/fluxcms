@@ -77,7 +77,6 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts` (
   `mailserver` int(10) unsigned NOT NULL,
   `embed` tinyint(4) NOT NULL,
   `baseurl` varchar(100) NOT NULL,
-  `attachment` varchar(255) NOT NULL default '',
   `colluri` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
