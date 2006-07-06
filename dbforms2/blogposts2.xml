@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0"  title="Blogposts">
+
+    <dbform:chooser namefield="concat(post_title,' &lt;small&gt;(',id,')&lt;/small&gt;')" wherefields="post_title,post_content"  limit="35"/>    
+
+    <dbform:fields table="blogposts" onsavejs="">
+
+        <!--
+        <dbform:field 
+            type="listview"
+            name="listview_bp"
+            idfield="id"
+            namefield="concat(post_title,' (',id,')')"
+            orderby=""
+        />
+        -->
+
+        <dbform:field name="post_title" type="text" descr="Title" onkeyup="updateUriField('field_post_title',document.getElementById('field_post_uri'));">
+        </dbform:field>
+        
+        <dbform:field name="post_uri" type="text_uri" descr="URI" onkeyup="this.edited = true;"/>
+
+        <dbform:field 
+            name="post_category"
+            type="relation_n2m" 
+            relationtable="blogposts2categories" 
+            thisidfield="blogposts_id"
+            thatidfield="blogcategories_id"
+            descr="Category">
+            
+            <dbform:datasource type="foreign" namefield="fullname" idfield="id" table="blogcategories" order="l"/>
+            <dbform:liveselect namefield="fullname" idfield="id" wherefields="fullname,fulluri" table="blogcategories" orderby="l" limit="35"/>
+
+        </dbform:field>
+
+        <dbform:field name="post_content" type="text_wysiwyg" descr="Content" isxml="true">
+            <dbform:value></dbform:value>
+        </dbform:field>
+
+        <dbform:field name="post_date" type="date" descr="Date"></dbform:field>
+        <dbform:field name="post_status" type="checkbox" descr="Enabled" default="1"/>
+        
+        <dbform:field name="post_comment_mode" type="select" descr="Comment Mode" default="3">
+            <dbform:value name="1">Allow comments for 1 month</dbform:value>
+            <dbform:value name="2">Always allow comments</dbform:value>
+            <dbform:value name="3">No comments allowed</dbform:value>
+        </dbform:field>
+        
+        <dbform:field name="post_author" type="select" descr="Author">
+            <dbform:datasource type="foreign" namefield="user_login" idfield="id" table="users" order="user_login"></dbform:datasource>
+        </dbform:field>
+
+        <dbform:form name="blogcomments" title="Blog Commments">
+            <dbform:fields table="blogcomments"  thisidfield="comment_posts_id">
+                
+                <dbform:field 
+                    type="listview_12n"
+                    name="listview1"
+                    thatidfield="comment_posts_id"
+                    idfield="id"
+                    namefield="concat(comment_author,' (',id,')')"
+                    orderby="comment_date DESC"
+                />
+                
+                <dbform:field name="comment_author" type="text" descr="Author"></dbform:field>
+                <dbform:field name="comment_author_email" type="text" descr="Email"></dbform:field>
+                <dbform:field name="comment_author_ip" type="text" descr="IP"></dbform:field>
+                <dbform:field name="comment_author_url" type="text" descr="URL"></dbform:field>
+                <dbform:field name="comment_date" type="date_time" descr="date"></dbform:field>
+                <dbform:field name="comment_status" type="select" descr="status" default="1">
+                    <dbform:value name="1">Approved</dbform:value>
+                    <dbform:value name="2">Moderated</dbform:value>
+                    <dbform:value name="3">Rejected</dbform:value>
+                </dbform:field>
+                
+                <dbform:field name="comment_content" type="text_wysiwyg" descr="text"></dbform:field>
+                <dbform:field name="comment_rejectreason" type="text_area_small" descr="rejectreason"></dbform:field>
+                
+            </dbform:fields>
+        </dbform:form>
+        
+        <dbform:field name="created" type="date_created" descr="Erstellt am"/>
+        <dbform:field name="changed" type="date_changed" descr="Geaendert am"/>
+        
+          
+    </dbform:fields>
+
+</dbform:form>
+
