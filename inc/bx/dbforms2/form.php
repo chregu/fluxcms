@@ -30,6 +30,7 @@ class bx_dbforms2_form {
      */
     protected $members = array (
         'fields' => array(),
+        'chooser' => '',
         'name' => '',
         'title' => '',
         'tableName' => '',
@@ -69,18 +70,20 @@ class bx_dbforms2_form {
     }
     
     /**
-     *  xx
+     *  Serializes the form to a DOM object.
      *
-     *  @param  type  $var descr
      *  @access public
-     *  @return type descr
+     *  @return object DOM object which contains the form.
      */
-    public function serializeToDOM() {
+    public function serializeToDOMObject() {
         $dom = new DOMDocument();
         $dom->appendChild($dom->createElement('form'));
         
         $dom->documentElement->setAttribute('name', $this->name);
         $dom->documentElement->setAttribute('title', $this->title);
+        $dom->documentElement->setAttribute('thisidfield', $this->attributes['thisidfield']);
+        $dom->documentElement->setAttribute('thatidfield', $this->attributes['thatidfield']);
+        $dom->documentElement->setAttribute('idfield', $this->attributes['idfield']);
         
         // append all attributes
         foreach($this->attributes as $name => $value) {
@@ -105,11 +108,24 @@ class bx_dbforms2_form {
     }
     
     /**
-     *  DOCUMENT_ME
+     *  Serializes the form to a DOM node.
      *
-     *  @param  type  $var descr
+     *  @param DOMObject $dom Parent DOM of the newly created node.
      *  @access public
-     *  @return type descr
+     *  @return object DOM node which contains the form.
+     */
+    public function serializeToDomNode($dom) {
+        $formDOM = $this->serializeToDOMObject();
+        $formNode = $dom->importNode($formDOM->documentElement, TRUE);
+        return $formNode;
+    }
+    
+    /**
+     *  Get a field by its name.
+     *
+     *  @param  string $name Field name
+     *  @access public
+     *  @return object field
      */
     public function getFieldByName($name) {
         if (is_array($this->fields)) {
@@ -128,6 +144,21 @@ class bx_dbforms2_form {
     }
     
     /**
+     *  Get a sub form by its name.
+     *
+     *  @param  string $name Field name
+     *  @access public
+     *  @return object field
+     */
+    public function getSubFormByName($name) {
+        foreach($this->fields as $field) {
+            if($field instanceof bx_dbforms2_form && $field->name == $name) {
+                return $field;
+            }
+        }
+    }
+    
+    /**
      *  Sets the values of all fields the form has.
      *
      *  @param  type  $var descr
@@ -136,7 +167,7 @@ class bx_dbforms2_form {
      */
     public function setValues($values) {
         foreach($this->fields as $field) {
-            if(isset($values[$field->name])) {
+            if($field instanceof bx_dbforms2_field && isset($values[$field->name])) {
                 $field->setValue($values[$field->name]);
             }
         }
@@ -163,10 +194,13 @@ class bx_dbforms2_form {
      */
     public function getConfigAttributes() {
         return array(
-            'onsavejs' => 'string',
-            'onsavephp' => 'string',
-            'alternate' => 'string',
-            'xsl'       => 'string'
+            'onsavejs'      => 'string',
+            'onsavephp'     => 'string',
+            'alternate'     => 'string',
+            'xsl'           => 'string',
+            'thisidfield'   => 'string',
+            'thatidfield'   => 'string',
+            'idfield'       => 'string',
         );
     }
 

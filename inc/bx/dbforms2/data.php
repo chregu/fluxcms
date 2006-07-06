@@ -25,37 +25,12 @@
 class bx_dbforms2_data {
 
     /**
-     *  Returns a DOMDocument object which contains the data queried from the
-     *  database by the passed query.
+     *  Parses all values of the given DOM-document and returns an array.
      *
-     *  @param  string $query SQL query to be run.
+     *  @param  object $form The bx_dbforms2_form object which the data belongs to.
+     *  @param  DOMDocument $xml The DOM-document to be parsed.
      *  @access public
-     *  @return object DOMObject containing the data returned from the query.
-     */
-    public static function getXMLByQuery($query, $fromMaster = false) {
-        if ($fromMaster) {
-            $xml = new XML_db2xml($GLOBALS['POOL']->dbwrite, 'data', 'Extended');
-        } else {
-            $xml = new XML_db2xml($GLOBALS['POOL']->db, 'data', 'Extended');
-        }
-        $options = array(
-            'formatOptions' => array ( 'xml_seperator' => '')
-        );
-
-        $xml->Format->SetOptions($options);
-        $xml->add($query);
-        $dom = $xml->getXMLObject();
-        
-        return $dom;
-        
-    }
-    
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
+     *  @return array Array containing all values.
      */
     public static function getValuesByXML($form, $xml) {
         $values = array();
@@ -71,18 +46,18 @@ class bx_dbforms2_data {
     }
     
     /**
-     *  DOCUMENT_ME
+     *  Translates a XML-node to a PHP data type.
      *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
+     *  @param  DOMElement $dataNode The node to be translated
+     *  @access protected
+     *  @return mixded The PHP representation of the XML-node
      */
     protected static function translateValue($dataNode) {
         if ($dataNode->childNodes->length == 1) {
             $childNode = $dataNode->firstChild;
             if ($childNode->nodeType == 1) {
                 if ($childNode->nodeName == "values") {
-                    $values= array();
+                    $values = array();
                     $child = $childNode->firstChild;
                     while ($child) {
                         $values[$child->getAttribute("id")] = $child->textContent;
@@ -98,11 +73,12 @@ class bx_dbforms2_data {
     }
     
     /**
-     *  DOCUMENT_ME
+     *  Adds additional data to an existing DOMDocument.
      *
-     *  @param  type  $var descr
+     *  @param  object $form The bx_dbforms2_form object which the data belongs to.
+     *  @param  DOMDocument $xml The DOM-document containing the existing data.
      *  @access public
-     *  @return type descr
+     *  @return DOMDocument The DOM-document with additional data added.
      */
     public static function addAdditionalDataByForm($form, $xml) {
         
@@ -111,30 +87,31 @@ class bx_dbforms2_data {
         
         if (is_array($form->fields)) {
             foreach($form->fields as $field) {
-                $data = $field->getAdditionalData($form->currentID);
-                if ($data) {
+                if($field instanceof bx_dbforms2_field)  {
                 
-                    $res = $xp->query("/data/$dataNodeName/$dataNodeName/".$field->name);
-                    if (!$res->item(0)) {
+                    $data = $field->getAdditionalData($form->currentID);
+                    if($data) {
+                        $res = $xp->query("/data/$dataNodeName/$dataNodeName/".$field->name);
+                        if (!$res->item(0)) {
                         $res = $xp->query("/data/$dataNodeName/$dataNodeName");
-                        $node = $res->item(0)->appendChild($xml->createElement(  $field->name));
-                    } else {
-                        $node = $res->item(0);
-                    }
-                
-                    if ($node) {
-                        if ($node->firstChild) {
-                            $vs = $xml->createElement("values");
-                            $node->replaceChild($vs,$node->firstChild);
+                            $node = $res->item(0)->appendChild($xml->createElement(  $field->name));
                         } else {
-                            $vs = $node->appendChild($xml->createElement("values"));
+                            $node = $res->item(0);
                         }
                         
-                        foreach ($data as $id => $value) {
-                            $v = $xml->createElement("value");
-                            $v->setAttribute("id",$id);
-                            $v->appendChild($xml->createTextNode(html_entity_decode( $value, ENT_COMPAT, 'UTF-8')));
-                            $vs->appendChild($v);
+                        if ($node) {
+                            if ($node->firstChild) {
+                                $vs = $xml->createElement("values");
+                                $node->replaceChild($vs,$node->firstChild);
+                            } else {
+                                $vs = $node->appendChild($xml->createElement("values"));
+                            }
+                            foreach ($data as $id => $value) {
+                                $v = $xml->createElement("value");
+                                $v->setAttribute("id",$id);
+                                $v->appendChild($xml->createTextNode(html_entity_decode( $value, ENT_COMPAT, 'UTF-8')));
+                                $vs->appendChild($v);
+                            }
                         }
                     }
                 
@@ -174,15 +151,16 @@ class bx_dbforms2_data {
     }
     
     /**
-     *  DOCUMENT_ME
+     *  Executes additional Queries on a form which are not part of the main form query.
      *
-     *  @param  type  $var descr
+     *  @param  object $form The form on which the additional queries should be executed.
      *  @access public
-     *  @return type descr
      */
     public static function doAdditionalQueries($form) {
         foreach($form->fields as $field) {
-            $field->doAdditionalQuery($form->currentID);
+            if($field instanceof bx_dbforms2_field)  {
+                $field->doAdditionalQuery($form->currentID);
+            }
         }
     }
     

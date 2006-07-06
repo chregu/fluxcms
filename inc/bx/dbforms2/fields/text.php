@@ -24,26 +24,12 @@
  */
 class bx_dbforms2_fields_text extends bx_dbforms2_field {
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function __construct($name) {
         parent::__construct($name);
         $this->type = 'text';
         $this->XMLName = 'input';
     }
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     protected function getXMLAttributes() {
         return array(
             'size' => 80,

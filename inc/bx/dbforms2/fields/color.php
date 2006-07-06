@@ -24,26 +24,12 @@
  */
 class bx_dbforms2_fields_color extends bx_dbforms2_field {
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function __construct($name) {
         parent::__construct($name);
         $this->type = 'color';
         $this->XMLName = 'input';
     }
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function getSQLValue() {
         
         return preg_replace("/([0-9a-fA-F]{6,6})/","$1",$this->value);

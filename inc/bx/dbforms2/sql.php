@@ -41,14 +41,15 @@ class bx_dbforms2_sql {
         
         if (is_array($form->fields))  {
             foreach($form->fields as $field) {
-                if ($field->getAttribute('nosql')==false) {
-                    $name = $field->getSQLName('select');
-                    if ($name) {
-                        //$fields[] = $db->quoteIdentifier($name);
-                        $fields[] = $name;
+                if($field instanceof bx_dbforms2_field)  {
+                    if ($field->getAttribute('nosql')==false) {
+                        $name = $field->getSQLName();
+                        if ($name) {
+                            //$fields[] = $db->quoteIdentifier($name);
+                            $fields[] = $name;
+                        }
                     }
                 }
-         
             }
         }
         
@@ -62,7 +63,7 @@ class bx_dbforms2_sql {
     /**
      *  Returns a query to get the current record for the passed form.
      *
-     *  @param  object $formr Form to generate the query for.
+     *  @param  object $form Form to generate the query for.
      *  @access public
      *  @return string Query to get the current record
      */
@@ -70,7 +71,6 @@ class bx_dbforms2_sql {
         
         $query = 'DELETE ';
         $fields = array();
-
         
         $query.= ' FROM '.$form->tablePrefix.$form->tableName;
         $query.= ' WHERE '.$form->idField.'='.$form->currentID;
@@ -79,11 +79,11 @@ class bx_dbforms2_sql {
     }
     
     /**
-     *  xx
+     *  Returns a query to update an entry for the given form.
      *
-     *  @param  type  $var descr
+     *  @param  object $form Form to generate the query for.
      *  @access public
-     *  @return type descr
+     *  @return string Query
      */
     public static function getUpdateQueryByForm($form) {
         $db = $GLOBALS['POOL']->db;            
@@ -92,20 +92,22 @@ class bx_dbforms2_sql {
         $query = "UPDATE $table SET";
         
         foreach($form->fields as $field) {
-            if($field->name != $form->idField && $field->getAttribute('nosql')==false) {
-                $col =  $field->getSQLName('update');
-                if ($col) {
-                    $value = $field->getSQLValue();
-                    if($field->getAttribute('isxml') !== TRUE) {
-                        $value = htmlspecialchars($value);
+            if($field instanceof bx_dbforms2_field)  {
+                if($field->name != $form->idField && $field->getAttribute('nosql')==false) {
+                    $col =  $field->getSQLName();
+                    if ($col) {
+                        $value = $field->getSQLValue();
+                        if($field->getAttribute('isxml') !== TRUE) {
+                            $value = htmlspecialchars($value);
+                        }
+                        
+                        $value = bx_helpers_string::utf2entities($value);
+                        if($field->quoteSQLValue()) {
+                            $value = $db->quote($value);
+                        }
+                        
+                        $query.= ' '.$db->quoteIdentifier($col)."=$value,";
                     }
-                    
-                    $value = bx_helpers_string::utf2entities($value);
-                    if($field->quoteSQLValue()) {
-                        $value = $db->quote($value);
-                    }
-                    
-                    $query.= ' '.$db->quoteIdentifier($col)."=$value,";
                 }
             }
         }
@@ -120,11 +122,11 @@ class bx_dbforms2_sql {
     }
     
     /**
-     *  xx
+     *  Returns a query to insert a new entry for the given form.
      *
-     *  @param  type  $var descr
+     *  @param  object $form Form to generate the query for.
      *  @access public
-     *  @return type descr
+     *  @return string Query
      */
     public static function getInsertQueryByForm($form) {
         $db = $GLOBALS['POOL']->db;            
@@ -137,22 +139,24 @@ class bx_dbforms2_sql {
         $values[] = $form->currentID;
         
         foreach($form->fields as $field) {
-            if($field->name != $form->idField && $field->getAttribute('nosql')==false) {
-                $name =  $field->getSQLName('insert');
-                if ($name) {
-                    $fields[] = $db->quoteIdentifier($name);
-                    
-                    $value = $field->getSQLValue();
-                    if($field->getAttribute('isxml') !== TRUE) {
-                        $value = htmlspecialchars($value);
+            if($field instanceof bx_dbforms2_field)  {
+                if($field->name != $form->idField && $field->getAttribute('nosql')==false) {
+                    $name =  $field->getSQLName();
+                    if ($name) {
+                        $fields[] = $db->quoteIdentifier($name);
+                        
+                        $value = $field->getSQLValue();
+                        if($field->getAttribute('isxml') !== TRUE) {
+                            $value = htmlspecialchars($value);
+                        }
+    
+                        $value = bx_helpers_string::utf2entities($value);
+                        if($field->quoteSQLValue()) {
+                            $value = $db->quote($value);
+                        }
+                        
+                        $values[] = $value;
                     }
-
-                    $value = bx_helpers_string::utf2entities($value);
-                    if($field->quoteSQLValue()) {
-                        $value = $db->quote($value);
-                    }
-                    
-                    $values[] = $value;
                 }
             }
         }
@@ -168,11 +172,11 @@ class bx_dbforms2_sql {
     }
     
     /**
-     *  xx
+     *  Returns a query to get all entries for the given live select object.
      *
-     *  @param  type  $var descr
+     *  @param  object $ls Liveselect to generate the query for.
      *  @access public
-     *  @return type descr
+     *  @return string Query
      */
     public static function getSelectQueryByLiveSelect($ls) {
         $db = $GLOBALS['POOL']->db;
@@ -197,8 +201,8 @@ class bx_dbforms2_sql {
         if ($ls->where) {
             $where .=" AND ". $ls->where;
         }
+        
         $orderby = !empty($ls->orderBy) ? $ls->orderBy : $ls->idField;
-		
 		$matcher = ( !empty($ls->getMatcher) AND isset($_GET[$ls->getMatcher]) )? ' AND '.$ls->getMatcher.' = "'.$_GET[$ls->getMatcher].'" ' : '';
         
         $query = 'SELECT '.$table.'.'.$ls->idField.' AS _id, '.$ls->nameField.' AS _title FROM '.$table.' '. $ls->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby.' LIMIT '.$ls->limit;

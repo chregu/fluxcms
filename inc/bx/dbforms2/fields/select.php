@@ -24,13 +24,6 @@
  */
 class bx_dbforms2_fields_select extends bx_dbforms2_field {
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function __construct($name) {
         parent::__construct($name);
         
@@ -38,13 +31,6 @@ class bx_dbforms2_fields_select extends bx_dbforms2_field {
         $this->XMLName = 'select';
     }
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function hasConfigValues() {
         return TRUE;
     }

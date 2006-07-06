@@ -191,7 +191,7 @@ class bx_dbforms2_field {
     }
     
     /**
-     *  Whether or not the plugin has child nodes in the configuration.
+     *  Whether the plugin has child nodes in the configuration.
      *
      *  @param  type  $var descr
      *  @access public
@@ -215,11 +215,10 @@ class bx_dbforms2_field {
     /**
      *  Returns the name of the field to be used in a SQL query.
      *
-     *  @param string $type 'insert','update' or 'select'
      *  @access public
      *  @return string Field name
      */
-    public function getSQLName($type) {
+    public function getSQLName() {
         return $this->name;
     }
     
@@ -326,25 +325,25 @@ class bx_dbforms2_field {
     }
     
     /**
-     *  xx
+     *  Returns additional data of this field.
      *
-     *  @param  type  $var descr
+     *  @param  mixed $id The currently used id.
      *  @access public
      *  @return type descr
      */
     public function getAdditionalData($id) {
-        return null;
+        return NULL;
     }
     
     /**
-     *  xx
+     *  Executes additional Queries on this field.
      *
-     *  @param  type  $var descr
+     *  @param  mixed $id The currently used id.
      *  @access public
      *  @return type descr
      */
     public function doAdditionalQuery($id) {
-        return null;   
+        return NULL;   
     }
     
     /**

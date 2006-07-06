@@ -50,7 +50,7 @@ class bx_dbforms2_nofield_text extends bx_dbforms2_nofield {
 	/**
 	 * 
 	 */
-	 public function getSQLName($type){
+	 public function getSQLName(){
 		return '';
 	 }
 

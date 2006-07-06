@@ -22,11 +22,12 @@
  * @category 
  * @author Bitflux GmbH <flux@bitflux.ch>
  */
-class bx_dbforms2_fields_relation_12n extends bx_dbforms2_field {
+class bx_dbforms2_fields_listview_12n extends bx_dbforms2_fields_listview {
 
     public function __construct($name) {
         parent::__construct($name);
-        $this->type = 'relation_12n';
+        $this->XMLName = 'listview';
+        $this->type = 'listview_12n';
     }
 
     /**
@@ -35,10 +36,31 @@ class bx_dbforms2_fields_relation_12n extends bx_dbforms2_field {
      *  @access public
      *  @return array Field attributes
      */
-    public function getAttributeSet() {
-        return array('descr', 'thatfield');
+    public function getConfigAttributes() {
+        $ret = parent::getConfigAttributes();
+        $ret['idfield'] = 'string';
+        $ret['thatidfield'] = 'string';
+        $ret['namefield'] = 'string';
+        $ret['orderby'] = 'string';
+        return $ret;
     }
-    
+
+    /**
+     *  Returns the query which is needed to get the values for this list view.
+     *
+     *  @param string $thatid The value of the related table id field.
+     *  @access public
+     *  @return string SQL Query
+     */
+    public function getSelectQuery($thatid) {
+        $table = $this->parentForm->tablePrefix.$this->parentForm->tableName;
+        $query = ' SELECT '.$table.'.'.$this->attributes['idfield'].' AS _id, '.$this->attributes['namefield'].' AS _title';
+        $query.= ' FROM '.$table;
+        $query.= ' WHERE '.$table.'.'.$this->attributes['thatidfield'].' = '.$GLOBALS['POOL']->db->quote($thatid);
+        $query.= ' ORDER BY '.$this->attributes['orderby'];
+        return $query;
+    }
+   
 }
 
 ?>

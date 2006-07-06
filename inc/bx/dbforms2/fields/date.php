@@ -24,26 +24,12 @@
  */
 class bx_dbforms2_fields_date extends bx_dbforms2_field {
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function __construct($name) {
         parent::__construct($name);
         $this->type = 'date';
         $this->XMLName = 'input';
     }
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function getSQLValue() {
         
         return preg_replace("/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2,4})/","$3-$2-$1",$this->value);

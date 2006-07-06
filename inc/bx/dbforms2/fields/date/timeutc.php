@@ -36,9 +36,9 @@ class bx_dbforms2_fields_date_timeutc extends bx_dbforms2_fields_date {
         return $this->fixDate($this->value);
     }
     
-    public function getSQLName($type) {
+    public function getSQLName() {
         $timezone = bx_helpers_config::getTimezoneAsSeconds();
-        if ($type == 'select') {
+        if ($this->parentForm->queryMode == bx_dbforms2::QUERYMODE_SELECT) {
             return "date_format(date_add(".$this->name.", INTERVAL ".$timezone." SECOND),'%Y-%m-%d %H:%i:%S+".($timezone / 3600).":00') as " . $this->name;
         } else {
             return $this->name;

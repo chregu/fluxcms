@@ -24,13 +24,6 @@
  */
 class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
 
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function __construct($name) {
         parent::__construct($name);
         $this->XMLName = 'select';
@@ -51,13 +44,6 @@ class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
         return $ret;
     }
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function hasConfigValues() {
         return true;
     }
@@ -91,7 +77,7 @@ class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
      *  @access public
      *  @return type descr
      */
-    public function getSQLName($type) {
+    public function getSQLName() {
         return null;  
     }
     

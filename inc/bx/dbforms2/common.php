@@ -25,28 +25,36 @@
 class bx_dbforms2_common {
 
     /**
-     *  DOCUMENT_ME
+     *  Takes a DOMDocument and transforms it to XHTML using the given stylesheet.
      *
-     *  @param  type  $var descr
+     *  @param  DOMDocument $dom The DOMDocument to be transformed.
+     *  @param  string $tablePrefix The table prefix.
+     *  @param  string $formxsl Absolute filename of the stylesheet to use.
      *  @access public
-     *  @return type descr
+     *  @return DOMDocument The transformed result.
      */
-    public static function transformFormXML($dom,$tablePrefix,$formxsl = null) {
+    public static function transformFormXML($dom, $tablePrefix, $formxsl) {
         $xslt = new XSLTProcessor();
         $xsl = new DOMDocument();
             
         if ($formxsl && file_exists($formxsl)) {
             $xsl->load($formxsl);
         } else {
-            $xsl->load(BX_LIBS_DIR.'dbforms2/xsl/form.xsl');
+            throw new PopoonFileNotFoundException($formxsl);
         }
+        
         $xslt->importStylesheet($xsl);
         $xslt->setParameter('', 'webroot', BX_WEBROOT);
         $xslt->setParameter('', 'tablePrefix', $tablePrefix);
         $xslt->registerPhpFunctions();
         
-        return $xslt->transformToDoc($dom);
+        $xml = $xslt->transformToDoc($dom);
+
+        if (!$xml) {
+            throw new PopoonXSLTParseErrorException($xslfile, $registerPhpFunctions);
+        }
         
+        return $xml;
         
     }
     

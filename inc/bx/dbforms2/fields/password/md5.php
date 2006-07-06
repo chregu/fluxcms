@@ -42,8 +42,8 @@ class bx_dbforms2_fields_password_md5 extends bx_dbforms2_fields_password {
      *  @access public
      *  @return type descr
      */
-    public function getSQLName($type) {
-        if ($type == 'select') {
+    public function getSQLName() {
+        if ($this->parentForm->queryMode == bx_dbforms2::QUERYMODE_SELECT) {
             return "'' as " . $this->name;
         } else if ($type == 'update' && trim($this->value) == '' ) {
             return false;

@@ -111,74 +111,96 @@ class bx_dbforms2_config {
     /**
      *  Returns an array containing all fields of the current form.
      *
+     *  @param  DOMElement $fieldsNode The <fields/> node of the form.
+     *  @param  object $parentForm The form's parent form.
      *  @access public
-     *  @return type descr
+     *  @return array All fields of the form, including child forms.
      */
     public function getFields($fieldsNode, $parentForm) {
         $fields = array();
         // get nodeset which contains all fields of the current form
-        $fieldsNS = $this->xpath->query('dbform:field|dbform:group|dbform:nofield', $fieldsNode);
+        $fieldsNS = $this->xpath->query('dbform:field|dbform:group|dbform:nofield|dbform:form', $fieldsNode);
 
         foreach($fieldsNS as $field) {
-            $type = $field->getAttribute('type');
-            $name = $field->getAttribute('name');
             
-            if($field->localName == 'field') {
-                $fieldInstance = $this->getFieldInstance($type, $name);
-            } else if($field->localName == 'group') {
-                $fieldInstance = $this->getGroupInstance($type, $name);
-            } else if($field->localName == 'nofield') {
-                $fieldInstance = $this->getNofieldInstance($type, $name);
-            }
-            
-            if($fieldInstance instanceof bx_dbforms2_field) {
-                $fieldInstance->setParentForm($parentForm);
+            switch($field->localName) {
+                case 'form';
+                    $name = $field->getAttribute('name');
+                    $form = $this->getForm($field);
+                    $fields[$name] = $form;
+                break;
                 
-                $attributeSet = $fieldInstance->getConfigAttributes();
-                $attributes = $this->getNodeAttributes($field, $attributeSet);
-                
-                $fieldInstance->setAttributes($attributes);
-                
-                // check if this field has values from the config file
-                if($fieldInstance->hasConfigValues()) {
-                    $fieldInstance->setValues($this->getFieldValues($field));
-                }
-                if(($default = $this->getDefaultFieldValue($field)) !== NULL) {
-                    $fieldInstance->setDefaultValue($default);
-                }
-
-                if($field->localName == 'field') {
-                    // check if this field has a live select
-                    $lsNS = $this->xpath->query('dbform:liveselect', $field);
-                    if($lsNS->length > 0) {
-                        $lsNode = $lsNS->item(0);
-                        $liveSelect = new bx_dbforms2_liveselect();
-                        
-                        $liveSelect->nameField = $lsNode->getAttribute('namefield');
-                        $liveSelect->whereFields = $lsNode->getAttribute('wherefields');
-                        $liveSelect->where = $lsNode->getAttribute('where');
-                        $liveSelect->idField = $lsNode->getAttribute('idfield');
-                        $liveSelect->tableName = $lsNode->getAttribute('table');
-                        $liveSelect->orderBy = $lsNode->getAttribute('orderby');
-                        $liveSelect->limit = $lsNode->getAttribute('limit');
-                        if(!$liveSelect->limit)
-                            $liveSelect->limit  = 20;
-                            
-                        $liveSelect->getMatcher = $lsNode->getAttribute('getmatcher');
-                        
-                        $fieldInstance->liveSelect = $liveSelect;
+                // field, nofield and group are subclasses of bx_dbforms2_field
+                case 'field':
+                case 'group':
+                case 'nofield':
+                    $type = $field->getAttribute('type');
+                    $name = $field->getAttribute('name');
+                    if($field->localName == 'field') {
+                        $fieldInstance = $this->getFieldInstance($type, $name);
+                    } else if($field->localName == 'group') {
+                        $fieldInstance = $this->getGroupInstance($type, $name);
+                    } else if($field->localName == 'nofield') {
+                        $fieldInstance = $this->getNofieldInstance($type, $name);
                     }
-                } else if($field->localName == 'group') {
-                    $fieldInstance->setFields($this->getFields($field));
-                
-                } else if($field->localName == 'nofield') {
-					$fieldInstance->setValue($field->getAttribute('value'));				
-                }
-                
-                $fields[$name] = $fieldInstance;
-            } else {
-                throw new Exception("Cannot instanciate $name ($type)"); 
+                    
+                    if($fieldInstance instanceof bx_dbforms2_field) {
+                        $fieldInstance->parentForm = $parentForm;
+                        
+                        $attributeSet = $fieldInstance->getConfigAttributes();
+                        $attributes = $this->getNodeAttributes($field, $attributeSet);
+                        
+                        $fieldInstance->setAttributes($attributes);
+                        
+                        // check if this field has values from the config file
+                        if($fieldInstance->hasConfigValues()) {
+                            $fieldInstance->setValues($this->getFieldValues($field));
+                        }
+                        if(($default = $this->getDefaultFieldValue($field)) !== NULL) {
+                            $fieldInstance->setDefaultValue($default);
+                        }
+        
+                        if($field->localName == 'field') {
+                            // check if this field has a live select
+                            $lsNS = $this->xpath->query('dbform:liveselect', $field);
+                            if($lsNS->length > 0) {
+                                $lsNode = $lsNS->item(0);
+                                $liveSelect = new bx_dbforms2_liveselect();
+                                
+                                $liveSelect->nameField = $lsNode->getAttribute('namefield');
+                                $liveSelect->whereFields = $lsNode->getAttribute('wherefields');
+                                $liveSelect->where = $lsNode->getAttribute('where');
+                                $liveSelect->idField = $lsNode->getAttribute('idfield');
+                                $liveSelect->tableName = $lsNode->getAttribute('table');
+                                $liveSelect->orderBy = $lsNode->getAttribute('orderby');
+                                $liveSelect->limit = $lsNode->getAttribute('limit');
+                                if(!$liveSelect->limit) {
+                                    $liveSelect->limit  = 20;
+                                }
+                                    
+                                $liveSelect->getMatcher = $lsNode->getAttribute('getmatcher');
+                                
+                                $fieldInstance->liveSelect = $liveSelect;
+                            }
+                        } else if($field->localName == 'group') {
+                            $fieldInstance->setFields($this->getFields($field));
+                        
+                        } else if($field->localName == 'nofield') {
+                            $fieldInstance->setValue($field->getAttribute('value'));				
+                        }
+                        
+                        $fields[$name] = $fieldInstance;
+                        
+                    } else if($fieldInstance instanceof bx_dbforms2_form) {
+                        $fields[$name] = $fieldInstance;
+                    } else {
+                        throw new Exception("Cannot instanciate $name ($type)"); 
+                    }
+                    
+                default:
+                break;
             }
+            
         }
         
         return $fields;
@@ -260,20 +282,29 @@ class bx_dbforms2_config {
     }
 
     /**
-     *  Returns a form instance for the current form.
+     *  Returns a form instance for the given form node.
      *
      *  @access public
      *  @return object Form object
      */
-    public function getForm() {
-        $fieldsNS = $this->xpath->query("/dbform:form/dbform:fields");
+    public function getForm($formNode) {
+        
+        $fieldsNS = $this->xpath->query("dbform:fields", $formNode);
         $fieldsNode = $fieldsNS->item(0);
 
         $form = new bx_dbforms2_form();
         $form->fields = $this->getFields($fieldsNode, $form);
-        $form->name = $this->name;
-        $form->tableName = $this->getTableName($fieldsNode);
-        $form->tablePrefix = $this->getTablePrefix($fieldsNode);
+        $form->chooser = $this->getChooser($formNode);
+        
+        $formName = $formNode->getAttribute('name');
+        if(!empty($formName)) {
+            $form->name = $formName;
+        } else {
+            $form->name = $this->name;
+        }
+        
+        $form->tableName = $this->getTableName($formNode);
+        $form->tablePrefix = $this->getTablePrefix($formNode);
         $form->title = $this->getFormTitle($fieldsNode);
         $form->eventHandlers = $this->getEventHandlersByForm($fieldsNode->parentNode);
 
@@ -287,22 +318,41 @@ class bx_dbforms2_config {
         }
         
         $form->attributes = $attributes;
-        $form->jsHrefs = $this->getJSHrefs();
+        if(!empty($form->attributes['thisidfield'])) {
+            $fieldInstance = $this->getFieldInstance('hidden', $form->attributes['thisidfield']);
+            $form->fields[] = $fieldInstance;
+        }
         
+        $form->jsHrefs = $this->getJSHrefs();
         return $form;
     }
     
     /**
-     *  DOCUMENT_ME
+     *  Returns the main form instance.
      *
-     *  @param  type  $var descr
      *  @access public
-     *  @return type descr
+     *  @return object Form object
      */
-    public function getChooser() {
+    public function getMainForm() {
+        $formNS = $this->xpath->query("/dbform:form");
+        return $this->getForm($formNS->item(0));
+    }
+    
+    
+    /**
+     *  Returns the chooser object for the given form node.
+     *
+     *  @param  object $formNode The form node for which to get the chooser.
+     *  @access public
+     *  @return object The chooser object of the given form.
+     */
+    public function getChooser($formNode) {
         
-        $chooserNS = $this->xpath->query("/dbform:form/dbform:chooser");
+        $chooserNS = $this->xpath->query("dbform:chooser", $formNode);
         $chooserNode = $chooserNS->item(0);
+        if(!isset($chooserNode)) {
+            return FALSE;
+        }
 
         $chooser = new bx_dbforms2_liveselect();
 
@@ -317,20 +367,19 @@ class bx_dbforms2_config {
         $chooser->orderBy = $chooserNode->getAttribute('orderby');
 		$chooser->getMatcher = $chooserNode->getAttribute('getmatcher');
 		$chooser->notNullFields = $chooserNode->getAttribute('notnullfields');
-        $chooser->tableName = $this->getTableName();
-        $chooser->tablePrefix = $this->getTablePrefix();
+        $chooser->tableName = $this->getTableName($formNode);
+        $chooser->tablePrefix = $this->getTablePrefix($formNode);
         
         $chooser->setLeftJoin($chooserNode->getAttribute('leftjoin'));
-        
         return $chooser;
     }
     
     /**
-     *  xx
+     *  Returns the title of a form.
      *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
+     *  @param  DOMElement $fieldsNode The <fields/> node of the form.
+     *  @access protected
+     *  @return string The form's title
      */
     protected function getFormTitle($fieldsNode = NULL) {
         if(!isset($fieldsNode)) {
@@ -344,40 +393,38 @@ class bx_dbforms2_config {
     }
     
     /**
-     *  xx
+     *  Returns the table name of a form.
      *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
+     *  @param  DOMElement $fieldsNode The <fields/> node of the form.
+     *  @access protected
+     *  @return string The form's table name
      */
-    protected function getTableName($fieldsNode = NULL) {
-        if(!isset($fieldsNode)) {
-            $fieldsNS = $this->xpath->query("/dbform:form/dbform:fields");
-            $fieldsNode = $fieldsNS->item(0);
-        }
+    protected function getTableName($formNode = NULL) {
+        $fieldsNS = $this->xpath->query("dbform:fields", $formNode);
+        $fieldsNode = $fieldsNS->item(0);
         
-        if($fieldsNode && $fieldsNode->hasAttribute('table'))
+        if($fieldsNode && $fieldsNode->hasAttribute('table')) {
             return $fieldsNode->getAttribute('table');
+        }
         
         return FALSE;
     }
     
-       /**
-     *  xx
+    /**
+     *  Returns the table prefix of a form.
      *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
+     *  @param  DOMElement $fieldsNode The <fields/> node of the form.
+     *  @access protected
+     *  @return string The form's table prefix
      */
-    protected function getTablePrefix($fieldsNode = NULL) {
-        if(!isset($fieldsNode)) {
-            $fieldsNS = $this->xpath->query("/dbform:form/dbform:fields");
-            $fieldsNode = $fieldsNS->item(0);
-        }
+    protected function getTablePrefix($formNode = NULL) {
+        $fieldsNS = $this->xpath->query("dbform:fields", $formNode);
+        $fieldsNode = $fieldsNS->item(0);
+        
         if($fieldsNode && $fieldsNode->hasAttribute('tablePrefix')) {
             return $fieldsNode->getAttribute('tablePrefix');
         }
-        return  $GLOBALS['POOL']->config->getTablePrefix();
+        return $GLOBALS['POOL']->config->getTablePrefix();
     }
     
     /**
@@ -389,14 +436,7 @@ class bx_dbforms2_config {
      *  @return object Field instance on succes, FALSE otherwise
      */
     protected function getFieldInstance($field, $name) {
-        if($field == "nofield") {
-            // "string" becomes "bx_dbforms2_string" because it's no field ;) "bx_dbforms2_nofield"
-            $class = "bx_dbforms2_$field";
-        }else {
-            // "string" becomes "bx_dbforms2_fields_string"
-            $class = "bx_dbforms2_fields_$field";
-        }
-
+        $class = "bx_dbforms2_fields_$field";
         return new $class($name);
     }
     

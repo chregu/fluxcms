@@ -24,13 +24,6 @@
  */
 class bx_dbforms2_fields_hidden extends bx_dbforms2_field {
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function __construct($name) {
         parent::__construct($name);
         $this->type = 'hidden';
@@ -40,5 +33,3 @@ class bx_dbforms2_fields_hidden extends bx_dbforms2_field {
    
 
 }
-
-?>
