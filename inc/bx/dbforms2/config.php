@@ -478,6 +478,8 @@ class bx_dbforms2_config {
     protected function getNodeAttributes($node, $attributeSet = NULL) {
         $attributes = array();
         foreach($attributeSet as $attribute => $type) {
+            
+            $attributes[$attribute] = NULL;
             if($node->hasAttribute($attribute)) {
                 $value = $node->getAttribute($attribute);
                 
