@@ -53,7 +53,6 @@ function openUploadIframe (id) {
 }
 
 function updateN2M(select,id) {
-	
 	field = dbforms2.form.getFieldByID(id);
 	field.setFieldValue(select.options[select.selectedIndex].value,select.options[select.selectedIndex].text);
 	select.selectedIndex = 0;
@@ -71,4 +70,31 @@ dbforms2_helpers.isImage = function(src) {
     }
     
     return false;
+}
+
+dbforms2_helpers.toggleSubForm = function(linkn, id) {
+    var dnode = document.getElementById(id);
+    if(dnode.style.display == 'block') {
+        dnode.style.display = 'none';
+        linkn.innerHTML = '+';
+    } else {
+        dnode.style.display = 'block';        
+        linkn.innerHTML = '-';
+    }
+}
+
+function var_dump(obj) {
+   if(typeof obj == "object") {
+      alert("Type: "+typeof(obj)+((obj.constructor) ? "\nConstructor: "+obj.constructor : "")+"\nValue: " + obj);
+   } else {
+      alert("Type: "+typeof(obj)+"\nValue: "+obj);
+   }
+}
+
+function var_serialize(obj) {
+   if(typeof obj == "object") {
+      return "Type: "+typeof(obj)+((obj.constructor) ? "\nConstructor: "+obj.constructor : "")+"\nValue: " + obj;
+   } else {
+      return "Type: "+typeof(obj)+"\nValue: "+obj;
+   }
 }

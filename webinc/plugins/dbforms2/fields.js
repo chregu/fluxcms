@@ -1,8 +1,8 @@
 /**
- * <p>
- * dbforms2_field
- * </p>
- * 
+ * The parent class for all fields
+ *
+ * Defines all required methods and members and provides a common set of functionality.
+ *
  */
 function dbforms2_field(DOMNode) {
     var defaultValue = '';
@@ -64,6 +64,9 @@ function dbforms2_field(DOMNode) {
     this.onChange = function() {
     }
     
+    this.setParentFormId = function() {
+    }
+    
     /**
      * e_XXX methods are called from onXXX handlers from a HTML element
      *
@@ -95,44 +98,43 @@ function dbforms2_field(DOMNode) {
 }
 
 
+
 /**
- * <p>
- * dbforms2_field_text
- * </p>
- * 
+ * Simple text field
+ *
  */
 function dbforms2_field_text(DOMNode) {
     this.init(DOMNode);
 }
-
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_text.prototype = new dbforms2_field();
 
+
+
 /**
- * <p>
- * dbforms2_field_password
- * </p>
- * 
+ * Field for editing passwords
+ *
  */
 function dbforms2_field_password(DOMNode) {
     this.init(DOMNode);
 }
-
 dbforms2_field_password.prototype = new dbforms2_field();
 
 
+
+/**
+ * Fields for MD5-hashed passwords
+ *
+ */
 function dbforms2_field_password_md5(DOMNode) {
     this.init(DOMNode);
 }
-
 dbforms2_field_password_md5.prototype = new dbforms2_field();
 
 
+
 /**
- * <p>
- * dbforms2_field_checkbox
- * </p>
- * 
+ * A simple checkbox field
+ *
  */
 function dbforms2_field_checkbox(DOMNode) {
     
@@ -151,17 +153,14 @@ function dbforms2_field_checkbox(DOMNode) {
         return 0;
     }
     
-    
 }
-
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_checkbox.prototype = new dbforms2_field();
 
+
+
 /**
- * <p>
- * dbforms2_field_color
- * </p>
- * 
+ * Field for selecting a color
+ *
  */
 function dbforms2_field_color(DOMNode) {
     
@@ -172,22 +171,24 @@ function dbforms2_field_color(DOMNode) {
     }
     
 }
-
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_color.prototype = new dbforms2_field();
 
 
+
 /**
- * <p>
- * dbforms2_field_text_area
- * </p>
- * 
+ * Field for text areas
+ *
  */
 function dbforms2_field_text_area(DOMNode) {
 }
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_text_area.prototype = new dbforms2_field();
 
+
+
+/**
+ * Field for editing text in fck
+ *
+ */
 function dbforms2_field_text_wysiwyg(DOMNode) {
     this.init = function(DOMNode) {
 		this.initField(DOMNode);
@@ -230,42 +231,44 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
 	}
 		
 }
-
-
 dbforms2_field_text_wysiwyg.prototype = new dbforms2_field();
 
-// dbforms2_field_text inherits from dbforms2_field
+
 
 /**
- * <p>
- * dbforms2_field_text_area_small
- * </p>
- * 
+ * Field for small text areas
+ *
  */
 function dbforms2_field_text_area_small(DOMNode) {
 }
-
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_text_area_small.prototype = new dbforms2_field();
 
+
+
 /**
- * <p>
- * dbforms2_field_select
- * </p>
- * 
+ * Field for dropdowns
+ *
  */
 function dbforms2_field_select(DOMNode) {
 }
-
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_select.prototype = new dbforms2_field();
 
 
+
+/**
+ * Field for dates
+ *
+ */
 function dbforms2_field_date(DOMNode) {
 }
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_date.prototype = new dbforms2_field();
 
+
+
+/**
+ * Field for static text
+ *
+ */
 function dbforms2_field_fixed(DOMNode) {
 	this.setValue = function(value) {
 		var sp = document.getElementById( this.DOMNode.id + "_fixed");
@@ -274,10 +277,14 @@ function dbforms2_field_fixed(DOMNode) {
         this.updateDOMNodeValue();
 	}
 }
-
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_fixed.prototype = new dbforms2_field();
 
+
+
+/**
+ * Field for managing n2m relations
+ *
+ */
 function dbforms2_field_relation_n2m(DOMNode) {
 
     this.init = function(DOMNode) {
@@ -365,9 +372,14 @@ function dbforms2_field_relation_n2m(DOMNode) {
     
     
 }
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_relation_n2m.prototype = new dbforms2_field();
 
+
+
+/**
+ * Fixed date/time field
+ *
+ */
 function dbforms2_field_fixed_datetime(DOMNode) {
     this.init(DOMNode);
 	
@@ -383,9 +395,14 @@ function dbforms2_field_fixed_datetime(DOMNode) {
         this.updateDOMNodeValue();
 	}
 }
-// dbforms2_field_text inherits from dbforms2_field
 dbforms2_field_fixed_datetime.prototype = new dbforms2_field_fixed();
 
+
+
+/**
+ * File Field
+ *
+ */
 function dbforms2_field_file(DOMNode) {
     
     var uploadDir = '';
@@ -445,10 +462,16 @@ function dbforms2_field_file(DOMNode) {
 	}
 	
 }
-	
 dbforms2_field_file.prototype = new dbforms2_field();
- 
 
+
+
+/**
+ * File Browser Field
+ *
+ * Provides a field which has an integrated browser to all the files in the cms.
+ *
+ */
 function dbforms2_field_file_browser(DOMNode) {
     var isImage;
 
@@ -488,9 +511,108 @@ function dbforms2_field_file_browser(DOMNode) {
     }
     
 }
-
-// dbforms2_field_filebrowser inherits from dbforms2_field
 dbforms2_field_file_browser.prototype = new dbforms2_field();
  
 
+
+/**
+ * Listview base class
+ *
+ */
+function dbforms2_field_listview(DOMNode) {
+
+    this.listData = new dbforms2_formData();
+    this.transport = new dbforms2_transport();
+    this.dataUri = '';
+    
+    this.init = function(DOMNode) {
+        this.initField(DOMNode);
+        this.initListView(DOMNode);
+        this.reloadEntries();
+    }
+    
+    this.initListView = function(DOMNode) {
+
+        var cf_onChoose = new bx_helpers_contextfixer(this.onChoose, this);
+        var cf_onDelete = new bx_helpers_contextfixer(this.onDelete, this);
+        
+        this.listview = new dbforms2_listview();
+        this.listview.onChooseAction = cf_onChoose.execute;
+        this.listview.onDeleteAction = cf_onDelete.execute;
+        this.listview.dataURI = this.form.listViewRootURI + '/' + this.id;
+        this.listview.init(document.getElementById(this.id + '_lvresultstable'));
+        
+        this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_DELETE_POST, this, this.eventFormDeletePost);
+        this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_NEW_POST, this, this.eventFormNewPost);
+        this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_SAVE_POST, this, this.eventFormSavePost);
+    }
+    
+    this.setValue = function(value) {
+    }
+    
+    this.onChoose = function(entry) {
+        this.form.loadFormDataByID(entry.id);
+    }
+    
+    this.onDelete = function(entry) {
+        this.listview.results.removeEntry(entry);
+        this.form.deleteEntryByID(entry.id);
+    }
+    
+    this.eventFormSavePost = function() {
+        this.reloadEntries();
+    }
+    
+    this.eventFormNewPost = function() {
+        this.reloadEntries();
+    }
+    
+    this.eventFormDeletePost = function() {
+        this.reloadEntries();
+    }
+    
+    this.reloadEntries = function() {
+        this.listview.loadEntries();
+    }
+    
+}
+dbforms2_field_listview.prototype = new dbforms2_field();
+
+
+
+/**
+ * Listview for 12n relations.
+ *
+ */
+function dbforms2_field_listview_12n(DOMNode) {
+    this.thisid = '';
+    this.listData = new dbforms2_formData();
+    this.transport = new dbforms2_transport();
+    this.dataUri = '';
+    
+    this.init = function(DOMNode) {
+        this.initField(DOMNode);
+        this.initListView(DOMNode);
+        this.form.registerInternalEventHandler(DBFORMS2_EVENT_PARENTFORM_NEW, this, this.eventParentFormNew);
+    }
+    
+    this.setParentFormId = function(id) {
+        this.listview.loadEntries({thatid:id});
+    }
+    
+    this.eventParentFormNew = function() {
+        this.reloadEntries();
+    }
+    
+    this.reloadEntries = function() {
+        if(this.form.parentForm.currentID == 0 && this.form.parentForm.insertID != 0) {
+            this.listview.loadEntries({thatid:this.form.parentForm.insertID});
+        } else if(this.form.parentForm.currentID != 0) {
+            this.listview.loadEntries({thatid:this.form.parentForm.currentID});
+        }
+    }
+    
+    
+}
+dbforms2_field_listview_12n.prototype = new dbforms2_field_listview();
 

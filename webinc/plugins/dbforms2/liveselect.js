@@ -1,6 +1,7 @@
 function dbforms2_liveselect() {
     this.transport = new dbforms2_transport();
     this.onChooseAction = null;
+    this.onDeleteAction = null;
     this.disabled = false;
     
     // set this to the data uri for this live select (should not be empty)
@@ -62,14 +63,16 @@ function dbforms2_liveselect() {
             idNS = entry.getElementsByTagName('_id');
             titleNS = entry.getElementsByTagName('_title');
             
-            title = 'Parse Error';
+            title = '#Broken Entry#';
             id = 0;
 
-            if(titleNS.length > 0 && titleNS.item(0).childNodes[0])
+            if(titleNS.length > 0 && titleNS.item(0).childNodes[0]) {
                 title = titleNS.item(0).childNodes[0].data
+            } 
 
-            if(idNS.length > 0 && idNS.item(0).childNodes[0])
+            if(idNS.length > 0 && idNS.item(0).childNodes[0]) {
                 id = idNS.item(0).childNodes[0].data;
+            }
             
             this.results.addEntry(id, title);
             
@@ -93,6 +96,12 @@ function dbforms2_liveselect() {
     this.onChoose = function(entry) {
         this.results.hide();
         this.onChooseAction(entry);
+    }
+    
+    this.onDelete = function(entry) {
+        if(this.onDeleteAction != null) {
+            this.onDeleteAction(entry);
+        }
     }
     
     this.disable = function() {
@@ -199,6 +208,9 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
                 this.chooser.onChoose(this.chooser.results.entries[this.chooser.results.entryFocus]);
                 this.chooser.results.hide();
             }
+        } else if(event.keyCode == 46) {
+            // DELETE
+            this.chooser.onDelete(this.chooser.results.entries[this.chooser.results.entryFocus]);
         }
     }
     

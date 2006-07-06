@@ -2,13 +2,19 @@ dbforms2_toolbar = function() {
 
     this.buttons = new Array();
     
+    this.addButtonEventHandler = function(bname, handler) {
+        bx_helpers.addEventListener(this.buttons[bname], 'click', handler);
+    }
+    
     this.setButton = function(bname, bobject) {
         this.buttons[bname] = bobject;
     }
     
     this.lockButton = function(bname) {
+        /*
         this.buttons[bname].disabled = true;
         this.buttons[bname].className = 'disabled';
+        */
     }
     
     this.unlockButton = function(bname) {

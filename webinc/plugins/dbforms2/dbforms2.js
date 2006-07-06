@@ -12,6 +12,29 @@
 dbforms2_globalObj = new Array();
 dbforms2_objID = 1;
 
+DBFORMS2_EVENT_FORM_LOAD_PRE        = 1;
+DBFORMS2_EVENT_FORM_LOAD_POST       = 2;
+DBFORMS2_EVENT_FORM_DELETE_PRE      = 3;
+DBFORMS2_EVENT_FORM_DELETE_POST     = 4;
+DBFORMS2_EVENT_FORM_RELOAD_PRE      = 5;
+DBFORMS2_EVENT_FORM_RELOAD_POST     = 6;
+DBFORMS2_EVENT_FORM_SAVE_PRE        = 7;
+DBFORMS2_EVENT_FORM_SAVE_POST       = 8;
+DBFORMS2_EVENT_FORM_NEW_PRE         = 9;
+DBFORMS2_EVENT_FORM_NEW_POST        = 10;
+
+DBFORMS2_EVENT_PARENTFORM_SAVE      = 20;
+DBFORMS2_EVENT_PARENTFORM_NEW       = 21;
+
+
+/*
+DBFORMS2_EVENT_FORM__PRE        = ;
+DBFORMS2_EVENT_FORM__POST       = ;
+DBFORMS2_EVENT_FORM__PRE        = ;
+DBFORMS2_EVENT_FORM__POST       = ;
+*/
+
+
 /**
  *  Get the next available id to register a global object.
  *
@@ -36,59 +59,47 @@ dbforms2.init = function(formConfig) {
     dbforms2_log.log('--');
     dbforms2_log.log('dbforms2 initializing...');
 
-    // initialize some globals
-    this.currentID = 0;
-    this.dataDocument = null;
-    this.dataDocumentLoaded = null;
+    // FIXME: this should be per form
     this.liveSelectRootURI = formConfig['liveSelectRootURI'];
     
-    // set data URI and get the form and status line div
-    this.dataURI = formConfig['dataURI'];
-    this.formDiv = document.getElementById('form');
+    // set up the status text
     this.statusTextDiv = document.getElementById('statustext');
     dbforms2.statusText('Initializing...');
 
-    // set up the global toolbar
-    this.toolbar = new dbforms2_toolbar();
-    this.toolbar.setButton('save', document.getElementsByName('button_save')[0]);
-    this.toolbar.setButton('new', document.getElementsByName('button_new')[0]);
-    this.toolbar.setButton('saveasnew', document.getElementsByName('button_saveasnew')[0]);
-    this.toolbar.setButton('delete', document.getElementsByName('button_delete')[0]);
-    this.toolbar.setButton('reload', document.getElementsByName('button_reload')[0]);
-    this.toolbar.lockAllButtons();
-    
-    // create the global form
-    this.form = new dbforms2_form();
-    this.form.dataURI = formConfig['dataURI'];
-    this.form.formDiv = this.formDiv;
-    this.form.tablePrefix = formConfig['tablePrefix'];
-    this.form.name = formConfig['name'];
-    this.form.init(formConfig['fields']);
+    // create the main form
+    this.mainform = dbforms2.getFormByConfig(formConfig);
+
+    this.mainform.toolbar = new dbforms2_toolbar();
+    this.mainform.initToolbar();
+    this.mainform.toolbar.lockAllButtons();
     
     // set client-side event handlers
     if(formConfig['onSaveJS']) {
-        this.form.eventHandlers['onSaveJS'] = formConfig['onSaveJS'];
+        this.mainform.eventHandlers['onSaveJS'] = formConfig['onSaveJS'];
     }
     if(formConfig['onLoadJS']) {
-        this.form.eventHandlers['onLoadJS'] = formConfig['onLoadJS'];
+        this.mainform.eventHandlers['onLoadJS'] = formConfig['onLoadJS'];
     }
 
 	// check if an id has been passed via url and load the corresponding entry if so
     this.parseUrlParams();
 	if (this.urlParams['id']) {
-		this.form.loadFormDataByID(this.urlParams['id']);
+		this.mainform.loadFormDataByID(this.urlParams['id']);
 	}
 	
-    // set up a live select for the main entry chooser
+    // set up a live select for the main chooser
     var cf_onLiveChoose = new ContextFixer(this.loadEntryByID, this);
     this.chooser = new dbforms2_liveselect();
     this.chooser.onChooseAction = cf_onLiveChoose.execute;
+    var wev = new ContextFixer(this.deleteEntryByID, this);
+    this.chooser.onDeleteAction = wev.execute;
+
     this.chooser.dataURI = formConfig['chooserDataURI'];
     this.chooser.init(document.getElementById('chooserQueryField'), document.getElementById('chooserResults'), document.getElementById('chooserImg'));
 
     // we're ready to go now.
-    this.toolbar.unlockButton('save');
-    this.toolbar.unlockButton('new');
+    this.mainform.toolbar.unlockButton('save');
+    this.mainform.toolbar.unlockButton('new');
     dbforms2.statusText('Ready.');
     dbforms2_log.log('dbforms2 initialized');
 
@@ -100,7 +111,7 @@ dbforms2.statusText = function(msg) {
 
 dbforms2.parseUrlParams = function () {
 	this.urlParams = new Array ();
-	var params = window.location.search.substring(1,window.location.search.length).split("&");
+	var params = window.location.search.substring(1, window.location.search.length).split("&");
 	var i = 0;
 	for (var param in params) {
 		var p = params[param].split("=");
@@ -111,6 +122,16 @@ dbforms2.parseUrlParams = function () {
 }
 
 dbforms2.loadEntryByID = function(entry) {
-    this.form.loadFormDataByID(entry.id);
+    this.mainform.loadFormDataByID(entry.id);
+}
+
+dbforms2.deleteEntryByID = function(entry) {
+    this.mainform.deleteEntryByID(entry.id);
+}
+
+dbforms2.getFormByConfig = function(formConfig) {
+    var form = new dbforms2_form();
+    form.init(formConfig);
+    return form;
 }
 

@@ -28,6 +28,19 @@ function dbforms2_transport() {
         this.data.send(xml);
     }
     
+    this.saveXMLSync = function(dataURI, xml) {
+        this.data = new XMLHttpRequest();
+
+        this.data.open('POST', dataURI, false);
+        this.data.send(xml);
+
+        response = new dbforms2_response();
+        response.setXML(this.data.responseXML);
+        
+        return response;
+        
+    }
+    
     this._sarissaOnLoadCallback = function() {
         dbforms2_log.log('dbforms2_loader::_sarissaOnLoadCallback');
 
