@@ -7,7 +7,7 @@ class bx_notifications_mail extends bx_notification {
     
     protected function __construct() {
         
-    }
+    } 
     
     static public function getInstance() {
         if (!(self::$instance)) {
@@ -39,14 +39,15 @@ class bx_notifications_mail extends bx_notification {
         }
         
         
-        $headers = "From: $from\r\n";
-        $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")\r\n"; 
-        
-        if (empty($options['charset'])) {
+        $headers = "From: $from".PHP_EOL;
+        $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")".PHP_EOL; 
+        if ($options['charset'] == "utf8") {
+		$options['charset']  = 'UTF-8';
+	} else if (empty($options['charset'])) {
             $options['charset'] = 'UTF-8';
         }
         
-        $headers .= "Content-Type: text/plain; charset=".$options['charset']."\r\nContent-Transfer-Encoding: 8bit\r\n";
+        $headers .= "Content-Type: text/plain; charset=\"".$options['charset']."\"".PHP_EOL."Content-Transfer-Encoding: 8bit".PHP_EOL;
         // recode utf8 strings
         if ($options['charset'] != "UTF-8") {
          if (function_exists("iconv")) {
