@@ -585,6 +585,34 @@ class patForms_Element
 		}
 		
 		$this->attributes[$attributeName]	=	$attributeValue;
+
+		switch( $this->attributeDefinition[$attributeName]["format"] ) {
+			case 'array':
+				$this->attributes[$attributeName]	=	split(' ',$attributeValue);
+				break;
+			case 'boolean':
+				switch( $attributeValue ) {
+					case "1":
+					case "true":
+          case "t":
+						$this->attributes[$attributeName]	=	true;
+						break;
+					case "0":
+					case "no":
+					case "false":
+          case "nil":
+						$this->attributes[$attributeName]	=	false;
+						break;
+					default:
+						$this->attributes[$attributeName]	= null;
+						break;
+					}
+			case 'int':
+			case 'string':
+				$this->attributes[$attributeName]	=	$attributeValue;
+			default:
+				return false;
+			}
 		
 		return true;
 	}
