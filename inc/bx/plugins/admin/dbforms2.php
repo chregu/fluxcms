@@ -28,9 +28,9 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
     }   
     
     public function __construct($mode) {
-        
         $this->mode = $mode;
     }
+
     /*
     public function getPermissionList() {
     	return array(	"admin_dbforms2-back-edit");	
@@ -49,15 +49,22 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         }
         
         // get form name and mode from id
-        $formName = $this->getFormNameByID($id);
+        $formName = $this->getMainFormNameById($id);
         if($formName == '') 
             throw new Exception('No form specified.');
         
-        $mode = $this->getDisplayModeByID($id);
-        
-        // get config for the form and instanciate a new form object
+        // get config for the form and create a new form instance
         $formConfig = new bx_dbforms2_config($formName);
-        $form = $formConfig->getForm();
+        $mainForm = $formConfig->getMainForm();
+        $form = $mainForm;
+        
+        // check if the request belongs to a subform
+        $subFormName = $this->getSubFormNameById($id);
+        if(!empty($subFormName)) {
+            $form = $mainForm->getSubFormByName($subFormName);
+        }
+
+        $mode = $this->getDisplayModeByID($id);
         
         if($mode == 'data') {
             
@@ -67,6 +74,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 // create a new DOM document out of the posted string
                 $xmlData = new DOMDocument();
                 $xmlData->loadXML($GLOBALS['HTTP_RAW_POST_DATA']);
+                bx_log::log($xmlData->saveXML());
                 
                 // get values as an array
                 $values = bx_dbforms2_data::getValuesByXML($form, $xmlData);
@@ -77,17 +85,33 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     $form->currentID = $values[$form->idField];
 
                 
-                if ($xmlData->documentElement->getAttribute("delete") == "true" && $form->currentID != 0) {
+                if($xmlData->documentElement->getAttribute('getnewid') == 'true') {
+                    $newId = $db->nextID($form->tablePrefix.'_sequences');
+                    // return the newly created id
+                    $dom = $this->createResponse(0, $newId);
+                    $dom->documentElement->setAttribute('id', $newId);
+                    bx_log::log($dom->saveXML());
+                    return $dom;
+                    
+                } else if($xmlData->documentElement->getAttribute("delete") == "true" && $form->currentID != 0) {
                     // delete an existing entry
                     $form->queryMode = bx_dbforms2::QUERYMODE_DELETE;
                     $query = bx_dbforms2_sql::getDeleteQueryByForm($form);  
-                    $deleteRequest = true;
+                    $form->callEventHandlers(bx_dbforms2::EVENT_DELETE_PRE);
                     $form->callEventHandlers(bx_dbforms2::EVENT_DELETE_PRE);
                 
-                } else if ($form->currentID == 0) {
+                } else if($form->currentID == 0) {
                     // create a new entry
                     $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
-                    $form->currentID = $db->nextID($form->tablePrefix.'_sequences');
+                    
+                    $insertid = $xmlData->documentElement->getAttribute('insertid');
+                    bx_log::log('insert id is: ' +$insertid);
+                    if(!empty($insertid)) {
+                        $form->currentID = $insertid;
+                    } else {
+                        $form->currentID = $db->nextID($form->tablePrefix.'_sequences');
+                    }
+                    
                     $query = bx_dbforms2_sql::getInsertQueryByForm($form);
                     $form->callEventHandlers(bx_dbforms2::EVENT_INSERT_PRE);
                 
@@ -102,7 +126,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 $res = $db->query($query);
 
                 if(MDB2::isError($res)) {
-                    // pass error code and message to the browser
+                    // return the db's error code on error
                     $responseCode = $res->getCode();
                     $responseText = $res->getMessage(). "\n".$res->getUserInfo();
 
@@ -137,11 +161,8 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 }
                 
                 // create response
-                $dom = new DomDocument();
-                $dom->appendChild($dom->createElement('response'));
-                $dom->documentElement->setAttribute('code', $responseCode);
+                $dom = $this->createResponse($responseCode, $responseText);
                 $dom->documentElement->setAttribute('id', $form->currentID);
-                $dom->documentElement->appendChild($dom->createElement('text', $responseText));
                 
                 // append reloaded data
                 if($dataDOM !== NULL) {
@@ -160,13 +181,14 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
 
         } else if($mode == 'form') {
             
-            $dom = $form->serializeTODOM();
+            $dom = $form->serializeToDOMObject();
             if (isset($_GET['XML']) && $_GET['XML'] == 1.1) {
                 return $dom;
             }
             
             // default form-xsl
-            $xslfile = BX_LIBS_DIR.'dbforms2/xsl/form.xsl';
+            $xslfile = BX_LIBS_DIR.'dbforms2/xsl/dbforms2.xsl';
+            
             // check for userspace form-xsl in local include dir
             if (isset($form->attributes['xsl']) && !empty($form->attributes['xsl'])) {
                 $userxslf = BX_LOCAL_INCLUDE_DIR."dbforms2/xsl/".$form->attributes['xsl'];
@@ -179,15 +201,42 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
 
         } else if($mode == 'chooser') {
             
-            $chooser = $formConfig->getChooser();
-
+            if(!$form->chooser instanceof bx_dbforms2_liveselect) {
+                throw new Exception('No chooser has been defined for this form.');
+            }
+            
             if(isset($_GET['q'])) {
-                $chooser->query = $_GET['q'];
-                $chooser->tablePrefix = $form->tablePrefix;
-                $query = bx_dbforms2_sql::getSelectQueryByLiveSelect($chooser);
-                return bx_dbforms2_data::getXMLByQuery($query);
+                $form->chooser->query = $_GET['q'];
+                $query = bx_dbforms2_sql::getSelectQueryByLiveSelect($form->chooser);
+                return bx_helpers_db2xml::getXMLByQuery($query);
             }
 
+        } else if($mode == 'listview') {
+            $thisid = '';
+            $thatid = '';
+            if(isset($_GET['thisid'])) {
+                $thisid = $_GET['thisid'];
+            }
+            if(isset($_GET['thatid'])) {
+                $thatid = $_GET['thatid'];
+            }
+            
+            $parts = explode('/', $id);
+            $fieldName = $parts[sizeof($parts)-1];
+            $field = $form->getFieldByName($fieldName);
+            
+            if($field instanceof bx_dbforms2_fields_listview_12n) {
+                $query = $field->getSelectQuery($thatid);
+            } else if($field instanceof bx_dbforms2_fields_listview_n2m) {
+                $query = $field->getSelectQuery($thatid, $thisid);
+            } else if($field instanceof bx_dbforms2_fields_listview) {
+                $query = $field->getSelectQuery();
+            } 
+
+            if($field instanceof bx_dbforms2_fields_listview) {
+                return bx_helpers_db2xml::getXMLByQuery($query);
+            }
+            
         } else if($mode == 'liveselect') {
             
             if(isset($_GET['q'])) {
@@ -199,11 +248,12 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     $field->liveSelect->query = $_GET['q'];
                     $field->liveSelect->tablePrefix = $form->tablePrefix;
                     $query = bx_dbforms2_sql::getSelectQueryByLiveSelect($field->liveSelect);
-                    return bx_dbforms2_data::getXMLByQuery($query);
+                    return bx_helpers_db2xml::getXMLByQuery($query);
                 }
                 
             }
-        } else if ($mode == 'upload') {
+            
+        } else if($mode == 'upload') {
             
             $fObj = $form->fields[$_POST['fieldname']];
             if (isset($_FILES['file']) && $fObj instanceof bx_dbforms2_fields_file) {
@@ -218,54 +268,89 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
     }
     
     /**
-     *  DOCUMENT_ME
+     *  Creates a new DOM document which can be sent to the client as a response.
      *
-     *  @param  type  $var descr
-     *  @access public
+     *  @param  string $code The error code of the response
+     *  @param  string $text The message of the response
+     *  @access protected
+     *  @return DOMDocument The created response
+     */
+    protected function createResponse($code, $text) {
+        $dom = new DomDocument();
+        $dom->appendChild($dom->createElement('response'));
+        $dom->documentElement->setAttribute('code', $responseCode);
+        $dom->documentElement->appendChild($dom->createElement('text', $text));
+        return $dom;
+    }
+    
+    /**
+     *  Returns the name of the main form.
+     *
+     *  @param  string $id 
+     *  @access protected
      *  @return type descr
      */
-    protected function getFormNameByID($id) {
+    protected function getMainFormNameById($id) {
         $elements = explode('/', substr($id, 1));
         return $elements[0];
     }
     
     /**
-     *  DOCUMENT_ME
+     *  Returns the name of a sub form.
      *
-     *  @param  type  $var descr
-     *  @access public
+     *  @param  string $id 
+     *  @access protected
      *  @return type descr
+     */
+    protected function getSubFormNameById($id) {
+        $elements = explode('/', substr($id, 1));
+        if(isset($elements[1]) && $elements[1] === 'subform' && !empty($elements[2])) {
+            return $elements[2];
+        }
+    }
+    
+    /**
+     *  Returns the display mode by id.
+     *
+     *  @param  string $id Request id
+     *  @access protected
+     *  @return string Display mode
      */
     protected function getDisplayModeByID($id) {
         $mode = 'form';
-        
         $elements = explode('/', substr($id, 1));
         if(!empty($elements[1])) {
-            if($elements[1] == 'data') {
-                $mode = 'data';
-            } else if($elements[1] == 'chooser') {
-                $mode = 'chooser';
-            } else if($elements[1] == 'liveselect') {
-                $mode = 'liveselect';
-            }  else if($elements[1] == 'upload') {
-                $mode = 'upload';
+            if($elements[1] == 'subform' && sizeof($elements > 3)) {
+                $elements = array_slice($elements, 2, 2);
             }
+            
+            if(in_array($elements[1], array(
+                'data', 
+                'chooser', 
+                'listview', 
+                'liveselect', 
+                'upload', 
+                ))) 
+            {
+                $mode = $elements[1];
+            }
+            
         }
         return $mode;
     }
     
     /**
-     *  DOCUMENT_ME
+     *  Takes a form and creates the correspondig DOMObject. 
      *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
+     *  @param  object $form Form object
+     *  @access protected
+     *  @return object DOMObject containing the data of the form.
      */
     protected function getDataByForm($form) {
         $form->queryMode = bx_dbforms2::QUERYMODE_SELECT;
         $form->callEventHandlers(bx_dbforms2::EVENT_SELECT_PRE);        
         $query = bx_dbforms2_sql::getSelectQueryByForm($form);
-        $dataDOM = bx_dbforms2_data::getXMLByQuery($query,true);
+        $dataDOM = bx_helpers_db2xml::getXMLByQuery($query,true);
         $dataDOM = bx_dbforms2_data::addAdditionalDataByForm($form, $dataDOM);
         $form->callEventHandlers(bx_dbforms2::EVENT_SELECT_POST);        
         return $dataDOM;
@@ -275,11 +360,11 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         return FALSE;
     }
 
-    public function getPipelineParametersById($path, $id) { 
+    public function getPipelineParametersById($path, $id) {
         $params = array();
         $dm = $this->getDisplayModeByID($id);
         
-        if($dm == 'data' || $dm == 'chooser' || $dm == 'liveselect') {
+        if($dm == 'data' || $dm == 'chooser' || $dm == 'liveselect' || $dm == 'listview') {
             $params['pipelineName'] = 'xml';
         }
         
