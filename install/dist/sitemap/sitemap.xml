@@ -255,7 +255,7 @@
                                         <map:parameter name="outputErrors" value="bx_errorhandler"/>
                                         <map:parameter name="stripScriptCDATA" value="true"/>
                                         <map:parameter name="stripBxAttributes" value="true"/>
-                                        <map:parameter name="obfuscateMail" value="true"/>
+                                        <map:parameter name="obfuscateMailJS" value="true"/>
                                         <map:parameter name="stripXMLDeclaration" value="true"/>
                                     </map:serialize>
                                 </map:otherwise>
