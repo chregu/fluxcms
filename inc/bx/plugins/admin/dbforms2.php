@@ -226,9 +226,9 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
             $field = $form->getFieldByName($fieldName);
             
             if($field instanceof bx_dbforms2_fields_listview_12n) {
-                $query = $field->getSelectQuery($thatid);
+                $query = $field->getSelectQuery(array('thatid' => $thatid));
             } else if($field instanceof bx_dbforms2_fields_listview_n2m) {
-                $query = $field->getSelectQuery($thatid, $thisid);
+                $query = $field->getSelectQuery(array('thatid' => $thatid, 'thisid' => $thisid));
             } else if($field instanceof bx_dbforms2_fields_listview) {
                 $query = $field->getSelectQuery();
             } 
@@ -278,7 +278,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
     protected function createResponse($code, $text) {
         $dom = new DomDocument();
         $dom->appendChild($dom->createElement('response'));
-        $dom->documentElement->setAttribute('code', $responseCode);
+        $dom->documentElement->setAttribute('code', $code);
         $dom->documentElement->appendChild($dom->createElement('text', $text));
         return $dom;
     }

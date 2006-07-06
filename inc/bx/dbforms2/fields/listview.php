@@ -47,7 +47,7 @@ class bx_dbforms2_fields_listview extends bx_dbforms2_field {
      *  @access public
      *  @return string SQL Query
      */
-    public function getSelectQuery() {
+    public function getSelectQuery($options) {
         $table = $this->parentForm->tablePrefix.$this->parentForm->tableName;
         $query = ' SELECT '.$table.'.'.$this->attributes['idfield'].' AS _id, '.$this->attributes['namefield'].' AS _title';
         $query.= ' FROM '.$table;

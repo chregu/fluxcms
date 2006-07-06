@@ -52,7 +52,8 @@ class bx_dbforms2_fields_listview_12n extends bx_dbforms2_fields_listview {
      *  @access public
      *  @return string SQL Query
      */
-    public function getSelectQuery($thatid) {
+    public function getSelectQuery($options) {
+        $thatid = $options['thatid'];
         $table = $this->parentForm->tablePrefix.$this->parentForm->tableName;
         $query = ' SELECT '.$table.'.'.$this->attributes['idfield'].' AS _id, '.$this->attributes['namefield'].' AS _title';
         $query.= ' FROM '.$table;
