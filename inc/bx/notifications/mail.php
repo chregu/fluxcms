@@ -38,7 +38,9 @@ class bx_notifications_mail extends bx_notification {
             throw new Exception("Subject: is invalid.");
         }
         
-        
+        if (!defined('PHP_EOL')) {
+            define('PHP_EOL',"\n");
+        }
         $headers = "From: $from".PHP_EOL;
         $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")".PHP_EOL; 
         if ($options['charset'] == "utf8") {
