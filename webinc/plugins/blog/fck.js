@@ -45,9 +45,14 @@ function initFckExtended() {
 
 
 function updateTextAreas() {
-	/*var oEditor = FCKeditorAPI.GetInstance("bx[plugins][admin_edit][content]") ;
+	var oEditor = FCKeditorAPI.GetInstance("bx[plugins][admin_edit][content]") ;
 	var xml = oEditor.GetXHTML(true);
-	document.getElementById("content").value = xml;*/
+	document.getElementById("bx[plugins][admin_edit][content]").value = xml;
+	
+	var oEditor = FCKeditorAPI.GetInstance("bx[plugins][admin_edit][content_extended]") ;
+	var xml = oEditor.GetXHTML(true);
+	document.getElementById("bx[plugins][admin_edit][content_extended]").value = xml;
+	
 	return formCheck();
 }
 

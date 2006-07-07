@@ -114,11 +114,11 @@ function startPreview(form, focusField) {
 	postRequest += "bx[plugins][admin_edit][id]=-1&";
 	postRequest += "bx[plugins][admin_edit][uri]=preview__&";
 	postRequest += "bx[plugins][admin_edit][status]=4&";	
-    postRequest += "bx[plugins][admin_edit][preview]=1";
-	postRequest += "bx[plugins][admin_edit][trackback]=";
-	postRequest += "bx[plugins][admin_edit][autodiscovery]=";
+    postRequest += "bx[plugins][admin_edit][preview]=1&";
+	postRequest += "bx[plugins][admin_edit][trackback]=&";
+	postRequest += "bx[plugins][admin_edit][autodiscovery]=&";
     postRequest += "bx[plugins][admin_edit][created]=now()";
-	
+
 	//liveSaveSetStatus("Saving Document ...");
 	liveSearchReq.onreadystatechange= previewProcessReqChange;
     liveSearchReq.open("POST", form.action);
