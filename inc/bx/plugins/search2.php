@@ -138,6 +138,7 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
                         $e->appendChild($dom->createElement("text",$v['text']));
                         $e->appendChild($dom->createElement("mod",$v['lastModified']));
                         $e->appendChild($dom->createElement("id",$v['id']));
+                        $e->appendChild($dom->createElement("cnt",$v['cnt']));
                     }
                 }
             }
@@ -182,7 +183,6 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         
         $query .= "and name = 'fulltext' group by properties.path order by cnt DESC LIMIT ".$options['searchStart'].",".$options['searchNumber'];
         $res = $db->query($query);
-        
         $ids = array();
         
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
@@ -209,12 +209,19 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
                     $displayName = $displayName . " :: " . $title;
                     
                 }
-                $ids[$id]['title'] =  $displayName;
                 $ids[$id]['url'] = str_replace("/index.html","/",$reso->getOutputUri());
+                
+                if (empty($displayName)) {
+                    $ids[$id]['title'] =  $ids[$id]['url'];
+                } else {
+                    $ids[$id]['title'] =  $displayName;
+                }
+                
                 //$relatedIds[$id]['resourceDescription'] = $res->getResourceDescription();
                 $ids[$id]['lastModified'] = $reso->getLastModified();
-                $ids[$id]['text'] = bx_helpers_string::truncate($row['value']);
+                $ids[$id]['text'] = bx_helpers_string::truncate(strip_tags($row['value']));
                 $ids[$id]['id'] = $id;
+                $ids[$id]['cnt'] = $row['cnt'];
                 //$relatedIds[$id]['status'] = $res->getStatus();
             }
             
