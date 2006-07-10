@@ -108,8 +108,8 @@ class ImageResize {
               if ($this->endImgHeight == 0) {
                   unset ($this->endImgHeight);
                   $this->oriImgPath = str_replace('/'.$this->endsize.'/','/',$this->endImgPath)."/";
+                  $this->oriEndsize = $this->endsize;
                   $this->endsize = $this->endImgWidth;
-				  $this->oriEndsize = $this->endImgWidth;
                   unset ($this->endImgWidth);
               }
           } else if (!preg_match("#^[0-9]+#",$this->endsize)) {
