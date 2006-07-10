@@ -53,7 +53,8 @@ class bx_dbforms2_config {
         $this->dom = new DOMDocument();
         if(isset($name)) {
             $this->load($name);
-        } 
+        }
+        $this->dom->xinclude();
     }
     
     /**
