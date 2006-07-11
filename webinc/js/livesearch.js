@@ -191,6 +191,9 @@ function previewSubmit(test) {
     var text = document.forms['bx_foo']['comments'].value;
 
     var f = document.forms['commentForm'];
+       if (typeof liveSearchRoot == "undefined") {
+               var liveSearchRoot = "/";
+       }
 
     body = "mail=" + encodeURIComponent(mail) + "&uri="+ encodeURIComponent(uri) + "&text="+ encodeURIComponent(text) + "&name="+ encodeURIComponent(name);
     new ajax (liveSearchRoot + 'inc/bx/php/preview.php', {
