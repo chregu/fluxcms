@@ -6,43 +6,18 @@ xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:bxf="http://bitflux.org/func
     <xsl:import href="../standard/common.xsl"/>
     <xsl:import href="../standard/plugins/blog.xsl"/>
 
-<xsl:param name="ICBM" select="php:functionString('bx_helpers_config::getOption','ICBM')"/>
+    <!-- 
     
-    <xsl:variable name="blogname" select="php:functionString('bx_helpers_config::getOption','blogname')"/>
-    <xsl:variable name="blogroot" select="concat(substring($webroot,1,string-length($webroot)-1),$collectionUri)"/>
-
-    <xsl:output encoding="utf-8" method="xml"/>
-    <xsl:variable name="singlePost">
-        <xsl:choose>
-            <xsl:when test="count(/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']) &lt;=1">true</xsl:when>
-            <xsl:otherwise>false</xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
+    if you want to change some of the blog xsl-templates, look at
+    themes/standard/plugins/blog.xsl, copy those you want to change into this file
+    and change them.
     
-    <xsl:variable name="dctitle">
-    <xsl:choose>
-            <xsl:when test="string-length($blogname) &gt; 0">
-                <xsl:value-of select="$blogname"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="$sitename"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
-   
-    <xsl:template name="contentRight">
+    This will overwrite the standard templates.
     
-        <xsl:apply-templates select="/bx/plugin[@name = 'blog']/xhtml:html/sidebar[@sidebar=2]"/>
-        
-    </xsl:template>
+    We do not advise to change stuff in themes/standard/, but to overwrite/extend them 
+    here, as this will make future upgrades much easier. 
     
-
-   
-    <xsl:template name="leftnavi">
-        <div id="left">
-            <xsl:apply-templates select="/bx/plugin[@name = 'blog']/xhtml:html/sidebar[@sidebar=1]"/>
-        </div>
-    </xsl:template>
-
+    -->
+    
  
 </xsl:stylesheet>
