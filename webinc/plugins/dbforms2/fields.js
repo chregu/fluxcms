@@ -601,7 +601,7 @@ function dbforms2_field_listview_12n(DOMNode) {
     }
     
     this.eventParentFormNew = function() {
-        this.reloadEntries();
+        this.listview.results.removeAllEntries();
     }
     
     this.reloadEntries = function() {
