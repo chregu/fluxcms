@@ -22,7 +22,7 @@
                 </label>
             </td>
             <td class="formInput">
-                <input xsl:use-attribute-sets="standardInputElement" id="field_{@name}">
+                <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
@@ -33,7 +33,7 @@
     <xsl:template match="input[@type='hidden']" mode="fields"/>
 
     <xsl:template match="input[@type='hidden']" mode="hidden">
-        <input xsl:use-attribute-sets="standardInputElement" id="field_{@name}">
+        <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
              <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
              <xsl:apply-templates mode="xhtml"/>
         </input>
@@ -47,7 +47,7 @@
                 </label>
             </td>
             <td class="formInput">
-                <textarea xsl:use-attribute-sets="standardInputElement" id="field_{@name}" name="field_{@name}">
+                <textarea xsl:use-attribute-sets="standardInputElement" id="{@id}" name="field_{@name}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </textarea>
@@ -78,7 +78,7 @@
                 </label>
             </td>
             <td class="formInput">
-                <select xsl:use-attribute-sets="standardInputElement" id="field_{@name}">
+                <select xsl:use-attribute-sets="standardInputElement" id="{@id}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </select>
@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 
-                <input type="hidden" id="field_{@name}"/>
+                <input type="hidden" id="{@id}"/>
                 <div class="n2mvalues" id="field_{@name}_values"></div>
 
             </td>
@@ -121,7 +121,7 @@
                 </label>
             </td>
             <td class="formInput">
-                <input xsl:use-attribute-sets="standardInputElement" id="field_{@name}">
+                <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
@@ -140,7 +140,7 @@
                 </label>
             </td>
             <td class="formInput">
-                <input xsl:use-attribute-sets="standardInputElement" id="field_{@name}" onchange="colorPicker_preview('{@name}');">
+                <input xsl:use-attribute-sets="standardInputElement" id="{@id}" onchange="colorPicker_preview('{@name}');">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
@@ -159,7 +159,7 @@
                 </label>
             </td>
             <td class="formInput">
-                <input xsl:use-attribute-sets="standardInputElement" id="field_{@name}">
+                <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
@@ -184,7 +184,7 @@
                 </label>
             </td>
             <td class="formInput" >
-                <input xsl:use-attribute-sets="standardInputElement" id="field_{@name}">
+                <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
@@ -204,7 +204,7 @@
     <xsl:template match="listview" mode="fields">
         <tr class="formRow">
             <td colspan="2">
-            <div id="field_{@name}">
+            <div id="{@id}">
                     <div class="listview">
                         <div class="listviewResults" id="{@name}_lvresults">
                             <table cellspacing="0" cellpadding="0" width="100%">

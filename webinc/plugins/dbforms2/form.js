@@ -59,7 +59,8 @@ function dbforms2_form() {
     this.initField = function(fieldID, fieldConfig) {
 
         fieldType = fieldConfig['type'];
-        fieldNode = document.getElementById('field_' + fieldID);
+        fieldNode = document.getElementById(this.name + '_' + fieldID);
+        //alert(this.name + '_' + fieldID+' == '+fieldNode);
         fieldClass = 'dbforms2_field_' + fieldType;
 
         try {
@@ -268,8 +269,8 @@ function dbforms2_form() {
                 parentID = this.parentForm.currentID;
             }
             
-            if(parentID != 0 && this.thisidfield != '') {
-                this.formData.setValueByFieldID(this.thisidfield, parentID);
+            if(parentID != 0 && this.thatidfield != '') {
+                this.formData.setValueByFieldID(this.thatidfield, parentID);
             } else {
                 return false;
             }

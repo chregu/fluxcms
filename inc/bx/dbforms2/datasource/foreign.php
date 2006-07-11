@@ -92,6 +92,7 @@ class bx_dbforms2_datasource_foreign {
         $result = array();
         $result[0] = "None";
         while ($row = $res->fetchRow()) {
+
                $result[$row[0]] = $row[1];
         }
         

@@ -319,8 +319,9 @@ class bx_dbforms2_config {
         }
         
         $form->attributes = $attributes;
-        if(!empty($form->attributes['thisidfield'])) {
-            $fieldInstance = $this->getFieldInstance('hidden', $form->attributes['thisidfield']);
+        if(!empty($form->attributes['thatidfield'])) {
+            $fieldInstance = $this->getFieldInstance('hidden', $form->attributes['thatidfield']);
+            $fieldInstance->parentForm = $form;
             $form->fields[] = $fieldInstance;
         }
         

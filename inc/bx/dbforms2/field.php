@@ -250,6 +250,7 @@ class bx_dbforms2_field {
             'type' => $this->type,
             'name' => $this->name,
             'descr' => $this->attributes['descr'],
+            'id' => $this->parentForm->name.'_'.$this->name,
             
             // FIXME: isn't this the same as the above attribute 'type' ?
             'fieldType' =>  str_replace('bx_dbforms2_fields_', '', get_class($this)),
