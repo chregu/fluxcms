@@ -245,7 +245,7 @@ function dbforms2_form() {
     
     this.saveFormData = function() {
         var uri =  this.dataURI;
-
+        
         this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_SAVE_PRE);
         this.formData.formName = this.name;
 
@@ -287,11 +287,6 @@ function dbforms2_form() {
 		
         if(this.currentID == 0 && this.insertID != 0) {
             xml.documentElement.setAttribute('insertid', this.insertID);
-        }
-
-        // save all child's form data as well
-        for (var fieldID in this.forms) {
-            this.fields[fieldID].saveFormData();
         }
         
         this.startTransportTimeout();
