@@ -60,7 +60,7 @@ class Auth_Container
      *
      * @access public
      */
-    function fetchData() 
+    function fetchData($username, $password) 
     {
     }
 
