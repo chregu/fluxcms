@@ -237,6 +237,11 @@
         <meta name="DC.title" content="{$dctitle}"/>
         <xsl:text>
 </xsl:text>
+
+        <link href="{$blogroot}microsummary.txt" type="application/x.microsummary+xml" rel="microsummary"/>
+        <xsl:text>
+</xsl:text>
+
         <xsl:if test="$ICBM">
             <meta name="ICBM" content="{$ICBM}"/>
             <xsl:text>
