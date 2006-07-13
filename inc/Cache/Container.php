@@ -315,7 +315,7 @@ class Cache_Container {
     * @access   public
     * @abstract
     */
-    function garbageCollection() {
+    function garbageCollection($maxlifetime) {
         $this->flushPreload();
     } // end func garbageCollection
 
