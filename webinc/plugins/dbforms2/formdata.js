@@ -55,10 +55,10 @@ function dbforms2_formData() {
 					var values= new Array();
 					var child = childNode.firstChild;
 					while (child) {
-						if(child.childNodes[0]) {
+						if(typeof child.childNodes[0] != 'undefined') {
                             values[child.getAttribute("id")] = child.childNodes[0].data;
-                            child = child.nextSibling;
                         }
+						child = child.nextSibling;
 					}
 					return values;
 				} else {
