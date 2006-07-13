@@ -35,6 +35,19 @@
 
     </plugins>
     
+    
+    <plugins inGetChildren="false">
+        <extension type="txt"/>
+        <file name="microsummary"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/plain"/>
+        <parameter type="pipeline" name="xslt" value="blogmicrosummary.xsl"/>
+        <plugin type="blog">
+            <parameter name="mode" value="rss"/>
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+
+    </plugins>
+    
     <plugins>
         <extension type="html"/>
         <parameter type="pipeline" name="xslt" value="blog.xsl"/>
