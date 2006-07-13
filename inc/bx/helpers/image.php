@@ -60,5 +60,15 @@ class bx_helpers_image {
         } else {
             return false;
         }
-    } 
+    }
+    
+    public static function getFaviconAsBase64() {
+        
+        if (file_exists(BX_OPEN_BASEDIR.'files/favicon.ico')) {
+            return base64_encode(file_get_contents(BX_OPEN_BASEDIR.'files/favicon.ico'));
+        } else {
+            return base64_encode(file_get_contents(BX_PROJECT_DIR.'favicon.ico'));
+        }
+    }
+        
 }
