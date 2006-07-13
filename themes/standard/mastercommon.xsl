@@ -12,6 +12,10 @@
     
     
     <xsl:template name="html_head_scripts">
+        <xsl:call-template name="html_head_scripts_default"/>
+    </xsl:template>
+    
+    <xsl:template name="html_head_scripts_default">
     <xsl:text>
             </xsl:text>
         <xsl:for-each select="/bx/javascripts/src">
@@ -20,6 +24,8 @@
             </xsl:text>
         </xsl:for-each>
     </xsl:template>
+    
+    
     
     
     
