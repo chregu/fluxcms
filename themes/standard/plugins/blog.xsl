@@ -242,6 +242,12 @@
         <xsl:text>
 </xsl:text>
 
+        <link rel="search" href="{$blogroot}/osd.xml" type="application/opensearchdescription+xml" title="{$dctitle}" />
+
+        <xsl:text>
+
+</xsl:text>
+
         <xsl:if test="$ICBM">
             <meta name="ICBM" content="{$ICBM}"/>
             <xsl:text>
