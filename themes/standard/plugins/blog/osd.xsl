@@ -25,7 +25,7 @@ xmlns:php="http://php.net/xsl"
     <ShortName><xsl:value-of select="$dctitle"/></ShortName>
     <Description>Search for <xsl:value-of select="$dctitle"/></Description>
     <InputEncoding>UTF-8</InputEncoding>
-    <Image width="16" height="16">data:image/x-icon;base64,<xsl:value-of select="php:functionString('bx_helpers_image::getFaviconAsBase64')"/></Image>
+    <Image width="16" height="16"><xsl:value-of select="$webroot"/>favicon.ico</Image>
     <Url type="text/html" method="GET" template="{$blogroot}">
         
         <Param name="q" value="{{searchTerms}}"/>
