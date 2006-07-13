@@ -261,7 +261,7 @@ var commentAuthorFieldName = "name";
 var commentAuthorLoggedIn  = false;
 
 var commentFormID          = "bx_foo";
-var commentTextFieldName   = "Send";
+var commentTextFieldName   = "comments";
 var commentButtonName      = "bx[plugins][blog][_all]";
 
 </xsl:if>
