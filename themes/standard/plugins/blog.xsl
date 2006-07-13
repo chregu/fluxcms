@@ -242,7 +242,7 @@
         <xsl:text>
 </xsl:text>
 
-        <link rel="search" href="{$blogroot}/osd.xml" type="application/opensearchdescription+xml" title="{$dctitle}" />
+        <link rel="search" href="{$blogroot}osd.xml" type="application/opensearchdescription+xml" title="{$dctitle}" />
 
         <xsl:text>
 
