@@ -47,7 +47,10 @@ if ($res->numRows() == 0) {
     $ret .= '<div xmlns="http://www.w3.org/1999/xhtml" class="resultRow">Nothing found (neither in title nor fulltext)</div>';
 } else {
     while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC) ) {
-        $ret .= '<li class="LSRow"> » <a href="'.$targetRoot.urlencode($row['post_uri']).'.html">'.utf8_encode(stripslashes($row['post_title'])).'</a>';
+	if  (!$db->isUtf8) {
+		$row['post_title'] = utf8_encode($row['post_title']);
+	}
+        $ret .= '<li class="LSRow"> » <a href="'.$targetRoot.urlencode($row['post_uri']).'.html">'.(stripslashes($row['post_title'])).'</a>';
         $ret .= '</li>';
     }
 }
