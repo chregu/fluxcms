@@ -27,6 +27,7 @@
     <message key="blogCaptchaAfterDays">Nach wie vielen Tagen soll Captcha-Abfrage aktiviert werden</message>
     <message key="blogCaptchaFontPath">Der Pfad zu ihrem Schriften-Verzeichniss an</message>
     <message key="blogCaptchaFontFile">Name des Schrift File</message>
+    <message key="help_blogAkismetKey"><![CDATA[Als zusätzlicher Kommentar-Spam-Check, kann der  <a href="http://akismet.com">akismet</a> Service benutzt werden. Dazu müssen Sie einen API key von <a href="http://wordpress.com/signup/">http://wordpress.com/signup/</a> holen und diesen hier einfügen.]]></message> 
     
     <message key="help_blogSendRejectedCommentNotification">Legt fest, ob E-Mail-Benachrichtigungen für abgelehnte Kommentare im Blog gesendet werden. Der Flux CMS Spam-Schutz versucht festzustellen, ob ein Kommentar 
     Spam ist oder nicht. Wenn er einen erkennt, ist es ziemlich sicher Spam und zweifelslos 

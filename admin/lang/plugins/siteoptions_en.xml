@@ -13,6 +13,7 @@
            don't want to be informed about that. If it's not sure, Flux CMS sets the post to moderated and you always get a mail then and you can then approve it.</message>
     
     <message key="help_blogCaptchaAfterDays">After how many days captcha should be activated. (-1 = never)</message>
+    <message key="help_blogAkismetKey"><![CDATA[As an additional comment-spam check, you can use the <a href="http://akismet.com">akismet</a> service. You have to get an API key at <a href="http://wordpress.com/signup/">http://wordpress.com/signup/</a> and insert that here.]]></message> 
     <message key="help_openIdEnabled">Should OpenID verification be enabled for blog comments.</message>
     <message key="help_copyright">Who holds the copyright of your content?</message>
     <message key="help_cclink"><![CDATA[If you want to use a <a href='http://creativecommons.org/'>Creative Commons</a> license for your blog content, put the link to the license here. Eg. http://creativecommons.org/licenses/by/2.5/]]> </message>
