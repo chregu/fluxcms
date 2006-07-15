@@ -26,10 +26,13 @@ xmlns:php="http://php.net/xsl"
     <Description>Search for <xsl:value-of select="$dctitle"/></Description>
     <InputEncoding>UTF-8</InputEncoding>
     <Image width="16" height="16"><xsl:value-of select="$webroot"/>favicon.ico</Image>
-    <Url type="text/html" method="GET" template="{$blogroot}">
+    <Url type="text/html" method="GET" template="{$blogroot}?q={{searchTerms}}">
         
-        <Param name="q" value="{{searchTerms}}"/>
     </Url>
+    <Url type="application/rss+xml" method="GET" template="{$blogroot}rss.xml?q={{searchTerms}}">
+        
+    </Url>
+    
     <SearchForm><xsl:value-of select="$blogroot"/></SearchForm> 
 </OpenSearchDescription>
 
