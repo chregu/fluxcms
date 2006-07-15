@@ -131,7 +131,6 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
             $templNode->appendChild($templ);
         }
         $fields->appendChild($templNode);
-        
         $this->addOption("blogname","text",$dom,array("help"=>$i18n->translate("blogname_rssfeed")));
         $this->addOption("blogdescription","text",$dom,array("help"=>$i18n->translate("desc_rssfeed")));
         
@@ -155,6 +154,11 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
            'true' => "Yes")
            , $dom,array("help"=>$i18n->translate("help_blogSendRejectedCommentNotification")));
        
+            
+        $this->addOption("blogAkismetKey","text" , $dom,array("help"=>$i18n->translate("help_blogAkismetKey")));
+       
+           
+           
        /*
        $this->addOption("blogCaptchaAfterDays","text",$dom,array("help"=>$i18n->translate("help_blogCaptchaAfterDays")));
        */

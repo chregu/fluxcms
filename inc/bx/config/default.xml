@@ -99,7 +99,7 @@
             <blogTrackbacksTimeLimit>true</blogTrackbacksTimeLimit>
             
             <blogSendRejectedCommentNotification allowFromDB="true">false</blogSendRejectedCommentNotification>
-            
+            <blogAkismetKey allowFromDB="true"></blogAkismetKey>   
             <allowHTTPAuthentication>true</allowHTTPAuthentication>
             <noOutsideConnections>false</noOutsideConnections>
             <adminOverviewInfoBoxes>
