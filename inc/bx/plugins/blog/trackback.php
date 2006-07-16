@@ -108,24 +108,23 @@ class bx_plugins_blog_trackback {
         
         $commentRejected .= bx_plugins_blog_spam::checkRBLs(array($url));
         $commentRejected .= bx_plugins_blog_spam::checkSenderIPBLs($_SERVER['REMOTE_ADDR']);
-
-//akismet 
         
-        $akismetkey = $GLOBALS['POOL']->config->blogAkismetKey;
-        if ($akismetkey) {
-            include_once(BX_LIBS_DIR.'plugins/blog/akismet.php');
-            
-            $akismet = new Akismet(BX_WEBROOT.$path,$akismetkey);
-            $akismet->setCommentAuthor($data['blog_name']);
-            $akismet->setCommentAuthorURL($data['url']);
-            $akismet->setCommentContent($data['excerpt']);
-            $akismet->setPermalink(BX_WEBROOT.$path.$id);
-            if($akismet->isCommentSpam()) {
-                $commentRejected .= "* akismet.com thinks, this is spam";
+        //akismet 
+        if (!$commentRejected) {  
+            $akismetkey = $GLOBALS['POOL']->config->blogAkismetKey;
+            if ($akismetkey) {
+                include_once(BX_LIBS_DIR.'plugins/blog/akismet.php');
+                
+                $akismet = new Akismet(BX_WEBROOT.$path,$akismetkey);
+                $akismet->setCommentAuthor($data['blog_name']);
+                $akismet->setCommentAuthorURL($data['url']);
+                $akismet->setCommentContent($data['excerpt']);
+                $akismet->setPermalink(BX_WEBROOT.$path.$id);
+                if($akismet->isCommentSpam()) {
+                    $commentRejected .= "* akismet.com thinks, this is spam";
+                }
             }
         }
-        
-
 
         if (preg_match("#<a[^>]+href=#",$data['title'])) {
             $commentRejected .= "* Links in title...\n";
