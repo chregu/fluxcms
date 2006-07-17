@@ -2,7 +2,6 @@
 
 include_once("../../../inc/bx/init.php");
 bx_init::start('conf/config.xml', "../../..");
-
 $conf = bx_config::getInstance();
 
 $confvars = $conf->getConfProperty('permm');
@@ -33,7 +32,7 @@ if (isset($_GET['openid_mode'])) {
 }
 print '<html>';
 print '<head>';
-print '<link type="text/css" href="http://fluxcms/themes/standard/admin/css/formedit.css" rel="stylesheet"/>';
+print '<link type="text/css" href="'.BX_WEBROOT.'/themes/standard/admin/css/formedit.css" rel="stylesheet"/>';
 print '</head>';
 
 
@@ -78,22 +77,18 @@ switch ($mode) {
             break;
         case 'do_about':
     
-        mysql_connect('localhost', 'root') or die("no host");
-            mysql_select_db('fluxcms') or die("no db");
-            
             if(isset($_GET['id'])) {
                 $dquery = "delete from fluxcms_openid_uri where id = '".$_GET['id']."'";
-                mysql_query($dquery) or die("false delete query");
+                $GLOBALS['POOL']->db->query($dquery);
                 print '<meta http-equiv="refresh" content="1; URL=http://'.$_SERVER['HTTP_HOST'].'/admin/webinc/openid">';
             }
             
             $query = "select * from fluxcms_openid_uri";
-            $result = mysql_query($query) or die("false select query");
-            
+            $result = $GLOBALS['POOL']->db->query($query) or die("false select query");
             print '<h2 class="openIdPage">OpenID</h2>';
             print "<div id='openIdTrust'>";
             print "<table>";
-            while($row = mysql_fetch_assoc($result)) {
+            while($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                 print "<tr><td><a href='?id=".$row['id']."'><img style='border:0px;' src='/webinc/images/delete.gif'/></a></td><td>".$row['uri']."</td><td>".$row['date']."</td></tr>\n";
             }
             print "</table>";
@@ -103,7 +98,6 @@ switch ($mode) {
             print $answer[0] ."<h2 class='openIdPage'> mode not implemented.</h2>";
             
     }
-
     print "</html>";
     }
 
