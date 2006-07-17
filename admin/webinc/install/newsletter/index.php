@@ -75,7 +75,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `class` varchar(60) NOT NULL,
   `mailserver` int(10) unsigned NOT NULL,
-  `group` int(10) unsigned NOT NULL defeault '0',
+  `group` varchar(255) NOT NULL default '0', 
   `embed` tinyint(4) NOT NULL,
   `baseurl` varchar(100) NOT NULL,
   `colluri` varchar(255) NOT NULL default '',
