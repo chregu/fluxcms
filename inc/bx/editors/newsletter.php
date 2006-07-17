@@ -90,9 +90,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             
             // Save all the information we received about the newsletter in the database for archiving purposes
             // FIXME... add also colluri 
-            $query =     "INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `colluri`,`attachment`, `class`, `mailserver`, `embed`, `baseurl`)
+            $query =     "INSERT INTO ".$prefix."newsletter_drafts (`from`,`subject`,`htmlfile`, `textfile`, `colluri`,`attachment`, `class`, `mailserver`, `embed`, `baseurl`,`group`)
             VALUES (
-            '".$data['from']."', '".$data['subject']."', '".$newHtmlFile."', '".$newTextFile."','".$colluri."', '".$data['attachment']."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."');";
+            '".$data['from']."', '".$data['subject']."', '".$newHtmlFile."', '".$newTextFile."','".$colluri."', '".$data['attachment']."', '".$classname."', '".$data['mailserver']."', '".(isset($data["embed"])?1:0)."', '".BX_WEBROOT."','".$groupIds."');";
             $GLOBALS['POOL']->dbwrite->exec($query);
             
             $draftId = $GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_drafts", "id");
@@ -469,7 +469,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         <tr><td>Text Body:</td><td>'.$newsText.'</td></tr>
         <tr><td>'.$txtAttachment.':</td><td><input type="text" id="attachment" name="attachment"/><input type="button" onclick="openFileBrowser(\'attachment\')" value="..."/></td></tr>
         <tr><td>Mail Server:</td><td>'.$serversHtml.'</td></tr>
-        <tr><td>'.$txtEmbed.':</td><td><input type="checkbox" name="embed" checked="checked"/></td></tr>
+        <tr><td>'.$txtEmbed.':</td><td><input type="checkbox" name="embed"/></td></tr>
         <tr><td>'.$txtPublish.':</td><td><input type="checkbox" name="publish"/></td></tr>
         <tr>
         <td></td>
@@ -721,9 +721,15 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             }
             
             $line = str_replace(";",",",$line);
+            
             // first line defines which db fields are being filled in
             if($firstline === true) {
                 $queryFields = $line;
+                $_fields = explode(",",$line);
+                $fields = array();
+                foreach($_fields as $key => $value) {
+                    $fields[$value] = $key;
+                }
                 $firstline = false;
                 continue;
             }
@@ -734,10 +740,23 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
                 $tokens[$i] = "'" . $tokens[$i] . "'";    
             }
             $line = implode(",", $tokens);
+            $db = $GLOBALS['POOL']->dbwrite;
             
-            $query = "insert into ".$prefix."newsletter_users (".$queryFields.",created) value(".$line.",NOW())";
-            if($GLOBALS['POOL']->dbwrite->exec($query) == 1) {
-                $query = "insert into ".$prefix."newsletter_users2groups (fk_user,fk_group) value('".$GLOBALS['POOL']->dbwrite->lastInsertID($prefix."newsletter_users", "id")."','".$group."')";
+            $id = $db->nextID($prefix."_sequences");                       
+            $query = "insert into ".$prefix."newsletter_users (id,".$queryFields.",created) value($id,".$line.",NOW())";
+            // try to insert
+            $res = $db->exec($query);
+            if ($db->isError($res)) {
+                if ($res->code == -3) {
+                  $id = $db->queryOne ( "select id from  ".$prefix."newsletter_users where email = ".$tokens[$fields['email']]);
+                  $db->exec("update ".$prefix."newsletter_users set status = 1 where id = $id");
+                } else {
+                
+                    print "could not import $line";
+                }
+            }
+            if($id) {
+                $query = "insert into ".$prefix."newsletter_users2groups (fk_user,fk_group) value($id,'".$group."')";
                 $GLOBALS['POOL']->dbwrite->exec($query);
             }
         }

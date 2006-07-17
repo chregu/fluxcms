@@ -70,7 +70,6 @@ class bx_editors_newsmailer_newsmailer {
     	
     	// load baseurl from db, we are not running inside apache!
     	$this->baseUrl = $draft["baseurl"];
-    //FIXME.... colluri is missing, has to go into the db somehow... 
     	// read in the newsletter templates if existing
     	   $htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html", $draft['colluri']);
 		$textMessage = $this->readNewsletterFile($draft['textfile'], "text", $draft['colluri']);
@@ -85,7 +84,9 @@ class bx_editors_newsmailer_newsmailer {
 			if($draft["embed"] == 1) {
 				self::$htmlImages = array();
 				$dom = $this->transformHTMLImages($dom);
-	    	}
+            } else {
+                $dom = $this->transformHTMLImagesLinks($dom,$draft['baseurl']);
+            }
 		}
 
 		$htmlTransform = $dom->saveXML();
@@ -116,8 +117,8 @@ class bx_editors_newsmailer_newsmailer {
 		foreach($receivers as $person)
 		{
 			// create the personalized email 
-			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile']);
-			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
+			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile'],$draft);
+			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile'],$draft);
 			
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
 			if(!empty($draft['textfile']))
@@ -224,8 +225,8 @@ class bx_editors_newsmailer_newsmailer {
 		foreach($receivers as $person)
 		{
 			// create the personalized email 
-			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile']);
-			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile']);
+			$customHtml = $this->customizeMessage($htmlTransform, $person, $draft['htmlfile'],$draft);
+			$customText = $this->customizeMessage($textMessage, $person, $draft['textfile'],$draft);
 			
 			// Generate the MIME body, it's possible to attach both a HTML and a Text version for the newsletter
 			if(!empty($draft['textfile']))
@@ -323,6 +324,19 @@ class bx_editors_newsmailer_newsmailer {
 		return $proc->transformToDoc($inputdom);  	
     }
     
+    protected function transformHTMLimagesLinks($inputdom,$webroot)
+    {
+		$xsl = new DomDocument();
+		//$xsl->load('themes/'.bx_helpers_config::getTheme().'/htmlimage.xsl');
+		$xsl->load('themes/standard/plugins/newsletter/htmlimagelinks.xsl');
+		$proc = new XsltProcessor();
+		$proc->registerPHPFunctions();
+		$xsl = $proc->importStylesheet($xsl);
+        $proc->setParameter('','webroot',$webroot);
+		return $proc->transformToDoc($inputdom);  	
+    }
+    
+    
     /**
      * Customized the message for a certain user
      * - {field} is replaced with its corresponding value from the database
@@ -338,7 +352,7 @@ class bx_editors_newsmailer_newsmailer {
      * @param filename html newsletter filename 
      * @return customized message
      */
-    protected function customizeMessage($message, $person, $filename)
+    protected function customizeMessage($message, $person, $filename,$draft)
     {
     	$templates = array();
     	$values = array();
@@ -365,9 +379,12 @@ class bx_editors_newsmailer_newsmailer {
     	
     	//array_push($values, $person['gender'] == '0' ? 'Herr' : 'Frau');
     	array_push($values, $this->baseUrl);
-    	array_push($values, $this->baseUrl."newsletter/index.html?activate=".$person['activation']);
-    	array_push($values, $this->baseUrl."newsletter/index.html?unsubscribe=".$person['email']);
-    	array_push($values, $this->baseUrl."newsletter/archive/".$webfilename);
+    	array_push($values, $this->baseUrl.$draft['colluri']."index.html?activate=".$person['activation']);
+    	array_push($values, $this->baseUrl.$draft['colluri']."index.html?unsubscribe=".$person['email']."&groups=".$draft['group']);
+	if (strpos($webfilename,"draft") === false) {
+		$webfilename = "archive/$webfilename";
+	}
+    	array_push($values, $this->baseUrl.$draft['colluri'].$webfilename);
     	array_push($values, date("m/Y"));
     	
     	return str_replace($templates, $values, $message);

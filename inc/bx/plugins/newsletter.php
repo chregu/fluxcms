@@ -58,9 +58,9 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         
         // enable to unsubscribe directly over the URL by appending ?unsubsribe={email}
         // this is needed in order to add unsubsribe-links to newsletter mails
-        if(isset($_GET["unsubscribe"]))
+        if(isset($_GET["unsubscribe"]) && !empty($_GET['really']))
         {   
-            if(!$this->removeSubscriber($_GET['unsubscribe'])) {
+            if(!$this->removeSubscriber($_GET['unsubscribe'], ($_GET['groups']))) {
                 $_POST["notfound"] = "true";
             }
         }
@@ -82,12 +82,19 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         else if(isset($_POST["notfound"]))
         {
             $xml .= '<status>SUB_NOT_FOUND</status>';
-        }        
-        else if(isset($_GET["unsubscribe"]) or isset($_POST["unsubscribe"]))
+        }
+        else if((isset($_GET["unsubscribe"]) && !empty($_GET['really'])) or isset($_POST["unsubscribe"]))
         {
             $xml .= '<status>SUB_UNSUB_SUCCESS</status>';
             $xml .= '<extended>SUB_CANCELED</extended>';
         }
+        
+        else if(isset($_GET["unsubscribe"]) or isset($_POST["unsubscribe"]))
+        {
+            $xml .= '<status>SUB_UNSUB_CONFIRM</status>';
+            $xml .= '<extended link="./?unsubscribe='.urlencode($_GET['unsubscribe']).'&really=1&groups='.urlencode($_GET['groups']).'">SUB_UNSUB_CONFIRM_LINK</extended>';
+        }
+        
         else if(isset($_POST["duplicate"]))
         {
             $xml .= '<status>SUB_EMAIL_INUSE</status>';
@@ -136,7 +143,9 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
             }
         }
         else if(isset($data['unsubscribe'])){
-            if($this->removeSubscriber($data['email']) === false) {
+            
+            
+            if($this->removeSubscriber($data['email'], $data['groups']) === false) {
                 $_POST["notfound"] = "true";
             }
         }
@@ -209,21 +218,33 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
     /**
     * Remove a subscriber from all lists
     */
-    protected function removeSubscriber($email){
+    protected function removeSubscriber($email,$groups = ""){
+        
+        if (!$groups) {
+            return false;
+        }
         $userid = $this->getUserId($email);
         
-        // remove user
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "UPDATE ".$prefix."newsletter_users SET status='3' WHERE id='".$userid."'";
-        if($GLOBALS['POOL']->dbwrite->exec($query) !== 1) {
-            // could not deactivate user
-            return false;    
+        $db = $GLOBALS['POOL']->dbwrite;
+        
+        //delete groups
+        $query = "delete from ".$prefix."newsletter_users2groups where fk_user='".$userid."' and fk_group in ($groups);";
+        $db->exec($query);
+        // check if there are more groups
+        
+        $res = $db->query("select id from ".$prefix."newsletter_users2groups where fk_user = ".$userid);
+        if ($res->numRows() == 0) {
+        
+            // set status to deactivated
+        
+            $query = "UPDATE ".$prefix."newsletter_users SET status='3' WHERE id='".$userid."'";
+            if($db->exec($query) !== 1) {
+                // could not deactivate user
+                return false;    
+            }
+        
         }
-        
-        // remove from groups
-        $query = "delete from ".$prefix."newsletter_users2groups where fk_user='".$userid."'";
-        $GLOBALS['POOL']->dbwrite->exec($query);
-        
         return true;
     }
     
