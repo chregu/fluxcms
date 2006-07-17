@@ -49,6 +49,7 @@
     <message key="SUB_EMAIL_INVAL">Die angegebenen E-Mail Adresse ist ungültig.</message>
     <message key="SUB_EMAIL_INUSE">Die angegebenen E-Mail Adresse ist bereits in Verwendung.</message>
     <message key="SUB_NOT_FOUND">Für die angegebene E-Mail Adresse existiert kein Abonnement.</message>
-    
+    <message key="SUB_UNSUB_CONFIRM">Bitte bestfütigen Sie die Abmeldung vom Newsletter</message>
+<message key="SUB_UNSUB_CONFIRM_LINK">Ja, ich will mich abmelden vom Newsletter</message>     
 </catalogue>
 

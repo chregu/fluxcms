@@ -22,6 +22,7 @@
     <message key="SUB_EMAIL_INVAL">The supplied email adress is invalid.</message>
     <message key="SUB_EMAIL_INUSE">The supplied email address is already in use.</message>
     <message key="SUB_NOT_FOUND">There is no entry for the supplied email address.</message>
-     
+    <message key="SUB_UNSUB_CONFIRM">Bitte bestfütigen Sie die Abmeldung vom Newsletter</message>
+<message key="SUB_UNSUB_CONFIRM_LINK">Ja, ich will mich abmelden vom Newsletter</message>      
 </catalogue>
 
