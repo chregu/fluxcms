@@ -407,7 +407,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $sendersHTML = '<select name="from" size="1">';
         foreach($senders as $row)
         {
-            $sendersHTML .= '<option value="'.$row['sender'].'">'.$row['sender'].'</option>';    
+            $sendersHTML .= '<option value="'.$row['sender'].'"';
+            if ($row['sender'] == @$_POST['from']) {
+                $sendersHTML .= ' selected="selected" ';
+            }
+            $sendersHTML .= '>'.$row['sender'].'</option>';    
         }
         $sendersHTML .= '</select>';
         
@@ -425,7 +429,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $newsHTML = '<select name="htmlfile" size="1"><option/>';
         foreach($htmlEnum as $entry)
         {
-            $newsHTML .= '<option value="'.$entry.'">'.$entry.'</option>';    
+            $newsHTML .= '<option value="'.$entry.'"';
+            if ($entry == @$_POST['htmlfile']) {
+                $newsHTML .= ' selected="selected" ';
+            }
+            $newsHTML .= '>'.$entry.'</option>';    
+            
         }
         $newsHTML .= '</select>';    
         
@@ -433,7 +442,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $newsText = '<select name="textfile" size="1"><option/>';
         foreach($txtEnum as $entry)
         {
-            $newsText .= '<option value="'.$entry.'">'.$entry.'</option>';    
+            $newsText .= '<option value="'.$entry.'"';
+            if ($entry == @$_POST['textfile']) {
+                $newsText .= ' selected="selected" ';
+            }
+            $newsText .= '>'.$entry.'</option>';    
         }
         $newsText .= '</select>';    
         
@@ -443,7 +456,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $serversHtml = '<select name="mailserver" size="1">';
         foreach($servers as $server)
         {
-            $serversHtml .= '<option value="'.$server['id'].'">'.$server['descr'].'</option>';    
+            $serversHtml .= '<option value="'.$server['id'].'"';
+            if ($server['id'] == @$_POST['htmlfile']) {
+                $serversHtml .= ' selected="selected" ';
+            }
+            $serversHtml .= '>'.$server['descr'].'</option>';    
         }
         $serversHtml .= '</select>';                
         
@@ -464,13 +481,24 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $xml .= '<table border="0" id="send">
         <tr><td>'.$txtFrom.':</td><td>'.$sendersHTML.'</td></tr>
         <tr><td style="vertical-align:top">'.$txtTo.':</td><td>'.$groupsHTML.'</td></tr>
-        <tr><td>'.$txtSub.':</td><td><input type="text" name="subject"/></td></tr>
+        <tr><td>'.$txtSub.':</td><td><input type="text" value="'.@$_POST['subject'].'" name="subject"/></td></tr>
         <tr><td>HTML Body:</td><td>'.$newsHTML.'</td></tr>
         <tr><td>Text Body:</td><td>'.$newsText.'</td></tr>
-        <tr><td>'.$txtAttachment.':</td><td><input type="text" id="attachment" name="attachment"/><input type="button" onclick="openFileBrowser(\'attachment\')" value="..."/></td></tr>
+        <tr><td>'.$txtAttachment.':</td><td><input type="text" id="attachment" value="'.@$_POST['attachment'].'" name="attachment"/><input type="button" onclick="openFileBrowser(\'attachment\')" value="..."/></td></tr>
         <tr><td>Mail Server:</td><td>'.$serversHtml.'</td></tr>
-        <tr><td>'.$txtEmbed.':</td><td><input type="checkbox" name="embed"/></td></tr>
-        <tr><td>'.$txtPublish.':</td><td><input type="checkbox" name="publish"/></td></tr>
+        <tr><td>'.$txtEmbed.':</td><td><input type="checkbox" name="embed"';
+        if (@$_POST['embed']) {
+            $xml .= ' checked="checked"';   
+        }
+        
+        $xml .='/></td></tr>
+        <tr><td>'.$txtPublish.':</td><td><input type="checkbox" name="publish"';
+        if (@$_POST['publish']) {
+            $xml .= ' checked="checked"';   
+        }
+        
+        
+        $xml .= '/></td></tr>
         <tr>
         <td></td>
         <td><input type="submit" name="bx[plugins][admin_edit][_all]" value="'.$txtPrev.'" class="formbutton"/></td>
