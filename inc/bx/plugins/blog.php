@@ -550,7 +550,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '</div>';   
             
             if($doComments){
-                $xml .= '<div class="post_content_extended">';
+                $xml .= '<div class="post_content_extended" name="post_content_extended">';
 
                 $xml .= $row['post_content_extended'].'</div>';
             }
@@ -594,7 +594,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             
             if(!$doComments){
                 if(trim(($row['post_content_extended']))){
-                    $xml .= '<span class="post_more"><a class="post_more" href="'.$posturipath.'"><i18n:text>Read whole post</i18n:text></a></span>';
+                    $xml .= '<span class="post_more"><a class="post_more" href="'.$posturipath.'#post_content_extended"><i18n:text>Read whole post</i18n:text></a></span>';
                 }
             }
             
