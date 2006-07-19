@@ -86,7 +86,8 @@ class bx_dbforms2_data {
         $dataNodeName = $form->tablePrefix.$form->tableName;
         
         if (is_array($form->fields)) {
-            foreach($form->fields as $field) {
+            $_f = $form->fields;
+            foreach($_f as $field) {
                 if($field instanceof bx_dbforms2_field)  {
                 
                     $data = $field->getAdditionalData($form->currentID);
