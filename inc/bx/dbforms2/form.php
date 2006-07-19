@@ -154,7 +154,8 @@ class bx_dbforms2_form {
      *  @return object field
      */
     public function getSubFormByName($name) {
-        foreach($this->fields as $field) {
+        $_f = $this->fields;
+        foreach($_f as $field) {
             if($field instanceof bx_dbforms2_form && $field->name == $name) {
                 return $field;
             }
@@ -169,7 +170,8 @@ class bx_dbforms2_form {
      *  @return type descr
      */
     public function setValues($values) {
-        foreach($this->fields as $field) {
+        $_f = $this->fields;
+        foreach($_f as $field) {
             if($field instanceof bx_dbforms2_field && isset($values[$field->name])) {
                 $field->setValue($values[$field->name]);
             }
