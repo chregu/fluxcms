@@ -9,6 +9,7 @@ function dbforms2_field(DOMNode) {
     var id = '';
     var form = null;
     
+    
     this.initField = function(DOMNode) {
         this.hasFocus = false;
         this.value = null;
@@ -22,6 +23,7 @@ function dbforms2_field(DOMNode) {
     this.setValue = function(value) {
         this.value = value;
         this.updateDOMNodeValue();
+        this.onChange();
     }
     
     this.updateDOMNodeValue = function() {
@@ -225,7 +227,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
 		
 		// Get the editor instance that we want to interact with.
 		var oEditor = FCKeditorAPI.GetInstance(this.id) ;
-		
+        dbforms2_log.log(oEditor.IsDirty());		
 		return oEditor.GetXHTML( true );
 		// Set the editor contents (replace the actual one).
 	}
@@ -270,12 +272,14 @@ dbforms2_field_date.prototype = new dbforms2_field();
  *
  */
 function dbforms2_field_fixed(DOMNode) {
+    
 	this.setValue = function(value) {
 		var sp = document.getElementById( this.DOMNode.id + "_fixed");
 		sp.innerHTML = value;
 		this.value = value;
         this.updateDOMNodeValue();
 	}
+    
 }
 dbforms2_field_fixed.prototype = new dbforms2_field();
 
@@ -374,6 +378,60 @@ function dbforms2_field_relation_n2m(DOMNode) {
 }
 dbforms2_field_relation_n2m.prototype = new dbforms2_field();
 
+
+/**
+ * Field for managing n->1 relations, only use this in subforms
+ *
+ */
+function dbforms2_field_relation_n21(DOMNode) {
+    
+    this.init = function(DOMNode) {
+        this.initField(DOMNode);
+
+        // init live select
+        this.liveSelect = new dbforms2_liveselect();
+        var wev = new bx_helpers_contextfixer(this.onLiveChoose, this);
+        this.liveSelect.onChooseAction = wev.execute;
+        this.liveSelect.dataURI = this.form.liveSelectRootURI + '/' + this.id;
+        this.liveSelect.autoExpandResultsOnFocus = false;
+        this.liveSelect.init(document.getElementById(this.id + '_lsqueryfield'), document.getElementById(this.id + '_lsresults'));
+        
+        this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_DELETE_POST, this, this.eventDelete);
+        this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_SAVE_POST, this, this.eventSave);
+        this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_NEW_PRE, this, this.eventNew);
+    }
+    
+    this.onLiveChoose = function(entry) {
+        this.form.loadFormDataByID(entry.id);
+        this.setParentIdField(entry.id);
+    }
+    
+    this.setParentFormId = function(id) {
+        var thisid = this.form.parentForm.getFieldByID(this.form.thisidfield).getValue();
+        this.form.loadFormDataByID(thisid);
+    }
+    
+    this.setParentIdField = function(id) {
+        this.form.parentForm.getFieldByID(this.form.thisidfield).setValue(id);
+    }
+    
+    this.eventDelete = function() {
+        this.liveSelect.reloadCurrentQuery();
+        this.setParentIdField(0);
+    }
+    
+    this.eventSave = function() {
+        this.liveSelect.reloadCurrentQuery();
+        this.setParentIdField(this.form.currentID);
+    }
+    
+    this.eventNew = function() {
+        this.liveSelect.reloadCurrentQuery();
+        this.setParentIdField(0);
+    }
+    
+}
+dbforms2_field_relation_n21.prototype = new dbforms2_field();
 
 
 /**
@@ -615,4 +673,5 @@ function dbforms2_field_listview_12n(DOMNode) {
     
 }
 dbforms2_field_listview_12n.prototype = new dbforms2_field_listview();
+
 
