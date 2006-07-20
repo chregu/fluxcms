@@ -40,8 +40,7 @@ class bx_dbforms2_sql {
         $fields[] = $form->idField;
         
         if (is_array($form->fields))  {
-            $_f = $form->fields;
-            foreach($_f as $field) {
+            foreach($form->fields as $field) {
                 if($field instanceof bx_dbforms2_field)  {
                     if ($field->getAttribute('nosql')==false) {
                         $name = $field->getSQLName();

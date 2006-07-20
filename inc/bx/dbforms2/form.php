@@ -25,49 +25,76 @@
 class bx_dbforms2_form {
 
     /**
-     *  descr
-     *  @var var
+     *  All form fields
+     *  @var fields
      */
-    protected $members = array (
-        'fields' => array(),
-        'chooser' => '',
-        'name' => '',
-        'title' => '',
-        'tableName' => '',
-        'tablePrefix' => '',
-        'idField' => 'id',
-        'currentID' => 0,
-        'attributes' => array(),
-        'jsHrefs' => array(),
-        'queryMode' => bx_dbforms2::QUERYMODE_UPDATE,
-        'eventHandlers' => array(),
-    );
-    
+    public $fields = array();
+
     /**
-     *  xx
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
+     *  Chooser object of this form
+     *  @var chooser
      */
-    public function __set($member, $value) {
-        if(isset($this->members[$member])) 
-            $this->members[$member] = $value;
-    }
-    
+    public $chooser = '';
+
     /**
-     *  xx
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
+     *  Form name
+     *  @var name
      */
-    public function __get($member) {
-        if(isset($this->members[$member]))
-            return $this->members[$member];
-        
-        return NULL;
-    }
+    public $name = '';
+
+    /**
+     *  Form title
+     *  @var title
+     */
+    public $title = '';
+
+    /**
+     *  Table name of the main table
+     *  @var tableName
+     */
+    public $tableName = '';
+
+    /**
+     *  Table prefix
+     *  @var tablePrefix
+     */
+    public $tablePrefix = '';
+
+    /**
+     *  Name of the id field
+     *  @var idField
+     */
+    public $idField = 'id';
+
+    /**
+     *  Id of the currently edited entry
+     *  @var currentID
+     */
+    public $currentID = 0;
+
+    /**
+     *  Form attributes
+     *  @var attributes
+     */
+    public $attributes = array();
+
+    /**
+     *  Javascript HREFs to inlcude
+     *  @var jsHrefs
+     */
+    public $jsHrefs = array();
+
+    /**
+     *  Currenty query mode
+     *  @var queryMode
+     */
+    public $queryMode = bx_dbforms2::QUERYMODE_UPDATE;
+
+    /**
+     *  Event handlers
+     *  @var eventHandlers
+     */
+    public $eventHandlers = array();
     
     /**
      *  Serializes the form to a DOM object.
@@ -86,22 +113,19 @@ class bx_dbforms2_form {
         $dom->documentElement->setAttribute('idfield', $this->attributes['idfield']);
         
         // append all attributes
-        $_a = $this->attributes ;
-        foreach($_a as $name => $value) {
+        foreach($this->attributes as $name => $value) {
             $dom->documentElement->setAttribute($name, $value);
         }
         
         // serialize all fields
         $fieldsNode = $dom->createElement('fields');
-        $_f = $this->fields;
-        foreach($_f as $field) {
+        foreach($this->fields; as $field) {
             $fieldsNode->appendChild($field->serializeToDOMNode($dom));
         }
         $dom->documentElement->appendChild($fieldsNode);
         
         // append one script node for every javascript file the form should include
-        $_j = $this->jsHrefs;
-        foreach($_j as $jshref) {
+        foreach($this->jsHrefs; as $jshref) {
             $scriptNode = $dom->createElement('script');
             $scriptNode->setAttribute('src', $jshref);
             $dom->documentElement->appendChild($scriptNode);
@@ -154,8 +178,7 @@ class bx_dbforms2_form {
      *  @return object field
      */
     public function getSubFormByName($name) {
-        $_f = $this->fields;
-        foreach($_f as $field) {
+        foreach($this->fields as $field) {
             if($field instanceof bx_dbforms2_form && $field->name == $name) {
                 return $field;
             }
@@ -170,8 +193,7 @@ class bx_dbforms2_form {
      *  @return type descr
      */
     public function setValues($values) {
-        $_f = $this->fields;
-        foreach($_f as $field) {
+        foreach($this->fields as $field) {
             if($field instanceof bx_dbforms2_field && isset($values[$field->name])) {
                 $field->setValue($values[$field->name]);
             }
