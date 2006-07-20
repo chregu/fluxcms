@@ -56,10 +56,7 @@
                     <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/colorpicker.js'"/></xsl:call-template>
                 </xsl:if>                
 
-                <xsl:if test="/form/fields//input[@type='file_browser' or @type='upload']">
-                    <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/bx/tooltip.js'"/></xsl:call-template>
-                </xsl:if>
-
+                <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/bx/tooltip.js'"/></xsl:call-template>
                 <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/bx/helpers.js'"/></xsl:call-template>
                 
                 <xsl:call-template name="importDBF2Js"><xsl:with-param name="href" select="'common.js'"/></xsl:call-template>
