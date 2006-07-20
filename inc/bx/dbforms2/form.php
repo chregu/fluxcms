@@ -119,13 +119,13 @@ class bx_dbforms2_form {
         
         // serialize all fields
         $fieldsNode = $dom->createElement('fields');
-        foreach($this->fields; as $field) {
+        foreach($this->fields as $field) {
             $fieldsNode->appendChild($field->serializeToDOMNode($dom));
         }
         $dom->documentElement->appendChild($fieldsNode);
         
         // append one script node for every javascript file the form should include
-        foreach($this->jsHrefs; as $jshref) {
+        foreach($this->jsHrefs as $jshref) {
             $scriptNode = $dom->createElement('script');
             $scriptNode->setAttribute('src', $jshref);
             $dom->documentElement->appendChild($scriptNode);
