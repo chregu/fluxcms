@@ -78,13 +78,14 @@ switch ($mode) {
         case 'do_about':
     
             if(isset($_GET['id'])) {
-                $dquery = "delete from fluxcms_openid_uri where id = '".$_GET['id']."'";
+                
+                $dquery = "delete from ". $GLOBALS['POOL']->config->getTablePrefix(). "openid_uri where id = '".$_GET['id']."'";
                 $GLOBALS['POOL']->db->query($dquery);
                 print '<meta http-equiv="refresh" content="1; URL=http://'.$_SERVER['HTTP_HOST'].'/admin/webinc/openid">';
             }
             
-            $query = "select * from fluxcms_openid_uri";
-            $result = $GLOBALS['POOL']->db->query($query) or die("false select query");
+            $query = "select * from ". $GLOBALS['POOL']->config->getTablePrefix(). "openid_uri";
+            $result = $GLOBALS['POOL']->db->query($query);
             print '<h2 class="openIdPage">OpenID</h2>';
             print "<div id='openIdTrust'>";
             print "<table>";
