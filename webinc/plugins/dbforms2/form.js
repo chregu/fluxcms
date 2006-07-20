@@ -15,6 +15,9 @@ function dbforms2_form() {
     this.lastFocus = null;
     this.parentForm = null;
     this.toolbar = null;
+
+    this.thisidfield = null;
+    this.thatidfield = null;
     
     this.eventHandlers = new Array();
     this.internalEventHandlers = new Array();
@@ -27,6 +30,8 @@ function dbforms2_form() {
         this.listViewRootURI = formConfig['listViewRootURI'];
         this.tablePrefix = formConfig['tablePrefix'];
         this.name = formConfig['name'];
+
+        this.relationtype = formConfig['relationtype'];
         this.thisidfield = formConfig['thisidfield'];
         this.thatidfield = formConfig['thatidfield'];
         
@@ -60,7 +65,6 @@ function dbforms2_form() {
 
         fieldType = fieldConfig['type'];
         fieldNode = document.getElementById(this.name + '_' + fieldID);
-        //alert(this.name + '_' + fieldID+' == '+fieldNode);
         fieldClass = 'dbforms2_field_' + fieldType;
 
         try {
@@ -179,11 +183,11 @@ function dbforms2_form() {
         var wev = new bx_helpers_contextfixer(this.e_saveasnew_click, this);
         this.toolbar.addButtonEventHandler('saveasnew', wev.execute);
 
-        if(this.parentForm == null) {
+        //if(this.parentForm == null) {
             this.toolbar.setButton('delete', document.getElementById('tb_'+this.name+'_delete'));
             var wev = new bx_helpers_contextfixer(this.e_delete_click, this);
             this.toolbar.addButtonEventHandler('delete', wev.execute);
-        }
+        //}
 
         this.toolbar.setButton('reload', document.getElementById('tb_'+this.name+'_reload'));
         var wev = new bx_helpers_contextfixer(this.e_reload_click, this);
@@ -260,20 +264,37 @@ function dbforms2_form() {
         // if this is a subform, set the corresponding relation field ...
         if(this.parentForm != null) {
             
-            var parentID = 0;
-            if(this.parentForm.currentID == 0 && this.parentForm.insertID == 0) {
-                parentID = this.parentForm.requestNewId();
-            } else if(this.parentForm.currentID == 0 && this.parentForm.insertID != 0) {
-                parentID = this.parentForm.insertID;
-            } else {
-                parentID = this.parentForm.currentID;
+            if(this.thatidfield != '' && this.thisidfield == '') {
+
+                // relation: 1 -> n
+                /*
+                    Gets the current ID from the parent form.
+                    - if the parent form doesn't have one, a new is generated
+                    - if the parent form has an insertID set, it is used
+                */
+                var parentID = 0;
+                if(this.parentForm.currentID == 0 && this.parentForm.insertID == 0) {
+                    parentID = this.parentForm.requestNewId();
+                } else if(this.parentForm.currentID == 0 && this.parentForm.insertID != 0) {
+                    parentID = this.parentForm.insertID;
+                } else {
+                    parentID = this.parentForm.currentID;
+                }
+                
+                if(parentID != 0 && this.thatidfield != '') {
+                    this.formData.setValueByFieldID(this.thatidfield, parentID);
+                } else {
+                    return false;
+                }
+                
+            } else if(this.thatidfield == '' && this.thisidfield != '') {
+                // relation: n -> 1
+                
+            } else if(this.thatidfield != '' && this.thisidfield != '') {
+                // relation: n -> m
             }
             
-            if(parentID != 0 && this.thatidfield != '') {
-                this.formData.setValueByFieldID(this.thatidfield, parentID);
-            } else {
-                return false;
-            }
+            
         }
         
         this.saveFocus();
@@ -451,13 +472,23 @@ function dbforms2_form() {
 
         } else {
             dbforms2.statusText('Data saved. (' + response.getResponseText() + ')');
-            this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_SAVE_POST);
             
             // reload the returned data
             this.loadFieldValuesByXML(response.responseData);
+
+            // save all child's form data as well
+            /*
+            for (var fieldID in this.forms) { 	 
+                if(this.fields[fieldID].changed) {
+                    this.fields[fieldID].saveFormData();
+                }
+            } 
+            */
             
             // reload chooser results
             dbforms2.chooser.reloadCurrentQuery();
+
+            this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_SAVE_POST);
 
             // call correspondig event handler on successsfull save
             if(this.eventHandlers['onSaveJS']) {
