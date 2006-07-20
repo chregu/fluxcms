@@ -149,10 +149,13 @@ class JSON
     function utf162utf8($utf16)
     {
         // oh please oh please oh please oh please oh please
+        if (function_exists("iconv")) {
+            return iconv('UTF-16BE','UTF-8',$utf16);   
+        }
         if(function_exists('mb_convert_encoding')) {
             return mb_convert_encoding($utf16, 'UTF-8', 'UTF-16');
         }
-
+        
         $bytes = (ord($utf16{0}) << 8) | ord($utf16{1});
 
         switch(true) {
@@ -193,10 +196,14 @@ class JSON
     function utf82utf16($utf8)
     {
         // oh please oh please oh please oh please oh please
+        
+        if (function_exists("iconv")) {
+            return iconv('UTF-8','UTF-16BE',$utf8);   
+        }
         if(function_exists('mb_convert_encoding')) {
             return mb_convert_encoding($utf8, 'UTF-16', 'UTF-8');
         }
-
+        
         switch(strlen($utf8)) {
             case 1:
                 // this case should never be reached, because we are in ASCII range
@@ -252,7 +259,6 @@ class JSON
 
             case 'string':
                 if ($c = iconv("UTF-8","JAVA",$var)) { 
-                
                     return '"'.$c.'"';
                 }
                 // STRINGS ARE EXPECTED TO BE IN ASCII OR UTF-8 FORMAT
