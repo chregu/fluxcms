@@ -12,10 +12,15 @@ function dbforms2_liveselect() {
     this.autoCollapseResultsOnBlur = true;
     this.showResultsIfEmpty = false;
     this.autoQueryTimeout = 200;
+    this.readOnly = false;
     
     this.init = function(queryfieldDOMNode, resultsDOMNode, dropDownImgNode) {
         this.queryField = new dbforms2_liveselect_queryfield(queryfieldDOMNode, this);
         this.queryField.init();
+        
+        if(this.readOnly == true) {
+            queryfieldDOMNode.readOnly = true;
+        }
 
         if(typeof dropDownImgNode != 'undefined') {
             var wev_onMouseUp = new ContextFixer(this.queryField.e_onMouseUpImage, this.queryField);
