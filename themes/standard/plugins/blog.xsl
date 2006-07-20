@@ -72,6 +72,11 @@
         <xsl:apply-templates select="document(concat('portlet://',$collectionUri,'plugin=categories(',$filename,',count).xml'))/bx/plugin/collection"/>
     </xsl:template>
 
+    <xsl:template match="tags" mode="xhtml">
+        <h3>Tags</h3>
+        <xsl:copy-of select="php:functionString('bx_helpers_tags::getTags', @entries, $collectionUri)"/>
+    </xsl:template>
+
     <xsl:template match="login" mode="xhtml">
         <xsl:call-template name="littleLogin"/>
     </xsl:template>
