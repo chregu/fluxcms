@@ -79,7 +79,7 @@ switch ($mode) {
     
             if(isset($_GET['id'])) {
                 
-                $dquery = "delete from ". $GLOBALS['POOL']->config->getTablePrefix(). "openid_uri where id = '".$_GET['id']."'";
+                $dquery = "delete from ". $GLOBALS['POOL']->config->getTablePrefix(). "openid_uri where id = '". (int) $_GET['id']."'";
                 $GLOBALS['POOL']->db->query($dquery);
                 print '<meta http-equiv="refresh" content="1; URL=http://'.$_SERVER['HTTP_HOST'].'/admin/webinc/openid">';
             }
