@@ -37,6 +37,7 @@
                                 &#160;
                                 <input type="button" id="tb_{@name}_new" value="new"/>
                                 <input type="button" id="tb_{@name}_saveasnew" value="save as new"/>
+                                <input type="button" id="tb_{@name}_delete" value="delete"/>
                                 <input type="button" id="tb_{@name}_reload" value="reload"/>
                             </span>
                         </div>
