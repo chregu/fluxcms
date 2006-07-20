@@ -9,7 +9,11 @@ dbforms2_log.init = function () {
 
 dbforms2_log.log = function(msg) {
     if(_BX_HELPERS_IS_MOZ) {
-        dump(this.getDateStr()+" "+msg+"\n");
+        var msg = this.getDateStr()+" "+msg+"\n";
+        dump(msg);
+        if(console) {
+            console.log(msg);
+        }
     }
 }
 
