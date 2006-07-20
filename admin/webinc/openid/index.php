@@ -30,10 +30,6 @@ if (isset($_GET['openid_mode'])) {
 } else {
     $method = $_SERVER['REQUEST_METHOD'];
 }
-print '<html>';
-print '<head>';
-print '<link type="text/css" href="'.BX_WEBROOT.'/themes/standard/admin/css/formedit.css" rel="stylesheet"/>';
-print '</head>';
 
 
 
@@ -44,8 +40,9 @@ switch ($mode) {
     switch ($answer[0]) {
         
         case 'do_auth':
-            print '<h2 class="openIdPage">OpenID</h2>';
-            print "<div id='openIdTrust'><p style='padding-left: 20px; margin:0px;'>not yet done, authorize ".$answer[1]->args['openid.trust_root'].'</p>';
+            printHeader();
+            print '<h2 class="openIdPage">'. bx_helpers_config::getOption('sitename'). ' - Flux CMS OpenID</h2>';
+            print "<div id='openIdTrust'><p style='padding-left: 20px; margin:0px;'>Please authorize ".$answer[1]->args['openid.trust_root'].'</p>';
             bx_helpers_openid::setRequestInfo($answer[1]);
             print '<br/>';
             print "<p style='padding-left: 20px; margin:0px;'>Do you want to trust " . $answer[1]->args['openid.trust_root'] ."?</p>";
@@ -86,11 +83,12 @@ switch ($mode) {
             
             $query = "select * from ". $GLOBALS['POOL']->config->getTablePrefix(). "openid_uri";
             $result = $GLOBALS['POOL']->db->query($query);
-            print '<h2 class="openIdPage">OpenID</h2>';
+            printHeader();
+            print '<h2 class="openIdPage">'. bx_helpers_config::getOption('sitename'). ' - Flux CMS OpenID</h2>';
             print "<div id='openIdTrust'>";
             print "<table>";
             while($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-                print "<tr><td><a href='?id=".$row['id']."'><img style='border:0px;' src='/webinc/images/delete.gif'/></a></td><td>".$row['uri']."</td><td>".$row['date']."</td></tr>\n";
+                print "<tr><td><a href='?id=".$row['id']."'><img style='border:0px;' src='".BX_WEBROOT."admin/webinc/img/icons/delete.gif'/></a></td><td>".$row['uri']."</td><td>".$row['date']."</td></tr>\n";
             }
             print "</table>";
             print "</div>";
@@ -102,7 +100,14 @@ switch ($mode) {
     print "</html>";
     }
 
+    function printHeader() {
+        
+        print '<html>';
+print '<head>';
+print '<link type="text/css" href="'.BX_WEBROOT.'/themes/standard/admin/css/formedit.css" rel="stylesheet"/>';
+print '</head>';
 
+    }
 
 
 
