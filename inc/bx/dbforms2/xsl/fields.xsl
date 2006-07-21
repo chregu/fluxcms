@@ -17,7 +17,7 @@
     <xsl:template match="input" mode="fields">
         <tr class="formRow">
             <td class="formHeader">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
@@ -42,7 +42,7 @@
     <xsl:template match="textarea" mode="fields">
         <tr class="formRow">
             <td class="formHeader">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
@@ -58,12 +58,12 @@
     <xsl:template match="remark" mode="fields">
         <tr class="formRow">
             <td class="formHeader">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
             <td class="formInput">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
@@ -73,7 +73,7 @@
     <xsl:template match="select" mode="fields">
         <tr class="formRow">
             <td class="formHeader">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
@@ -90,7 +90,7 @@
     <xsl:template match="select[@type='relation_n2m']" mode="fields">
         <tr class="formRow">
             <td class="formHeader">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
@@ -116,7 +116,7 @@
     <xsl:template match="input[@type='date']" mode="fields">
         <tr class="formRow">
             <td class="formHeader">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
@@ -135,17 +135,17 @@
     <xsl:template match="input[@type='color']" mode="fields">
         <tr class="formRow">
             <td class="formHeader">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
             <td class="formInput">
-                <input xsl:use-attribute-sets="standardInputElement" id="{@id}" onchange="colorPicker_preview('{@name}');">
+                <input xsl:use-attribute-sets="standardInputElement" id="{@id}" onchange="colorPicker_preview('{@id}');">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
                 <xsl:text> </xsl:text>
-                <input type="button" value="..." onclick="colorPicker_show('{@name}'); return false;" name="anchor_field_{@name}" id="anchor_field_{@name}" style="background-color: #ffffff; color: #000000;"/>
+                <input type="button" value="..." onclick="colorPicker_show('{@id}'); return false;" name="anchor_{@id}" id="anchor_{@id}" style="background-color: #ffffff; color: #000000;"/>
             </td>
         </tr>
     </xsl:template>    
@@ -154,7 +154,7 @@
     <xsl:template match="input[@type='upload']" mode="fields">
         <tr class="formRow">
             <td class="formHeader">
-                <label for="field_{@name}">
+                <label for="{@id}">
                     <xsl:value-of select="@descr"/>
                 </label>
             </td>
@@ -167,11 +167,11 @@
 
                 <input type="button" onclick="openUploadIframe('{@name}')" value="..."/>
                 
-                <span id="field_{@name}_previewLarge" class="pic">
-                    <img id="field_{@name}_previewSmall" src="{$DBFORMS2_IMG_NULLIMG}" border="0"/>
+                <span id="{@id}_previewLarge" class="pic">
+                    <img id="{@id}_previewSmall" src="{$DBFORMS2_IMG_NULLIMG}" border="0"/>
                 </span>
 
-                <iframe id="field_{@name}_iframe" width="400" height="50" style="display: none"></iframe>
+                <iframe id="{@id}_iframe" width="400" height="50" style="display: none"></iframe>
             </td>
         </tr>
     </xsl:template>
@@ -204,7 +204,7 @@
     <xsl:template match="listview" mode="fields">
         <tr class="formRow">
             <td colspan="2">
-            <div id="{@id}">
+                <div id="{@id}">
                     <div class="listview">
                         <div class="listviewResults" id="{@name}_lvresults">
                             <table cellspacing="0" cellpadding="0" width="100%">
@@ -220,9 +220,8 @@
                             </table>
                         </div>
                     </div>
-            </div>
+                </div>
             </td>
-            
         </tr>
     </xsl:template>
 
