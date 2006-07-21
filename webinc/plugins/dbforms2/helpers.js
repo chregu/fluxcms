@@ -47,8 +47,7 @@ function makeUri(value) {
 }
 
 function openUploadIframe (id) {
-	
-	var field = dbforms2.form.getFieldByID(id);
+	var field = dbforms2.mainform.getFieldByID(id);
 	field.setIframe();
 }
 
