@@ -107,7 +107,7 @@
                 </div>
                 
                 <input type="hidden" id="{@id}"/>
-                <div class="n2mvalues" id="field_{@name}_values"></div>
+                <div class="n2mvalues" id="{@id}_values"></div>
 
             </td>
         </tr>
@@ -192,8 +192,8 @@
 
                 <input type="button" onclick="dbforms2_common.openFileBrowser('{@name}')" value="..."/>
                 <xsl:if test="1 or @isImage = '1'">
-                    <span id="field_{@name}_previewLarge" class="pic">
-                        <img id="field_{@name}_previewSmall" src="{$DBFORMS2_IMG_NULLIMG}" border="0"/>
+                    <span id="{@id}_previewLarge" class="pic">
+                        <img id="{@id}_previewSmall" src="{$DBFORMS2_IMG_NULLIMG}" border="0"/>
                     </span>
                 </xsl:if>
                 
