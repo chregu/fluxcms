@@ -23,7 +23,6 @@ function dbforms2_field(DOMNode) {
     this.setValue = function(value) {
         this.value = value;
         this.updateDOMNodeValue();
-        this.onChange();
     }
     
     this.updateDOMNodeValue = function() {
