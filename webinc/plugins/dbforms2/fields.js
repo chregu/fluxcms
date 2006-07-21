@@ -192,6 +192,7 @@ dbforms2_field_text_area.prototype = new dbforms2_field();
  *
  */
 function dbforms2_field_text_wysiwyg(DOMNode) {
+
     this.init = function(DOMNode) {
 		this.initField(DOMNode);
 	
@@ -201,7 +202,6 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
         oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'webinc/plugins/dbforms2/fckconfig.js';
         oFCKeditor.ToolbarSet = 'BxCMS';
         oFCKeditor.ReplaceTextarea() ;
-		
     }
 	
 	this.setValue = function(value) {
@@ -224,7 +224,6 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
 	}
 	
 	this.getValue = function(value) {
-		
 		// Get the editor instance that we want to interact with.
 		var oEditor = FCKeditorAPI.GetInstance(this.id) ;
         dbforms2_log.log(oEditor.IsDirty());		

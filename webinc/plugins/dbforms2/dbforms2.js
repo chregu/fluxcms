@@ -102,6 +102,11 @@ dbforms2.init = function(formConfig) {
     this.mainform.toolbar.unlockButton('new');
     dbforms2.statusText('Ready.');
     dbforms2_log.log('dbforms2 initialized');
+    
+    // firebug breaks xmlhttprequests
+    if(console) {
+        console.warn("NOTE: Firebug 0.4 breaks XMLHttpRequests, when 'Options -> Show XMLHttpRequests' is enabled!");
+    }
 
 }
 
