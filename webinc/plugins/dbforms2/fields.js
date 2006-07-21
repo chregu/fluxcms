@@ -385,14 +385,13 @@ function dbforms2_field_relation_n21(DOMNode) {
     
     this.init = function(DOMNode) {
         this.initField(DOMNode);
-
         // init live select
         this.liveSelect = new dbforms2_liveselect();
         var wev = new bx_helpers_contextfixer(this.onLiveChoose, this);
         this.liveSelect.onChooseAction = wev.execute;
         this.liveSelect.dataURI = this.form.liveSelectRootURI + '/' + this.id;
         this.liveSelect.autoExpandResultsOnFocus = false;
-        this.liveSelect.init(document.getElementById(this.id + '_lsqueryfield'), document.getElementById(this.id + '_lsresults'));
+        this.liveSelect.init(document.getElementById(this.DOMNode.id + '_lsqueryfield'), document.getElementById(this.DOMNode.id + '_lsresults'));
         
         this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_DELETE_POST, this, this.eventDelete);
         this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_SAVE_POST, this, this.eventSave);
