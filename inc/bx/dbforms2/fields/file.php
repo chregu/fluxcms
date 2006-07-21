@@ -62,7 +62,7 @@ class bx_dbforms2_fields_file extends bx_dbforms2_field {
         
         $xml = '<html><head><script type="text/javascript">
         function init() {
-            var field  = parent.dbforms2.form.getFieldByID("'. $this->name .'");';
+            var field  = parent.dbforms2.mainform.getFieldByID("'. $this->name .'");';
             if ($file['tmp_name']) {
                 $xml .= 'field.setValue("'.$filename.'");';
             }
