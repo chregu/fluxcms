@@ -44,13 +44,13 @@ function dbforms2_form() {
                 this.fields[fieldID] = this.initGroup(fieldID, fields[fieldID]);
             
             } else if(fields[fieldID]['isForm']) {
-                dbforms2_log.log(fieldID + ' is a form.');
+                //dbforms2_log.log(fieldID + ' is a form.');
                 var form = this.initForm(fieldID, fields[fieldID]['config']);
                 this.fields[fieldID] = form;
                 this.forms[fieldID] = form;
             
             } else {
-                dbforms2_log.log(fieldID + '.init()...');
+                //dbforms2_log.log(fieldID + '.init()...');
                 // field is a regular field
                 this.fields[fieldID] = this.initField(fieldID, fields[fieldID]);
             }
@@ -117,7 +117,7 @@ function dbforms2_form() {
     }
     
     this.resetValue = function() {
-        dbforms2_log.log('form.resetValue');
+        //dbforms2_log.log('form.resetValue');
         for(fieldID in this.fields) {
             this.fields[fieldID].resetValue();
         }
@@ -528,7 +528,7 @@ function dbforms2_form() {
 	
     this.startTransportTimeout = function() {
         if(this.transportTimeout) {
-            dbforms2_log.log('killed an old transport timeout!');
+            //dbforms2_log.log('killed an old transport timeout!');
             this.stopTransportTimeout();
         }
         
