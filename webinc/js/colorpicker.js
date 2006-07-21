@@ -170,7 +170,8 @@ function colorPicker_show(elementName) {
 }
 
 function colorPicker_ok() {
-  obj = colorPicker_getElementById('field_' + colorPicker_parentInputElementName);
+  console.log(colorPicker_parentInputElementName);
+  obj = colorPicker_getElementById(colorPicker_parentInputElementName);
   obj.value = colorPicker_currentColor;
   colorPicker_preview(colorPicker_parentInputElementName);
   colorPicker_hide();
@@ -178,9 +179,9 @@ function colorPicker_ok() {
 
 
 function colorPicker_preview(elementName){
-  element = colorPicker_getElementById('field_' + elementName);
+  element = colorPicker_getElementById(elementName);
   color = element.value;
-  element = colorPicker_getElementById('anchor_field_' + elementName);
+  element = colorPicker_getElementById('anchor_' + elementName);
   element.style.backgroundColor = color;
 }
 
