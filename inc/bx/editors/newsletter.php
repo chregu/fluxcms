@@ -812,7 +812,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         "'<dc:date>'.\$this->callbackFeedDate(date('YmdHis', strtotime('$1'))).'</dc:date>'", 
         $feedContent);
         
-        $filenameSimple = $feed["name"].'_'.date("Ymd-His");
+        $filenameSimple = bx_helpers_string::makeUri($feed["name"]).'_'.date("Ymd-His");
         
         if($data["html"] == "on") {
             // HTML format
@@ -833,7 +833,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             // Plain Text format
             $filename = $filenameSimple.'-txt.de.xhtml';
             $xsl = new DomDocument();
-            $xsl->load('themes/'.bx_helpers_config::getTheme().'/textfeeds.xsl');
+            if (file_exists(BX_OPEN_BASEDIR.'themes/'.bx_helpers_config::getTheme().'/textfeeds.xsl')) {
+                $textfeedxsl= BX_OPEN_BASEDIR.'themes/'.bx_helpers_config::getTheme().'/textfeeds.xsl';
+            } else {
+                $textfeedxsl = BX_OPEN_BASEDIR.'themes/standard/plugins/newsletter/textfeeds.xsl';
+            }
+            $xsl->load($textfeedxsl);
             $inputdom = new DomDocument();
             $inputdom->loadXML($feedContent);
             $proc = new XsltProcessor();
