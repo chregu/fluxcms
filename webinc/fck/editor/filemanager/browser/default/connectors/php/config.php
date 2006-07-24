@@ -43,7 +43,7 @@ if (!$permObj->isAllowed('/',array('admin'))) {
  }
  
 $Config['UserFilesPath'] = "/";
-$Config['UserFilesAbsolutePath'] = BX_PROJECT_DIR . str_replace(BX_PROJECT_DIR,"",BX_OPEN_BASEDIR) . $Config['UserFilesPath']   ;
+$Config['UserFilesAbsolutePath'] = BX_OPEN_BASEDIR . $Config['UserFilesPath']   ;
 
 if (isset($_GET['Type']) && $_GET['Type'] == 'gallery') {
 $Config['UserFilesPath'] .= "/files/_galleries/";
