@@ -844,9 +844,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             $inputdom->loadXML($feedContent);
             $proc = new XsltProcessor();
             $xsl = $proc->importStylesheet($xsl);
-           // if (empty($feed['lastdate'])) {
+           if (empty($feed['lastdate'])) {
                 $feed['lastdate'] = 0;
-            //}
+            }
             $proc->setParameter('', 'lastdate', $feed["lastdate"]);
             $newdom = $proc->transformToDoc($inputdom);     
             
