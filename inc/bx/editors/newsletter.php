@@ -839,17 +839,25 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
                 $textfeedxsl = BX_OPEN_BASEDIR.'themes/standard/plugins/newsletter/textfeeds.xsl';
             }
             $xsl->load($textfeedxsl);
+            
             $inputdom = new DomDocument();
             $inputdom->loadXML($feedContent);
             $proc = new XsltProcessor();
             $xsl = $proc->importStylesheet($xsl);
+           // if (empty($feed['lastdate'])) {
+                $feed['lastdate'] = 0;
+            //}
             $proc->setParameter('', 'lastdate', $feed["lastdate"]);
             $newdom = $proc->transformToDoc($inputdom);     
             
             // replace breaks with newline ASCII character
             $nodeValue = $newdom->getElementsByTagName('div')->item(0)->nodeValue;
-            $nodeValue = str_replace("<br/>", "\n", $nodeValue);        
+            $nodeValue = str_replace(array("<br/>","Read whole post"), array("\n",""), $nodeValue);        
+            $nodeValue = preg_replace('#\n +#'," \n",$nodeValue);
+            $nodeValue = preg_replace('# {2,}#'," ",$nodeValue);
+            $nodeValue = preg_replace('#\n{3,}#',"\n\n",$nodeValue);
             
+            //bx_helpers_debug::webdump(htmlspecialchars($nodeValue));
             file_put_contents('data'.$colluri.'drafts/'.$filename, $nodeValue);
         }
         
