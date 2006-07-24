@@ -424,7 +424,6 @@ CREATE TABLE `##bxcms_##users` (
 -- Dumping data for table `##bxcms_##users`
 --
 
-INSERT INTO `##bxcms_##users` (`ID`, `user_login`, `user_pass`, `user_email`, `user_fullname`, `user_gupi`, `user_gid`, `user_tmphash`, `user_adminlang`, `plazes_username`, `plazes_password`) VALUES (1,'admin','f56107fb349a099199f394d5890293ae','','',NULL,1,'','',NULL,NULL);
 
 
 -- 
