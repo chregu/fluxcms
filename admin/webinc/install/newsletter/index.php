@@ -36,7 +36,7 @@ $tablePrefix = $conf->getTablePrefix();
 echo "$tablePrefix";
 echo "starting install newsletter";
 
-print "<pre/>";
+print "<pre>";
 $db = $GLOBALS['POOL']->dbwrite;
 
 
@@ -158,23 +158,40 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_cache` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-
+/*
 foreach($queries as $query){
     $res = $db->query($query);
     if ($db->isError($res)) {
-        "installation failed, please report to milo@flux-cms.org";    
+        "installation failed, please report to chregu@flux-cms.org";    
          printError($res);
     }
-}
-
+}*/
+print "</pre>";
 echo "<h1>Success ;)</h1>";
-echo "<p>Newsletter-Plugin-Tables successfully created. Now you can create the newsletter collection with the following .configxml (adjust the activation properties according to your environment):</p>";
+echo "<p>Newsletter-Plugin-Tables successfully created. Please also adjust the .configxml to your environement.</p>";
 
-printConfigXML();
+//printConfigXML();
 
-echo "<p>Now create the following collections inside of newsletter: archive, archive/YYYY (e.g 2006) and drafts. The archive path must be visible in order to view newsletters sent directly from the website. Also make sure, you have newsfeeds.xsl and htmlimage.xsl in your themes-folder. Defaults can be found in 3-cols.</p>";
+//echo "<p>Now create the following collections inside of newsletter: archive, archive/YYYY (e.g 2006) and drafts. The archive path must be visible in order to view newsletters sent directly from the website. Also make sure, you have newsfeeds.xsl and htmlimage.xsl in your themes-folder. Defaults can be found in 3-cols.</p>";
 
 // Add resources
+bx_resourcemanager::setProperty("/newsletter/", "parent-uri", "/");
+bx_resourcemanager::setProperty("/newsletter/", "mimetype", "httpd/unix-directory");
+bx_resourcemanager::setProperty("/newsletter/", "output-mimetype", "text/html");
+
+
+bx_resourcemanager::setProperty("/newsletter/drafts/", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/drafts/", "mimetype", "httpd/unix-directory");
+bx_resourcemanager::setProperty("/newsletter/drafts/", "output-mimetype", "text/html");
+
+bx_resourcemanager::setProperty("/newsletter/archive/", "parent-uri", "/newsletter/");
+bx_resourcemanager::setProperty("/newsletter/archive/", "mimetype", "httpd/unix-directory");
+bx_resourcemanager::setProperty("/newsletter/archive/", "output-mimetype", "text/html");
+
+bx_resourcemanager::setProperty("/newsletter/archive/2006/", "parent-uri", "/newsletter/archive/");
+bx_resourcemanager::setProperty("/newsletter/archive/2006/", "mimetype", "httpd/unix-directory");
+bx_resourcemanager::setProperty("/newsletter/archive/2006/", "output-mimetype", "text/html");
+
 
 bx_resourcemanager::setProperty("/newsletter/index.de.xhtml", "parent-uri", "/newsletter/");
 bx_resourcemanager::setProperty("/newsletter/index.de.xhtml", "display-name", "Index");
@@ -200,6 +217,8 @@ bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "display-
 bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "mimetype", "text/html");
 bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "output-mimetype", "text/html");
 
+
+bx_helpers_file::cpdir(BX_PROJECT_DIR.'admin/webinc/install/newsletter/data/',BX_DATA_DIR.'newsletter/');
 /**
  * just prints the configxml used for linkplugin.
  * */
