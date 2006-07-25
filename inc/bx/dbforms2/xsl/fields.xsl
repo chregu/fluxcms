@@ -191,7 +191,7 @@
                 </input>
                 <xsl:text> </xsl:text>
 
-                <input type="button" onclick="dbforms2_common.openFileBrowser('{@name}')" value="..."/>
+                <input type="button" onclick="dbforms2_common.openFileBrowser(dbforms2_globalObj['{@id}'])" value="..."/>
                 <xsl:if test="1 or @isImage = '1'">
                     <span id="{@id}_previewLarge" class="pic">
                         <img id="{@id}_previewSmall" src="{$DBFORMS2_IMG_NULLIMG}" border="0"/>
