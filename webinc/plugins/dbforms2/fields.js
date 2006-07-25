@@ -344,23 +344,19 @@ function dbforms2_field_relation_n2m(DOMNode) {
     
     this.onLiveChoose = function(entry) {
         this.addFieldValue(entry.id, entry.title);
+        this.changed = true;
     }
 	
 	this.addFieldValue = function(id, title) {
 		if (id != 0)  {
-			var div= document.createElement("div");
+			var div = document.createElement("div");
 			var del = document.createElement("a");
             div.className = 'n2mvalue';
 			del.appendChild(document.createTextNode("x"));
 			del.setAttribute("style","cursor: pointer;");
 
-            //var wev_onClick = new bx_helpers_contextfixer(this.e_onMouseDown, this);
-            clickHandler = function() {
-                this.parentNode.parentNode.removeChild(this.parentNode);
-            }
-            bx_helpers.addEventListener(del, 'click', clickHandler);
-			
-            //del.setAttribute("onclick"," return false");
+            var wev = new bx_helpers_contextfixer(this.removeFieldValue, this, id);
+            bx_helpers.addEventListener(del, 'click', wev.execute);
 			
 			div.appendChild(del);
 			div.appendChild(document.createTextNode(" "));
@@ -371,7 +367,13 @@ function dbforms2_field_relation_n2m(DOMNode) {
 			this.divElement.appendChild(div);
 		}
 	}
-	
+    
+    this.removeFieldValue = function(id) {
+        if(id != null) {
+            this.changed = true;
+            this.divElement.removeChild(document.getElementById(this.DOMNode.id+"_value_id_"+id));
+        }
+    }
 	
 	this.getValue = function() {
 		var values = new Array();
