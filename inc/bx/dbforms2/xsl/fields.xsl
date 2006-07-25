@@ -140,12 +140,12 @@
                 </label>
             </td>
             <td class="formInput">
-                <input xsl:use-attribute-sets="standardInputElement" id="{@id}" onchange="colorPicker_preview('{@id}');">
+                <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
                     <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
                 <xsl:text> </xsl:text>
-                <input type="button" value="..." onclick="colorPicker_show('{@id}'); return false;"/>&#160;
+                <input type="button" value="..." onclick="colorPicker_show('{@id}', dbforms2_globalObj['{@id}']); return false;"/>&#160;
                 <span style="width: 40px;" id="anchor_{@id}" ><img src="{$DBFORMS2_IMG_NULLIMG}" height="15" width="80"/></span>
             </td>
         </tr>
