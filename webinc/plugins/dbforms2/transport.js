@@ -42,7 +42,7 @@ function dbforms2_transport() {
     }
     
     this._sarissaOnLoadCallback = function() {
-        dbforms2_log.log('dbforms2_loader::_sarissaOnLoadCallback');
+        //dbforms2_log.log('dbforms2_loader::_sarissaOnLoadCallback');
 
         if(this.data.readyState == 4 && !this.dataLoaded && this.data.documentElement) {
             dbforms2_log.log('data loaded');
@@ -55,7 +55,7 @@ function dbforms2_transport() {
     }
 
     this._sarissaOnSaveCallback = function() {
-        dbforms2_log.log('dbforms2_loader::_sarissaOnSaveCallback');
+        //dbforms2_log.log('dbforms2_loader::_sarissaOnSaveCallback');
         
         if(this.data.readyState == 4 && !this.dataSaved) {
             dbforms2_log.log('data saved');

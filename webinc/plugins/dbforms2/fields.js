@@ -8,12 +8,13 @@ function dbforms2_field(DOMNode) {
     var defaultValue = '';
     var id = '';
     var form = null;
-    
+    var changed = false;
     
     this.initField = function(DOMNode) {
         this.hasFocus = false;
         this.value = null;
         this.DOMNode = DOMNode;
+        this.resetChanged();
     }
     
     this.init = function(DOMNode) {
@@ -63,6 +64,17 @@ function dbforms2_field(DOMNode) {
     }
     
     this.onChange = function() {
+        this.changed = true;
+        dbforms2_log.log(this.id + '.onChange()');
+    }
+    
+    this.hasChanged = function() {
+        dbforms2_log.log(this.id + '.changed = ' + this.changed);
+        return this.changed;
+    }
+    
+    this.resetChanged = function() {
+        this.changed = false;
     }
     
     this.setParentFormId = function() {
@@ -165,10 +177,28 @@ dbforms2_field_checkbox.prototype = new dbforms2_field();
  */
 function dbforms2_field_color(DOMNode) {
     
+    this.init = function(DOMNode) {
+        this.initField(DOMNode);
+        this.previewDOMNode = document.getElementById('anchor_' + this.DOMNode.id);
+    }
+    
+    this.updateColorPreview = function() {
+        var color = this.value;
+        if(color == null || color == '') {
+            color = 'ffffff';
+        }
+		this.previewDOMNode.style.backgroundColor = '#' + color;
+    }
+    
     this.setValue = function(value) {
- 		this.DOMNode.value = value;
-		var bt = document.getElementById( "anchor_" + this.DOMNode.id );
-		bt.style.backgroundColor = value;
+        this.value = value;
+        this.updateDOMNodeValue();
+        this.updateColorPreview();
+    }
+    
+    this.onChange = function() {
+        this.changed = true;
+        this.updateColorPreview();
     }
     
 }
