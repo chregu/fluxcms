@@ -65,7 +65,6 @@ function dbforms2_field(DOMNode) {
     
     this.onChange = function() {
         this.changed = true;
-        dbforms2_log.log(this.id + '.onChange()');
     }
     
     this.hasChanged = function() {
@@ -105,6 +104,7 @@ function dbforms2_field(DOMNode) {
     }
     
     this.e_onChange = function() {
+        dbforms2_log.log(this.id + '.onChange()');
         this.onChange();
     }
     

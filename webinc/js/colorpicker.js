@@ -158,7 +158,7 @@ function colorPicker_ShowColorBox(hexStr){
   colorPicker_currentColor = hexStr;
 }
 
-function colorPicker_show(elementName) {
+function colorPicker_show(elementName, dbforms2_field) {
   colorPicker_showSpectrumBox();
   
   element = colorPicker_getElementById('colorPicker_colorpickerbox');
@@ -167,13 +167,15 @@ function colorPicker_show(elementName) {
   element.style.visibility = 'visible';
   
   colorPicker_parentInputElementName = elementName;
+  colorPicker_parentInputField = dbforms2_field;
 }
 
 function colorPicker_ok() {
-  console.log(colorPicker_parentInputElementName);
   obj = colorPicker_getElementById(colorPicker_parentInputElementName);
   obj.value = colorPicker_currentColor;
-  colorPicker_preview(colorPicker_parentInputElementName);
+  //colorPicker_preview(colorPicker_parentInputElementName);
+  //colorPicker_parentInputElementName.onChange();
+  colorPicker_parentInputField.onChange();
   colorPicker_hide();
 }
 
