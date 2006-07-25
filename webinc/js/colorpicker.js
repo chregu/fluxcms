@@ -175,6 +175,7 @@ function colorPicker_ok() {
   obj.value = colorPicker_currentColor;
   //colorPicker_preview(colorPicker_parentInputElementName);
   //colorPicker_parentInputElementName.onChange();
+  colorPicker_parentInputField.value = colorPicker_currentColor; 
   colorPicker_parentInputField.onChange();
   colorPicker_hide();
 }
