@@ -145,7 +145,8 @@
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
                 <xsl:text> </xsl:text>
-                <input type="button" value="..." onclick="colorPicker_show('{@id}'); return false;" name="anchor_{@id}" id="anchor_{@id}" style="background-color: #ffffff; color: #000000;"/>
+                <input type="button" value="..." onclick="colorPicker_show('{@id}'); return false;"/>&#160;
+                <span style="width: 40px;" id="anchor_{@id}" ><img src="{$DBFORMS2_IMG_NULLIMG}" height="15" width="80"/></span>
             </td>
         </tr>
     </xsl:template>    
