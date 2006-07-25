@@ -504,6 +504,7 @@ function dbforms2_field_file(DOMNode) {
 
     this.setValue = function(value) {
         this.value = value;
+        this.resetChanged();
         this.updateDOMNodeValue();
         this.updatePreviewAndTooltip();
     }
@@ -519,6 +520,7 @@ function dbforms2_field_file(DOMNode) {
     }
 
     this.onChange = function() {
+        this.changed = true;
         this.value = this.DOMNode.value;
         this.updatePreviewAndTooltip();
     }
@@ -576,6 +578,14 @@ function dbforms2_field_file_browser(DOMNode) {
     
     this.setValue = function(value) {
         this.value = value;
+        this.resetChanged();
+        this.updateDOMNodeValue();
+        this.updatePreviewAndTooltip();
+    }
+    
+    this.setUrl = function(url) {
+        this.value = url;
+        this.changed = true;
         this.updateDOMNodeValue();
         this.updatePreviewAndTooltip();
     }
@@ -593,6 +603,7 @@ function dbforms2_field_file_browser(DOMNode) {
     }
     
     this.onChange = function() {
+        this.changed = true;
         this.value = this.DOMNode.value;
         this.updatePreviewAndTooltip();
     }

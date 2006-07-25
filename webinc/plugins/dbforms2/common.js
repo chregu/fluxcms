@@ -1,4 +1,4 @@
-dbforms2_fBrowserFieldId = '';
+dbforms2_fBrowserField = null;
 dbforms2_fBrowserLastLocation = '';
 
 function dbforms2_common() {
@@ -9,10 +9,11 @@ dbforms2_common.serializeToString = function(dom) {
     return serializer.serializeToString(dom);
 }
 
-dbforms2_common.openFileBrowser = function(fieldId) {
+dbforms2_common.openFileBrowser = function(field) {
     var fBrowserUrl = bx_webroot + 'webinc/fck/editor/filemanager/browser/default/browser.html?Type=files&Connector=connectors/php/connector.php';
 
-    var currentFile = dbforms2.mainform.getFieldByID(fieldId).getValue();
+    var currentFile = field.getValue();
+    
     if (currentFile == '' && dbforms2_fBrowserLastLocation) {
         currentFile = dbforms2_fBrowserLastLocation;
     }
@@ -30,14 +31,14 @@ dbforms2_common.openFileBrowser = function(fieldId) {
 
     fBrowserWindow.focus();
 
-    dbforms2_fBrowserFieldId = fieldId;
+    dbforms2_fBrowserField = field;
     
     SetUrl = function(url) {
-        if(dbforms2_fBrowserFieldId != '') {
-            dbforms2.mainform.getFieldByID(dbforms2_fBrowserFieldId).setValue(url);
+        if(dbforms2_fBrowserField != null) {
+            dbforms2_fBrowserField.setUrl(url);
             dbforms2_fBrowserLastLocation = url;
         }
-        dbforms2_fBrowserFieldId = '';
+        dbforms2_fBrowserField = null;
     }
     
 }
