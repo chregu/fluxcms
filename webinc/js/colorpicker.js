@@ -182,7 +182,7 @@ function colorPicker_preview(elementName){
   element = colorPicker_getElementById(elementName);
   color = element.value;
   element = colorPicker_getElementById('anchor_' + elementName);
-  element.style.backgroundColor = color;
+  element.style.backgroundColor = '#' + color;
 }
 
 function colorPicker_hide() {
