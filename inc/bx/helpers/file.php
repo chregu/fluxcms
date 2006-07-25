@@ -97,7 +97,7 @@ class bx_helpers_file {
         }
     }
     
-    static function cpdir($dir,$todir) {
+    static function cpdir($dir,$todir,$noSvn = true) {
         $folder = opendir($dir);
         if (!file_exists($todir)) {
             mkdir($todir,0755,true);
@@ -106,10 +106,17 @@ class bx_helpers_file {
            if ($file == '.' || $file == '..') {
                continue;
            }
+           if ($noSvn && $file == ".svn") {
+               continue;
+           }
+           
            if(is_dir($dir.'/'.$file)){
                self::cpdir($dir.'/'.$file,$todir.'/'.$file);
            } else {
-               copy($dir.'/'.$file,$todir.'/'.$file);
+               
+               if (!copy($dir.'/'.$file,$todir.'/'.$file)) {
+                   print 'Could not copy '.$dir.'/'.$file .' to ' . $todir.'/'.$file."<br/>";
+               }
            }
         }
         closedir($folder);

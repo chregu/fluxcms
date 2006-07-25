@@ -75,7 +75,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `class` varchar(60) NOT NULL,
   `mailserver` int(10) unsigned NOT NULL,
-  `group` varchar(255) NOT NULL default '0', 
+  `group` varchar(255) NOT NULL default '0',
   `embed` tinyint(4) NOT NULL,
   `baseurl` varchar(100) NOT NULL,
   `colluri` varchar(255) NOT NULL default '',
@@ -158,14 +158,15 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_cache` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-/*
+
 foreach($queries as $query){
     $res = $db->query($query);
     if ($db->isError($res)) {
         "installation failed, please report to chregu@flux-cms.org";    
          printError($res);
     }
-}*/
+}
+
 print "</pre>";
 echo "<h1>Success ;)</h1>";
 echo "<p>Newsletter-Plugin-Tables successfully created. Please also adjust the .configxml to your environement.</p>";
@@ -217,8 +218,9 @@ bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "display-
 bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "mimetype", "text/html");
 bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "output-mimetype", "text/html");
 
-
 bx_helpers_file::cpdir(BX_PROJECT_DIR.'admin/webinc/install/newsletter/data/',BX_DATA_DIR.'newsletter/');
+bx_helpers_file::cpdir(BX_PROJECT_DIR.'admin/webinc/install/newsletter/dbforms2/',BX_PROJECT_DIR.'dbforms2/',true);
+
 /**
  * just prints the configxml used for linkplugin.
  * */

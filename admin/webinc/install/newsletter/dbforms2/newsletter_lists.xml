@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<dbform:form 
+    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>
+
+    <dbform:fields table="newsletter_users2groups">
+
+        <dbform:field name="fk_user" type="select" descr="User">
+        	<dbform:datasource type="foreign" table="newsletter_users" order="firstname" namefield="concat(firstname,' ',lastname,' (',id,')')" orderby="firstname" idfield="id"/>
+        </dbform:field>
+        <dbform:field name="fk_group" type="select" descr="Group">
+        	<dbform:datasource type="foreign" table="newsletter_groups" order="name" namefield="concat(name,' (',id,')')" orderby="name" idfield="id"/>
+        </dbform:field>
+
+    </dbform:fields>    
+    <dbform:chooser namefield="concat('User (',fk_user,') Group (',fk_group,')')" wherefields="fk_user, fk_group" limit="50"/>    
+
+</dbform:form>

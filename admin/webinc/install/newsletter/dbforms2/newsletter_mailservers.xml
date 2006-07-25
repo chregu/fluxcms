@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<dbform:form 
+    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>
+
+    <dbform:fields table="newsletter_mailservers">
+
+		<dbform:field name="descr" type="text" descr="Description"/>
+        <dbform:field name="host" type="text" descr="Host"/>
+        <dbform:field name="port" type="text" descr="Port"/>
+        <dbform:field name="username" type="text" descr="Username"/>
+        <dbform:field name="password" type="text" descr="Password"/>
+        
+    </dbform:fields>    
+    <dbform:chooser namefield="concat(descr,' (',host,')')" wherefields="descr, host, port, username, password" limit="50"/>    
+
+</dbform:form>

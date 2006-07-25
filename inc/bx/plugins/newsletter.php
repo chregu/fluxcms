@@ -301,6 +301,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         
         $dom->setTitle("Newsletter", "Newsletters");
         $dom->setPath($path);
+        $dom->setType("newsletter");
         $dom->setIcon("gallery");
         
         // first tab

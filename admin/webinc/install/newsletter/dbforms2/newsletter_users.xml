@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<dbform:form 
+    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>
+
+    <dbform:fields table="newsletter_users">
+
+        <dbform:field name="firstname" type="text" descr="Firstname"/>
+        <dbform:field name="lastname" type="text" descr="Lastname"/>
+        <dbform:field name="email" type="text" descr="Email"/>
+        <dbform:field name="gender" type="select" descr="Gender">
+            <dbform:value name="0">Male</dbform:value>
+            <dbform:value name="1">Female</dbform:value>
+        </dbform:field>
+        <dbform:field name="status" type="select" descr="Status">
+            <dbform:value name="1">Active</dbform:value>
+            <dbform:value name="2">Needs activation</dbform:value>
+            <dbform:value name="3">Unsubscribed</dbform:value>
+            <dbform:value name="4">Too many bounces</dbform:value>
+        </dbform:field>
+        
+        <dbform:field 
+            name="groupname"
+            type="relation_n2m" 
+            relationtable="newsletter_users2groups" 
+            thisidfield="fk_user"
+            thatidfield="fk_group"
+            descr="Groups">
+            
+            <dbform:datasource type="foreign" namefield="name" idfield="id" table="newsletter_groups" />
+            <dbform:liveselect namefield="name" idfield="id" wherefields="name" table="newsletter_groups"  limit="35"/>
+
+        </dbform:field>
+        
+    </dbform:fields>    
+    <dbform:chooser namefield="concat(firstname,' ',lastname,' (',id,')')" wherefields="firstname, lastname, email, gender" limit="5000"/>    
+
+</dbform:form>
