@@ -62,7 +62,10 @@ class bx_editors_newsmailer_newsmailer {
     public function autoPrepareNewsletter($draftId)
     {
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-		$query = "SELECT DISTINCT u.* FROM ".$prefix."newsletter_cache c, ".$prefix."newsletter_users u WHERE c.fk_draft=".$draftId." AND c.fk_user=u.id";
+    //mark as prepareds    
+    $query = "UPDATE ".$prefix."newsletter_drafts SET prepared=NOW() WHERE id=".$draftId;
+    	$GLOBALS['POOL']->dbwrite->exec($query);    
+	$query = "SELECT DISTINCT u.* FROM ".$prefix."newsletter_cache c, ".$prefix."newsletter_users u WHERE c.fk_draft=".$draftId." AND c.fk_user=u.id";
     	$receivers = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
     	
     	$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);	
@@ -142,8 +145,7 @@ class bx_editors_newsmailer_newsmailer {
 		}
 
 		// all mails for this draft were preprocessed successfully
-    	$query = "UPDATE ".$prefix."newsletter_drafts SET prepared=NOW() WHERE id=".$draftId;
-    	$GLOBALS['POOL']->dbwrite->exec($query);
+
     
     	$query = "DELETE FROM ".$prefix."newsletter_cache WHERE fk_draft=".$draftId;
     	$GLOBALS['POOL']->dbwrite->exec($query);
@@ -161,12 +163,14 @@ class bx_editors_newsmailer_newsmailer {
     	$draft = $GLOBALS['POOL']->db->queryRow("select * from ".$prefix."newsletter_drafts WHERE ID=".$draftId, null, MDB2_FETCHMODE_ASSOC);
     	$mailoptions = $this->getMailserverOptions($draft['mailserver']);
     	
+    $query = "UPDATE ".$prefix."newsletter_drafts SET sent=NOW() WHERE id=".$draftId;
+    	$GLOBALS['POOL']->dbwrite->exec($query);
+	
+        
     	$mail_queue = new Mail_Queue($this->db_options, $mailoptions);
 		$retval = $mail_queue->sendMailsInQueue();	
 		
-    	$query = "UPDATE ".$prefix."newsletter_drafts SET sent=NOW() WHERE id=".$draftId;
-    	$GLOBALS['POOL']->dbwrite->exec($query);
-		
+    		
 		return !$mail_queue->isError($retval);    	
     }
     
