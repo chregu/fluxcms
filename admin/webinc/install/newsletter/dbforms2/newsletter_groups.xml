@@ -14,7 +14,7 @@
             <dbform:value name="0">false</dbform:value>
             <dbform:value name="1">true</dbform:value>
         </dbform:field>
-
+<dbform:field name="test" type="checkbox" descr="Testgroup"/>
     </dbform:fields>    
     <dbform:chooser namefield="concat(name,' (',id,')')" wherefields="name" limit="50"/>    
 
