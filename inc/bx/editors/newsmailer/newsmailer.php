@@ -15,7 +15,7 @@ class bx_editors_newsmailer_newsmailer {
     public function __construct()
     {
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
-		$this->db_options['type']       = 'db';
+		$this->db_options['type']       = 'mdb2';
 		$this->db_options['dsn']        = $GLOBALS['POOL']->dbwrite->getDSN();
 		$this->db_options['mail_table'] = $prefix.'mail_queue';	
     }
