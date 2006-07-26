@@ -59,10 +59,6 @@ $queries[] = "CREATE TABLE `".$tablePrefix."mail_queue` (
   KEY `id_user` (`id_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = "CREATE TABLE `".$tablePrefix."mail_queue_seq` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
 $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts` (
   `from` varchar(100) NOT NULL,
@@ -157,7 +153,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_cache` (
   `status` tinyint(4) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-
+/*
 
 foreach($queries as $query){
     $res = $db->query($query);
@@ -165,7 +161,7 @@ foreach($queries as $query){
         "installation failed, please report to chregu@flux-cms.org";    
          printError($res);
     }
-}
+}*/
 
 print "</pre>";
 echo "<h1>Success ;)</h1>";
@@ -221,6 +217,12 @@ bx_resourcemanager::setProperty("/newsletter/activation-txt.de.xhtml", "output-m
 bx_helpers_file::cpdir(BX_PROJECT_DIR.'admin/webinc/install/newsletter/data/',BX_DATA_DIR.'newsletter/');
 bx_helpers_file::cpdir(BX_PROJECT_DIR.'admin/webinc/install/newsletter/dbforms2/',BX_PROJECT_DIR.'dbforms2/',true);
 
+if (!copy(BX_PROJECT_DIR.'admin/webinc/install/newsletter/xsl/newsletter.xsl',BX_THEMES_DIR.bx_helpers_config::getTheme()."/newsletter.xsl")) {
+    print BX_PROJECT_DIR.'admin/webinc/install/newsletter/xsl/newsletter.xsl  could not be copied to '.
+        BX_THEMES_DIR.bx_helpers_config::getTheme().'/.<br/> Please do it by hand.';
+}
+    
+    
 /**
  * just prints the configxml used for linkplugin.
  * */
