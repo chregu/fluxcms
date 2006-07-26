@@ -290,6 +290,13 @@ dbforms2_field_select.prototype = new dbforms2_field();
  *
  */
 function dbforms2_field_date(DOMNode) {
+    
+    this.setDate = function(y, m, d) {
+        this.value = d+'.'+m+'.'+y+' 00:00:00';
+        this.changed = true;
+        this.updateDOMNodeValue();
+    }
+    
 }
 dbforms2_field_date.prototype = new dbforms2_field();
 

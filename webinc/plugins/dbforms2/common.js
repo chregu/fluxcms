@@ -1,6 +1,9 @@
 dbforms2_fBrowserField = null;
 dbforms2_fBrowserLastLocation = '';
 
+dbforms2_calendarCallback = null;
+dbforms2_calendarField = null;
+
 function dbforms2_common() {
 }
 
@@ -43,3 +46,22 @@ dbforms2_common.openFileBrowser = function(field) {
     
 }
 
+dbforms2_common.openCalendarPopup = function(field, id) {
+
+    setDate = function(y, m, d) {
+        dbforms2_calendarField.setDate(y, m, d);
+        dbforms2_calendarCallback = null;
+        dbforms2_calendarField = null;
+    }
+    
+    dbforms2_calendarCallback = setDate;
+    dbforms2_calendarField = field;
+    cal.setReturnFunction('_calendarReturnFunction');
+    cal.select(document.getElementById(id), 'anchor_' + id, 'dd.MM.yyyy 00:00:00');
+}
+
+function _calendarReturnFunction(y, m, d) {
+    if(dbforms2_calendarCallback != null) {
+        dbforms2_calendarCallback(y, m, d);
+    }
+}
