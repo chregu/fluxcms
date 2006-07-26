@@ -126,7 +126,7 @@
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
                 <xsl:text> </xsl:text>
-                <input type="button" value="..." onclick="cal.select(document.getElementById('{@id}'),'anchor_{@id}','dd.MM.yyyy 00:00:00'); return false;" name="anchor_{@id}" id="anchor_{@id}" />
+                <input type="button" value="..." onclick="dbforms2_common.openCalendarPopup(dbforms2_globalObj['{@id}'],'{@id}');return false;" name="anchor_{@id}" id="anchor_{@id}"/>
                 <div id="caldiv" style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
             </td>
         </tr>
