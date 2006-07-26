@@ -288,9 +288,9 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         <form name="bx_news_send" action="./" method="post">
         <h3>'.$txtNewsPrev.'</h3>
         <table border="0" id="send">
-        <tr><td>'.$txtFrom.':</td><td>'.$_POST["from"].'</td></tr>
+        <tr><td>'.$txtFrom.':</td><td>'.htmlspecialchars($_POST["from"]).'</td></tr>
         <tr><td style="vertical-align:top">'.$txtTo.':</td><td>'.$groups.' ('.$usercount.' subscribers)'.'</td></tr>
-        <tr><td>'.$txtSub.':</td><td>'.$_POST["subject"].'</td></tr>';
+        <tr><td>'.$txtSub.':</td><td>'.htmlspecialchars($_POST["subject"]).'</td></tr>';
         if(!empty($_POST["attachment"])) {
             $xml .= '<tr><td>'.$txtAttachment.':</td><td>'.$_POST["attachment"].'</td></tr>';
         }
@@ -334,8 +334,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $xml .=    '</tr>
         </table>
         
-        <input type="hidden" name="from" value="'.$_POST["from"].'"/>
-        <input type="hidden" name="subject" value="'.$_POST["subject"].'"/>
+        <input type="hidden" name="from" value="'.htmlspecialchars($_POST["from"]).'"/>
+        <input type="hidden" name="subject" value="'.htmlspecialchars($_POST["subject"]).'"/>
         <input type="hidden" name="attachment" value="'.$_POST["attachment"].'"/>
         <input type="hidden" name="htmlfile" value="'.$_POST["htmlfile"].'"/>
         <input type="hidden" name="textfile" value="'.$_POST["textfile"].'"/>
@@ -400,7 +400,7 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         $groupsHTML = '<select name="groups[]" size="'.count($groups).'" multiple="multiple">';
         foreach($groups as $row)
         {
-            $groupsHTML .= '<option value="'.$row['id'].'">'.$row['name'].'</option>';    
+            $groupsHTML .= '<option value="'.$row['id'].'">'.htmlspecialchars($row['name']).'</option>';    
         }
         $groupsHTML .= '</select>';
         
@@ -506,7 +506,6 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
         </table>
         </form>
         </newsletter>';
-        
         return domdocument::loadXML($xml);        
     }
     
