@@ -68,7 +68,7 @@ function dbforms2_field(DOMNode) {
     }
     
     this.hasChanged = function() {
-        dbforms2_log.log(this.id + '.changed = ' + this.changed);
+        //dbforms2_log.log(this.id + '.changed = ' + this.changed);
         return this.changed;
     }
     
@@ -221,44 +221,83 @@ dbforms2_field_text_area.prototype = new dbforms2_field();
  *
  */
 function dbforms2_field_text_wysiwyg(DOMNode) {
+    
+    var lastValue = null;
+    var editorInstance = null;
 
     this.init = function(DOMNode) {
 		this.initField(DOMNode);
+
+        this.lastValue = this.defaultValue;
 	
-        var oFCKeditor = new FCKeditor(this.id ) ;
+        dbforms2_fckEditors[this.id] = new Array();
+        dbforms2_fckEditors[this.id]['context'] = this;
+        dbforms2_fckEditors[this.id]['method'] = this.eFCK_OnComplete;
+        
+        var oFCKeditor = new FCKeditor(this.id);
+        oFCKeditor.caller = this;
         oFCKeditor.BasePath	= fckBasePath;
         
         oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'webinc/plugins/dbforms2/fckconfig.js';
         oFCKeditor.ToolbarSet = 'BxCMS';
-        oFCKeditor.ReplaceTextarea() ;
+        oFCKeditor.ReplaceTextarea();
+        
+    }
+    
+    this.eFCK_OnComplete = function(einstance) {
+        // register the 'OnAfterSetHTML' event
+        var wev = new bx_helpers_contextfixer(this.eFCK_OnAfterSetHTML, this);
+        einstance.Events.AttachEvent('OnAfterSetHTML', wev.execute);
+        this.editorInstance = einstance;
+    }
+    
+    this.eFCK_OnAfterSetHTML = function() {
+        this.resetChanged();
     }
 	
 	this.setValue = function(value) {
 		// Get the editor instance that we want to interact with.
-		
 		if (typeof FCKeditorAPI  != "undefined") {
 			var oEditor = FCKeditorAPI.GetInstance(this.id) ;
+
             // Set the editor contents (replace the actual one).
-			
 			if (oEditor.SetHTML) {
-                if(value == null)
+                if(value == null) {
                     value = '';
+                }
 				oEditor.SetHTML(value);
 			} else {
 				this.DOMNode.value = value;
 			}
+            
 		} else {
 			this.DOMNode.value = value;
 		}
+        this.lastValue = value;
 	}
 	
 	this.getValue = function(value) {
 		// Get the editor instance that we want to interact with.
 		var oEditor = FCKeditorAPI.GetInstance(this.id) ;
-        dbforms2_log.log(oEditor.IsDirty());		
-		return oEditor.GetXHTML( true );
-		// Set the editor contents (replace the actual one).
+		return oEditor.GetXHTML(true);
 	}
+    
+    this.resetChanged = function() {
+        if(this.editorInstance != null) {
+            this.lastValue = this.editorInstance.GetXHTML(true);
+        }
+    }
+    
+    this.hasChanged = function() {
+		if (typeof FCKeditorAPI  != "undefined") {
+            var oEditor = FCKeditorAPI.GetInstance(this.id);
+            var value = oEditor.GetXHTML(true);
+            if(value != this.lastValue) {
+                return true;
+            }
+        }
+        return false;
+    }
 		
 }
 dbforms2_field_text_wysiwyg.prototype = new dbforms2_field();

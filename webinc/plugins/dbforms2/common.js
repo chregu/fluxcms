@@ -65,3 +65,17 @@ function _calendarReturnFunction(y, m, d) {
         dbforms2_calendarCallback(y, m, d);
     }
 }
+
+/* 
+    This is a workaround because FCKeditor doesn't allow callbacks for the main OnComplete event.
+    FCK always calls the global function 'FCKeditor_OnComplete' so we register the callback first 
+    and then launch it from here.
+*/
+var dbforms2_fckEditors = new Array();
+function FCKeditor_OnComplete(einstance) {
+    if(dbforms2_fckEditors[einstance.Name]) {
+        var handler = dbforms2_fckEditors[einstance.Name];
+        handler['method'].apply(handler['context'], [einstance]);
+        
+    }
+}

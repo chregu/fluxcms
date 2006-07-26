@@ -348,7 +348,10 @@ function dbforms2_form() {
      *
      */
     this.saveFormData = function() {
-        dbforms2_log.log(this.name + '.hasChanged = ' + this.hasChanged());
+        dbforms2_log.log(this.name + ' has no changes');
+        if(!this.hasChanged()) {
+            return false;
+        }
         var uri =  this.dataURI;
         
         this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_SAVE_PRE);
