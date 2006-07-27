@@ -117,7 +117,10 @@ function dbforms2_field(DOMNode) {
  *
  */
 function dbforms2_field_text(DOMNode) {
-    
+    this.init = function(DOMNode) {
+        this.initField(DOMNode);
+        this.DOMNode.setAttribute('autocomplete', 'off');
+    }
 }
 dbforms2_field_text.prototype = new dbforms2_field();
 
