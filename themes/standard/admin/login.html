@@ -8,14 +8,63 @@
 
 <title>Flux CMS Admin - Login</title> 
 <?php 
+$tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
+$i = 0;
+$query = "select service from ".$tablePrefix."userauthservices group by service";
+$res = $GLOBALS['POOL']->db->query($query);
+if (MDB2::isError($res)) {
+} else {
+	while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+		$services[$i] = $row['service'];
+		$i++;
+	}
+}
     echo '<link rel="stylesheet" type="text/css" href="'.BX_WEBROOT.'themes/standard/admin/css/head.css" media="screen"/>';
     echo '<link rel="stylesheet" type="text/css" href="'.BX_WEBROOT.'themes/standard/admin/css/login.css" media="screen"/>';
-    
-    ?>
+
+if(isset($services) && isset($service)) {
+echo '<script typ="text/javascript">
+function service() {
+	var service = document.getElementById("authservice").value;
+	switch(service) {
+		case "openid":	document.forms.login.action="/admin/webinc/auth/openid/index.php";
+		break;
+		default:	"";
+		break;
+	}
+}
+			document.login.submit();
+</script>';
+} else {
+echo '
+<script typ="text/javascript">
+function service() {
+	document.login.submit();
+}
+</script>
+';
+}
+if(isset($services)) {
+echo '
+<script typ="text/javascript">		
+		function changed() {
+			var service = document.getElementById("authservice").value;
+			if(service != "Fluxcms") {
+				document.getElementById("pwd").style.visibility = "hidden";
+				document.forms.login.action = "/admin/webinc/auth/openid/index.php";
+			}
+			if(service == "Fluxcms") {
+				document.getElementById("pwd").style.visibility = "";
+			}
+		}
+</script>
+';
+}
+?>
 
 </head> 
 
-<body onload="document.login.username.focus()">
+<body onload="document.forms.login.username.focus();">
 <div id="top"><p class="logo">Flux CMS</p> <?php print '<a href="'.BX_WEBROOT.'" class="logolink">'. bx_helpers_config::getOption('sitename').'</a>';?>
 <br class="clr"/></div>
 <div id="container" >
@@ -54,23 +103,48 @@ EOT;
     $lost = $GLOBALS['POOL']->i18nadmin->translate('Lost your password?');
     $newone = $GLOBALS['POOL']->i18nadmin->translate('Get a new one.');
     $remember = $GLOBALS['POOL']->i18nadmin->translate('Remember me:');
+	$authservices = $GLOBALS['POOL']->i18nadmin->translate('Auth Services:');
 print <<<EOT
 
         Admin Login  </legend>
 	   <label>&#160;</label><p>$title</p>
 <label>$user</label> <input name="username" type="text" class="input"/>
+  
+EOT;
+  if (isset($services)) {
+  		print <<<EOT
+		<br /><br />
+		<label>$authservices</label> 
+		<select name="authservice" id="authservice" onChange="changed();">
+EOT;
+		
+		foreach($services as $service) {
+			  print <<<EOT
+			  <option type="text">$service</option>
+EOT;
+		}
+		print <<<EOT
+		<option type="text" selected="selected">Fluxcms</option>
+	    </select>
+		<br/>
+EOT;
+   }
+   print <<<EOT
   <br />
+  <div id="pwd">
   <label>$pwd</label> <input name="password" type="password" class="input"/>
+  </div>
   <br/>
 <label>$remember</label> <input name="remember" type="checkbox"/>
 
   <br />
-    <label>&#160;</label>  <input type="submit" value="Submit"  />
+    <label>&#160;</label>  <input type="button" value="Submit" onclick="service();return false;" />
   <br />
   
   <br /><br />
       <label>&#160;</label>		<p>$lost <a href="./webinc/lostpw">$newone</a></p>
 	
+	  
 	</fieldset>
       </form>
 EOT;
