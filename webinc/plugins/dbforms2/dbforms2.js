@@ -93,6 +93,7 @@ dbforms2.init = function(formConfig) {
     this.chooser.onChooseAction = cf_onLiveChoose.execute;
     var wev = new ContextFixer(this.deleteEntryByID, this);
     this.chooser.onDeleteAction = wev.execute;
+    this.chooser.showSelectedEntry = true;
 
     this.chooser.dataURI = formConfig['chooserDataURI'];
     this.chooser.init(document.getElementById('chooserQueryField'), document.getElementById('chooserResults'), document.getElementById('chooserImg'));
@@ -139,4 +140,3 @@ dbforms2.getFormByConfig = function(formConfig) {
     form.init(formConfig);
     return form;
 }
-
