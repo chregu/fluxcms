@@ -504,6 +504,9 @@ function dbforms2_field_relation_n21(DOMNode) {
         this.setParentIdField(0);
     }
     
+    this.focus = function() {
+    }
+    
 }
 dbforms2_field_relation_n21.prototype = new dbforms2_field();
 
@@ -718,6 +721,9 @@ function dbforms2_field_listview(DOMNode) {
         this.listview.loadEntries();
     }
     
+    this.focus = function() {
+    }
+    
 }
 dbforms2_field_listview.prototype = new dbforms2_field();
 
@@ -753,9 +759,6 @@ function dbforms2_field_listview_12n(DOMNode) {
         } else if(this.form.parentForm.currentID != 0) {
             this.listview.loadEntries({thatid:this.form.parentForm.currentID});
         }
-    }
-    
-    this.focus = function() {
     }
     
     
