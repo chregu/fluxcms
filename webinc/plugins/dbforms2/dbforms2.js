@@ -104,7 +104,7 @@ dbforms2.init = function(formConfig) {
     dbforms2_log.log('dbforms2 initialized');
     
     // firebug breaks xmlhttprequests
-    if(console) {
+    if(typeof console != 'undefined') {
         console.warn("NOTE: Firebug 0.4 breaks XMLHttpRequests, when 'Options -> Show XMLHttpRequests' is enabled!");
     }
 

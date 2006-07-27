@@ -11,7 +11,7 @@ dbforms2_log.log = function(msg) {
     if(_BX_HELPERS_IS_MOZ) {
         var msg = this.getDateStr()+" "+msg+"\n";
         dump(msg);
-        if(console) {
+        if(typeof console != 'undefined') {
             console.log(msg);
         }
     }
