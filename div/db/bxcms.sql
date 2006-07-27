@@ -260,7 +260,7 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('outp
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('image_allowed_sizes','',1,5);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('defaultLanguage','',0,6);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitedescription','',0,7);
-INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','7312',0,8);
+INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','7720',0,8);
 
 --
 -- Table structure for table `##bxcms_##properties`
@@ -462,3 +462,15 @@ INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`,
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+
+-- 
+-- Table structure for table `fluxcms_userauthservices`
+-- 
+
+CREATE TABLE `##bxcms_##_userauthservices` (
+  `id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL default '0',
+  `service` varchar(50) NOT NULL default '',
+  `account` varchar(200) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
