@@ -227,6 +227,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
     
     var lastValue = null;
     var editorInstance = null;
+    var valueSet = false;
 
     this.init = function(DOMNode) {
 		this.initField(DOMNode);
@@ -238,7 +239,6 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
         dbforms2_fckEditors[this.id]['method'] = this.eFCK_OnComplete;
         
         var oFCKeditor = new FCKeditor(this.id);
-        oFCKeditor.caller = this;
         oFCKeditor.BasePath	= fckBasePath;
         
         oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'webinc/plugins/dbforms2/fckconfig.js';
@@ -254,8 +254,12 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
         this.editorInstance = einstance;
     }
     
-    this.eFCK_OnAfterSetHTML = function() {
-        this.resetChanged();
+    this.eFCK_OnAfterSetHTML = function(einstance) {
+        console.log('OnAfterSetHTML');
+        if(this.valueSet) {
+            this.resetChanged();
+            this.valueSet = false;
+        }
     }
 	
 	this.setValue = function(value) {
@@ -269,6 +273,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
                     value = '';
                 }
 				oEditor.SetHTML(value);
+                this.valueSet = true;
 			} else {
 				this.DOMNode.value = value;
 			}
