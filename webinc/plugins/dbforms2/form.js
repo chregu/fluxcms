@@ -500,6 +500,8 @@ function dbforms2_form() {
         this.currentID = 0;
         this.resetValues();
 
+        dbforms2.chooser.queryField.clearCurrentEntry();
+        
         // notify all child forms' fields
         for (var fieldID in this.forms) {
             this.fields[fieldID].createNewEntry();
