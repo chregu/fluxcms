@@ -91,12 +91,19 @@ dbforms2.init = function(formConfig) {
     var cf_onLiveChoose = new ContextFixer(this.loadEntryByID, this);
     this.chooser = new dbforms2_liveselect();
     this.chooser.onChooseAction = cf_onLiveChoose.execute;
+    
+    /* FIXME: This makes use of the delete key, which is already used in the queryfield to
+       edit the currenty query ... 
+       
     var wev = new ContextFixer(this.deleteEntryByID, this);
     this.chooser.onDeleteAction = wev.execute;
+    */
+    
     this.chooser.showSelectedEntry = true;
+    this.chooser.enablePager = true;
 
     this.chooser.dataURI = formConfig['chooserDataURI'];
-    this.chooser.init(document.getElementById('chooserQueryField'), document.getElementById('chooserResults'), document.getElementById('chooserImg'));
+    this.chooser.init(document.getElementById('chooserQueryField'), document.getElementById('chooserResults'), document.getElementById('chooserImg'), document.getElementById('chooserPagerDisplay'));
 
     // we're ready to go now.
     this.mainform.toolbar.unlockButton('save');

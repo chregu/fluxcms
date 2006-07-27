@@ -5,6 +5,10 @@ function dbforms2_liveselect() {
     this.disabled = false;
     this.currentEntry = null;
     
+    this.currentPage = 0;
+    this.numPages = 5;
+    this.pagerDOMNode = null;
+    
     // set this to the data uri for this live select (should not be empty)
     this.dataURI = '';
 
@@ -15,8 +19,10 @@ function dbforms2_liveselect() {
     this.autoQueryTimeout = 200;
     this.readOnly = false;
     this.showSelectedEntry = false;
+    this.enablePager = false;
+    this.pagerDisplayTemplate = 'page CURPAGE of NUMPAGES';
     
-    this.init = function(queryfieldDOMNode, resultsDOMNode, dropDownImgNode) {
+    this.init = function(queryfieldDOMNode, resultsDOMNode, dropDownImgNode, pagerDOMNode) {
         this.queryField = new dbforms2_liveselect_queryfield(queryfieldDOMNode, this);
         this.queryField.init();
         
@@ -27,6 +33,11 @@ function dbforms2_liveselect() {
         if(typeof dropDownImgNode != 'undefined') {
             var wev_onMouseUp = new ContextFixer(this.queryField.e_onMouseUpImage, this.queryField);
             bx_helpers.addEventListener(dropDownImgNode, 'mouseup', wev_onMouseUp.execute);
+        }
+
+        if(typeof pagerDOMNode != 'undefined' && this.enablePager) {
+            this.pagerDOMNode = pagerDOMNode;
+            this.pagerDOMNode.style.display = 'block';
         }
         
         this.results = new dbforms2_liveselect_results(resultsDOMNode, this);
@@ -52,7 +63,12 @@ function dbforms2_liveselect() {
         if (window.location.search != "") {
   			get = '&' + window.location.search.substring(1,8192);   
   		} 
-        var uri =  this.dataURI + '?q=' + escape(query) + get;
+        var uri =  this.dataURI + '?q=' + escape(query);
+        if(this.enablePager) {
+            uri = uri + '&p=' + this.currentPage;
+        }
+        uri = uri + get;
+        
         this.data = Sarissa.getDomDocument();
     
         var wrappedCallback = new ContextFixer(this._sarissaOnLoadCallback, this);
@@ -85,12 +101,24 @@ function dbforms2_liveselect() {
             
             entry = entry.nextSibling;
         }
+        
         if(this.queryField.hasFocus && this.results.entries.length > 0) {
             this.results.focusEntryByID(0);
             this.results.show();
         } else {
             this.results.hide();
         }
+        
+        if(this.enablePager) {
+            var numPagesNS = this.data.getElementsByTagName('numpages');
+            var numPages = numPagesNS.item(0).childNodes[0].data;
+            if(numPages != this.numPages) {
+                this.resetPager(numPages);
+            } else {
+                this.updatePagerDisplay();
+            }
+        }
+        
     }
     
     this._sarissaOnLoadCallback = function() {
@@ -124,6 +152,33 @@ function dbforms2_liveselect() {
     
     this.focus = function() {
         this.queryField.DOMNode.focus();
+    }
+    
+    this.showNextPage = function() {
+        if(this.currentPage + 1 < this.numPages) {
+            this.currentPage++;
+            this.reloadCurrentQuery();
+        }
+    }
+    
+    this.showPreviousPage = function() {
+        if(this.currentPage - 1 >= 0) {
+            this.currentPage--;
+            this.reloadCurrentQuery();
+        }
+    }
+     
+    this.updatePagerDisplay = function() {
+        var display = this.pagerDisplayTemplate;
+        display = display.replace(/CURPAGE/, this.currentPage + 1);
+        display = display.replace(/NUMPAGES/, this.numPages);
+        this.pagerDOMNode.innerHTML = display;
+    }
+    
+    this.resetPager = function(numPages) {
+        this.currentPage = 0;
+        this.numPages = numPages;
+        this.updatePagerDisplay();
     }
     
 }
@@ -236,7 +291,18 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
             this.chooser.results.hide();
             
         } else if(event.keyCode == 33) {
-            event.stopPropagation();
+            // PAGE UP
+            
+            // don't do the default action on the textfield
+            event.preventDefault();
+            this.chooser.showPreviousPage();
+            
+        } else if(event.keyCode == 34) {
+            // PAGE DOWN
+
+            // don't do the default action on the textfield
+            event.preventDefault();
+            this.chooser.showNextPage();
             
         } else if (event.keyCode == 13 || event.keyCode == 14) {
             // ENTER & RETURN
