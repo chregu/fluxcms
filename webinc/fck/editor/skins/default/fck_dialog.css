@@ -110,6 +110,7 @@ body, .BackColor
 	margin-top: 1px;
 	border-bottom: #d5d59d 1px solid;
 	cursor: pointer;
+	cursor: hand;
 }
 
 .PopupTabSelected
@@ -126,4 +127,5 @@ body, .BackColor
 	border: #ff9933 1px solid;
 	background-color: #fffacd;
 	cursor: pointer;
+	cursor: hand;
 }

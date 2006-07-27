@@ -21,8 +21,6 @@
 <head>
 	<link href="browser.css" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="js/common.js"></script>
-	<script type="text/javascript" src="../../../../../js/bx/tooltip.js"></script>
-	<script type="text/javascript" src="../../../../../plugins/dbforms2/helpers.js"></script>
 	<script type="text/javascript">
 
 var oListManager = new Object() ;
@@ -30,18 +28,7 @@ var oListManager = new Object() ;
 oListManager.Clear = function()
 {
 	document.body.innerHTML = '' ;
-    
-    
-    // get the fluxcms webroot
-    var matches = window.document.URL.match(/(.*\/)webinc\//)
-    if(matches != null) {
-        this.BX_WEBROOT = matches[1];
-    } else {
-        this.BX_WEBROOT = '/';
-    }
-    
 }
-
 
 oListManager.GetFolderRowHtml = function( folderName, folderPath )
 {
@@ -62,11 +49,12 @@ oListManager.GetFolderRowHtml = function( folderName, folderPath )
 oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
 {
 	// Build the link to view the folder.
-	var sLink = '<a href="'+fileUrl+'" onclick="OpenFile(\'' + fileUrl.replace( /'/g, '\\\'') + '\');return false;">' ;
+	var sLink = '<a href="#" onclick="OpenFile(\'' + fileUrl.replace( /'/g, '\\\'') + '\');return false;">' ;
 
 	// Get the file icon.
 	var sIcon = oIcons.GetIcon( fileName ) ;
-    return '<tr>' +
+
+	return '<tr>' +
 			'<td width="16">' +
 				sLink + 
 				'<img alt="" src="images/icons/' + sIcon + '.gif" width="16" height="16" border="0"></a>' +
@@ -111,48 +99,39 @@ function GetFoldersAndFilesCallBack( fckXml )
 	if ( oConnector.CheckError( fckXml ) != 0 )
 		return ;
 
-//	var dTimer = new Date() ;
-
 	// Get the current folder path.
 	var oNode = fckXml.SelectSingleNode( 'Connector/CurrentFolder' ) ;
 	var sCurrentFolderPath	= oNode.attributes.getNamedItem('path').value ;
 	var sCurrentFolderUrl	= oNode.attributes.getNamedItem('url').value ;
-	
-	var sHTML = '<table id="tableFiles" cellspacing="1" cellpadding="0" width="100%" border="0">' ;
 
+//	var dTimer = new Date() ;
+
+	var oHtml = new StringBuilder( '<table id="tableFiles" cellspacing="1" cellpadding="0" width="100%" border="0">' ) ;
 
 	// Add the Folders.	
 	var oNodes = fckXml.SelectNodes( 'Connector/Folders/Folder' ) ;
 	for ( var i = 0 ; i < oNodes.length ; i++ )
 	{
 		var sFolderName = oNodes[i].attributes.getNamedItem('name').value ;
-		sHTML += oListManager.GetFolderRowHtml( sFolderName, sCurrentFolderPath + sFolderName + "/" ) ;
+		oHtml.Append( oListManager.GetFolderRowHtml( sFolderName, sCurrentFolderPath + sFolderName + "/" ) ) ;
 	}
 
 	// Add the Files.	
 	var oNodes = fckXml.SelectNodes( 'Connector/Files/File' ) ;
 	for ( var i = 0 ; i < oNodes.length ; i++ )
 	{
-		var sFileName = oNodes[i].attributes.getNamedItem('name').value ;
-		var sFileSize = oNodes[i].attributes.getNamedItem('size').value ;
-		sHTML += oListManager.GetFileRowHtml( sFileName, sCurrentFolderUrl + sFileName, sFileSize ) ;
+		var oNode = oNodes[i] ;
+		var sFileName = oNode.attributes.getNamedItem('name').value ;
+		var sFileSize = oNode.attributes.getNamedItem('size').value ;
+		oHtml.Append( oListManager.GetFileRowHtml( sFileName, sCurrentFolderUrl + sFileName, sFileSize ) ) ;
 	}
 
-	sHTML += '</table>' ;
+	oHtml.Append( '</table>' ) ;
+	
+	document.body.innerHTML = oHtml.ToString() ;
 
-	document.body.innerHTML = sHTML ;
-    bx_tooltip.init();
-    
-    var a = document.getElementsByTagName("a");
-    for (var i = 0; i < a.length; i++) {
-        var fileUrl =  a[i].getAttribute("href");
-        
-        if(dbforms2_helpers.isImage(fileUrl) && !a[i].onmouseover) {
-            bx_tooltip.prepare(a[i],oListManager.BX_WEBROOT + 'dynimages/200/' + fileUrl);
-        }
-    }
-    
 //	window.top.document.title = 'Finished processing in ' + ( ( ( new Date() ) - dTimer ) / 1000 ) + ' seconds' ;
+
 }
 
 window.onload = function()

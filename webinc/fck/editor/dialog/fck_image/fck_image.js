@@ -49,7 +49,6 @@ function OnDialogTabChange( tabCode )
 }
 
 // Get the selected image (if available).
-if (FCK.Selection) {
 var oImage = FCK.Selection.GetSelectedElement() ;
 
 if ( oImage && oImage.tagName != 'IMG' && !( oImage.tagName == 'INPUT' && oImage.type == 'image' ) )
@@ -57,15 +56,19 @@ if ( oImage && oImage.tagName != 'IMG' && !( oImage.tagName == 'INPUT' && oImage
 
 // Get the active link.
 var oLink = FCK.Selection.MoveToAncestorNode( 'A' ) ;
-} else {
-	oImage = null;
-}
+
 var oImageOriginal ;
 
 function UpdateOriginal( resetSize )
 {
 	if ( !eImgPreview )
 		return ;
+	
+	if ( GetE('txtUrl').value.length == 0 )
+	{
+		oImageOriginal = null ;
+		return ;
+	}
 		
 	oImageOriginal = document.createElement( 'IMG' ) ;	// new Image() ;
 
@@ -260,7 +263,6 @@ function UpdateImage( e, skipId )
 {
 	e.src = GetE('txtUrl').value ;
 	SetAttribute( e, "_fcksavedurl", GetE('txtUrl').value ) ;
-	SetAttribute( e, "src", GetE('txtUrl').value );
 	SetAttribute( e, "alt"   , GetE('txtAlt').value ) ;
 	SetAttribute( e, "width" , GetE('txtWidth').value ) ;
 	SetAttribute( e, "height", GetE('txtHeight').value ) ;

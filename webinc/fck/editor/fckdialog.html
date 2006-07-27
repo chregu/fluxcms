@@ -32,9 +32,7 @@ if ( !window.dialogArguments )
 document.write( '<link href="' + window.dialogArguments.Editor.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;
 
 // Sets the language direction.
-if ( window.dialogArguments.Editor.FCKLang) {
-    window.document.dir = window.dialogArguments.Editor.FCKLang.Dir ;
-}
+window.document.dir = window.dialogArguments.Editor.FCKLang.Dir ;
 
 var sTitle = window.dialogArguments.Title ;
 document.write( '<title>' + sTitle + '<\/title>' ) ;
@@ -48,9 +46,7 @@ function LoadInnerDialog()
 		window.onresize() ;
 
 	// First of all, translate the dialog box contents.
-    if (window.dialogArguments.Editor.FCKLanguageManager) {
-	    window.dialogArguments.Editor.FCKLanguageManager.TranslatePage( document ) ;
-    }
+	window.dialogArguments.Editor.FCKLanguageManager.TranslatePage( document ) ;
 
 	window.frames["frmMain"].document.location.href = window.dialogArguments.Page ;
 }
@@ -60,9 +56,7 @@ function InnerDialogLoaded()
 	var oInnerDoc = document.getElementById('frmMain').contentWindow.document ;
 
 	// Set the language direction.
-    if (window.dialogArguments.Editor.FCKLang) {
-	    oInnerDoc.dir = window.dialogArguments.Editor.FCKLang.Dir ;
-    }
+	oInnerDoc.dir = window.dialogArguments.Editor.FCKLang.Dir ;
 
 	// Sets the Skin CSS.
 	oInnerDoc.write( '<link href="' + window.dialogArguments.Editor.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;

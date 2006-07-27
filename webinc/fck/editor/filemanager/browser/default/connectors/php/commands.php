@@ -162,9 +162,8 @@ function FileUpload( $resourceType, $currentFolder )
 		$sFileName = $oFile['name'] ;
 		
 		// Replace dots in the name with underscores (only one dot can be there... security issue).
-		//if ( $Config['ForceSingleExtension'] )
-		//	$sFileName = preg_replace( '/\\.(?![^.]*$)/', '_', $sFileName ) ;
-        $sFileName = bx_helpers_string::makeUri($sFileName, TRUE);
+		if ( $Config['ForceSingleExtension'] )
+			$sFileName = preg_replace( '/\\.(?![^.]*$)/', '_', $sFileName ) ;
 
 		$sOriginalFileName = $sFileName ;
 

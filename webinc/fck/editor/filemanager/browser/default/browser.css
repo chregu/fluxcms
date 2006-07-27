@@ -82,10 +82,3 @@ body, td, input, select
 {
 	background-image: url(images/Folder.gif);
 }
-
-.imageTooltip {
-    color: #000;
-    background-color: #fff;
-    border: solid #ddd 1px;
-    padding: 5px;
-}

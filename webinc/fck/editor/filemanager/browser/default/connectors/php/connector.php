@@ -18,6 +18,8 @@
  * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
  */
 
+ob_start() ;
+
 include('config.php') ;
 include('util.php') ;
 include('io.php') ;
@@ -66,7 +68,7 @@ function DoResponse()
 	$sCurrentFolder	= $_GET['CurrentFolder'] ;
 
 	// Check if it is an allowed type.
-	if ( !in_array( $sResourceType, array('files','gallery') ) )
+	if ( !in_array( $sResourceType, array('File','Image','Flash','Media') ) )
 		return ;
 
 	// Check the current folder syntax (must begin and start with a slash).
