@@ -3,6 +3,7 @@ function dbforms2_liveselect() {
     this.onChooseAction = null;
     this.onDeleteAction = null;
     this.disabled = false;
+    this.currentEntry = null;
     
     // set this to the data uri for this live select (should not be empty)
     this.dataURI = '';
@@ -13,6 +14,7 @@ function dbforms2_liveselect() {
     this.showResultsIfEmpty = false;
     this.autoQueryTimeout = 200;
     this.readOnly = false;
+    this.showSelectedEntry = false;
     
     this.init = function(queryfieldDOMNode, resultsDOMNode, dropDownImgNode) {
         this.queryField = new dbforms2_liveselect_queryfield(queryfieldDOMNode, this);
@@ -100,6 +102,7 @@ function dbforms2_liveselect() {
     
     this.onChoose = function(entry) {
         this.results.hide();
+        this.currentEntry = entry;
         this.onChooseAction(entry);
     }
     
@@ -127,6 +130,7 @@ function dbforms2_liveselect() {
 
 function dbforms2_liveselect_queryfield(DOMNode, chooser) {
     this.currentQuery = '';
+    this.savedValue = null;
     this.onKeyUpTimeout = null;
     this.hideTimeout = null;
 
@@ -171,14 +175,25 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
     this.e_focus = function() {
         this.hasFocus = true;
 
-        if(this.chooser.autoExpandResultsOnFocus)
+        if(this.chooser.showSelectedEntry && this.savedValue != null) {
+            this.DOMNode.value = this.savedValue;
+        }
+        
+        if(this.chooser.autoExpandResultsOnFocus) {
             this.chooser.results.show();
+        }
     }
     
     this.e_blur = function() {
         this.hasFocus = false;
-        if(this.chooser.autoCollapseResultsOnBlur)
+        if(this.chooser.autoCollapseResultsOnBlur) {
             this.chooser.results.hide();
+        }
+        
+        if(this.chooser.showSelectedEntry && this.chooser.currentEntry != null) {
+            this.savedValue = this.DOMNode.value;
+            this.DOMNode.value = this.chooser.currentEntry.title;
+        }
     }
     
     this.e_keyPress = function(event) {
