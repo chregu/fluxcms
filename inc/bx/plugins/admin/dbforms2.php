@@ -207,8 +207,16 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
             
             if(isset($_GET['q'])) {
                 $form->chooser->query = $_GET['q'];
-                $query = bx_dbforms2_sql::getSelectQueryByLiveSelect($form->chooser);
-                return bx_helpers_db2xml::getXMLByQuery($query);
+                
+                if(isset($_GET['p'])) {
+                    $form->chooser->currentPage = $_GET['p'];
+                    $xml = bx_helpers_db2xml::getXMLByQuery($form->chooser->getSelectQuery());
+                    $form->chooser->appendPagerNode($xml);
+                } else {
+                    $xml = bx_helpers_db2xml::getXMLByQuery($form->chooser->getSelectQuery());
+                }
+                
+                return $xml;
             }
 
         } else if($mode == 'listview') {
@@ -248,8 +256,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 if($field->liveSelect instanceof bx_dbforms2_liveselect) {
                     $field->liveSelect->query = $_GET['q'];
                     $field->liveSelect->tablePrefix = $form->tablePrefix;
-                    $query = bx_dbforms2_sql::getSelectQueryByLiveSelect($field->liveSelect);
-                    return bx_helpers_db2xml::getXMLByQuery($query);
+                    return bx_helpers_db2xml::getXMLByQuery($field->liveSelect->getSelectQuery());
                 }
                 
             }

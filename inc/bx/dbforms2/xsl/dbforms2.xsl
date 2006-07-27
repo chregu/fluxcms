@@ -113,6 +113,7 @@
                                 <div class="liveselectResultsShadow">
                                     <div class="liveselectResults" id="chooserResults">
                                         <ul><li>Loading...</li></ul>
+                                        <div id="chooserPagerDisplay" class="liveselectPager">page 1 of 5</div>
                                     </div>
                                 </div>
                             </div>

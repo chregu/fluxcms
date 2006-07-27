@@ -88,6 +88,8 @@ class bx_dbforms2_liveselect {
      */
 	public $notNullFields = '';
     
+    public $currentPage = null;
+    
     /**
      *  DOCUMENT_ME
      *
@@ -108,12 +110,70 @@ class bx_dbforms2_liveselect {
      *  @return type descr
      */
     public function setLeftJoin($leftJoin) {
-
         if ($leftJoin) {
             $leftJoin = str_replace('{tablePrefix}', $this->tablePrefix,$leftJoin);
             $this->leftJoin = "left join " . $leftJoin;
         }
     }
+    
+    protected function getMainSelectQuery() {
+        $q = bx_helpers_string::utf2entities($this->getNormalizedQuery());
+        
+        $table = $this->tablePrefix.$this->tableName;
+        
+        $whereFields = explode(',', $this->whereFields);
+        $where = '(0 ';
+        foreach($whereFields as $field) {
+            $where.= "OR $field like '%$q%' ";
+        }
+        $where .=" ) ";
+
+        $notNullFields = explode(',', $this->notNullFields);
+        foreach($notNullFields as $field) {
+			if($field != ''){
+				$where.= "AND $field != 'NULL' ";
+			}
+        }
+        
+        if ($this->where) {
+            $where .=" AND ". $this->where;
+        }
+        
+        $orderby = !empty($this->orderBy) ? $this->orderBy : $this->idField;
+		$matcher = (!empty($this->getMatcher) AND isset($_GET[$this->getMatcher]) )? ' AND '.$this->getMatcher.' = "'.$_GET[$this->getMatcher].'" ' : '';
+        
+        return 'FROM '.$table.' '. $ls->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby;
+        
+    }
+    
+    public function getSelectQuery() {
+        $table = $this->tablePrefix.$this->tableName;
+        $limit = $this->limit;
+        if(isset($this->currentPage)) {
+            $limit = $this->currentPage * $this->limit.','.$this->limit;
+        }
+
+        $query = 'SELECT '.$table.'.'.$this->idField.' AS _id, '.$this->nameField.' AS _title '.$this->getMainSelectQuery().' LIMIT '.$limit;
+        return $query;
+    }
+    
+    protected function getNumPages() {
+        $query = 'SELECT count(*) '.$this->getMainSelectQuery();
+        $res = $GLOBALS['POOL']->db->query($query);
+        $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
+        if($row) {
+            return ceil($row[0] / $this->limit);
+        }
+        return FALSE;
+    }
+    
+    public function appendPagerNode($xml) {
+        $pagerNode = $xml->createElement('pager');
+        $numPages = $xml->createElement('numpages', $this->getNumPages());
+        $pagerNode->appendChild($numPages);
+        $xml->documentElement->appendChild($pagerNode);
+    }
+    
 }
 
 ?>

@@ -168,47 +168,8 @@ class bx_dbforms2_sql {
 
         $query = "INSERT INTO $table ($fields) VALUES ($values)";
         return $query;
-    
     }
-    
-    /**
-     *  Returns a query to get all entries for the given live select object.
-     *
-     *  @param  object $ls Liveselect to generate the query for.
-     *  @access public
-     *  @return string Query
-     */
-    public static function getSelectQueryByLiveSelect($ls) {
-        $db = $GLOBALS['POOL']->db;
-        $q = bx_helpers_string::utf2entities($ls->getNormalizedQuery());
         
-        $table = $ls->tablePrefix.$ls->tableName;
-        
-        $whereFields = explode(',', $ls->whereFields);
-        $where = '(0 ';
-        foreach($whereFields as $field) {
-            $where.= "OR $field like '%$q%' ";
-        }
-        $where .=" ) ";
-
-        $notNullFields = explode(',', $ls->notNullFields);
-        foreach($notNullFields as $field) {
-			if($field != ''){
-				$where.= "AND $field != 'NULL' ";
-			}
-        }
-        
-        if ($ls->where) {
-            $where .=" AND ". $ls->where;
-        }
-        
-        $orderby = !empty($ls->orderBy) ? $ls->orderBy : $ls->idField;
-		$matcher = ( !empty($ls->getMatcher) AND isset($_GET[$ls->getMatcher]) )? ' AND '.$ls->getMatcher.' = "'.$_GET[$ls->getMatcher].'" ' : '';
-        
-        $query = 'SELECT '.$table.'.'.$ls->idField.' AS _id, '.$ls->nameField.' AS _title FROM '.$table.' '. $ls->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby.' LIMIT '.$ls->limit;
-        return $query;
-    }
-    
 }
 
 ?>
