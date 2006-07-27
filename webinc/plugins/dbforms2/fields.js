@@ -255,7 +255,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
     }
     
     this.eFCK_OnAfterSetHTML = function(einstance) {
-        console.log('OnAfterSetHTML');
+        //console.log('OnAfterSetHTML');
         if(this.valueSet) {
             this.resetChanged();
             this.valueSet = false;
