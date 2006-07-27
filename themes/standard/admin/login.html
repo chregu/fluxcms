@@ -33,13 +33,13 @@ function service() {
 		break;
 	}
 }
-			document.login.submit();
+			document.forms.login.submit();
 </script>';
 } else {
 echo '
 <script typ="text/javascript">
 function service() {
-	document.login.submit();
+	document.forms.login.submit();
 }
 </script>
 ';
@@ -82,7 +82,7 @@ echo '
         } 
         else {
             if (isset($_GET['back']) && $_GET['back']) {
-                print '<form method="post" action="'.htmlspecialchars($_GET['back']).'">';
+                print '<form name="login" method="post" action="'.htmlspecialchars($_GET['back']).'">';
             } else {
 	      print '<form method="post" action="'.BX_WEBROOT.'admin/'. preg_replace("#^http.+/admin/(.*)$#","$1", str_replace("?logout","",htmlspecialchars(bx_helpers_uri::getRequestUri()))).'" name="login">';
             }
