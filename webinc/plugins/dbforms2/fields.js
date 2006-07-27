@@ -60,7 +60,6 @@ function dbforms2_field(DOMNode) {
     }
     
     this.focus = function() {
-        dbforms2_log.log(this.id);
         this.DOMNode.focus();
     }
     
@@ -110,6 +109,9 @@ function dbforms2_field(DOMNode) {
     
 }
 
+function dbforms2_field_hidden(DOMNode) {
+}
+dbforms2_field_hidden.prototype = new dbforms2_field();
 
 
 /**
@@ -489,6 +491,7 @@ function dbforms2_field_relation_n21(DOMNode) {
     
     this.setParentIdField = function(id) {
         this.form.parentForm.getFieldByID(this.form.thisidfield).setValue(id);
+        this.form.parentForm.getFieldByID(this.form.thisidfield).changed = true;
     }
     
     this.eventDelete = function() {
