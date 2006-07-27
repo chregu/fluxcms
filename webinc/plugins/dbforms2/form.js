@@ -358,8 +358,15 @@ function dbforms2_form() {
      *
      */
     this.saveFormData = function() {
-        dbforms2_log.log(this.name + ' has no changes');
+
+        // first save all child forms
+        for (var formID in this.forms) { 	 
+            this.forms[formID].saveFormData();
+        }
+        
+        dbforms2_log.log('saving ' + this.name);
         if(!this.hasChanged()) {
+            dbforms2_log.log(this.name + ' has no changes');
             return false;
         }
         var uri =  this.dataURI;
@@ -662,15 +669,6 @@ function dbforms2_form() {
             // reload the returned data
             this.loadFieldValuesByXML(response.responseData);
 
-            // save all child's form data as well
-            /*
-            for (var fieldID in this.forms) { 	 
-                if(this.fields[fieldID].changed) {
-                    this.fields[fieldID].saveFormData();
-                }
-            } 
-            */
-            
             // reload chooser results
             dbforms2.chooser.reloadCurrentQuery();
 
