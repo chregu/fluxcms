@@ -60,6 +60,7 @@ function dbforms2_field(DOMNode) {
     }
     
     this.focus = function() {
+        dbforms2_log.log(this.id);
         this.DOMNode.focus();
     }
     
@@ -116,7 +117,7 @@ function dbforms2_field(DOMNode) {
  *
  */
 function dbforms2_field_text(DOMNode) {
-    this.init(DOMNode);
+    
 }
 dbforms2_field_text.prototype = new dbforms2_field();
 
@@ -127,7 +128,6 @@ dbforms2_field_text.prototype = new dbforms2_field();
  *
  */
 function dbforms2_field_password(DOMNode) {
-    this.init(DOMNode);
 }
 dbforms2_field_password.prototype = new dbforms2_field();
 
@@ -138,7 +138,6 @@ dbforms2_field_password.prototype = new dbforms2_field();
  *
  */
 function dbforms2_field_password_md5(DOMNode) {
-    this.init(DOMNode);
 }
 dbforms2_field_password_md5.prototype = new dbforms2_field();
 
@@ -516,7 +515,6 @@ dbforms2_field_relation_n21.prototype = new dbforms2_field();
  *
  */
 function dbforms2_field_fixed_datetime(DOMNode) {
-    this.init(DOMNode);
 	
 	this.setValue = function(value) {
 		var sp = document.getElementById( this.DOMNode.id + "_fixed");
