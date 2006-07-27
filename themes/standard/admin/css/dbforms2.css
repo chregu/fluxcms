@@ -153,7 +153,6 @@ td.formInput {
     cursor: pointer;
     max-height: 500px;
     overflow: auto;
-
 }
 
 .liveselectResultsShadow {
@@ -190,8 +189,13 @@ td.formInput {
     padding: 0px 3px 0px 3px;
 }
 
-.liveselectResultsPager {
-    border-bottom: 1px solid;
+.liveselectPager {
+    color: #666;
+    font-size: 11px;
+    padding-top: 3px;
+    border-top: 1px solid #333;
+    margin-top: 2px;
+    display: none;
 }
 
 .listview {
