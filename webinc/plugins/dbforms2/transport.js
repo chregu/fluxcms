@@ -17,6 +17,26 @@ function dbforms2_transport() {
         this.data.load(dataURI);
     }
     
+    this.loadXMLSync = function(dataURI) {
+        this.data = new XMLHttpRequest();
+        this.data.open('GET', dataURI, false);
+        
+        response = new dbforms2_response();
+    
+        dbforms2_log.log('loading ' + dataURI + '...')
+        
+        try {
+            this.data.send('');
+            response.responseData = this.data.responseXML;
+            response.responseCode = 0;
+        } catch (e) { 
+            response.responseText = 'Unable to establish a connection to the server.';
+        }
+        
+        return response;
+        
+    }
+    
     this.saveXML = function(dataURI, xml) {
         this.data = new XMLHttpRequest();
 
@@ -30,12 +50,15 @@ function dbforms2_transport() {
     
     this.saveXMLSync = function(dataURI, xml) {
         this.data = new XMLHttpRequest();
-
         this.data.open('POST', dataURI, false);
-        this.data.send(xml);
-
         response = new dbforms2_response();
-        response.setXML(this.data.responseXML);
+        
+        try {
+            this.data.send(xml);
+            response.setXML(this.data.responseXML);
+        } catch (e) {
+            response.responseText = 'Unable to establish a connection to the server.';
+        }
         
         return response;
         
