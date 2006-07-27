@@ -68,7 +68,6 @@ function dbforms2_field(DOMNode) {
     }
     
     this.hasChanged = function() {
-        //dbforms2_log.log(this.id + '.changed = ' + this.changed);
         return this.changed;
     }
     
@@ -754,6 +753,9 @@ function dbforms2_field_listview_12n(DOMNode) {
         } else if(this.form.parentForm.currentID != 0) {
             this.listview.loadEntries({thatid:this.form.parentForm.currentID});
         }
+    }
+    
+    this.focus = function() {
     }
     
     
