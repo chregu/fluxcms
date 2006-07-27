@@ -315,6 +315,19 @@ if ($lastVersion < 7312) {
       updateLastVersion(7312);
 }
 
+if ($lastVersion < 7720) {
+    $res = doQueryTable("
+   CREATE TABLE `".$tablePrefix."userauthservices` (
+  `id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL default '0',
+  `service` varchar(50) NOT NULL default '',
+  `account` varchar(200) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+)",'userauthservices');
+
+      updateLastVersion(7720);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
