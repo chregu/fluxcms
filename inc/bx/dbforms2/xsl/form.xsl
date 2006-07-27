@@ -39,6 +39,7 @@
                                 <input type="button" id="tb_{@name}_saveasnew" value="save as new"/>
                                 <input type="button" id="tb_{@name}_delete" value="delete"/>
                                 <input type="button" id="tb_{@name}_reload" value="reload"/>
+                                
                             </span>
                         </div>
                     </xsl:if>
@@ -132,7 +133,7 @@
                 
                 <xsl:otherwise>
                     var field = new Array();
-                    field['type'] ='<xsl:value-of select="@fieldType"/>';
+                    field['type'] ='<xsl:value-of select="@type"/>';
                     field['default'] ='<xsl:value-of select="php:functionString('addslashes', default)"/>';
                     formConfig['fields']['<xsl:value-of select="@name"/>'] = field;
                 </xsl:otherwise>
