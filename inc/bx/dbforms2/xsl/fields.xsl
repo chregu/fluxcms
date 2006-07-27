@@ -23,7 +23,7 @@
             </td>
             <td class="formInput">
                 <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
-                    <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+                    <xsl:apply-templates select="@*[name() != 'descr']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
             </td>
@@ -34,7 +34,7 @@
 
     <xsl:template match="input[@type='hidden']" mode="hidden">
         <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
-             <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+             <xsl:apply-templates select="@*[name() != 'descr']" mode="xhtml"/>
              <xsl:apply-templates mode="xhtml"/>
         </input>
     </xsl:template>
@@ -48,7 +48,7 @@
             </td>
             <td class="formInput">
                 <textarea xsl:use-attribute-sets="standardInputElement" id="{@id}" name="field_{@name}">
-                    <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+                    <xsl:apply-templates select="@*[name() != 'descr']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </textarea>
             </td>
@@ -79,7 +79,7 @@
             </td>
             <td class="formInput">
                 <select xsl:use-attribute-sets="standardInputElement" id="{@id}">
-                    <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+                    <xsl:apply-templates select="@*[name() != 'descr']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </select>
             </td>
@@ -122,7 +122,7 @@
             </td>
             <td class="formInput">
                 <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
-                    <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+                    <xsl:apply-templates select="@*[name() != 'descr']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
                 <xsl:text> </xsl:text>
@@ -141,7 +141,7 @@
             </td>
             <td class="formInput">
                 <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
-                    <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+                    <xsl:apply-templates select="@*[name() != 'descr']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
                 <xsl:text> </xsl:text>
@@ -161,7 +161,7 @@
             </td>
             <td class="formInput">
                 <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
-                    <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+                    <xsl:apply-templates select="@*[name() != 'descr']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
                 <xsl:text> </xsl:text>
@@ -186,7 +186,7 @@
             </td>
             <td class="formInput" >
                 <input xsl:use-attribute-sets="standardInputElement" id="{@id}">
-                    <xsl:apply-templates select="@*[name() != 'descr' and name() != 'fieldType']" mode="xhtml"/>
+                    <xsl:apply-templates select="@*[name() != 'descr']" mode="xhtml"/>
                     <xsl:apply-templates mode="xhtml"/>
                 </input>
                 <xsl:text> </xsl:text>
