@@ -1,11 +1,15 @@
 function updateUriField(field, urifield) {
+    // BROKEN: this helper doesn't work in subforms, because dbforms2.mainform
+    // refers to the main form only. Should be fixed using a different way of 
+    // calling the helper.
+    
 	//only update uri field, if it's a new entry (uri should be a permalink after all)
 	
 	if (urifield.value.length == 0) {
 		urifield.wasEmpty = true;
 		urifield.edited = false;
 	}
-	if ((urifield.wasEmpty  &&  urifield.edited == false ) || (!(dbforms2.form.currentID > 0) && (typeof urifield.edited == "undefined" ))) {
+	if ((urifield.wasEmpty  &&  urifield.edited == false ) || (!(dbforms2.mainform.currentID > 0) && (typeof urifield.edited == "undefined" ))) {
 		var splitted = field.split(",");
 		var uri = "";
 		for (var i = 0; i < splitted.length; i++) {
