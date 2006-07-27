@@ -191,16 +191,26 @@ function dbforms2_form() {
      *
      */
     this.hasChanged = function() {
+
         if(this.changed == true) {
             return true;
-        } else {
-            for (fieldID in this.fields) {
-                if(this.fields[fieldID].hasChanged() == true) {
-                    return true;
-                }
+        } 
+
+        // check all fields for changes
+        for (fieldID in this.fields) {
+            if(this.fields[fieldID].hasChanged() == true) {
+                return true;
             }
-            return false;
         }
+        
+        // check all subforms for changes
+        for (formID in this.forms) {
+            if(this.forms[formID].hasChanged() == true) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -329,9 +339,9 @@ function dbforms2_form() {
             return false;
         }
     
-        var uri =  this.dataURI + '?id=' + id;
         this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_LOAD_PRE);
-        
+
+        var uri =  this.dataURI + '?id=' + id;
         this.disable();
         dbforms2.statusText('Loading Data ...');
         
@@ -426,6 +436,7 @@ function dbforms2_form() {
     this.saveFormDataAsNew = function() {
         // reset current id and then save => will create a new record
         this.currentID = 0;
+        this.changed = true;
         this.saveFormData();
     }
     
@@ -536,7 +547,7 @@ function dbforms2_form() {
     }
     
     /**
-     *  Saves the currently focued field. This method is called by form fields.
+     *  Saves the currently focused field. This method is called by form fields.
      *  Use saveFocus to save the currently focused field.
      *
      */
