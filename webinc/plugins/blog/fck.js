@@ -50,9 +50,12 @@ function updateTextAreas() {
 	document.getElementById("bx[plugins][admin_edit][content]").value = xml;
 	
 	var oEditor = FCKeditorAPI.GetInstance("bx[plugins][admin_edit][content_extended]") ;
-	var xml = oEditor.GetXHTML(true);
-	document.getElementById("bx[plugins][admin_edit][content_extended]").value = xml;
-	
+	if (oEditor) {
+		var xml = oEditor.GetXHTML(true);
+		document.getElementById("bx[plugins][admin_edit][content_extended]").value = xml;
+	} else {
+		document.getElementById("bx[plugins][admin_edit][content_extended]").value = "";
+	}
 	return formCheck();
 }
 
