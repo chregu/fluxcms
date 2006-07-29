@@ -470,13 +470,13 @@
     </xsl:template>
  
     <xsl:template name="html_head_microsummary">
-    <link href="{$blogroot}microsummary.txt" type="application/x.microsummary+xml" rel="microsummary"/>
+    <link rel="microsummary" type="application/x.microsummary+xml" href="{$blogroot}microsummary.txt" />
         <xsl:text>
 </xsl:text>
     </xsl:template>
     
     <xsl:template name="html_head_osd">
-     <link rel="search" href="{$blogroot}osd.xml" type="application/opensearchdescription+xml" title="{$dctitle}" />
+     <link rel="search" type="application/opensearchdescription+xml" href="{$blogroot}osd.xml" title="{$dctitle}" />
         <xsl:text>
 </xsl:text>
     </xsl:template>
