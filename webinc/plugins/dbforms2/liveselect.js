@@ -62,8 +62,9 @@ function dbforms2_liveselect() {
     	var get = '';
         if (window.location.search != "") {
   			get = '&' + window.location.search.substring(1,8192);   
-  		} 
+  		}
         var uri =  this.dataURI + '?q=' + escape(query);
+
         if(this.enablePager) {
             uri = uri + '&p=' + this.currentPage;
         }
@@ -74,7 +75,6 @@ function dbforms2_liveselect() {
         var wrappedCallback = new ContextFixer(this._sarissaOnLoadCallback, this);
         this.data.onreadystatechange = wrappedCallback.execute;
         
-        dbforms2_log.log('loading ' + uri + '...')
         this.dataLoaded = false;
         this.data.load(uri);
     }
