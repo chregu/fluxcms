@@ -235,6 +235,7 @@
                         <div class="liveselectResultsShadow">
                             <div class="liveselectResults" id="{@id}_lsresults">
                                 <ul></ul>
+                                <div id="{@id}_pd" class="liveselectPager"></div>
                             </div>
                         </div>
                     </div>
