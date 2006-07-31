@@ -142,7 +142,7 @@ class bx_dbforms2_liveselect {
         $orderby = !empty($this->orderBy) ? $this->orderBy : $this->idField;
 		$matcher = (!empty($this->getMatcher) AND isset($_GET[$this->getMatcher]) )? ' AND '.$this->getMatcher.' = "'.$_GET[$this->getMatcher].'" ' : '';
         
-        return 'FROM '.$table.' '. $ls->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby;
+        return 'FROM '.$table.' '. $this->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby;
         
     }
     
@@ -161,10 +161,11 @@ class bx_dbforms2_liveselect {
         $query = 'SELECT count(*) '.$this->getMainSelectQuery();
         $res = $GLOBALS['POOL']->db->query($query);
         $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
+        
         if($row) {
             return ceil($row[0] / $this->limit);
         }
-        return FALSE;
+        return 1;
     }
     
     public function appendPagerNode($xml) {
