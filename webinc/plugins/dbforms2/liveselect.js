@@ -30,12 +30,12 @@ function dbforms2_liveselect() {
             queryfieldDOMNode.readOnly = true;
         }
 
-        if(typeof dropDownImgNode != 'undefined') {
+        if(typeof dropDownImgNode != 'undefined' && dropDownImgNode != null) {
             var wev_onMouseUp = new ContextFixer(this.queryField.e_onMouseUpImage, this.queryField);
             bx_helpers.addEventListener(dropDownImgNode, 'mouseup', wev_onMouseUp.execute);
         }
 
-        if(typeof pagerDOMNode != 'undefined' && this.enablePager) {
+        if(typeof pagerDOMNode != 'undefined' && pagerDOMNode != null && this.enablePager) {
             this.pagerDOMNode = pagerDOMNode;
             this.pagerDOMNode.style.display = 'block';
         }
@@ -111,12 +111,21 @@ function dbforms2_liveselect() {
         
         if(this.enablePager) {
             var numPagesNS = this.data.getElementsByTagName('numpages');
-            var numPages = numPagesNS.item(0).childNodes[0].data;
-            if(numPages != this.numPages) {
-                this.resetPager(numPages);
-            } else {
-                this.updatePagerDisplay();
+            var numPages = 0;
+            if(numPagesNS.length > 0) {
+                numPages = numPagesNS.item(0).childNodes[0].data;
             }
+            
+            if(numPages > 1) {
+                if(numPages != this.numPages) {
+                    this.resetPager(numPages);
+                } else {
+                    this.updatePagerDisplay();
+                }
+            } else {
+                this.hidePagerDisplay();
+            }
+               
         }
         
     }
@@ -187,12 +196,17 @@ function dbforms2_liveselect() {
         display = display.replace(/CURPAGE/, this.currentPage + 1);
         display = display.replace(/NUMPAGES/, this.numPages);
         this.pagerDOMNode.innerHTML = display;
+        this.pagerDOMNode.style.display = 'block';
     }
     
     this.resetPager = function(numPages) {
         this.currentPage = 0;
         this.numPages = numPages;
         this.updatePagerDisplay();
+    }
+    
+    this.hidePagerDisplay = function() {
+        this.pagerDOMNode.style.display = 'none';
     }
     
 }
