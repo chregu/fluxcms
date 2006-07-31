@@ -256,7 +256,9 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 if($field->liveSelect instanceof bx_dbforms2_liveselect) {
                     $field->liveSelect->query = $_GET['q'];
                     $field->liveSelect->tablePrefix = $form->tablePrefix;
-                    return bx_helpers_db2xml::getXMLByQuery($field->liveSelect->getSelectQuery());
+                    $xml = bx_helpers_db2xml::getXMLByQuery($field->liveSelect->getSelectQuery());
+                    $field->liveSelect->appendPagerNode($xml);
+                    return $xml;
                 }
                 
             }
