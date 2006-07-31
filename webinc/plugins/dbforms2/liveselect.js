@@ -6,7 +6,7 @@ function dbforms2_liveselect() {
     this.currentEntry = null;
     
     this.currentPage = 0;
-    this.numPages = 5;
+    this.numPages = 0;
     this.pagerDOMNode = null;
     
     // set this to the data uri for this live select (should not be empty)
@@ -157,15 +157,29 @@ function dbforms2_liveselect() {
     this.showNextPage = function() {
         if(this.currentPage + 1 < this.numPages) {
             this.currentPage++;
-            this.reloadCurrentQuery();
+        } else {
+            this.currentPage = 0;
         }
+        this.reloadCurrentQuery();
     }
     
     this.showPreviousPage = function() {
         if(this.currentPage - 1 >= 0) {
             this.currentPage--;
-            this.reloadCurrentQuery();
+        } else {
+            this.currentPage = this.numPages - 1;   
         }
+        this.reloadCurrentQuery();
+    }
+    
+    this.showFirstPage = function() {
+        this.currentPage = 0;
+        this.reloadCurrentQuery();
+    }
+    
+    this.showLastPage = function() {
+        this.currentPage = this.numPages - 1;
+        this.reloadCurrentQuery();
     }
      
     this.updatePagerDisplay = function() {
@@ -270,51 +284,52 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
     }
     
     this.e_keyPress = function(event) {
-        if (event.keyCode == 40 ) {
-            // KEY DOWN
+        if (event.keyCode == 40 ) { // KEY DOWN
             if(this.chooser.results.hidden) {
                 this.chooser.results.show();
             } else {
                 this.chooser.results.focusNextEntry();
             }
             
-        } else if (event.keyCode == 38 ) {
-            // KEY UP
+        } else if (event.keyCode == 38 ) {  // KEY UP
             if(this.chooser.results.hidden) {
                 this.chooser.results.show();
             } else {
                 this.chooser.results.focusPreviousEntry();
             }
             
-        } else if (event.keyCode == 27) {
-            // ESC
+        } else if (event.keyCode == 27) {   // ESC
             this.chooser.results.hide();
             
-        } else if(event.keyCode == 33) {
-            // PAGE UP
-            
+        } else if(event.keyCode == 33 && this.chooser.enablePager) {    // PAGE UP
             // don't do the default action on the textfield
             event.preventDefault();
             this.chooser.showPreviousPage();
             
-        } else if(event.keyCode == 34) {
-            // PAGE DOWN
-
+        } else if(event.keyCode == 34 && this.chooser.enablePager) {    // PAGE DOWN
             // don't do the default action on the textfield
             event.preventDefault();
             this.chooser.showNextPage();
             
-        } else if (event.keyCode == 13 || event.keyCode == 14) {
-            // ENTER & RETURN
+        } else if(event.keyCode == 36 && this.chooser.enablePager) {    // HOME
+            event.preventDefault();
+            this.chooser.showFirstPage();
+            
+        } else if(event.keyCode == 35 && this.chooser.enablePager) {    // END
+            event.preventDefault();
+            this.chooser.showLastPage();
+
+        } else if (event.keyCode == 13 || event.keyCode == 14) {    // ENTER & RETURN
             if(this.chooser.results.hidden) {
                 this.chooser.results.show();
             } else {
                 this.chooser.onChoose(this.chooser.results.entries[this.chooser.results.entryFocus]);
                 this.chooser.results.hide();
             }
-        } else if(event.keyCode == 46) {
-            // DELETE
+
+        } else if(event.keyCode == 46) {    // DELETE
             this.chooser.onDelete(this.chooser.results.entries[this.chooser.results.entryFocus]);
+
         }
     }
     
