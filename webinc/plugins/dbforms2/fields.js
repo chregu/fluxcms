@@ -476,8 +476,10 @@ function dbforms2_field_relation_n21(DOMNode) {
         var wev = new bx_helpers_contextfixer(this.onLiveChoose, this);
         this.liveSelect.onChooseAction = wev.execute;
         this.liveSelect.dataURI = this.form.liveSelectRootURI + '/' + this.id;
-        this.liveSelect.autoExpandResultsOnFocus = false;
-        this.liveSelect.init(document.getElementById(this.DOMNode.id + '_lsqueryfield'), document.getElementById(this.DOMNode.id + '_lsresults'));
+        this.liveSelect.autoExpandResultsOnFocus = true;
+        this.liveSelect.enablePager = true;
+        this.liveSelect.showSelectedEntry = true;
+        this.liveSelect.init(document.getElementById(this.DOMNode.id + '_lsqueryfield'), document.getElementById(this.DOMNode.id + '_lsresults'), null, document.getElementById(this.DOMNode.id + '_pd'));
         
         this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_DELETE_POST, this, this.eventDelete);
         this.form.registerInternalEventHandler(DBFORMS2_EVENT_FORM_SAVE_POST, this, this.eventSave);
