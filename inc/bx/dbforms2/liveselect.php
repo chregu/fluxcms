@@ -117,7 +117,7 @@ class bx_dbforms2_liveselect {
     }
     
     protected function getMainSelectQuery() {
-        $q = bx_helpers_string::utf2entities($this->getNormalizedQuery());
+        $q = bx_helpers_string::utf2entities(utf8_encode($this->getNormalizedQuery()));
         
         $table = $this->tablePrefix.$this->tableName;
         
