@@ -716,7 +716,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 }
                 $xml .= '<span class="comment_date">'.$row['comment_date'].' '. self::$timezoneString . '</span>';
                 if($row['openid'] == 1) {
-                    $xml .= '<span class="openid">/files/images/check.png</span>';
+                    $xml .= '<img class="openid" src="'.BX_WEBROOT.'webinc/images/openid.gif"/>';
                 }
                 
                 $xml .= '<span class="comment_type">'.$row['comment_type'].'</span>';
