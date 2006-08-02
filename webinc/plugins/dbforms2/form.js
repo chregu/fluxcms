@@ -357,11 +357,25 @@ function dbforms2_form() {
      *  Saves the current form data.
      *
      */
-    this.saveFormData = function() {
+    this.saveFormData = function(fromLastChild) {
+        
+        dbforms2_log.log( this.name + '.saveFormData()');
 
-        // first save all child forms
-        for (var formID in this.forms) { 	 
-            this.forms[formID].saveFormData();
+        if(this.parentForm == null && (typeof fromLastChild  == 'undefined')) {
+
+            var hasSaved = false;
+            // first save all child forms
+            for (var formID in this.forms) { 	 
+                this.forms[formID].saveFormData();
+            }
+        
+            // return if this is the parent form, because the last child callback
+            // will call this method again. Don't do this, if none of the child forms
+            // have started a save.
+            if(hasSaved !== false) {
+                return;
+            }
+            
         }
         
         dbforms2_log.log('saving ' + this.name);
@@ -369,6 +383,11 @@ function dbforms2_form() {
             dbforms2_log.log(this.name + ' has no changes');
             return false;
         }
+        
+        if(this.parentForm != null) {
+            dbforms2_saveCount++;
+        }        
+        
         var uri =  this.dataURI;
         
         this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_SAVE_PRE);
@@ -433,6 +452,9 @@ function dbforms2_form() {
         
         this.startTransportTimeout();
 		this.transport.saveXML(uri, xml);
+        
+        // returning true means this form has started to save
+        return true;
     }
 
     /**
@@ -658,6 +680,7 @@ function dbforms2_form() {
      *
      */
     this._dataSavedCallback = function(response) {
+        //console.log(this.name + '._dataSavedCallback()');
         this.stopTransportTimeout();
         if(response.isError()) {
             alert("error saving data!\n---\nReason: "+response.getResponseText()+"\nCode: "+response.getResponseCode());
@@ -682,6 +705,20 @@ function dbforms2_form() {
             }
 
             this.toolbar.unlockAllButtons();
+            
+            //console.log(dbforms2_saveCount);
+            
+            if(this.parentForm != null) {
+                if(dbforms2_saveCount > 1) {
+                    dbforms2_saveCount--;
+                } else {
+                    this.parentForm.saveFormData(true);
+                }
+            } else {
+                dbforms2_saveCount = 0;
+            }
+            //console.log(dbforms2_saveCount);
+            
         }
         this.enable();
         this.restoreFocus();
