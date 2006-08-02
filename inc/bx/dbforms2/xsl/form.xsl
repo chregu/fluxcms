@@ -19,9 +19,21 @@
         
             <xsl:if test="@title != ''">
                 <xsl:choose>
-                    <xsl:when test="local-name(parent::node()) = 'fields'"><h3><a onclick="dbforms2_helpers.toggleSubForm(this, '_form_{@name}');">-</a><xsl:value-of select="@title"/></h3></xsl:when>
+                    <xsl:when test="local-name(parent::node()) = 'fields'"><h3><a id="_form_{@name}_toggleLink" onclick="dbforms2_helpers.toggleSubForm(this, '_form_{@name}');">-</a><xsl:value-of select="@title"/></h3></xsl:when>
                     <xsl:otherwise><h1><xsl:value-of select="@title"/></h1></xsl:otherwise>
                 </xsl:choose>
+            </xsl:if>
+            
+            <!-- display the relation controls in the form header so they don't collapse -->
+            <xsl:if test="fields/relation[@type='relation_n21']">
+                <xsl:call-template name="doLiveSelect">
+                    <xsl:with-param name="ls" select="fields/relation[@type='relation_n21'][1]"/>
+                </xsl:call-template>
+            </xsl:if>
+            <xsl:if test="fields/listview[@type='listview_12n']">
+                <xsl:call-template name="doListview">
+                    <xsl:with-param name="lv" select="fields/listview[@type='listview_12n'][1]"/>
+                </xsl:call-template>
             </xsl:if>
             
             <div id="_form_{@name}" style="display:block;">

@@ -202,6 +202,8 @@
         </tr>
     </xsl:template>
     
+    <!-- TODO: currently disbaled, to be fixed later
+    
     <xsl:template match="listview" mode="fields">
         <tr class="formRow">
             <td colspan="2">
@@ -225,27 +227,6 @@
             </td>
         </tr>
     </xsl:template>
+    -->
 
-    <xsl:template match="relation[@type='relation_n21']" mode="fields">
-        <tr class="formRow">
-            <td colspan="2">
-                <div class="liveselectcontainer" style="z-index: {1000-position()} !important;">
-                    <div class="liveselect">
-                        <input type="text" id="{@id}_lsqueryfield" size="40"/>
-                        <div class="liveselectResultsShadow">
-                            <div class="liveselectResults" id="{@id}_lsresults">
-                                <ul></ul>
-                                <div id="{@id}_pd" class="liveselectPager"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <input type="hidden" id="{@id}"/>
-                <div class="n2mvalues"/>
-
-            </td>
-        </tr>
-    </xsl:template>
-    
 </xsl:stylesheet>

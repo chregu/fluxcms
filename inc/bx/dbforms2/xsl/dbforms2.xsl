@@ -8,6 +8,7 @@
 
     <xsl:import href="form.xsl"/>
     <xsl:import href="fields.xsl"/>
+    <xsl:import href="common.xsl"/>
 
     <xsl:output encoding="utf-8" method="xml"
        doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
