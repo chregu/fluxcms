@@ -86,6 +86,14 @@ dbforms2_helpers.toggleSubForm = function(linkn, id) {
     }
 }
 
+dbforms2_helpers.showSubForm = function(linkn, id) {
+    var dnode = document.getElementById(id);
+    if(dnode.style.display == 'none') {
+        dnode.style.display = 'block';
+        linkn.innerHTML = '-';
+    }
+}
+
 function var_dump(obj) {
    if(typeof obj == "object") {
       alert("Type: "+typeof(obj)+((obj.constructor) ? "\nConstructor: "+obj.constructor : "")+"\nValue: " + obj);
