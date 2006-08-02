@@ -12,6 +12,8 @@
 dbforms2_globalObj = new Array();
 dbforms2_objID = 1;
 
+dbforms2_saveCount = 0;
+
 DBFORMS2_EVENT_FORM_LOAD_PRE        = 1;
 DBFORMS2_EVENT_FORM_LOAD_POST       = 2;
 DBFORMS2_EVENT_FORM_DELETE_PRE      = 3;
