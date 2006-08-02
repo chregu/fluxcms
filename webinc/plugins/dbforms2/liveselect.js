@@ -103,7 +103,7 @@ function dbforms2_liveselect() {
         }
         
         if(this.queryField.hasFocus && this.results.entries.length > 0) {
-            this.results.focusEntryByID(0);
+            this.results.focusEntryByIndex(0);
             this.results.show();
         } else {
             this.results.hide();
@@ -209,6 +209,14 @@ function dbforms2_liveselect() {
         this.pagerDOMNode.style.display = 'none';
     }
     
+    this.setCurrentEntryById = function(id) {
+        entry = this.results.getEntryByID(id);
+        this.currentEntry = entry;
+        this.queryField.savedValue = '';
+        this.queryField.showCurrentEntry();
+        console.log(entry);
+    }
+    
 }
 
 function dbforms2_liveselect_queryfield(DOMNode, chooser) {
@@ -287,7 +295,7 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
         }
     }
     
-    this.e_blur = function() {
+    this.e_blur = function(e) {
         this.hasFocus = false;
         if(this.chooser.autoCollapseResultsOnBlur) {
             this.chooser.results.hide();
@@ -356,7 +364,8 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
     }
     
     this.e_onMouseUpImage = function(event) {
-        this.DOMNode.focus();
+        //this.DOMNode.focus();
+        event.preventDefault();
     }
     
     this._onKeyUpTimeout = function() {
@@ -427,7 +436,15 @@ function dbforms2_liveselect_results(DOMNode, chooser) {
         this.entries = new Array();
     }
     
-    this.focusEntryByID = function(entry) {
+    this.getEntryByID = function(id) {
+        for(var i=0; i<= this.entries.length; i++) {
+            if(this.entries[i].id == id) {
+                return this.entries[i];
+            }
+        }
+    }
+    
+    this.focusEntryByIndex = function(entry) {
         if(this.entries[entry] != null) {
 	    if (this.entries[this.entryFocus]) {
                this.entries[this.entryFocus].unsetFocus();
@@ -440,7 +457,7 @@ function dbforms2_liveselect_results(DOMNode, chooser) {
     this.focusEntryByEntryObj = function(entry) {
         for(var i=0; i<= this.entries.length; i++) {
             if(entry == this.entries[i]) {
-                this.focusEntryByID(i);
+                this.focusEntryByIndex(i);
             }
         }
     }
