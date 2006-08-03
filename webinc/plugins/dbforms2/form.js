@@ -304,7 +304,6 @@ function dbforms2_form() {
         
 		this.toolbar.lockAllButtons();
         this.disable();
-		dbforms2.statusText('Getting a New Id ...');
 		
 		this.formData.formName = this.name;
         
@@ -320,8 +319,6 @@ function dbforms2_form() {
             newID = response.savedID;
         }
 
-		dbforms2.statusText('Got a New Id: '+newID+' ...');
-        
         this.enable();
         // save the new ID for later but don't overwrite currentID
         this.insertID = newID;
@@ -703,7 +700,7 @@ function dbforms2_form() {
             if(this.eventHandlers['onSaveJS']) {
 				eval(this.eventHandlers['onSaveJS']);
             }
-
+            
             this.toolbar.unlockAllButtons();
             
             //console.log(dbforms2_saveCount);
@@ -716,6 +713,7 @@ function dbforms2_form() {
                 }
             } else {
                 dbforms2_saveCount = 0;
+                this.reloadSubForms();
             }
             //console.log(dbforms2_saveCount);
             
