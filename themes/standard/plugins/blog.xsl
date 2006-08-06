@@ -590,5 +590,6 @@ var commentButtonName      = "bx[plugins][blog][_all]";
         </xsl:choose>
     </xsl:template>
     
+    <xsl:template name="html_head_custom"/>
 
 </xsl:stylesheet>
