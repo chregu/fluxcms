@@ -115,8 +115,8 @@ class bx_plugins_admin_themes extends bx_plugins_admin implements bxIplugin  {
     public function getPreviewPicture($themePic, $theme, $themeCss) {
         $themePicName = preg_replace("#.css#", ".jpg", $themeCss);
         $sc = popoon_helpers_simplecache::getInstance();
-        @mkdir (BX_PROJECT_DIR."themes/".$theme."/preview/",0755,true);
-        file_put_contents(BX_PROJECT_DIR."themes/".$theme."/preview/".$themePicName, $sc->simpleCacheHttpRead($themePic,3600));
+        @mkdir (BX_OPEN_BASEDIR."themes/".$theme."/preview/",0755,true);
+        file_put_contents(BX_OPEN_BASEDIR."themes/".$theme."/preview/".$themePicName, $sc->simpleCacheHttpRead($themePic,3600));
     }
     
 }
