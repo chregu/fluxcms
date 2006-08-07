@@ -101,7 +101,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
 
     public function getContentById($path, $id) {
-                      
         $perm = bx_permm::getInstance();
         if($id == "newpost" or $id == "_all/index") {
 	        if (!$perm->isAllowed($path,array('blog-back-post'))) {
@@ -181,8 +180,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         } else {
             $cat = "";
         }
-
+	$sidebar = true;
         if ($mode == "rss") {
+	    $sidebar = false;
             $id = "index";
         }
         
@@ -401,7 +401,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml = str_replace("§amp;","&amp;",$xml);
             $dom->loadXML($xml);
         }
-        $this->getSidebarData($dom->documentElement);
+	if ($sidebar) {
+        	$this->getSidebarData($dom->documentElement);	
+	}
         return $dom;
     }
     
@@ -1048,6 +1050,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     protected function getSidebarData($root) {
         $query = "SELECT sidebar, name, content, isxml FROM ".$this->tablePrefix."sidebar AS sidebar WHERE sidebar != '0' order by sidebar,position";
         $res = $GLOBALS['POOL']->db->query($query);
+	if ($GLOBALS['POOL']->db->isError($res)) {
+		return;
+	}
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             
             $s = $root->appendChild($root->ownerDocument->createElement("sidebar"));
