@@ -138,8 +138,10 @@ class bx_editors_newsmailer_newsmailer {
 			$hdrs['Return-Path'] = $this->getBounceAddress($person);
 
 			// Put it in the queue (the message will be cached in the database)
-			$mail_queue->put($hdrs['From'], $person['email'], $hdrs, $body );
-			
+		   $ret = $mail_queue->put($hdrs['From'], $person['email'], $hdrs, $body );
+           if (PEAR::isError($ret)) {
+                var_dump($ret->getMessage() . "\n".$ret->getUserInfo());   
+            }
 	    	$query = "UPDATE ".$prefix."newsletter_cache SET status='2' WHERE fk_user='".$person['id']."' AND fk_draft='".$draftId."'";
 	    	$GLOBALS['POOL']->dbwrite->exec($query);
 		}
