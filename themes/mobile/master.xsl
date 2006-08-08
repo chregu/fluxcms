@@ -8,8 +8,8 @@
 	exclude-result-prefixes="xhtml forms php"
 	>
     <xsl:output encoding="utf-8" method="xml" 
-   doctype-system="http://www.openwave.com/dtd/xhtml-mobile10.dtd"         
-    doctype-public="-//OPENWAVE//DTD XHTML Mobile 1.0//EN"/> 
+    doctype-system="http://www.wapforum.org/DTD/xhtml-mobile10.dtd"         
+    doctype-public="-//WAPFORUM//DTD XHTML Mobile 1.0//EN"/> 
     <xsl:param name="webroot"/>
     <xsl:param name="webrootLang"/>
     <xsl:param name="requestUri"/>
