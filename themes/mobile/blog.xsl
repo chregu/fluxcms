@@ -257,4 +257,19 @@ Not yet available
 
 </xsl:template>
 
+<xsl:template match="xhtml:textarea" mode="xhtml">
+<xsl:copy>
+<xsl:apply-templates select="@*" mode="xhtml"/>
+<xsl:apply-templates mode="xhtml"/>
+<xsl:if test="not(text())"><xsl:text>
+</xsl:text></xsl:if> 
+</xsl:copy>
+</xsl:template>
+
+<xsl:template match="xhtml:input[@value = 'Preview']" mode="xhtml">
+
+
+
+</xsl:template>
+
 </xsl:stylesheet>
