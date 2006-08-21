@@ -58,6 +58,13 @@ class bx_helpers_perm {
         return $h;
         
     }
+	
+	static function getAuthServices() {
+		$authservices = array();
+		$authservices['0'] = "OpenID";
+		$authservices['1'] = "Flicker";
+		return $authservices;
+	}
         
 }
 
