@@ -216,10 +216,31 @@ h1.pageTitle, h1.page, h2.openIdPage {
     color: white;
     font-size: 12px;
     padding: 5px;
-    padding-left: 15px;
+    padding-left: 11px;
     width: 95%;
     
 }
+/*
+#users {
+    background-color:#f3f3f3;
+    width: 930px;
+    padding: 5px;
+    padding-top:10px;
+    padding-left: 15px;
+    border: 5px solid #006486;
+}
+
+h2.userPage {
+    margin:0px;
+	padding-right:10px;
+    background-color: #006486 ! important;
+    color: white;
+    font-size: 12px;
+    padding: 5px;
+    width: 950px;
+    
+}
+*/
 
 .sortable {
     
@@ -246,3 +267,8 @@ h1.pageTitle, h1.page, h2.openIdPage {
     margin: 5px;
 }
 
+
+#userdiv p {
+	padding:0px;
+	margin:0px;
+}
