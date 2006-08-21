@@ -42,10 +42,14 @@ class bx_notifications_mail extends bx_notification {
             define('PHP_EOL',"\n");
         }
         $headers = "From: $from".PHP_EOL;
-        $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")".PHP_EOL; 
+        $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")".PHP_EOL;
+        if (!empty($_SERVER['HTTP_HOST'])) {
+            $headers .= "X-Flux-Host: ".$_SERVER['HTTP_HOST'].PHP_EOL;
+        }
+        
         if ($options['charset'] == "utf8") {
-		$options['charset']  = 'UTF-8';
-	} else if (empty($options['charset'])) {
+            $options['charset']  = 'UTF-8';
+        } else if (empty($options['charset'])) {
             $options['charset'] = 'UTF-8';
         }
         
@@ -66,22 +70,22 @@ class bx_notifications_mail extends bx_notification {
     }
     
     public function sendByUsername($username, $subject, $message, $fromAdress = null, $fromName = null) {
-     
-     $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-     
-     $query = "select user_email,user_fullname from ".$prefix."users where user_login =".$GLOBALS['POOL']->db->quote($username);
-     
-     $row = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
-     if (MDB2::isError($row)) {
-         throw new PopoonDBException($row);
-     }
-     if (!$row['user_fullname']) {
-         $row['user_fullname'] = $username;
-     }
-     $to = $row['user_fullname'] . ' <' .$row['user_email'].'>';
-     if ($to) {
-         $this->send($to,$subject,$message,$fromAdress, $fromName);
-     }
+        
+        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+        
+        $query = "select user_email,user_fullname from ".$prefix."users where user_login =".$GLOBALS['POOL']->db->quote($username);
+        
+        $row = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
+        if (MDB2::isError($row)) {
+            throw new PopoonDBException($row);
+        }
+        if (!$row['user_fullname']) {
+            $row['user_fullname'] = $username;
+        }
+        $to = $row['user_fullname'] . ' <' .$row['user_email'].'>';
+        if ($to) {
+            $this->send($to,$subject,$message,$fromAdress, $fromName);
+        }
     }
     
 }
