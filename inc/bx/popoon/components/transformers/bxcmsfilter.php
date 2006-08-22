@@ -1,6 +1,5 @@
 <?php
 
-@include_once("bitlib/functions/debug.php");
 
 class popoon_components_transformers_bxcmsfilter extends popoon_components_transformer {
     
