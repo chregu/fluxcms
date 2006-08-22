@@ -59,6 +59,7 @@
 
                 <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/bx/tooltip.js'"/></xsl:call-template>
                 <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/bx/helpers.js'"/></xsl:call-template>
+                <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/bx/string.js'"/></xsl:call-template>
                 
                 <xsl:call-template name="importDBF2Js"><xsl:with-param name="href" select="'common.js'"/></xsl:call-template>
                 <xsl:call-template name="importDBF2Js"><xsl:with-param name="href" select="'dbforms2.js'"/></xsl:call-template>
@@ -92,7 +93,7 @@
                     formConfig['fields'] = new Array();
                     <xsl:apply-templates select="/form" mode="jsconfig"/>
                     var dbforms2_formConfig = formConfig;
-
+                    
                 </script>
 
             </head>
