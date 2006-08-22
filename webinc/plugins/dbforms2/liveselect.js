@@ -211,10 +211,14 @@ function dbforms2_liveselect() {
     
     this.setCurrentEntryById = function(id) {
         entry = this.results.getEntryByID(id);
-        this.currentEntry = entry;
+        if(entry !== false) {
+            this.currentEntry = entry;
+        } else {
+            this.currentEntry = new dbforms2_liveselect_entry();
+            this.currentEntry.title = 'n/a';
+        }
         this.queryField.savedValue = '';
         this.queryField.showCurrentEntry();
-        console.log(entry);
     }
     
 }
@@ -266,7 +270,7 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
     this.showCurrentEntry = function() {
         if(this.chooser.showSelectedEntry) {
             if(this.chooser.currentEntry != null) {
-                this.DOMNode.value = this.chooser.currentEntry.title;
+                this.DOMNode.value = bx_string.stripHtmlTags(this.chooser.currentEntry.title);
             } else  {
                 this.DOMNode.value = '';
             }
@@ -437,10 +441,14 @@ function dbforms2_liveselect_results(DOMNode, chooser) {
     }
     
     this.getEntryByID = function(id) {
-        for(var i=0; i<= this.entries.length; i++) {
-            if(this.entries[i].id == id) {
-                return this.entries[i];
+        try {
+            for(var i=0; i<= this.entries.length; i++) {
+                if(this.entries[i].id == id) {
+                    return this.entries[i];
+                }
             }
+        } catch(e) {
+            return false;
         }
     }
     
@@ -474,7 +482,7 @@ function dbforms2_liveselect_results(DOMNode, chooser) {
     }
 
     this.focusPreviousEntry = function() {
-        if(this.entries[this.entryFocus] != null) 
+        if(this.entries[this.entryFocus] != null)
             this.entries[this.entryFocus].unsetFocus();
 
         if(--this.entryFocus < 0)
