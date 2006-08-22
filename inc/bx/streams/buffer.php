@@ -8,6 +8,9 @@ abstract class bx_streams_buffer {
     protected $parameters = array();
     protected $originalPath = null;
     
+    function __construct() {
+    }
+    
     function stream_open ($path, $mode, $options, &$opened_path) {
         $this->originalPath = $path;
         $this->mode = substr($mode,0,1);
