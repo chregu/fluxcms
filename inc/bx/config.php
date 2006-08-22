@@ -25,7 +25,7 @@ class bx_config extends popoon_classes_config {
     }
     
       
-    private function __construct() {
+    protected function __construct() {
         parent::__construct();
     }
     
