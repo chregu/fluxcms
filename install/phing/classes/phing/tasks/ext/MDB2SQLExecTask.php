@@ -425,7 +425,7 @@ class MDB2SQLExecTask extends MDB2Task {
                 return false;
             }
             if ($res) {
-                $this->log($res . " rows affected", PROJECT_MSG_VERBOSE);
+                $this->log($res->numRows() . " rows affected", PROJECT_MSG_VERBOSE);
             } else {
                 if ($this->print) {
                     $this->printResults($out);
