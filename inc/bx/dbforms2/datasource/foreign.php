@@ -74,8 +74,8 @@ class bx_dbforms2_datasource_foreign {
      *  @return type descr
      */
     public function getValues($args, $childNode) {
-        
-        $sql = 'select '. $args['idfield'] . ','.$args['namefield'] . ' from ' .$GLOBALS['POOL']->config->getTablePrefix() . $args['table'];
+        $prefx = (isset($args['tablePrefix']) && !empty($args['tablePrefix'])) ? $args['tablePrefix'] : $GLOBALS['POOL']->config->getTablePrefix();        
+        $sql = 'select '. $args['idfield'] . ','.$args['namefield'] . ' from ' . $prefx . $args['table'];
         
         if (isset($args['where'])) {
            $sql .= ' where ' . $args['where'];  
