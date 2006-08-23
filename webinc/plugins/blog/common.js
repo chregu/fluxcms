@@ -283,3 +283,43 @@ function closeExtendedPost() {
     var tr = document.getElementById("postExtended");
     tr.style.display = "none";
 }
+
+//extended useroptions
+
+function toggleUserAdvanced() {
+    var div = document.getElementById("user");
+	if (div.style.display == "none") {
+        showUserAdvanced();   
+    } else {
+        closeUserAdvanced();
+    }
+}
+
+function showUserAdvanced() {
+    var img = document.getElementById("advanced_triangle");
+	img.src = img.src.replace(/\/[^\/]*_klein.gif/,"/open_klein.gif");
+	var div = document.getElementById("user");
+	div.style.display = "";
+
+    
+    var ExpireDate = new Date ();
+    var cook = "userAdvancedView=divue";
+    ExpireDate.setTime(ExpireDate.getTime() + (30 * 24 * 3600 * 1000));
+    document.cookie = cook + "; expires=" + ExpireDate.toGMTString();
+}
+
+function closeUserAdvanced() {
+    var img = document.getElementById("advanced_triangle");
+    img.src = img.src.replace(/\/[^\/]*_klein.gif/,"/closed_klein.gif");
+    for(var x = 1;x<=6;x++){
+        var div = document.getElementById("user");
+       
+        div.style.display = "none";
+    }
+
+    var ExpireDate = new Date ();
+    var cook = "userAdvancedView=none";
+    ExpireDate.setTime(ExpireDate.getTime() + (30 * 24 * 3600 * 1000));
+    document.cookie = cook + "; expires=" + ExpireDate.toGMTString();
+}
+
