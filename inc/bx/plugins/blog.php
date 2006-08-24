@@ -602,7 +602,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             
 
             $xml .= '<span class="post_comments_count"><a href="'.$posturipath.'#comments">'.$row['comment_count'].'</a></span> ';
-            $xml .= '<span class="post_uri"><a href="'.$posturipath.'">Permalink</a></span>';
+            $xml .= '<span class="post_uri"><a href="'.$posturipath.'" rel="bookmark">Permalink</a></span>';
 
 
             $xml .= '</div>';
