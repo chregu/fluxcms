@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalogue>
+    <message key="help_uploadfile">Importer un fichier dans le système. Si vous voulez extraire un ficher ZIP ou TAR, choisissez 'Ajouter images d'archives ZIP' au menu principal</message>
+    <message key="help_uploadzip">Importez des fichiers d'archives ZIP ou TAR. Ils sont extraits, décompressés et effacés automatiquement</message>
+    <message key="help_removefilepath">Si vous souhaitez extraire et décompresser tous les fichiers d'archives ZIP dans un seul fichier 
+    (au lieu d'établir un répértoire structuré complet)</message>
+    <message key="Remove File Paths">Extraire ZIP dans un fichier</message>
+    <message key="help_unlikedfiles">BxCMS ignore certains noms de fichiers. Cette option répare ces noms automatiquement</message>
+    <message key="Fix invalid filenames">Réparer noms fichiers</message>
+    
+    
+    
+    
+</catalogue>

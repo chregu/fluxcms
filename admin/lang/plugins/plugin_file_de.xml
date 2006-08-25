@@ -6,7 +6,7 @@
     <message key="help_uploadzip">Laden Sie ein ZIP oder TAR Archiv hoch. Es wird
     automatisch entpackt und gelöscht</message>
     <message key="help_removefilepath">Wenn sie alle Dateien in diesem ZIP Archiv
-    in den gleichen Ordner entpacken wol len(anstatt, die vollständige Verzeichnitruktur zu erstellen)</message>
+    in den gleichen Ordner entpacken wollen (anstatt, die vollständige Verzeichnitruktur zu erstellen)</message>
     <message key="Remove File Paths">Datei Pfade entfernen</message>
     <message key="help_unlikedfiles">Flux CMS mag gewisse Filenamen nicht, diese 
     Option behebt sie automatisch</message>

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<catalogue>
+    <message key="sitename">Nom page</message>
+    <message key="sitedescription">Description page</message>
+    <message key="theme">Thème</message>
+    <message key="blogname">Nom blog</message>
+    <message key="blogdescription">Description blog</message>
+    <message key="blogDefaultPostCommentMode">Configuration globale pour les commentaires du blog</message>
+    <message key="blogSendRejectedCommentNotification">Notification pour commentaires refusés dans le blog</message>
+    <message key="copyright">Droit d'auteur</message>
+    <message key="cclink">Licence Creative Commons</message>
+    <message key="timezoneSeconds">Fuseau horaire</message>
+    <message key="timezoneString">Fuseau horaire en suite</message>
+    <message key="ICBM">ICMB</message>
+    <message key="outputLanguages">Langue de présentation</message>
+    <message key="defaultLanguage">Langue standard</message>
+    <message key="image_allowed_sizes">Grandeur d'image tolérée</message>
+    <!--message key="Resource /dgdfg.en.xhtml"></message-->
+    <!-- siteoptions helps-->
+    <message key="blogname_rssfeed">Nom du blog pour le RSS-Feed. Si ce champ est vide, 'Nom page' sera attribué</message>
+    <message key="desc_rssfeed">Description pour le RSS-Feed. Si ce champ est vide, 'Description page' sera attribué</message>
+    <message key="Name of the site">Nom de la page</message>
+    <message key="Subtitle for the site">Sous-titre de la page</message>
+    <message key="motiv_help"><![CDATA[D'autres thèmes sont disponibles chez <a href="http://intensivstation.ch/en/templates/bxcms/" 
+    target="_blank">intensivstation.ch</a>]]></message>
+    <message key="default_blogcommentmode">Configuration globale pour le mode commentaire du blog. Peut être adapté pour chaque 'post' ultérieurement.</message>
+	<message key="Blog Default Editor">Nous vous recommendons l'éditeur WYSIWYG (what you see is what you get), qui offre plus d'options que l'éditeur de source. Si votre navigateur web ne supporte pas ce mode, l'éditeur de source est activé automatiquement.</message>
+    
+    <message key="help_blogSendRejectedCommentNotification">Définit, si des messages refusés sont publiés dans le blog. La protection anti-spam de Flux CMS filtre les commentaires spam. Si Flux CMS identifie un commentaire 'spam', il s'agit très probablement de spam et vous n'en voudriez sans doute pas être en informé. Si Flux CMS est incertain, le post obtient l'état 'moderated' et vous recevez un message et pouvez débloquer le commentaire</message>
+    
+    <message key="help_copyright">Qui a le droit d'auteur du contenu de votre site web?</message>
+    
+    <message key="help_cclink"><![CDATA[Si vous souhaitez une Licence <a href='http://creativecommons.org/'>Creative Commons</a> pour le contenu de votre blog, veuillez inscriver le lien de la licence ci-dessous. P.ex. http://creativecommons.org/licenses/by/2.5/]]></message>
+    
+    <message key="help_timezoneseconds">Votre fuseau horaire en secondes (p.ex. 3600). 'servertime' reprend le fuseau horaire du serveur</message>
+    <message key="help_timezonestring">Votre fuseau horaire en suite (p.ex. CET). 'servertime' reprend le fuseau horaire du serveur</message>
+    
+    <message key="help_icbm"><![CDATA[Votre position géographique. En principe, le format 'degré de latitude, degré de longitude' 
+    (p.e.: 47.3798, 8.5275 pour le bureau Bitflux). Si vous ne connaissez pas vos coordonnées, cherchez votre position sur <a target='_new' href='http://multimap.com'>Multimap.com</a>
+    Copiez les données du box 'Map Information' dans le champs (texte) ci-dessous.]]></message>
+    <message key="help_outputlanguages">Langues de présentation disponibles (Deux lettres par langue, plusieurs séparés par semicolon) p.e.: 'fr;en'</message>
+    <message key="help_defaultlanguage">Langue standard (Deux lettres de la liste ci-dessus)</message>
+    <message key="help_image_allowed_sizes">Grandeurs d'image tolérée pour générer des images de manière dynamique</message>
+
+</catalogue>
