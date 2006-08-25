@@ -88,6 +88,7 @@
             <adminLanguages>
                  <item>en</item>
                  <item>de</item>
+                 <item>fr</item>
             </adminLanguages>
             
             <xslt_allowed_phpfunctions>__all__</xslt_allowed_phpfunctions>
