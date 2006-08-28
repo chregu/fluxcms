@@ -65,6 +65,23 @@ class bx_helpers_perm {
 		$authservices['1'] = "Flicker";
 		return $authservices;
 	}
+	
+	static function getPermGroups() {
+		$db = $GLOBALS['POOL']->db;
+		$px = $GLOBALS['POOL']->config->getTablePrefix();
+		
+		$query = "select * from ".$px."groups";
+		
+		$res = $GLOBALS['POOL']->db->query($query);
+		
+		$group = array();
+		$x = 0;
+		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+			$group[$x] = $row['id'] . "-" . $row['name'];
+			$x++;
+		}
+		return $group;
+	}
         
 }
 
