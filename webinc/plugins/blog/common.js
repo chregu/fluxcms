@@ -287,7 +287,7 @@ function closeExtendedPost() {
 //extended useroptions
 
 function toggleUserAdvanced() {
-    var div = document.getElementById("user");
+	var div = document.getElementById("user");
 	if (div.style.display == "none") {
         showUserAdvanced();   
     } else {
@@ -303,7 +303,7 @@ function showUserAdvanced() {
 
     
     var ExpireDate = new Date ();
-    var cook = "userAdvancedView=divue";
+    var cook = "userAdvancedView=true";
     ExpireDate.setTime(ExpireDate.getTime() + (30 * 24 * 3600 * 1000));
     document.cookie = cook + "; expires=" + ExpireDate.toGMTString();
 }
@@ -322,4 +322,3 @@ function closeUserAdvanced() {
     ExpireDate.setTime(ExpireDate.getTime() + (30 * 24 * 3600 * 1000));
     document.cookie = cook + "; expires=" + ExpireDate.toGMTString();
 }
-
