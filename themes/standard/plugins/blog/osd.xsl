@@ -32,7 +32,9 @@ xmlns:php="http://php.net/xsl"
     <Url type="application/rss+xml" method="GET" template="{$blogroot}rss.xml?q={{searchTerms}}">
         
     </Url>
-    
+
+    <Url type="application/x-suggestions+json" method="GET" template="{$webroot}inc/bx/php/livesearch.php?mode=json&amp;q={{searchTerms}}"/>
+
     <SearchForm><xsl:value-of select="$blogroot"/></SearchForm> 
 </OpenSearchDescription>
 
