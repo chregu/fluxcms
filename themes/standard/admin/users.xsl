@@ -2,34 +2,43 @@
 <xsl:stylesheet version="1.0" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:xhtml="http://www.w3.org/1999/xhtml" 
+	xmlns:php="http://php.net/xsl"
     xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
     xmlns="http://www.w3.org/1999/xhtml"
     > 
     <xsl:param name="webroot" value="'/'"/>
     <xsl:variable name="pluginName" select="/bx/plugin/@name"/>
-     
+     <xsl:variable name="showAdvancedView" select="php:functionString('bx_helpers_globals::COOKIE','userAdvancedView')"/> 
+    
      <xsl:template match="/">
 		<html>
 		<head>
-			<link type="text/css" href="http://fluxcms/themes/standard/admin/css/formedit.css" rel="stylesheet"/>
+			<link type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css" rel="stylesheet"/>
 			<xsl:text>
 			</xsl:text>
-			<link type="text/css" href="http://fluxcms/themes/standard/admin/css/blog.css" rel="stylesheet"/>
+			<link type="text/css" href="{$webroot}themes/standard/admin/css/blog.css" rel="stylesheet"/>
 			<xsl:text>
 			</xsl:text>
 			
-			<script type="text/javascript" src="http://fluxcms/webinc/plugins/blog/common.js"></script>
+			<script type="text/javascript" src="{$webroot}webinc/plugins/blog/common.js"></script>
 			<xsl:text>
 			</xsl:text>
 			
 		</head>
 		<body>
-			<xsl:apply-templates mode="xhtml"/>
+			<xsl:apply-templates mode="xhtml" />
 		</body>
 		</html>
      </xsl:template>
      
-	 <xsl:template match="/bx/plugin[@name='admin_users']/useradministration/users" mode="xhtml">
+	 
+	 <xsl:template match="useradministration/authservices" mode="xhtml">
+	 </xsl:template>
+	 
+	 <xsl:template match="useradministration/groups" mode="xhtml">
+	 </xsl:template>
+	 
+	 <xsl:template match="plugin[@name='admin_users']/useradministration/users" mode="xhtml">
 	 	<h2 class="userPage">
 			Users
 		</h2>
@@ -108,27 +117,45 @@
 			<input type="text" value="{mail}" name="bx[plugins][admin_users][mail]"/>
 		</li>
 		<li>
-			 Guip<br/>
-		
-			<input type="text" value="{user_gupi}" name="bx[plugins][admin_users][gupi]"/>
-		</li>
-		<li>
-			 Gid<br/>
-		
-			<input type="text" value="{user_gid}" name="bx[plugins][admin_users][gid]"/>
-		</li>
-		<li>
 			 Sprache<br/>
 		
 			<input type="text" value="{user_adminlang}" name="bx[plugins][admin_users][lang]"/>
 		</li>
+		<xsl:choose>
+		<xsl:when test="/bx/plugin[@name='admin_users']/useradministration/groups/group">
+			<h3 class="userPage">
+				User Groups
+			</h3>
+			<li>
+				 <xsl:for-each select="/bx/plugin[@name='admin_users']/useradministration/groups/group">
+					<input style="width:15px;" type="checkbox" name="bx[plugins][admin_users][{group-name}]" />
+					<xsl:value-of select="group-name"/><br/>
+					<br/>
+				</xsl:for-each>
+			</li>
+		</xsl:when>
+		<xsl:otherwise>
+			<li>
+				 Guip<br/>
+				 <input type="text" value="{user_gupi}" name="bx[plugins][admin_users][gupi]"/>
+			</li>
+		</xsl:otherwise>
+		</xsl:choose>
 		<li>
 		<br/>
-		<img src="http://fluxcms/admin/webinc/img/closed_klein.gif" id="advanced_triangle" onclick="toggleUserAdvanced();"/>
+		<img src="http://fluxcms/admin/webinc/img/closed_klein.gif" id="advanced_triangle" onclick="toggleUserAdvanced();">
+			<xsl:attribute name="src">
+				   <xsl:choose>
+					   <xsl:when test="$showAdvancedView = 'true'"><xsl:value-of select="$webroot"/>admin/webinc/img/open_klein.gif</xsl:when>
+						<xsl:otherwise><xsl:value-of select="$webroot"/>admin/webinc/img/closed_klein.gif</xsl:otherwise>
+					 </xsl:choose>
+			 </xsl:attribute>
+		</img>
 		More options (click to expand)
 		<br/><br/>
 		</li>
 		<div id="user" style="display:none;">
+		<xsl:call-template name="displayOrNot"/>
 		<h3 class="userPage">
 			Plazes
 		</h3>
@@ -207,24 +234,57 @@
 			<input type="text" value="{mail}" name="bx[plugins][admin_users][mail]"/>
 		</li>
 		<li>
-			Guip<br/>
-			<input type="text" value="{user_gupi}" name="bx[plugins][admin_users][gupi]"/>
-		</li>
-		<li>
-			Gid<br/>
-			<input type="text" value="{user_gid}" name="bx[plugins][admin_users][gid]"/>
-		</li>
-		<li>
 			Sprache<br/>
 			<input type="text" value="{user_adminlang}" name="bx[plugins][admin_users][lang]"/>
 		</li>
 		
+		<xsl:choose>
+		<xsl:when test="/bx/plugin[@name='admin_users']/useradministration/groups/group">
+			<h3 class="userPage">
+				User Groups
+			</h3>
+			<li>
+				<xsl:variable name="usergroups" select="/bx/plugin[@name='admin_users']/useradministration/user/groups"/>
+				<xsl:for-each select="/bx/plugin[@name='admin_users']/useradministration/groups/group">
+					<xsl:variable name="id" select="group-id"/>
+					<xsl:variable name="name" select="group-name"/>
+					
+							<input style="width:15px;" type="checkbox" name="bx[plugins][admin_users][{$name}]">
+							<xsl:if test="$usergroups/group/id/text() = $id">
+							<xsl:attribute name="checked">checked</xsl:attribute>
+							</xsl:if>
+							
+							</input>
+							
+							<xsl:value-of select="$name"/><br/>
+							<br/>
+					
+				</xsl:for-each>
+				
+			</li>
+		</xsl:when>
+		<xsl:otherwise>
+			<li>
+				Guip<br/>
+				<input type="text" value="{user_gupi}" name="bx[plugins][admin_users][gupi]"/>
+			</li>
+		</xsl:otherwise>
+		</xsl:choose>
+		
 		<li>
-		<img src="http://fluxcms/admin/webinc/img/closed_klein.gif" id="advanced_triangle" onclick="toggleUserAdvanced();"/>
+		<img src="http://fluxcms/admin/webinc/img/closed_klein.gif" id="advanced_triangle" onclick="toggleUserAdvanced();">
+			<xsl:attribute name="src">
+				   <xsl:choose>
+					   <xsl:when test="$showAdvancedView = 'true'"><xsl:value-of select="$webroot"/>admin/webinc/img/open_klein.gif</xsl:when>
+						<xsl:otherwise><xsl:value-of select="$webroot"/>admin/webinc/img/closed_klein.gif</xsl:otherwise>
+					 </xsl:choose>
+			 </xsl:attribute>
+		</img>
 		More options (click to expand)
 		<br/><br/>
 		</li>
 		<div id="user" style="display:none;">
+		<xsl:call-template name="displayOrNot"/>
 		<h3 class="userPage">
 			Plazes
 		</h3>
@@ -238,6 +298,7 @@
 		
 			<input type="text" value="{plazes_password}" name="bx[plugins][admin_users][plazes_pwd]"/>
 		</li>
+		<xsl:if test="/bx/plugin[@name='admin_users']/useradministration/authservices/authservice">
 		<h3 class="userPage">
 			Authservices
 		</h3>
@@ -248,6 +309,7 @@
 				<br/>
 			</xsl:for-each>
 		</li>
+		</xsl:if>
 		</div>
 		
 			<hr/>
@@ -279,5 +341,15 @@
 		</form>
 		</div>
 	 </xsl:template>
+	 
+	 <xsl:template name="displayOrNot">
+     <xsl:attribute name="style">
+           <xsl:choose>
+               <xsl:when test="$showAdvancedView = 'true'">
+                </xsl:when>
+                <xsl:otherwise>display: none;</xsl:otherwise>
+             </xsl:choose>
+     </xsl:attribute>
+    </xsl:template>
 	 
 </xsl:stylesheet>
