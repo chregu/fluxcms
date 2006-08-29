@@ -303,11 +303,30 @@
 			Authservices
 		</h3>
 		<li>
-			 <xsl:for-each select="/bx/plugin[@name='admin_users']/useradministration/user/services/service">
-			 	<xsl:value-of select="servicename"/><br/>
-				<input type="text" name="bx[plugins][admin_users][{servicename}]" value="{account}" />
-				<br/>
-			</xsl:for-each>
+		
+		
+		
+		
+		
+		
+			<xsl:variable name="userservices" select="/bx/plugin[@name='admin_users']/useradministration/user/services"/>
+				
+				<xsl:for-each select="/bx/plugin[@name='admin_users']/useradministration/authservices/authservice">
+							<xsl:variable name="name" select="authservice-name"/>
+							
+							<xsl:value-of select="$name"/><br/>
+							<input type="text" name="bx[plugins][admin_users][{$name}]">
+							<xsl:if test="$userservices/service/servicename/text() = $name">
+							<xsl:attribute name="value">
+								<xsl:value-of select="$userservices/service[servicename = $name]/account/text()"/>
+							</xsl:attribute>
+							</xsl:if>
+							
+							</input>
+							
+							<br/>
+					
+				</xsl:for-each>
 		</li>
 		</xsl:if>
 		</div>
@@ -321,7 +340,7 @@
 			<input type="text" value="{password}" name="bx[plugins][admin_users][new_pwd]"/>
 		</li>
 		<li>
-			Retype New Password
+				<i18n:text>Retype New Password</i18n:text>
 		<br/>
 			<input type="text" value="{password}" name="bx[plugins][admin_users][new_pwd_re]"/>
 		</li>

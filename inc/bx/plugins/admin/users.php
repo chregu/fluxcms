@@ -45,7 +45,9 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 		$xml .= "<authservices>";
 		
 		foreach($services as $service) {
-			$xml .= "<authservice>".$service."</authservice>";
+			$xml .= "<authservice>";
+			$xml .= "<authservice-name>".$service."</authservice-name>";
+			$xml .= "</authservice>";
 		}
 		$xml .= "</authservices>";
 		
@@ -243,7 +245,6 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 				$res = $GLOBALS['POOL']->db->query($userauthservices_query);
 			}
 		}
-		
 		$usergroupsdel_query = "delete from ".$tablePrefix."users2groups where fk_user = '".$user_id."'";
 		$res = $GLOBALS['POOL']->db->query($usergroupsdel_query);
 		//update  groups
@@ -257,7 +258,11 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 			}
 		}
 		if(!isset($query)) {
-			$query = "update ".$tablePrefix."users SET user_login = '".$data['username']."', user_fullname = '".$data['fullname']."', user_email = '".$data['mail']."', user_gupi = '".$data['gupi']."', user_adminlang = '".$data['lang']."', plazes_username = '".$data['plazes_username']."', plazes_password = '".$data['plazes_pwd']."' , user_pass = '".$data['new_pwd']."' where id = ".$user_id;		
+			$query = "update ".$tablePrefix."users SET user_login = '".$data['username']."', user_fullname = '".$data['fullname']."', user_email = '".$data['mail']."'";
+			if(isset($data['gupi']) && $data['gupi']) {
+				$query .= ", user_gupi = '".$data['gupi']."'";
+			}
+			$query .= ", user_adminlang = '".$data['lang']."', plazes_username = '".$data['plazes_username']."', plazes_password = '".$data['plazes_pwd']."' , user_pass = '".$data['new_pwd']."' where id = ".$user_id;		
 		}
 		if(isset($query)) {
 			$res = $GLOBALS['POOL']->db->query($query);
