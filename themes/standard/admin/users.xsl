@@ -84,136 +84,19 @@
 		</xsl:for-each>
 		</table>
 		<br/>
-		<a href="{$webroot}admin/users/edit/?add=1">
+		<a href="{$webroot}admin/users/edit/">
 			<input type="button" value="Add a new user"/>
 		</a>
 		
 		</div>
 	 </xsl:template>
 	 
-	 <xsl:template match="/bx/plugin[@name='admin_users']/useradministration/new" mode="xhtml">
-	 	<h2 class="userPage">
-			New User
-		</h2>
-		<div id='userdiv'>
-		
-		<form name="adminform" action="" method="POST" enctype="multipart/form-data">
-		<ul>
-		<h3 class="userPage">
-			General
-		</h3>
-		<li>
-			 Username<br/>
-			<input type="text" value="{username}" name="bx[plugins][admin_users][username]"/>
-		</li>
-		<li>
-			 Fullname<br/>
-		
-			<input type="text" value="{fullname}" name="bx[plugins][admin_users][fullname]"/>
-		</li>
-		<li>
-			 Mail Adress<br/>
-		
-			<input type="text" value="{mail}" name="bx[plugins][admin_users][mail]"/>
-		</li>
-		<li>
-			 Sprache<br/>
-		
-			<input type="text" value="{user_adminlang}" name="bx[plugins][admin_users][lang]"/>
-		</li>
-		<xsl:choose>
-		<xsl:when test="/bx/plugin[@name='admin_users']/useradministration/groups/group">
-			<h3 class="userPage">
-				User Groups
-			</h3>
-			<li>
-				 <xsl:for-each select="/bx/plugin[@name='admin_users']/useradministration/groups/group">
-					<input style="width:15px;" type="checkbox" name="bx[plugins][admin_users][{group-name}]" />
-					<xsl:value-of select="group-name"/><br/>
-					<br/>
-				</xsl:for-each>
-			</li>
-		</xsl:when>
-		<xsl:otherwise>
-			<li>
-				 Guip<br/>
-				 <input type="text" value="{user_gupi}" name="bx[plugins][admin_users][gupi]"/>
-			</li>
-		</xsl:otherwise>
-		</xsl:choose>
-		<li>
-		<br/>
-		<img src="http://fluxcms/admin/webinc/img/closed_klein.gif" id="advanced_triangle" onclick="toggleUserAdvanced();">
-			<xsl:attribute name="src">
-				   <xsl:choose>
-					   <xsl:when test="$showAdvancedView = 'true'"><xsl:value-of select="$webroot"/>admin/webinc/img/open_klein.gif</xsl:when>
-						<xsl:otherwise><xsl:value-of select="$webroot"/>admin/webinc/img/closed_klein.gif</xsl:otherwise>
-					 </xsl:choose>
-			 </xsl:attribute>
-		</img>
-		More options (click to expand)
-		<br/><br/>
-		</li>
-		<div id="user" style="display:none;">
-		<xsl:call-template name="displayOrNot"/>
-		<h3 class="userPage">
-			Plazes
-		</h3>
-		<li>
-			 Plazes Username<br/>
-		
-			<input type="text" value="{plazes_username}" name="bx[plugins][admin_users][plazes_username]"/>
-		</li>
-		<li>
-			 Plazes Password<br/>
-		
-			<input type="text" value="{plazes_password}" name="bx[plugins][admin_users][plazes_pwd]"/>
-		</li>
-		<h3 class="userPage">
-			Authservices
-		</h3>
-		<li>
-			 <xsl:for-each select="/bx/plugin[@name='admin_users']/useradministration/authservices/authservice">
-			 	<xsl:value-of select="."/><br/>
-				<input type="text" name="bx[plugins][admin_users][{.}]" />
-				<br/>
-			</xsl:for-each>
-		</li>
-		</div>
-		
-			<hr/>
-		
-		<li>
-			 New Password<br/>
-		
-			<input type="text" value="{plazes_password}" name="bx[plugins][admin_users][new_pwd]"/>
-		</li>
-		<li>
-			 Retype New Password<br/>
-		
-			<input type="text" value="{plazes_password}" name="bx[plugins][admin_users][new_pwd_re]"/>
-		</li>
-		<li style="color:red;">
-			 Your Password<br/>
-		
-			<input type="text" value="{plazes_password}" name="bx[plugins][admin_users][pwd]"/>
-			<br/><br/>
-		</li>
-		<li>
-			<input type="submit" value="Add" name="bx[plugins][admin_users][add]"/>
-		
-			<a href="{$webroot}admin/users/">
-			<input type="button" value="Back"/>
-			</a>
-		</li>
-		</ul>
-		</form>
-		</div>
-	 </xsl:template>
-	 
-	 <xsl:template match="/bx/plugin[@name='admin_users']/useradministration/user" mode="xhtml">
+	 <xsl:template match="/bx/plugin[@name='admin_users']/useradministration/user | /bx/plugin[@name='admin_users']/useradministration/new" mode="xhtml">
 	 <h2 class="userPage">
-			User | <xsl:value-of select="username"/>
+			User 
+			<xsl:if test="username/text()">
+				| <xsl:value-of select="username"/>
+			</xsl:if>
 		</h2>
 		<div id='usersdiv'>
 		<h3 class="userPage">
@@ -265,8 +148,8 @@
 		</xsl:when>
 		<xsl:otherwise>
 			<li>
-				Guip<br/>
-				<input type="text" value="{user_gupi}" name="bx[plugins][admin_users][gupi]"/>
+				Gid<br/>
+				<input type="text" value="{user_gupi}" name="bx[plugins][admin_users][gid]"/>
 			</li>
 		</xsl:otherwise>
 		</xsl:choose>
@@ -299,16 +182,10 @@
 			<input type="text" value="{plazes_password}" name="bx[plugins][admin_users][plazes_pwd]"/>
 		</li>
 		<xsl:if test="/bx/plugin[@name='admin_users']/useradministration/authservices/authservice">
-		<h3 class="userPage">
-			Authservices
-		</h3>
-		<li>
-		
-		
-		
-		
-		
-		
+			<h3 class="userPage">
+				Authservices
+			</h3>
+			<li>
 			<xsl:variable name="userservices" select="/bx/plugin[@name='admin_users']/useradministration/user/services"/>
 				
 				<xsl:for-each select="/bx/plugin[@name='admin_users']/useradministration/authservices/authservice">

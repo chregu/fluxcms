@@ -68,8 +68,12 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 		}
 		
 		if(isset($user_del)) {
-			$query = "delete from ".$tablePrefix."users where id = ".$user_del;
-			$GLOBALS['POOL']->db->query($query);
+			$query1 = "delete from ".$tablePrefix."users where id = ".$user_del;
+			$query2 = "delete from ".$tablePrefix."users2groups where fk_user = ".$user_del;
+			$query3 = "delete from ".$tablePrefix."userauthservices where user_id = ".$user_del;
+			$GLOBALS['POOL']->db->query($query1);
+			$GLOBALS['POOL']->db->query($query2);
+			$GLOBALS['POOL']->db->query($query3);
 		}
 		
 		if(isset($_GET['id']) && $_GET['id']) {
@@ -97,7 +101,7 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 			$xml .= "<fullname>".$row['user_fullname']."</fullname>";
 			$xml .= "<mail>".$row['user_email']."</mail>";
 			$xml .= "<id>".$row['id']."</id>";
-			$xml .= "<user_gupi>".$row['user_gupi']."</user_gupi>";
+			$xml .= "<user_gid>".$row['user_gid']."</user_gid>";
 			$xml .= "<user_adminlang>".$row['user_adminlang']."</user_adminlang>";
 			$xml .= "<plazes_username>".$row['plazes_username']."</plazes_username>";
 			$xml .= "<plazes_password>".$row['plazes_password']."</plazes_password>";
@@ -134,7 +138,7 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 			$xml .= "</user>";
 			
 		} else {
-			if($id == "/edit/" and isset($user_add)) {
+			if($id == "/edit/") {
 				$xml .= "<new/>";
 			} else {
 				$query = "select user_login, user_fullname, user_email, ID from ".$tablePrefix."users";
@@ -232,7 +236,13 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 		
 		if(isset($data['new_pwd']) && $data['new_pwd'] && isset($data['new_pwd_re']) && $data['new_pwd_re']) {
 			if($data['new_pwd'] == $data['new_pwd_re']) {
-				$query = "update ".$tablePrefix."users SET user_login = '".$data['username']."', user_fullname = '".$data['fullname']."', user_email = '".$data['mail']."', user_gupi = '".$data['gupi']."', user_adminlang = '".$data['lang']."', plazes_username = '".$data['plazes_username']."', plazes_password = '".$data['plazes_pwd']."' , user_pass = '".md5($data['new_pwd'])."' where id = ".$user_id;
+				$query = "update ".$tablePrefix."users SET user_login = '".$data['username']."', user_fullname = '".$data['fullname']."', user_email = '".$data['mail']."'";
+				if(isset($data['gid']) && $data['gid']) {
+					$query .= ", user_gid = '".$data['gid']."'";
+				} else {
+					$query .= ", user_gid = '1'";
+				}
+				$query .= ", user_adminlang = '".$data['lang']."', plazes_username = '".$data['plazes_username']."', plazes_password = '".$data['plazes_pwd']."' , user_pass = '".md5($data['new_pwd'])."' where id = ".$user_id;
 			} else {
 				print "<p style='color:red'>New password didn't match try again please</p>";
 			}
@@ -251,7 +261,6 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 		foreach($groups as $group) {
 			$matches = explode('-',$group);
 		if(isset($data[$matches['1']]) && $data[$matches['1']]) {
-				//$usergroups_query = "update ".$tablePrefix."user2groups set  fk_group = '".$matches['0']."', fk_user = '".$data[$group]."' where user_id = '".$user_id."' and service = '".$service."'";
 				$usergroups_query = "insert into ".$tablePrefix."users2groups (fk_user , fk_group) values('".$user_id."' , '".$matches['0']."')"; // on dublicate key update fk_user = fk_user and fk_group = fk_group";
 				$res = $GLOBALS['POOL']->db->query($usergroups_query);
 				
@@ -259,8 +268,10 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 		}
 		if(!isset($query)) {
 			$query = "update ".$tablePrefix."users SET user_login = '".$data['username']."', user_fullname = '".$data['fullname']."', user_email = '".$data['mail']."'";
-			if(isset($data['gupi']) && $data['gupi']) {
-				$query .= ", user_gupi = '".$data['gupi']."'";
+			if(isset($data['gid']) && $data['gid']) {
+				$query .= ", user_gid = '".$data['gid']."'";
+			} else {
+				$query .= ", user_gid = '1'";
 			}
 			$query .= ", user_adminlang = '".$data['lang']."', plazes_username = '".$data['plazes_username']."', plazes_password = '".$data['plazes_pwd']."' , user_pass = '".$data['new_pwd']."' where id = ".$user_id;		
 		}
@@ -273,38 +284,41 @@ class bx_plugins_admin_users extends bx_plugins_admin implements bxIplugin  {
 		$tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
 		$perm = bx_permm::getInstance();
 		$active_user_id = $_SESSION['_authsession']['data']['id'];
+	
+		$query = "insert into ".$tablePrefix."users (user_login, user_fullname, user_email, user_gid, user_adminlang, plazes_username, plazes_password, user_pass) value('".$data['username']."', '".$data['fullname']."', '".$data['mail']."'";
+		if(isset($data['gdi']) && $data['gdi']) {
+			$query .= ", '".$data['gdi']."'";
+		} else {
+			$query .= ", '1'";
+		}
+		$query .= ", '".$data['lang']."', '".$data['plazes_username']."', '".$data['plazes_pwd']."', '".md5($data['new_pwd'])."')";
 		
-		if(isset($data['add']) && $data['add']) {
-			$query = "insert into ".$tablePrefix."users (user_login, user_fullname, user_email, user_gupi, user_adminlang, plazes_username, plazes_password, user_pass) value('".$data['username']."', '".$data['fullname']."', '".$data['mail']."', '".$data['gupi']."', '".$data['lang']."', '".$data['plazes_username']."', '".$data['plazes_pwd']."', '".md5($data['new_pwd'])."')";
-			
-			if(isset($query)) {
-				$res = $GLOBALS['POOL']->db->query($query);
+		if(isset($query)) {
+			$res = $GLOBALS['POOL']->db->query($query);
+		}
+		
+		//insert services
+		foreach($services as $service) {
+			if(isset($data[$service]) && $data[$service]) {
+				$max_id_query = "select MAX(id) as last_id from ".$tablePrefix."users";
+				$result = $GLOBALS['POOL']->db->query($max_id_query);
+				$insert_id = $result->fetchRow(MDB2_FETCHMODE_ASSOC);
+				$userauthservices_query = "insert into ".$tablePrefix."userauthservices (user_id, service, account) value('".$insert_id['last_id']."', '".$service."', '".$data[$service]."')";
+				$res = $GLOBALS['POOL']->db->query($userauthservices_query);
 			}
-			
-			//insert services
-			foreach($services as $service) {
-				if(isset($data[$service]) && $data[$service]) {
-					$max_id_query = "select MAX(id) as last_id from ".$tablePrefix."users";
-					$result = $GLOBALS['POOL']->db->query($max_id_query);
-					$insert_id = $result->fetchRow(MDB2_FETCHMODE_ASSOC);
-					$userauthservices_query = "insert into ".$tablePrefix."userauthservices (user_id, service, account) value('".$insert_id['last_id']."', '".$service."', '".$data[$service]."')";
-					$res = $GLOBALS['POOL']->db->query($userauthservices_query);
-				}
+		}
+		
+		
+		//insert groups
+		foreach($groups as $group) {
+			$matches = explode('-',$group);
+			if(isset($data[$matches['1']]) && $data[$matches['1']]) {
+				$max_id_query = "select MAX(id) as last_id from ".$tablePrefix."users";
+				$result = $GLOBALS['POOL']->db->query($max_id_query);
+				$insert_id = $result->fetchRow(MDB2_FETCHMODE_ASSOC);
+				$userauthgroups_query = "insert into ".$tablePrefix."users2groups (fk_user, fk_group) value('".$insert_id['last_id']."', '".$matches['0']."')";
+				$res = $GLOBALS['POOL']->db->query($userauthgroups_query);
 			}
-			
-			
-			//insert groups
-			foreach($groups as $group) {
-				$matches = explode('-',$group);
-				if(isset($data[$matches['1']]) && $data[$matches['1']]) {
-					$max_id_query = "select MAX(id) as last_id from ".$tablePrefix."users";
-					$result = $GLOBALS['POOL']->db->query($max_id_query);
-					$insert_id = $result->fetchRow(MDB2_FETCHMODE_ASSOC);
-					$userauthgroups_query = "insert into ".$tablePrefix."users2groups (fk_user, fk_group) value('".$insert_id['last_id']."', '".$matches['0']."')";
-					$res = $GLOBALS['POOL']->db->query($userauthgroups_query);
-				}
-			}
-			
 		}
 		
 	}
