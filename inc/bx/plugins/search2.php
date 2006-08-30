@@ -214,7 +214,7 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
                 if (empty($displayName)) {
                     $ids[$id]['title'] =  $ids[$id]['url'];
                 } else {
-                    $ids[$id]['title'] =  $displayName;
+                    $ids[$id]['title'] =  htmlspecialchars($displayName);
                 }
                 
                 //$relatedIds[$id]['resourceDescription'] = $res->getResourceDescription();
