@@ -84,6 +84,16 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                     $fulluri = substr($fulluri,3);
                 }
             }
+            if (strpos($fulluri, ".") === false) {
+                //if no / at the end of fulluri and no . in filename, we assume, it's a subcollection
+                // and do redirect here
+                if (substr($fulluri,-1) != "/") {
+                    header("Location: ".BX_WEBROOT.preg_replace("#^/#","",$fulluri)."/");
+                    die();
+                }
+                $fulluri .= "index.html";   
+            }
+            
             list($fulluri, $lang) = bx_collections::getLanguage($fulluri);
             $GLOBALS['POOL']->config->setOutputLanguage($lang);
 
@@ -100,15 +110,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 }
                 $fulluri = substr($fulluri,0,$pos);
             }
-            if (strpos($fulluri, ".") === false) {
-                //if no / at the end of fulluri and no . in filename, we assume, it's a subcollection
-                // and do redirect here
-                if (substr($fulluri,-1) != "/") {
-                    header("Location: ".BX_WEBROOT.preg_replace("#^/#","",$fulluri)."/");
-                    die();
-                }
-                $fulluri .= "index.html";   
-            }
+           
             
         }
         
