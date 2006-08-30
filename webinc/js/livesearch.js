@@ -98,6 +98,10 @@ function liveSearchKeyPress(event) {
 		}
 		document.getElementById("LSResult").style.display = "none";
 	} 
+	//BACKSPACE - required for IE
+	else if (event.keyCode == 8 && isIE) {
+		liveSearchStart();
+	}
 }
 function liveSearchStart() {
 	if (t) {
