@@ -125,6 +125,7 @@ function liveSearchDoSearch() {
 	}
 	if ( document.forms.searchform.q.value == "") {
 		liveSearchHide();
+		liveSearchLast = "";
 		return false;
 	}
 	if (window.XMLHttpRequest) {
