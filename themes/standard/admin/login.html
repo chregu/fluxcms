@@ -33,7 +33,6 @@ function service() {
 		break;
 	}
 }
-			document.forms.login.submit();
 </script>';
 } else {
 echo '
@@ -138,7 +137,7 @@ EOT;
 <label>$remember</label> <input name="remember" type="checkbox"/>
 
   <br />
-    <label>&#160;</label>  <input type="button" value="Submit" onclick="service();return false;" />
+    <label>&#160;</label>  <input type="submit" value="Submit" onsubmit="service();return false;" name="submitButton"/>
   <br />
   
   <br /><br />
