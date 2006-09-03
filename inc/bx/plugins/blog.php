@@ -401,7 +401,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml = str_replace("§amp;","&amp;",$xml);
             $dom->loadXML($xml);
         }
-	if ($sidebar) {
+       if ($sidebar && $dom->documentElement) {
         	$this->getSidebarData($dom->documentElement);	
 	}
         return $dom;
@@ -1054,7 +1054,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 		return;
 	}
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-            
             $s = $root->appendChild($root->ownerDocument->createElement("sidebar"));
             $s->setAttribute("sidebar",$row['sidebar']);
             $s->setAttribute("name",$row['name']);
