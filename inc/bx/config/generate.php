@@ -220,7 +220,9 @@ class bx_config_generate {
                 }
                 include("popoon/pool.php");
                 include("bx/helpers/debug.php");
-                fwrite ($fd,'$bx_config->dbIsUtf8 = ' . var_export(@popoon_pool::isMysqlUTF8($dsn,$db),true) . ";\n");
+                
+                fwrite ($fd,'$bx_config->dbIsFourOne = ' . var_export(@popoon_pool::isMysqlFourOne($dsn,$db),true) . ";\n");
+                fwrite ($fd,'$bx_config->dbIsUtf8 = ' . var_export((@popoon_pool::isMysqlFourOne($dsn,$db) && @popoon_pool::isMysqlUTF8($dsn,$db)),true) . ";\n");
             } 
             
             ini_set("include_path",$oldinc); 
