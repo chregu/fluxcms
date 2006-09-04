@@ -72,6 +72,50 @@ class bx_config_generate {
         //constants
         $dom = self::mergeXML($configfile,$bxdir."/config/default.xml");
         $sxe = simplexml_import_dom($dom);
+        
+        if (!file_exists($tmpdir)) {
+            mkdir($tmpdir);
+        }
+        $fd = fopen($tmpdir.'/config.inc.php',"w");
+        
+        
+        fwrite($fd,'<?php'."\n");
+         //staging
+        $_staging = false;
+        
+        fwrite($fd,'$_staging =array();'."\n");
+            
+        foreach($sxe->staging->stage as $n) {
+            $stage = trim((string) $n);
+            
+            fwrite($fd,'$_staging[\''.$stage.'\']= array();'."\n"); 
+            $de = dom_import_simplexml($n);
+            foreach($de->attributes as $a) {
+                fwrite($fd,'$_staging[\''.$stage.'\'][\''.$a->localName.'\'] = \''. $a->value."';\n");
+            }
+            if (!$_staging) {
+                $_staging_first = $stage;
+                $_staging = true;
+            }
+            
+        }
+        
+        if (!$_staging) {
+            fwrite($fd, '$_staging = false;'."\n");
+            fwrite($fd, '$_stage = "";'."\n");
+        } else {
+            fwrite($fd,'@list($firsthost,$resthost) = explode(".",$_SERVER[\'HTTP_HOST\'],2)'.";\n");
+            fwrite($fd,'if ($resthost && !isset($_staging[$firsthost])) {'."\n");
+            fwrite($fd,'   $_stage = $firsthost'.";\n");
+            fwrite($fd,'}'."\n");
+            fwrite($fd,' else {'."\n");
+            fwrite($fd,' $_stage = \''.$_staging_first."';\n");
+            fwrite($fd,'}'."\n");
+        }
+        fwrite($fd,"define('BX_STAGE',"); 
+        fwrite($fd,'$_stage');
+        fwrite($fd,");\n");        
+        
         $const = array();
         foreach ($sxe->constants->constant as $node) {
             if ( (string) $node != 'none')  {
@@ -89,13 +133,7 @@ class bx_config_generate {
         }
         
         // write constants 
-        if (!file_exists($tmpdir)) {
-            mkdir($tmpdir);
-        }
-        $fd = fopen($tmpdir.'/config.inc.php',"w");
-        
-        
-        fwrite($fd,'<?php'."\n");
+    
         
         foreach($sxe->files->before as $file) {
             fwrite($fd,"include_once('".self::replaceConstants(str_replace('\\','/',$file))."');\n");
@@ -127,7 +165,7 @@ class bx_config_generate {
         //open post config file (after we initialized some stuff.
         $fd = fopen($tmpdir.'/config.inc.php.post',"w");
         fwrite($fd,'<?php'."\n");
-        
+        fwrite($fd,'$bx_config->staging = $_staging;'."\n");
         // database connections
         $bxc = array();
         foreach($sxe->connections->db as $db) {
@@ -138,6 +176,8 @@ class bx_config_generate {
                 $bxc[$type] = array();
             }
             foreach ($db->children() as $child) {
+                
+//                $name =  dom_import_simplexml($child)->localName;
                 $bxc[$type][ dom_import_simplexml($child)->localName] = (string) $child;
             }
             
@@ -329,6 +369,8 @@ class bx_config_generate {
             fwrite($fd,'$bx_config->notifications[\'mail\']= array();'."\n");
         }
         
+        
+       
         
         //additional files to be included
         foreach($sxe->files->include as $file) {

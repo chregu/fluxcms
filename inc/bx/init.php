@@ -56,7 +56,6 @@ class bx_init {
 
         ini_set('include_path',BX_INCLUDE_DIR.PATH_SEPARATOR.ini_get('include_path'));
         //for staging, will be improved later
-        define('BX_STAGE','edit');                
         bx_errorhandler::getInstance();
         
         include_once($configCachedFile.'.post');

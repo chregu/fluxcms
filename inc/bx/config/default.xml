@@ -5,20 +5,21 @@
         
         <constant name="BX_PROJECT_DIR">auto</constant>
         
-        <!-- The tmp dir, should be writable by the webserver -->
-        <constant name="BX_TEMP_DIR">{BX_PROJECT_DIR}tmp/</constant>
-
-        <!-- The data dir, where all the content goes -->
-        <constant name="BX_DATA_DIR" >{BX_PROJECT_DIR}data/</constant>
-
-        <!-- The themes dir, where  the themes go -->
-        <constant name="BX_THEMES_DIR" >{BX_PROJECT_DIR}themes/</constant>
-
         <!-- Some plugins check for this and do not allow access for stuff above that
             we use that for the shared hosting, so that only files from each users directory
             can be accessed.
         -->
         <constant name="BX_OPEN_BASEDIR" >{BX_PROJECT_DIR}</constant>
+        
+        <!-- The tmp dir, should be writable by the webserver -->
+        <constant name="BX_TEMP_DIR">{BX_PROJECT_DIR}tmp/</constant>
+
+        <!-- The data dir, where all the content goes -->
+        <constant name="BX_DATA_DIR" >{BX_OPEN_BASEDIR}data/</constant>
+
+        <!-- The themes dir, where  the themes go -->
+        <constant name="BX_THEMES_DIR" >{BX_OPEN_BASEDIR}themes/</constant>
+
         
         <!-- this directory is used for admin configuration files -->
         <constant name="BX_ADMIN_DATA_DIR" >{BX_PROJECT_DIR}admin/data/</constant>
