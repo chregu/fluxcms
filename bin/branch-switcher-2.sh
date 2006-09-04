@@ -1,6 +1,7 @@
 DIRS="webinc inc admin install"
 DIRS_INC="popoon"
 
+ 
 STARTDIR=`pwd`
 echo -e "\nUsually this script works without problems, but nevertheles\nPLEASE DO BACKUP BEFORE.\nPress <Enter> to continue or <Ctrl>+<C> to abort."
 read
@@ -41,8 +42,11 @@ done
 
 if ! test -f '_hosts';
 then
-    mv themes themes.old
-    svn co -N https://svn.bitflux.ch/repos/public/fluxcms_demo/branches/1_5/themes/
+    if test -z $1;
+    then
+        mv themes themes.old
+        svn co -N https://svn.bitflux.ch/repos/public/fluxcms_demo/branches/1_5/themes/
+    fi
     OLDBRANCH=1
 else
     OLDBRANCH=0
@@ -65,19 +69,27 @@ else
     
     #echo "" >> .externals
     #comment out the followin, if you're not using fluxcms_demo, but your own 
-    
     svn propset svn:externals . -F .externals 
-    svn switch https://svn.bitflux.ch/repos/public/fluxcms_demo/$BRANCH/_hosts/live/themes/ ;
+    if test -z $1;
+    then    
+        svn switch https://svn.bitflux.ch/repos/public/fluxcms_demo/$BRANCH/_hosts/live/themes/ ;
+    fi
     
 fi 
     
 cd $STARTDIR
 svn propset svn:externals . -F .externals 
-svn switch https://svn.bitflux.ch/repos/public/fluxcms_demo/$BRANCH/
+if test -z $1;
+then
+    svn switch https://svn.bitflux.ch/repos/public/fluxcms_demo/$BRANCH/
+fi
 
 if test $OLDBRANCH == 1 ;
 then
-   mv themes.old/* themes/
+   if test -z $1;
+   then 
+        mv themes.old/* themes/
+   fi
    cd themes 
    echo -n "" > .externals
    cd standard
