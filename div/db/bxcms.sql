@@ -467,10 +467,12 @@ INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`,
 -- Table structure for table `fluxcms_userauthservices`
 -- 
 
-CREATE TABLE `##bxcms_##_userauthservices` (
+DROP TABLE IF EXISTS `##bxcms_##userauthservices`;
+
+CREATE TABLE `##bxcms_##userauthservices` (
   `id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL default '0',
   `service` varchar(50) NOT NULL default '',
   `account` varchar(200) NOT NULL default '',
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ;
