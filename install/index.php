@@ -269,6 +269,16 @@ function prereq() {
         return "Root Dir (".rootDir().") is not writeable";
     }
 
+    
+    print "Check if live dir (".rootDir()."/_hosts/live/) directory is writable ...\n";
+    if(is_writeable(rootDir()."/_hosts/live/")) {
+        print "OK.<br/>\n";
+    } else {
+        print "<font color='red'>";
+        print "Not writeable<br/>";
+        return "Root Dir (".rootDir()."/_hosts/live/) is not writeable";
+    }
+    
     return true;
 }
 
