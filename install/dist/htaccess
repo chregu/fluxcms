@@ -84,20 +84,20 @@ RewriteCond     %{REQUEST_URI}  !^/*##DIR##inc/bx/php/.*\.php
 RewriteRule ^/*(.+)$ ./index.php?path=$1 [QSA]
 
 
-#RewriteCond %{REQUEST_URI}  /*files/       
-#RewriteCond ${HTTP_HOST} ^edit         
-#RewriteRule ^/*files/(.+)$  ./_hosts/edit/files/$1 [L]       
+RewriteCond %{REQUEST_URI}  /*files/       
+RewriteCond ${HTTP_HOST} ^edit         
+RewriteRule ^/*files/(.+)$  ./_hosts/edit/files/$1 [L]       
 
-#RewriteCond %{REQUEST_URI}  /*files/       
-#RewriteRule ^/*files/(.+)$  ./_hosts/live/files/$1 [L]       
+RewriteCond %{REQUEST_URI}  /*files/       
+RewriteRule ^/*files/(.+)$  ./_hosts/live/files/$1 [L]       
 
-#RewriteCond %{REQUEST_URI}  /*themes/       
-#RewriteCond %{HTTP_HOST} ^edit         
-#RewriteRule ^/*themes/(.+)$  ./_hosts/edit/themes/$1 [L]       
+RewriteCond %{REQUEST_URI}  /*themes/       
+RewriteCond %{HTTP_HOST} ^edit         
+RewriteRule ^/*themes/(.+)$  ./_hosts/edit/themes/$1 [L]       
 
-#RewriteCond %{REQUEST_URI}  /*themes/       
-#RewriteCond %{HTTP_HOST}  !^edit.*         
-#RewriteRule ^/*themes/(.+)$  ./_hosts/live/themes/$1 [L]       
+RewriteCond %{REQUEST_URI}  /*themes/       
+RewriteCond %{HTTP_HOST}  !^edit.*         
+RewriteRule ^/*themes/(.+)$  ./_hosts/live/themes/$1 [L]       
 
 
 

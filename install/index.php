@@ -4,7 +4,7 @@ session_start();
 <html>
 <head>
 <title>Flux CMS Webinstaller</title>
-<link rel="stylesheet" href="../themes/standard/admin/css/formedit.css" type="text/css" />
+<link rel="stylesheet" href="../_hosts/live/themes/standard/admin/css/formedit.css" type="text/css" />
 </head>
 
 <body>
@@ -139,6 +139,8 @@ function startPhing() {
     } else {
         Phing::setProperty("database.type","mysql");
     }
+    
+    //Phing::setProperty("database.prefix", $_POST['database_prefix'].'live__');
     Phing::setProperty("replacePhpInHtaccess", function_exists("apache_get_modules") ? "php_" : "#php_");
     
     $mysql_version = getMysqlVersion();
