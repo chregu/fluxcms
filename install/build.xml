@@ -6,14 +6,14 @@
     <target name="prepare" depends="prereq">
         <mkdir dir="${BxRootDir}/tmp/"/>
         <copy includeemptydirs="true" todir="${BxRootDir}/_hosts/live/data/">
-            <fileset dir="${BxRootDir}/install/dist/_hosts/live/data/">
+            <fileset dir="${BxRootDir}/install/dist/data/">
                 <exclude name="**/.svn/"/>
             </fileset>
         </copy>
 
         <mkdir dir="${BxRootDir}/_hosts/live/files/"/>
         <copy includeemptydirs="true" todir="${BxRootDir}/_hosts/live/files/">
-            <fileset dir="${BxRootDir}/install/dist/_hosts/live/files/">
+            <fileset dir="${BxRootDir}/install/dist/files/">
                 <exclude name="**/.svn/"/>
             </fileset>
         </copy>
@@ -21,7 +21,7 @@
         <mkdir dir="${BxRootDir}/dynimages/"/>
         <mkdir dir="${BxRootDir}/_hosts/live/lang/"/>
         <copy includeemptydirs="true" todir="${BxRootDir}/_hosts/live/lang/">
-            <fileset dir="${BxRootDir}/install/dist/_hosts/live/lang/">
+            <fileset dir="${BxRootDir}/install/dist/lang/">
                 <exclude name="**/.svn/"/>
             </fileset>
         </copy>
