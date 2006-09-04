@@ -5,10 +5,7 @@
         <!-- change http:// to http(s):// if you want to use a mixed https/http environment -->
         <constant name="BX_WEBROOT">http://{$_SERVER['HTTP_HOST']}/##DIR##</constant>
         <constant name="BX_PROJECT_DIR">auto</constant>
-        <!-- for staging, you need that -->
-        <!-- 
-            <constant name="BX_OPEN_BASEDIR">{BX_PROJECT_DIR}/_hosts/{BX_STAGE}/</constant>
-            -->
+        <constant name="BX_OPEN_BASEDIR">{BX_PROJECT_DIR}/_hosts/{BX_STAGE}/</constant>
         
     </constants>
 <!-- set cacheDBOptions to false, if you don't want to write the options from the DB to
@@ -266,11 +263,10 @@
         <include>{BX_PROJECT_DIR}conf/include.php</include>
         
     </files>
-   <!-- 
    <staging>
         <stage>live</stage>
         <stage>edit</stage>
-    </staging>
+   </staging>
     
-    -->
+   
 </config>
