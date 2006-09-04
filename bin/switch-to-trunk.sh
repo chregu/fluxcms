@@ -1,4 +1,4 @@
 BRANCH="trunk"
 POPOON_BRANCH="trunk"
 
-. bin/branch-switcher.sh
+. bin/branch-switcher-2.sh
