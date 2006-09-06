@@ -84,7 +84,7 @@ class bx_config_generate {
         $_staging = false;
         
         fwrite($fd,'$_staging =array();'."\n");
-            
+        if ($sxe->staging->stage)  {
         foreach($sxe->staging->stage as $n) {
             $stage = trim((string) $n);
             
@@ -99,7 +99,7 @@ class bx_config_generate {
             }
             
         }
-        
+        }
         if (!$_staging) {
             fwrite($fd, '$_staging = false;'."\n");
             fwrite($fd, '$_stage = "";'."\n");
