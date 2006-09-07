@@ -636,6 +636,8 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
     public function getDisplayOrder() {
         if (($o = $this->getProperty('display-order')) !== NULL) {
             return $o;
+        } else {
+            return 0;
         }
     }
     

@@ -62,12 +62,13 @@ class popoon_components_generators_admintree extends popoon_components_reader {
                
             switch ($entry->getProperty("output-mimetype")) {
                 case "httpd/unix-directory":
+                
                     $el->setAttribute('iconAction',"testopen('".$coll->uri.$p['rawname'].$entry->getBaseName()."/',this)");
                     $el->setAttribute('icon', BX_WEBROOT.'admin/webinc/img/icons/fileicon_folder.gif');
                     $el->setAttribute('openIcon', BX_WEBROOT.'admin/webinc/img/icons/fileicon_folder.gif');
                     $el->setAttribute('title',$entry->getDisplayName());
                     $el->setAttribute('src', BX_WEBROOT.'admin/navi/tree'.$entry->uri);
-                    $el->setAttribute('name', $entry->getBaseName());
+                    $el->setAttribute('name', $entry->getBaseName() ." (".$entry->getDisplayOrder().")");
                     $el->setAttribute('action',BX_WEBROOT. 'admin/overview'.$coll->uri.$p['rawname'].$entry->getBaseName().'/');
                     
                     if($entry->getBaseName() == 'themes' AND $permObj->isAllowed('/',array('admin'))) {
@@ -85,7 +86,7 @@ class popoon_components_generators_admintree extends popoon_components_reader {
                     $el->setAttribute('icon', BX_WEBROOT.'admin/webinc/img/icons/'.$mimetype.'.gif');
                     $el->setAttribute('openIcon', BX_WEBROOT.'admin/webinc/img/icons/'.$mimetype.'.gif');
                     $el->setAttribute('title',$entry->getDisplayName());
-                    $el->setAttribute('name', $entry->getLocalName());
+                    $el->setAttribute('name', $entry->getLocalName() );
                     $dom->documentElement->appendChild($el);
                     
                 
