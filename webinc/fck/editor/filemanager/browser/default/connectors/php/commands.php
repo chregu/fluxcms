@@ -197,6 +197,7 @@ function FileUpload( $resourceType, $currentFolder )
 						$oldumask = umask(0) ;
 						chmod( $sFilePath, 0777 ) ;
 						umask( $oldumask ) ;
+                         bx_metaindex::callIndexerFromFilename($sFilePath,str_replace(BX_OPEN_BASEDIR,'/',$sFilePath));
 					}
 
 					break ;
@@ -215,4 +216,5 @@ function FileUpload( $resourceType, $currentFolder )
 
 	exit ;
 }
+
 ?>
