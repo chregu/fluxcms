@@ -64,7 +64,7 @@ echo '
 </head> 
 
 <body onload="document.forms.login.username.focus();">
-<div id="top"><p class="logo">Flux CMS</p> <?php print '<a href="'.BX_WEBROOT.'" class="logolink">'. bx_helpers_config::getOption('sitename').'</a>';?>
+<div id="top"><p class="logo">Flux CMS</p> <?php print '<a href="'.BX_WEBROOT.'" class="logolink">'. htmlspecialchars( bx_helpers_config::getOption('sitename')).'</a>';?>
 <br class="clr"/></div>
 <div id="container" >
 <?php 
