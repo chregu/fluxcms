@@ -289,6 +289,7 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
                 }
             }
         }
+        asort($templates);
         
         return $templates;
         
