@@ -363,8 +363,9 @@ function dbforms2_form() {
             var hasSaved = false;
             // first save all child forms
             for (var formID in this.forms) { 	 
-                this.forms[formID].saveFormData();
-                hasSaved = true;
+                if(this.forms[formID].saveFormData() == true) {
+                    hasSaved = true;
+                }
             }
         
             // return if this is the parent form, because the last child callback
