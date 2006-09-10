@@ -49,7 +49,8 @@
 
     --> 
     <blogSendRejectedCommentNotification allowFromDB="true">false</blogSendRejectedCommentNotification>
-   
+    <blogSendModeratedCommentNotification allowFromDB="true">true</blogSendModeratedCommentNotification>
+            
     <!-- Whether to regard post expiration dates -->
     <blogPostsExpireCatAllOnly allowFromDB="true">false</blogPostsExpireCatAllOnly>
     <blogPostsCheckExpiry>true</blogPostsCheckExpiry>
