@@ -6,6 +6,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  xmlns:exsl="http://exslt.org/c
     <xsl:output encoding="utf-8" method="xml"/>
 <xsl:param name="table" select="'bxcms_users'"/>
 <xsl:param name="alias" select="'users'"/>
+<xsl:param name="tableprefix" select="'fluxcms_'"/>
     <xsl:template match="/">
         <xsl:for-each select="/database/table[name/text() = $table]">
 
@@ -38,23 +39,51 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  xmlns:exsl="http://exslt.org/c
     <dbform:field name="{name}" type="text_area" descr="{name}"><xsl:call-template name="defaultValue"/></dbform:field>
     
     </xsl:template>
+    
+    <xsl:template match="field[type='clob']">
+    <dbform:field name="{name}" type="text_area" descr="{name}"><xsl:call-template name="defaultValue"/></dbform:field>
+    
+    </xsl:template>
+    
+     <xsl:template match="field[type='date']">
+         <dbform:field name="{name}" type="date" descr="{name}"><xsl:call-template name="defaultValue"/></dbform:field>
+
+    
+    </xsl:template>
    
     <xsl:template match="field[name='ID' or name='id']">
      <!-- <dbform:field name="{name}" type="fixed" descr="{name}"><xsl:call-template name="defaultValue"/></dbform:field>-->
     </xsl:template>
      
+    
+    
+    <xsl:template match="field[contains(name,'_id') and type = 'integer']">
+    
+    
+                <dbform:field name="{name}" descr="{name}" type="select">
+                
+                <xsl:variable name="ftable" select="concat($tableprefix,substring-before(name,'_id'))"/>
+                <xsl:variable name="firstfield" select="/database/table[name = $ftable]/declaration/field[type='text'][1]/name"/>
 
-    
-    
+                 <dbform:datasource type="foreign" table="{substring-before(name,'_id')}" order="{$firstfield}" namefield="concat({$firstfield}, ' (', id,')')"  idfield="id"/>
+                </dbform:field>
 
+    </xsl:template>
     
+     <xsl:template match="field[contains(.,'file') or name = 'pdf']" priority="100">
     
-    
-     <xsl:template match="field[contains(.,'fileref')]" priority="100">
-    
-    <dbform:field name="{name}" type="file"  descr="{name}"><xsl:call-template name="defaultValue"/></dbform:field>
+    <dbform:field name="{name}" type="file_browser"  descr="{name}"><xsl:call-template name="defaultValue"/></dbform:field>
     
     </xsl:template>
+    
+    <xsl:template match="field[contains(name,'image') or contains(name,'bild')]" priority="100">
+    
+    <dbform:field name="{name}" type="file_browser" isImage="true" descr="{name}"><xsl:call-template name="defaultValue"/></dbform:field>
+    
+    </xsl:template>
+    
+    
+  
     
     <xsl:template match="field[type='timestamp' ]">
     
