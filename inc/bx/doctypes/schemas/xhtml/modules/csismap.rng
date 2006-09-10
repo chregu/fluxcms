@@ -53,6 +53,9 @@
 
 <define name="map.attlist">
   <ref name="CommonIdRequired.attrib"/>
+ <optional> 
+    <attribute name="name"/>
+   </optional>
 </define>
 
 <define name="a.attlist" combine="interleave">

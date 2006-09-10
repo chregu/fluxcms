@@ -96,6 +96,9 @@
  	<attribute name="width"/>
   </optional>
   <optional>
+ 	<attribute name="background-color"/>
+  </optional>
+  <optional>
     <attribute name="abbr">
       <ref name="Text.datatype"/>
     </attribute>

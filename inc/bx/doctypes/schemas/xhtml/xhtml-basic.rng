@@ -18,5 +18,5 @@
 <include href="modules/link.rng"/>
 <include href="modules/base.rng"/>
 <include href="modules/pres.rng"/>
-
+<include href="modules/csismap.rng"/>
 </grammar>
