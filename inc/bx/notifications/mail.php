@@ -46,12 +46,12 @@ class bx_notifications_mail extends bx_notification {
         if (!empty($_SERVER['HTTP_HOST'])) {
             $headers .= "X-Flux-Host: ".$_SERVER['HTTP_HOST'].PHP_EOL;
         }
-        
-        if ($options['charset'] == "utf8") {
-            $options['charset']  = 'UTF-8';
-        } else if (empty($options['charset'])) {
+        if (empty($options['charset'])) {
             $options['charset'] = 'UTF-8';
         }
+        else if ($options['charset'] == "utf8") {
+            $options['charset']  = 'UTF-8';
+        } 
         
         $headers .= "Content-Type: text/plain; charset=\"".$options['charset']."\"".PHP_EOL."Content-Transfer-Encoding: 8bit".PHP_EOL;
         // recode utf8 strings
@@ -82,9 +82,14 @@ class bx_notifications_mail extends bx_notification {
         if (!$row['user_fullname']) {
             $row['user_fullname'] = $username;
         }
-        $to = $row['user_fullname'] . ' <' .$row['user_email'].'>';
-        if ($to) {
-            $this->send($to,$subject,$message,$fromAdress, $fromName);
+        
+        if (!empty($row['user_email'])) {
+            
+            
+            $to = $row['user_fullname'] . ' <' .$row['user_email'].'>';
+            if ($to) {
+                $this->send($to,$subject,$message,$fromAdress, $fromName);
+            }
         }
     }
     

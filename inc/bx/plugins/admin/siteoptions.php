@@ -149,7 +149,12 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
            2 => "Always allow comments",
            3 => "No comments allowed"), $dom,array("help"=>$i18n->translate("default_blogcommentmode")));
         
-        $this->addSelectOption("blogSendRejectedCommentNotification",array(
+        $this->addSelectOption("blogSendModeratedCommentNotification",array(
+        'false' => "No",
+           'true' => "Yes")
+           , $dom,array("help"=>$i18n->translate("help_blogSendModeratedCommentNotification")));
+       
+           $this->addSelectOption("blogSendRejectedCommentNotification",array(
         'false' => "No",
            'true' => "Yes")
            , $dom,array("help"=>$i18n->translate("help_blogSendRejectedCommentNotification")));

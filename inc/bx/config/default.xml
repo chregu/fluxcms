@@ -101,6 +101,8 @@
             <blogTrackbacksTimeLimit>true</blogTrackbacksTimeLimit>
             
             <blogSendRejectedCommentNotification allowFromDB="true">false</blogSendRejectedCommentNotification>
+            <blogSendModeratedCommentNotification allowFromDB="true">true</blogSendModeratedCommentNotification>
+            
             <blogAkismetKey allowFromDB="true"></blogAkismetKey>   
             <allowHTTPAuthentication>true</allowHTTPAuthentication>
             <noOutsideConnections>false</noOutsideConnections>

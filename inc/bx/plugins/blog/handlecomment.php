@@ -323,9 +323,20 @@ class bx_plugins_blog_handlecomment {
                 $headers .= "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n";
                 $emailBody = str_replace('<br />','',$emailBody);
                 //don't send mails on rejects for the time beeing
-                if ($GLOBALS['POOL']->config->blogSendRejectedCommentNotification == "true" || !$deleteIt) {
-                    bx_notificationmanager::sendToDefault($emailTo,$emailSubject, $emailBody,$emailFrom);
+                $rejStage = 0;
+                if ($commentRejected) {
+                    $rejStage = 1;
+                    if ($deleteIt) {
+                        $rejStage = 2;
+                    }
                 }
+                if ($rejStage == 0 ||
+                    ($rejStage == 1 && $GLOBALS['POOL']->config->blogSendModeratedCommentNotification == "true") ||
+                    ($rejStage == 2 && $GLOBALS['POOL']->config->blogSendRejectedCommentNotification == "true")
+                    ) {
+                        bx_notificationmanager::sendToDefault($emailTo,$emailSubject, $emailBody,$emailFrom);
+                }
+                
                 if(!$commentRejected) {
                     bx_plugins_blog_commentsnotification::sendNotificationMails($lastID,$row['id'],$parts['coll']->uri);
                     
