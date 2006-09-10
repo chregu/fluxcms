@@ -173,8 +173,8 @@ class bx_helpers_string {
         $newValue= preg_replace("/[òó]/u","o",$newValue);
         $newValue= preg_replace("/[ß]/u","ss",$newValue);
         
+        $newValue= preg_replace("/[\n\r]+/u","",$newValue);
         
-        $newValue= preg_replace("/[\n\r]*/u","",$newValue);
         //removing everything else
         $newValue = strtolower($newValue);
         $newValue = preg_replace("/[^a-z0-9\.\-\_]/","-",$newValue);
@@ -187,7 +187,6 @@ class bx_helpers_string {
         }
 
         $newValue= preg_replace("/-{2,}/u","-",$newValue);
-
         $newValue = trim($newValue,"-");
         if (!$newValue) {
             $newValue = "none";
@@ -305,7 +304,9 @@ class bx_helpers_string {
     
     static function makeLinksClickable($text) {
         //$res=preg_replace("/((http|ftp)+(s)?:(\/\/)([\w]+(.[\w]+))([\w\-\.,@?^=%&:;\/~\+#]*[\w\-\@?^=%&:;\/~\+#])?)/i", "<a href=\"\\0\">\\0</a>", $text);
-        $res = preg_replace( "#([\s\(\.\:]|\A)(http[s]?:\/\/[^\s^>^<^\)]*)#m", "$1<a href=\"$2\">$2</a>", $text);
+        //$res = preg_replace( "#([\s\(\.\:]|\A)(http[s]?:\/\/[^\s^>^<^\)]*)#m", "$1<a href=\"$2\">$2</a>", $text);
+        $res = preg_replace( "#([\s\(\.\:]|\A)(http[s]?:\/\/[^\s^>^<^\)]*[^\s^>^<^\)^\.^\,])#m", "$1<a href=\"$2\">$2</a>", $text);
+        
         return $res;
     }
     

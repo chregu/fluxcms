@@ -38,6 +38,11 @@ class Test_of_bx_helpers_string extends UnitTestCase {
     
     function test_makeLinksClickable() {
         $this->assertEqual(bx_helpers_string::makeLinksClickable("http://www.flux-cms.org/"),'<a href="http://www.flux-cms.org/">http://www.flux-cms.org/</a>');
+        $this->assertEqual(bx_helpers_string::makeLinksClickable("http://www.flux-cms.org/.hello"),'<a href="http://www.flux-cms.org/.hello">http://www.flux-cms.org/.hello</a>');
+        $this->assertEqual(bx_helpers_string::makeLinksClickable("http://www.flux-cms.org/. hello"),'<a href="http://www.flux-cms.org/">http://www.flux-cms.org/</a>. hello');
+        $this->assertEqual(bx_helpers_string::makeLinksClickable("http://www.flux-cms.org/,hello"),'<a href="http://www.flux-cms.org/,hello">http://www.flux-cms.org/,hello</a>');
+        $this->assertEqual(bx_helpers_string::makeLinksClickable("http://www.flux-cms.org/, hello"),'<a href="http://www.flux-cms.org/">http://www.flux-cms.org/</a>, hello');
+
         $this->assertEqual(bx_helpers_string::makeLinksClickable("http://www.flux-cms.org/test.html#test"),'<a href="http://www.flux-cms.org/test.html#test">http://www.flux-cms.org/test.html#test</a>');
         $this->assertEqual(bx_helpers_string::makeLinksClickable("bar http://www.flux-cms.org/ foo"),'bar <a href="http://www.flux-cms.org/">http://www.flux-cms.org/</a> foo');
         $this->assertEqual(bx_helpers_string::makeLinksClickable("http://www.flux-cms.org/ foo"),'<a href="http://www.flux-cms.org/">http://www.flux-cms.org/</a> foo');
