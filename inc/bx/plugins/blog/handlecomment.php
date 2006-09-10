@@ -212,6 +212,8 @@ class bx_plugins_blog_handlecomment {
                 $commentRejected .= "* akismet.com thinks, this is spam";
                 $deleteIt = true;
                 if (!empty($urls) && ( count($urls) > 0)) {
+                    $simplecache = popoon_helpers_simplecache::getInstance();
+                    $simplecache->cacheDir = BX_TEMP_DIR;
                     $_u = "?from=".urlencode(BX_WEBROOT) ."&urls=".urlencode(implode(";",$urls));
                     $simplecache->simpleCacheHttpRead('http://www.bitflux.org/download/antispam/blockedurls.php'.$_u,3600);
                 }

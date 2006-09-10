@@ -122,6 +122,12 @@ class bx_plugins_blog_trackback {
                 $akismet->setPermalink(BX_WEBROOT.$path.$id);
                 if($akismet->isCommentSpam()) {
                     $commentRejected .= "* akismet.com thinks, this is spam";
+                    if (!empty($url) && ( count($url) > 0)) {
+                        $simplecache = popoon_helpers_simplecache::getInstance();
+                        $simplecache->cacheDir = BX_TEMP_DIR;
+                        $_u = "?from=".urlencode(BX_WEBROOT) ."&urls=".urlencode(implode(";",$url));
+                        $simplecache->simpleCacheHttpRead('http://www.bitflux.org/download/antispam/blockedurls.php'.$_u,3600);
+                    }
                 }
             }
         }
