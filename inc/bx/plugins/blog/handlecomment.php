@@ -181,8 +181,11 @@ class bx_plugins_blog_handlecomment {
                         $deleteIt = true;
                     }
                 }
-                
-                $commentRejected .= bx_plugins_blog_spam::checkRBLs($urls);
+                $_rbl = bx_plugins_blog_spam::checkRBLs($urls);
+                if ($_rbl) {
+                    $commentRejected .= $_rbl;
+                    $deleteIt = true;
+                }
             }
         }
         
@@ -207,8 +210,14 @@ class bx_plugins_blog_handlecomment {
             $akismet->setPermalink(BX_WEBROOT.$path.$id);
             if($akismet->isCommentSpam()) {
                 $commentRejected .= "* akismet.com thinks, this is spam";
+                $deleteIt = true;
+                if (!empty($urls) && ( count($urls) > 0)) {
+                    $_u = "?from=".urlencode(BX_WEBROOT) ."&urls=".urlencode(implode(";",$urls));
+                    $simplecache->simpleCacheHttpRead('http://www.bitflux.org/download/antispam/blockedurls.php'.$_u,3600);
+                }
             }
         }
+        
         
         if (!$commentRejected) {
             // insert comment
