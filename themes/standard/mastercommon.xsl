@@ -25,7 +25,9 @@
         </xsl:for-each>
     </xsl:template>
     
-    
+
+<xsl:template name="html_head_custom">                                     
+</xsl:template>    
     
     
     
