@@ -169,15 +169,21 @@ class bx_plugins_blog_handlecomment {
         
         /* Max 5 links per post and SURBL check */
         /* No check, when logged in */
-        if (!$username && (preg_match_all("#http://[\/\w\.\-]+#",$data['comments'], $matches) || $data['openid_url'] != '')) {
+        if (!$username && (preg_match_all("#http://[\/\w\.\-]+|[\/\w\.\-]+@[\/\w\.\-]+#",$data['comments'], $matches) || $data['openid_url'] != '')) {
+            $maxurls = 5;
             if ($data['openid_url'] != '') {
                 $matches[0][] = $data['openid_url'] ;
+                $maxurls++;
+            }
+            if (!empty($data['email']) && strpos($data['email'],"@")) {
+                $matches[0][] = $data['email'];   
+                $maxurls++;
             }
             if (isset($matches[0])) {
                 $urls = array_unique($matches[0]);
-                if ( count($urls) > 5) {
+                if ( count($urls) > $maxurls) {
                     $commentRejected .= "* More than 5 unique links in comment (".count($urls) .")\n";
-                    if (count($urls) > 10) {
+                    if (count($urls) > ($maxurls + 5)) {
                         $deleteIt = true;
                     }
                 }
