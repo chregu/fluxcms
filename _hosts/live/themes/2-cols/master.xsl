@@ -290,14 +290,23 @@
     <xsl:template name="html_head_title_end"/>
 
     <xsl:template name="html_head_keywords">
-    <!-- uncomment this, if you want meta description and keywords from collection properties
+      <!-- uncomment this, if you want meta description and keywords from collection properties
            and also adjust the html_head_keywords and html_head_description templates
     -->
+    <!-- with inheritance 
+    <xsl:variable name="k" select="$selectedCollections/properties/property[@name='subject']"/>
+    <xsl:variable name="last" select="$k[position() = last()]/@value"/>
+    -->
+    <!-- without inheritance 
+    <xsl:variable name="k" select="$selectedCollections[position() = last()]"/>
+    <xsl:variable name="last" select="$k/properties/property[@name='subject']/@value"/>
+    -->
     <!--
+    <xsl:if test="$last">
         <meta name="keywords">
-        <xsl:variable name="k" select="$selectedCollections/properties/property[@name='subject']"/> 
-        <xsl:attribute name="content"><xsl:value-of select="$k[position() = last()]/@value"/> </xsl:attribute>
+            <xsl:attribute name="content"><xsl:value-of select="$last"/></xsl:attribute>
         </meta>
+    </xsl:if>
     -->
     </xsl:template>
     
@@ -305,15 +314,21 @@
     <!-- uncomment this, if you want meta description and keywords from collection properties
            and also adjust the html_head_keywords and html_head_description templates
     -->
-    <!--
+    <!-- with inheritance
         <xsl:variable name="k" select="$selectedCollections/properties/property[@name='description']"/>
         <xsl:variable name="last" select="$k[position() = last()]/@value"/>
-        <xsl:choose>
-            <xsl:when test="$last != ''" >
-                  <meta name="description" content="{$last}"/>
+     -->
+    <!-- without inheritance
+        <xsl:variable name="k" select="$selectedCollections[position() = last()]"/>
+        <xsl:variable name="last" select="$k/properties/property[@name='description']/@value"/>
+     -->
+    <!--
+      <xsl:choose>
+            <xsl:when test="$last != ''">
+                <meta name="description" content="{$last}"/>
             </xsl:when>
             <xsl:otherwise>
-                 <meta name="description" content="{$sitedescription}"/>
+                <meta name="description" content="{$sitedescription}"/>
             </xsl:otherwise>
         </xsl:choose>
      -->
