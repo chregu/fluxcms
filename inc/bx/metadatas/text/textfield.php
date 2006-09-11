@@ -3,7 +3,7 @@
 class bx_metadatas_text_textfield extends bx_metadata {
 
     protected $size = 45;
-    protected $maxLength = 60;
+    protected $maxLength = 0;
     
     public function __construct() {
         parent::__construct();
@@ -22,7 +22,9 @@ class bx_metadatas_text_textfield extends bx_metadata {
         $textField = $dom->createElement('metadata');
         $textField->setAttribute('type', 'textfield');
         $textField->setAttribute('size', $this->size);
-        $textField->setAttribute('maxLength', $this->maxLength);
+        if ($this->maxLength > 0) {
+            $textField->setAttribute('maxLength', $this->maxLength);
+        }
 
         return $textField;
     }
