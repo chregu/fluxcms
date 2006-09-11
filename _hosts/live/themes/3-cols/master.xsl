@@ -34,7 +34,7 @@
            and also adjust the html_head_keywords and html_head_description templates
     -->
     <!--
-    <xsl:variable name="selectedCollections" select="$navitreePlugin/collection//items/collection[@selected='selected']"/>
+    <xsl:variable name="selectedCollections" select="$navitreePlugin/collection|$navitreePlugin/collection//items/collection[@selected='selected']"/>
     -->
     
     <xsl:variable name="webrootW" select="substring($webroot,1,string-length($webroot)-1)"/>
