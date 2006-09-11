@@ -53,15 +53,15 @@ class bx_tree {
         if ($this->recursive) {
             while ($coll) {
                 array_unshift($colls, $coll);
-                       $childUri = $coll->uri;
-
+                $childUri = $coll->uri;
                 $coll = $coll->getParentCollection();
-               if ($childUri == $coll->uri)   {
-                       break;
-               }
                 if ($coll) {
-                    $this->childUris[$coll->uri] = $childUri;                    
+                    if ($childUri == $coll->uri)   {
+                        break;
+                    }
+                    $this->childUris[$coll->uri] = $childUri;
                 }
+
                 
             }
             $this->fillElement($node,bx_collections::getCollection("/",$this->mode));
