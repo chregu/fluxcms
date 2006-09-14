@@ -53,16 +53,22 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
 
         if (!isset($this->fileroots[$uri])) {
             if ($root = $this->getParameter($uri,"virtualDir")) {
-                $rootCheck = realpath(BX_OPEN_BASEDIR.$root) ;
-                if (BX_OS_WIN) {
-                  $rootCheck = str_replace('\\','/',$rootCheck);
-                  
-                }
-                if (strpos($rootCheck,BX_OPEN_BASEDIR) !== 0) {
-                    $this->fileroots[$uri] = '__notallowed';
+                if ($GLOBALS['POOL']->config->filesDoBaseDirCheck != 'false') {
+                    $rootCheck = realpath(BX_OPEN_BASEDIR.$root) ;
+                    if (BX_OS_WIN) {
+                        $rootCheck = str_replace('\\','/',$rootCheck);
+                        
+                    }
+                    if (strpos($rootCheck,BX_OPEN_BASEDIR) !== 0) {
+                        $this->fileroots[$uri] = '__notallowed';
+                    } else {
+                        $this->fileroots[$uri] = $root;
+                    }
                 } else {
                     $this->fileroots[$uri] = $root;
                 }
+               
+               
             } else {
                 $this->fileroots[$uri] = $uri;
             }

@@ -130,6 +130,7 @@
     
         <openIdEnabled  allowFromDB="true">false</openIdEnabled>
         <adminDeleteTmp>true</adminDeleteTmp>
+        <filesDoBaseDirCheck>true</filesDoBaseDirCheck>
         
         </options>
 </config>
