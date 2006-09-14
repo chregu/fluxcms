@@ -105,7 +105,7 @@ class bx_config_generate {
             fwrite($fd, '$_stage = "";'."\n");
         } else {
             fwrite($fd,'@list($firsthost,$resthost) = explode(".",$_SERVER[\'HTTP_HOST\'],2)'.";\n");
-            fwrite($fd,'if ($resthost && !isset($_staging[$firsthost])) {'."\n");
+            fwrite($fd,'if ($resthost && isset($_staging[$firsthost])) {'."\n");
             fwrite($fd,'   $_stage = $firsthost'.";\n");
             fwrite($fd,'}'."\n");
             fwrite($fd,' else {'."\n");
