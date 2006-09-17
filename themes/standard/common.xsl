@@ -85,7 +85,7 @@
     <label>User:</label><input size="10" name="username" type="text" class="input"/><br/>
     <label>Pwd:</label><input size="10"  name="password" type="password" class="input"/><br/>
     
-    <label>&#160;</label>  <input type="submit" value="Submit"  /><br clear="both"/>
+    <label>&#160;</label>  <input type="submit" value="Submit"  /><br clear="all"/>
     Remember me: <input name="remember" type="checkbox"/><br/>
   </form>
   </xsl:when>
