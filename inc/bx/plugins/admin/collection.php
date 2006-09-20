@@ -69,7 +69,7 @@ class bx_plugins_admin_collection extends bx_plugin {
         if(!empty($data['name']) && !empty($data['resource'])) {
             $id = '/'.$id;
             $name = bx_helpers_string::makeUri($data['name']);
-            if($this->makeCollection($id.$name)) {
+            if($this->makeCollection($id.$name,$data['name'])) {
                 if($data['resource'] != 'none') {
                     $location = BX_WEBROOT.'admin/addresource'.$id.$name.'/?type='.$data['resource'].'&name=index&updateTree='.$id;
                 } else {
@@ -106,7 +106,7 @@ class bx_plugins_admin_collection extends bx_plugin {
         }
 
         // create new collection
-        $coll = new bx_collection($path.$name."/","output", true);
+        $coll = new bx_collection($path."/","output", true);
         if($coll instanceof bx_collection) {
             $parentColl = $this->getParentCollection("$path");
             if($parentColl instanceof bx_collection) {
@@ -114,6 +114,9 @@ class bx_plugins_admin_collection extends bx_plugin {
                 $props = $parentColl->getAllProperties(BX_PROPERTY_PIPELINE_NAMESPACE);
                 foreach($props as $prop) {
                     $coll->setProperty($prop['name'], $prop['value'], $prop['namespace']);
+                }
+                if ($name != '') {
+                    $coll->setProperty("display-name",$name, BX_PROPERTY_DEFAULT_NAMESPACE.BX_DEFAULT_LANGUAGE);
                 }
                 return $coll;       
             }
