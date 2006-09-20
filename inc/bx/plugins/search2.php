@@ -149,7 +149,9 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
     
     protected function getPages($search,$tag) {
         $pages =  array();
-        $options = array ('searchStart' => 0 , 'searchNumber' => 10);
+        $options = array ('searchStart' => 0 , 'searchNumber' => 10,
+         'lang' => $GLOBALS['POOL']->config->getOutputLanguage()
+        );
         $p['fulltext'] = $this->getFulltextPages($search,$tag,$options);
         return $p;
     }
@@ -178,6 +180,12 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         }
         if ($tag) {
             $query .= ' and properties.path in (select path from '.$tablePrefix.'properties2tags left join '.$tablePrefix.'tags on tag_id =  '.$tablePrefix.'tags.id where tag = '.$db->quote($tag).') ';
+        }
+        
+        if (!empty($options['lang'])) {
+            //only works for xhtml... FIXME
+            $query .= ' and properties.path like "%.'.$options['lang'].'.xhtml"';
+            
         }
             
         
