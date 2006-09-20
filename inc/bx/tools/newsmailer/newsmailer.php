@@ -39,7 +39,6 @@ include_once("inc/bx/init.php");
 bx_init::start('conf/config.xml', '');
 $db = $GLOBALS['POOL']->db;
 
-
 function printHelp() {
     echo "Flux CMS Newsmailer Command Line Interface\n";
     echo "Usage: newsmailer.php [options] <command> [parameters]
@@ -134,13 +133,14 @@ function _command_checkbounces($options, $arguments) {
 }
 
 function _command_preparemails($options, $arguments) {
+    bx_log::logNewsletter("START preparemails");
 
     // get the unsent newsletters
     $prefix = $GLOBALS['POOL']->config->getTablePrefix();
     $query = "SELECT * FROM ".$prefix."newsletter_drafts WHERE prepared=TIMESTAMP('0000-00-00 00:00:00')";
     $drafts = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+    bx_log::logNewsletter(count($drafts) . " mails to process");
          
-    echo "START: preparing newsletters\n";
     $start_time_test = time() + microtime(true);
             
     foreach($drafts as $draft) {
@@ -150,21 +150,21 @@ function _command_preparemails($options, $arguments) {
     }
 
     $stop_time_test = time() + microtime(true);
-      $time = $stop_time_test - $start_time_test;
+    $time = $stop_time_test - $start_time_test;
 
-    echo "DONE: newsletters prepared ($time seconds)\n";
-
+    bx_log::logNewsletter("DONE preparemails");
     return TRUE;
 }
 
 function _command_sendmails($options, $arguments) {
+    bx_log::logNewsletter("START sendmails");
 
     // get the unsent newsletters
     $prefix = $GLOBALS['POOL']->config->getTablePrefix();
     $query = "SELECT * FROM ".$prefix."newsletter_drafts WHERE prepared!=TIMESTAMP('0000-00-00 00:00:00') AND sent=TIMESTAMP('0000-00-00 00:00:00')";
     $drafts = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
-    
-    echo "START: sending newsletters\n";
+    bx_log::logNewsletter(count($drafts) . " mails to process");
+
     $start_time_test = time() + microtime(true);
             
     foreach($drafts as $draft) {
@@ -176,9 +176,9 @@ function _command_sendmails($options, $arguments) {
     }
 
     $stop_time_test = time() + microtime(true);
-      $time = $stop_time_test - $start_time_test;
+    $time = $stop_time_test - $start_time_test;
 
-    echo "DONE: newsletters sent ($time seconds)\n";
+    bx_log::logNewsletter("DONE sendmails");
 
     return TRUE;
 }

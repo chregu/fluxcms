@@ -359,6 +359,7 @@ class Mail_Queue extends PEAR
     function sendMail($mail)
     {
         $recipient = $mail->getRecipient();
+        bx_log::logNewsletter("Mail_Queue, sending to: " . $recipient);
         $hdrs = $mail->getHeaders();
         $body = $mail->getBody();
         if (empty($this->send_mail)) {

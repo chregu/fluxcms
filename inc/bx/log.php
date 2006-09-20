@@ -28,4 +28,15 @@ class bx_log {
         return FALSE;
     }
     
+    public static function logNewsletter($msg) {
+        $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+        $msg = $GLOBALS['POOL']->db->quote($msg);
+        $query = "INSERT INTO ".$prefix."newsletter_log (message) VALUES (" . $msg . ")";
+        $GLOBALS['POOL']->dbwrite->exec($query);
+
+	$logline = strftime("[%Y-%m-%d %T] " . $msg . "\n");
+	$f = fopen("/tmp/newsletter.log", "a");
+	fwrite($f, $logline);
+	fclose($f);
+    }
 }

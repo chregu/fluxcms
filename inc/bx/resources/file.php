@@ -221,12 +221,12 @@ class bx_resources_file extends bx_resource {
                     }
                     return true;
                 } else {
-                    bx::log("Could not copy $id to ".$fileRoot.$to);
+                    print ("Could not copy $id to ".$fileRoot.$to);
                     return false;
                 }
             }
          }
-         bx::log("$id does not exist");
+         print("$id does not exist");
          return false;
      }
      
