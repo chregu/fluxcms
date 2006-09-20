@@ -340,6 +340,13 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
             } else {
                 fwrite($fd, '<created keep="true"></created>');
             }
+            if (isset($content['categories'])) {    
+                foreach ($content['categories'] as $p) {
+                    $cat = $p->getval();
+                   fwrite ($fd,'<sa-cat:categories  xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sa-cat="http://sixapart.com/atom/category#"><dc:subject>'.$cat.'</dc:subject></sa-cat:categories>');
+                }                   
+            }
+            
             fwrite($fd, '<atom:content type="application/xhtml+xml" xmlns:atom="http://purl.org/atom/ns#" xmlns="http://www.w3.org/1999/xhtml">'.bx_helpers_string::tidyfy(stripslashes($content['description'])).'</atom:content>');
             if (isset($content['mt_text_more']) && trim($content['mt_text_more'])) {
                 fwrite($fd, '<atom:content_extended type="application/xhtml+xml" xmlns:atom="http://purl.org/atom/ns#" xmlns="http://www.w3.org/1999/xhtml">'.bx_helpers_string::tidyfy(stripslashes($content['mt_text_more'])).'</atom:content_extended>');
@@ -406,7 +413,12 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
                 fwrite($fd, '<created ></created>');
             }
             
-            if (stripos($_SERVER['HTTP_USER_AGENT'],"Flickr") !== false) {
+            if (isset($content['categories'])) {    
+                foreach ($content['categories'] as $p) {
+                    $cat = $p->getval();
+                   fwrite ($fd,'<sa-cat:categories  xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sa-cat="http://sixapart.com/atom/category#"><dc:subject>'.$cat.'</dc:subject></sa-cat:categories>');
+                }                   
+            } else if (stripos($_SERVER['HTTP_USER_AGENT'],"Flickr") !== false) {
                 fwrite ($fd,'<sa-cat:categories  xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sa-cat="http://sixapart.com/atom/category#"><dc:subject>__default</dc:subject></sa-cat:categories>');
             } else if (stripos($_SERVER['QUERY_STRING'],'rnd') !== false) {
                 //writely...
