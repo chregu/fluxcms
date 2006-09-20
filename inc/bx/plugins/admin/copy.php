@@ -18,7 +18,7 @@ class bx_plugins_admin_copy extends bx_plugins_admin implements bxIplugin {
     }
     
     public function getContentById($path, $id) {
-        $to = $this->getParameter($path,"to");
+        $to = bx_helpers_string::makeUri($this->getParameter($path,"to"),true,true);
         $move = $this->getParameter($path,"move");
         $parts = bx_collections::getCollectionAndFileParts($id,$this->mode);
         $dom = new domDocument();

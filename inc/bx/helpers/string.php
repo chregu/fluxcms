@@ -150,7 +150,7 @@ class bx_helpers_string {
         return ($str);
     }
     
-    static function makeUri ($title, $preserveDots = false) {
+    static function makeUri ($title, $preserveDots = false,$preserveSlashes = false) {
         $title = html_entity_decode($title,ENT_QUOTES,'UTF-8');
         
         $title = trim($title);
@@ -177,7 +177,7 @@ class bx_helpers_string {
         
         //removing everything else
         $newValue = strtolower($newValue);
-        $newValue = preg_replace("/[^a-z0-9\.\-\_]/","-",$newValue);
+        $newValue = preg_replace("/[^a-z0-9\.\-\_\/]/","-",$newValue);
         
         
         if (!$preserveDots) {
@@ -185,7 +185,11 @@ class bx_helpers_string {
         } else {
             $newValue= preg_replace("/_([0-9]+)\./u","-$1.",$newValue);
         }
-
+        
+        if (!$preserveSlashes) {
+            $newValue= preg_replace("/\//u","-$1",$newValue);
+        }
+        
         $newValue= preg_replace("/-{2,}/u","-",$newValue);
         $newValue = trim($newValue,"-");
         if (!$newValue) {

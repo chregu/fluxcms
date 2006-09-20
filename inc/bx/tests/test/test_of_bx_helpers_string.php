@@ -11,11 +11,13 @@ class Test_of_bx_helpers_string extends UnitTestCase {
         $this->assertEqual(bx_helpers_string::makeUri("foo6"),"foo6","Numbers without _: %s");
         $this->assertEqual(bx_helpers_string::makeUri("foo_6"),"foo-6","Numbers with -: %s");
         $this->assertEqual(bx_helpers_string::makeUri("foo_a6"),"foo_a6","Numbers with _ and letter: %s");
+        $this->assertEqual(bx_helpers_string::makeUri("foo/a6"),"foo-a6","Numbers with / and letter: %s");
         $this->assertEqual(bx_helpers_string::makeUri("a!ç#'\".$%z"),"a-z","Specialchars: %s");
         $this->assertEqual(bx_helpers_string::makeUri(""),"none","Empty: %s");
         $this->assertEqual(bx_helpers_string::makeUri("a\nb\rc"),"abc","line breaks: %s");
         $this->assertEqual(bx_helpers_string::makeUri("foobar.pdf"),"foobar-pdf","Remove dots: %s");
         $this->assertEqual(bx_helpers_string::makeUri("foobar.pdf",true),"foobar.pdf","Preserve dots: %s");
+        $this->assertEqual(bx_helpers_string::makeUri("/foo/bär/index.de.html",true,true),"/foo/baer/index.de.html","Preserve slashes: %s");
     }
     
     function test_truncate() {
