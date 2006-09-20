@@ -42,9 +42,13 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
         $this->addDispatch("mt.setPostCategories","setPostCategories");
         $this->addDispatch("metaWeblog.editPost","editPost");
         $this->addDispatch("metaWeblog.newPost","newPost");
+        $this->addDispatch("blogger.editPost","editPostBlogger");
+        $this->addDispatch("blogger.newPost","newPostBlogger");
+        
         $this->addDispatch("blogger.deletePost","deletePost");
          $this->addDispatch("metaWeblog.getPost","getPost");
          $this->addDispatch("blogger.getUsersBlogs","getUsersBlogs");
+         
     }
      function getRecentPostTitles($params) {
         if (!$this->checkAuth($params,1)) {
@@ -109,6 +113,8 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
         return $dom;
             
         } else {
+
+        
             return parent::getContentById($path,$id);
         }
            
@@ -285,15 +291,43 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
          return new XML_RPC_Response (new XML_RPC_Value(true,"boolean"));;
     }
     
+    function editPostBlogger($params) {
+   
+        array_shift($params->params);
+        
+        return $this->editPost($params);
+        
+    }
+    
     function editPost($params) {
         if (!$this->checkAuth($params,1)) {
             return false;
         }
         
+        
          $id = $params->params[0]->getval();
          $content = $params->params[3]->getval();
+         if (!is_array($content)) {
+             
+             $_c = $content;
+             $content = array();
+             $content['description'] = $_c;
+             $content['title'] = '';
+             
+             
+         }
+         
+         if (!isset($content['mt_keywords'])) {
+            $content['mt_keywords'] = '';
+         }
+             
+             
          bx_global::registerStream("blog");
-            $fd = fopen("blog://".$this->path."_id".$id,"w");
+         
+         
+               $fd = fopen("blog://".$this->path."_id".$id,"w");
+         
+            
             fwrite($fd, '<entry xmlns="http://purl.org/atom/ns#">');
             fwrite($fd, '<title>'.htmlspecialchars(html_entity_decode($content['title'],ENT_NOQUOTES,'UTF-8')).'</title>');
             $tags = html_entity_decode($content['mt_keywords'],ENT_NOQUOTES,'UTF-8');
@@ -313,7 +347,7 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
 
             fwrite($fd, '</entry>');
             fclose($fd);
-        
+            
         return new XML_RPC_Response (new XML_RPC_Value(true,"boolean"));;
     }
     
@@ -326,19 +360,39 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
           return new XML_RPC_Response (new XML_RPC_Value(true,"boolean"));;
     }
     
+    function newPostBlogger($params) {
+   
+        array_shift($params->params);
+        
+        return $this->newPost($params);
+        
+    }
+    
     function newPost ($params) {
           if (!$this->checkAuth($params,1)) {
             return false;
         }
         $id = $params->params[0]->getval();
          $content = $params->params[3]->getval();
-         
+         if (!is_array($content)) {
+             $_c = $content;
+             $content = array();
+             $content['description'] = $_c;
+             $content['title'] = '';
+         }
+         if (!isset($content['mt_keywords'])) {
+            $content['mt_keywords'] = '';
+         }
+             
          bx_global::registerStream("blog");
          if (trim($content['title']) == '') {
              $content['title'] = 'No Title';
          }
          $uri = bx_streams_blog::getUniqueUri(bx_helpers_string::makeUri(trim($content['title'])),$this->path);
+         
+   
             $fd = fopen("blog://".$this->path."newpost.xml","w");
+         
             fwrite($fd, '<entry xmlns="http://purl.org/atom/ns#">');
             fwrite($fd, '<title>'.htmlspecialchars(html_entity_decode($content['title'],ENT_NOQUOTES,'UTF-8')).'</title>');
             fwrite($fd, '<uri>'.$uri.'</uri>');
@@ -351,8 +405,13 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
             } else {
                 fwrite($fd, '<created ></created>');
             }
+            
             if (stripos($_SERVER['HTTP_USER_AGENT'],"Flickr") !== false) {
                 fwrite ($fd,'<sa-cat:categories  xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sa-cat="http://sixapart.com/atom/category#"><dc:subject>__default</dc:subject></sa-cat:categories>');
+            } else if (stripos($_SERVER['QUERY_STRING'],'rnd') !== false) {
+                //writely...
+                fwrite ($fd,'<sa-cat:categories  xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sa-cat="http://sixapart.com/atom/category#"><dc:subject>__default</dc:subject></sa-cat:categories>');
+                
             }
             fwrite($fd, '<atom:content type="application/xhtml+xml" xmlns:atom="http://purl.org/atom/ns#" xmlns="http://www.w3.org/1999/xhtml">'.bx_helpers_string::tidyfy(stripslashes($content['description'])).'</atom:content>');
             if (isset($content['mt_text_more']) && trim($content['mt_text_more'])) {

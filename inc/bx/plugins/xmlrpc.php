@@ -30,7 +30,10 @@ class bx_plugins_xmlrpc extends bx_plugin {
         try {
             $xml = $this->_server->server_payload;
             
+            
+            
         } catch (Exception $e) {
+        
             $r = new XML_RPC_Response(0,$e->getCode(),$e->getMessage());
             $xml = '<?xml version="1.0" ?>'.$r->serialize();
         }
