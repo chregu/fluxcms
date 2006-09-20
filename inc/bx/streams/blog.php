@@ -223,7 +223,11 @@ class bx_streams_blog extends bx_streams_buffer {
         if ((!$date || $date == "now()" || $date == $this->zeroDate)) {
             return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : $this->zeroDate;
         } 
-         
+        
+        if (strpos($date,"Z") === false && strpos($date,"+") === false && strpos($date,"-") === false) {
+            $date .="Z";
+        }
+        
         $date =  preg_replace("/([0-9])T([0-9])/","$1 $2",$date);
         $date =  preg_replace("/([\+\-][0-9]{2}):([0-9]{2})/","$1$2",$date);
         $date = strtotime($date);
@@ -464,7 +468,9 @@ class bx_streams_blog extends bx_streams_buffer {
                 $post = call_user_func($func,$post);
             }
         }
-        
+        if ($post->title == '') {
+            $post->title = "No Title";
+        }
         $query = "update ".$this->tablePrefix."blogposts set post_title = ".$db->quote(bx_helpers_string::utf2entities($post->title)).",".
         "post_content = ".$db->quote(bx_helpers_string::utf2entities($post->content)) .",".
         "post_content_extended = ".$db->quote(bx_helpers_string::utf2entities($post->content_extended)) .",".
