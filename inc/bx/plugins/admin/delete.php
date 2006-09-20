@@ -1,7 +1,7 @@
 <?php
 
 class bx_plugins_admin_delete extends bx_plugins_admin implements bxIplugin {
-
+    
     static private $instance = null;
     
     private function __construct() {
@@ -14,7 +14,7 @@ class bx_plugins_admin_delete extends bx_plugins_admin implements bxIplugin {
         }
         
         return self::$instance;
-    
+        
     }
     
     public function getContentById($path, $id) {
@@ -25,23 +25,23 @@ class bx_plugins_admin_delete extends bx_plugins_admin implements bxIplugin {
         
         $perm = bx_permm::getInstance();
         if (!$perm->isAllowed($permId,array('collection-back-delete'))) {
-        	throw new BxPageNotAllowedException();
+            throw new BxPageNotAllowedException();
         }
-
+        
         $dom = new domDocument();
         $response = $dom->createElement('response');
         if ($parts['coll']->deleteResourceById($parts['rawname'])) {
             $response->appendChild($dom->createTextNode('ok'));
             
             if(substr($id, -1) == '/') {
-	            // delete permissions
-	            $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-	            $query = "	DELETE FROM {$prefix}perms 
-							WHERE LOCATE('{$permId}', {$prefix}perms.uri) != 0";
-		
-				$GLOBALS['POOL']->dbwrite->exec($query); 
+                // delete permissions
+                $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+                $query = "    DELETE FROM {$prefix}perms 
+                WHERE LOCATE('{$permId}', {$prefix}perms.uri) != 0";
+                
+                $GLOBALS['POOL']->dbwrite->exec($query); 
             }
-
+            
         } else {
             $response->appendChild($dom->createTextNode('failed'));
         }
@@ -67,7 +67,7 @@ class bx_plugins_admin_delete extends bx_plugins_admin implements bxIplugin {
         
         $parts = bx_collections::getCollectionAndFileParts($id,$this->mode);
         return $parts['coll']->getContentUriById($parts['rawname'],$sample);   
-         
+        
     }
 }
 
