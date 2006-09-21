@@ -86,17 +86,19 @@ function dbforms2_liveselect() {
             idNS = entry.getElementsByTagName('_id');
             titleNS = entry.getElementsByTagName('_title');
             
-            title = '#Broken Entry#';
             id = 0;
 
-            if(titleNS.length > 0 && titleNS.item(0).childNodes[0]) {
-                title = titleNS.item(0).childNodes[0].data
-            } 
-
+            
             if(idNS.length > 0 && idNS.item(0).childNodes[0]) {
                 id = idNS.item(0).childNodes[0].data;
             }
+
+            title = '#Empty Field# ('+ id +')';
             
+			if(titleNS.length > 0 && titleNS.item(0).childNodes[0]) {
+                title = titleNS.item(0).childNodes[0].data
+            } 
+
             this.results.addEntry(id, title);
             
             entry = entry.nextSibling;
