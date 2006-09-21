@@ -109,7 +109,21 @@ class bx_plugins_admin_themes extends bx_plugins_admin implements bxIplugin  {
      }
     
     public function unZip($zipFile) {
-        exec("unzip -o ". escapeshellarg($zipFile) ." -d ".BX_OPEN_BASEDIR."themes");
+
+        if(class_exists('ZipArchive')) {
+            
+            $zip = new ZipArchive;
+
+            if($zip->open($zipFile) === TRUE) {
+                
+                $zip->extractTo(BX_OPEN_BASEDIR . 'themes/');
+                $zip->close();
+            }
+
+        } else {
+
+            exec("unzip -o ". escapeshellarg($zipFile) ." -d ".BX_OPEN_BASEDIR."themes");
+        }
     }
     
     public function getPreviewPicture($themePic, $theme, $themeCss) {
