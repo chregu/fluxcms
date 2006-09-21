@@ -30,7 +30,7 @@
     <xsl:template match="/">
         <html>
             <head>
-                <link href="{$webroot}themes/admin/css/dbforms2.css" rel="stylesheet" media="screen" type="text/css"/>
+                <link href="{$webroot}themes/standard/admin/css/dbforms2.css" rel="stylesheet" media="screen" type="text/css"/>
 
                 <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/sarissa.js'"/></xsl:call-template>
 
@@ -111,7 +111,7 @@
                         <div style="position:absolute; top:3px; left: 350px">
                             <div class="liveselect">
                                 <input type="text" id="chooserQueryField" size="40" accesskey="c"/>
-                                <img id="chooserImg" src="{$webroot}themes/admin/images/dbforms2/liveselect_arrowd.gif" border="0"/>
+                                <img id="chooserImg" src="{$webroot}themes/standard/admin/images/dbforms2/liveselect_arrowd.gif" border="0"/>
                                 <div class="liveselectResultsShadow">
                                     <div class="liveselectResults" id="chooserResults">
                                         <ul><li>Loading...</li></ul>

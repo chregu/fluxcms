@@ -21,7 +21,7 @@
     	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     	<link rel="stylesheet" type="text/css" href="http://berggebiete/themes/standard/admin/css/formedit.css" />
     	<link rel="stylesheet" type="text/css" href="http://berggebiete/themes/standard/admin/css/admin.css" />
-    	<link rel="stylesheet" type="text/css" media="screen" href="{$webroot}/themes/admin/css/assets.css"/>
+    	<link rel="stylesheet" type="text/css" media="screen" href="{$webroot}/themes/standard/admin/css/assets.css"/>
     	<script type="text/javascript" language="javascript">
     		var bx_webroot = '<xsl:value-of select="$webroot"/>';
     		var langs  = new Array(<xsl:for-each select="/bx/plugin/assets/langs/entry">'<xsl:value-of select="."/>'<xsl:if test="not(position()=last())">,</xsl:if></xsl:for-each>);
