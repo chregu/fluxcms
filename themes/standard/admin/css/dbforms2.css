@@ -156,7 +156,7 @@ td.formInput {
 }
 
 .liveselectResultsShadow {
-    background: transparent url(/themes/admin/images/shadow2.png);
+    background: transparent url(/themes/standard/admin/images/shadow2.png);
     position: relative;
     bottom: -3px;
     right: -3px;

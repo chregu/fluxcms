@@ -17,7 +17,7 @@
     
     <head>
     <title>Flux CMS Admin</title>
-    <link rel="stylesheet" type="text/css" media="screen" href="{$webroot}themes/admin/css/navi.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{$webroot}themes/standard/admin/css/navi.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="{$webroot}admin/webinc/xlt/xtree.css" />
     <script type="text/javascript">
     var webFXTreeConfig = new Object();

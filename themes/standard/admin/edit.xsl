@@ -29,7 +29,7 @@
                 <xsl:copy/>
             </xsl:for-each>
             <xsl:apply-templates/>
-            <link href="{$webroot}themes/admin/css/admin.css" id="adminrcss" rel="stylesheet" media="screen" type="text/css"/>
+            <link href="{$webroot}themes/standard/admin/css/admin.css" id="adminrcss" rel="stylesheet" media="screen" type="text/css"/>
             <script src="{$webroot}webinc/js/editpopup.js">
                 <xsl:text> </xsl:text>
             </script>

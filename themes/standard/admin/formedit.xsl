@@ -18,7 +18,7 @@
                 <xsl:copy/>
             </xsl:for-each>
             <xsl:apply-templates/>
-            <link href="{$webroot}themes/admin/css/formedit.css" rel="stylesheet" media="screen" type="text/css"/>
+            <link href="{$webroot}themes/standard/admin/css/formedit.css" rel="stylesheet" media="screen" type="text/css"/>
         
         </xsl:copy>
     </xsl:template>
