@@ -28,6 +28,10 @@ abstract class bx_plugins_admin extends bx_component {
     public function getJavaScriptSources() {
 	return array();
 	}
+    
+    public function getOverviewSections($path,$mainOverview) {
+        return false;
+    }
 }
 
 
