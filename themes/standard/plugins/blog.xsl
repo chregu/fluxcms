@@ -95,6 +95,17 @@
         </form>
     </xsl:template>
 
+   <xsl:template match="latest_comments" name="latest_comments" mode="xhtml">
+
+ <xsl:for-each select="document(concat('portlet://',$collectionUri,'latestcomments.xml'))/bx/plugin/comments/comment">
+      <li><xsl:value-of select="author"/>:<br/>
+        <cite>"<a title="Am {date} zum Thema: {post_title}" href="{$webrootW}{$collectionUri}archives/{post_permauri}#comments"><xsl:value-of disable-output-escaping="yes" select="substring(content,1,50)"/>
+        <xsl:if test="string-length(content) &gt; 50">..</xsl:if>
+       </a>"
+      </cite></li>
+    </xsl:for-each>
+</xsl:template>
+
     <xsl:template name="buttons" match="buttons" mode="xhtml">
         <h3 class="blog">Buttons</h3>
         <div id="buttons">
