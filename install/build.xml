@@ -5,22 +5,22 @@
    <property name="hasTidy" value="auto"/>
     <target name="prepare" depends="prereq">
         <mkdir dir="${BxRootDir}/tmp/"/>
-        <copy includeemptydirs="true" todir="${BxRootDir}/_hosts/live/data/">
+        <copy includeemptydirs="true" todir="${BxRootDir}/data/">
             <fileset dir="${BxRootDir}/install/dist/data/">
                 <exclude name="**/.svn/"/>
             </fileset>
         </copy>
 
-        <mkdir dir="${BxRootDir}/_hosts/live/files/"/>
-        <copy includeemptydirs="true" todir="${BxRootDir}/_hosts/live/files/">
+        <mkdir dir="${BxRootDir}/files/"/>
+        <copy includeemptydirs="true" todir="${BxRootDir}/files/">
             <fileset dir="${BxRootDir}/install/dist/files/">
                 <exclude name="**/.svn/"/>
             </fileset>
         </copy>
 
         <mkdir dir="${BxRootDir}/dynimages/"/>
-        <mkdir dir="${BxRootDir}/_hosts/live/lang/"/>
-        <copy includeemptydirs="true" todir="${BxRootDir}/_hosts/live/lang/">
+        <mkdir dir="${BxRootDir}/lang/"/>
+        <copy includeemptydirs="true" todir="${BxRootDir}/lang/">
             <fileset dir="${BxRootDir}/install/dist/lang/">
                 <exclude name="**/.svn/"/>
             </fileset>

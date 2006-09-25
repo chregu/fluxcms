@@ -4,7 +4,9 @@ session_start();
 <html>
 <head>
 <title>Flux CMS Webinstaller</title>
-<link rel="stylesheet" href="../_hosts/live/themes/standard/admin/css/formedit.css" type="text/css" />
+<!-- <link rel="stylesheet" href="../_hosts/live/themes/standard/admin/css/formedit.css" type="text/css" /> -->
+
+ <link rel="stylesheet" href="../themes/standard/admin/css/formedit.css" type="text/css" />
 </head>
 
 <body>
@@ -270,14 +272,14 @@ function prereq() {
     }
 
     
-    print "Check if live dir (".rootDir()."/_hosts/live/) directory is writable ...\n";
+    /* print "Check if live dir (".rootDir()."/_hosts/live/) directory is writable ...\n";
     if(is_writeable(rootDir()."/_hosts/live/")) {
         print "OK.<br/>\n";
     } else {
         print "<font color='red'>";
         print "Not writeable<br/>";
         return "Root Dir (".rootDir()."/_hosts/live/) is not writeable";
-    }
+    }*/
     
     return true;
 }
