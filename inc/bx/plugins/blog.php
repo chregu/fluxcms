@@ -845,15 +845,20 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     	}	
 
         $dom->addTab("Edit Categories/Links");
-        if($perm->isAllowed('/blog/',array('blog-back-categories'))) {
+        if($perm->isAllowed($path,array('blog-back-categories'))) {
         	$dom->addLink("Edit Categories",'edit'.$path.'sub/categories/');
         }
-        if($perm->isAllowed('/blog/',array('blog-back-blogroll'))) {
+        if($perm->isAllowed($path,array('blog-back-blogroll'))) {
         	$dom->addLink("Edit Links and Linkcategories",'edit'.$path.'sub/blogroll/');
         }
         if($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-blogcomments'))) {
         	$dom->addLink("Edit Comments",'dbforms2/blogcomments/');
         }
+        
+         if($perm->isAllowed($path,array('blog-back-sidebars'))) {
+        	$dom->addLink("Edit Sidebars",'edit'.$path.'sub/sidebar/');
+        }
+        
         
         //if (!$mainOverview) {
             $dom->addTab("RSS");
