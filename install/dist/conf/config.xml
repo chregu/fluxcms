@@ -264,10 +264,12 @@
         <include>{BX_PROJECT_DIR}conf/include.php</include>
         
     </files>
-   <staging>
+   
+    <!-- for staging in 2.0 
+    <staging>
         <stage>live</stage>
         <stage>edit</stage>
    </staging>
-    
+    -->
    
 </config>

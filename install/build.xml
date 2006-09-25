@@ -81,8 +81,16 @@
     <target name="installTables" depends="setupPrefixedTable, installUser">
     
      <mdb2 src="${BxRootDir}/tmp/bxcms.prefixed.sql" url="${database.type}://${database.user}:${database.password}@${database.host}/${database.name}"></mdb2>
+     <!-- 
+     for 2.0
+     
      <mdb2  url="${database.type}://${database.user}:${database.password}@${database.host}/${database.name}">
      INSERT INTO ${database.prefix}live__users ( user_login, user_pass) VALUES ('${cms.user}',md5('${cms.password}'));
+     </mdb2>
+     -->
+     
+     <mdb2  url="${database.type}://${database.user}:${database.password}@${database.host}/${database.name}">
+     INSERT INTO ${database.prefix}users ( user_login, user_pass) VALUES ('${cms.user}',md5('${cms.password}'));
      </mdb2>
      <delete file="bxcms.prefixed.sql" dir="${BxRootDir}/tmp/" />
     </target>
@@ -91,7 +99,8 @@
         <copy file="${BxRootDir}/div/db/bxcms.sql" tofile="${BxRootDir}/tmp/bxcms.prefixed.sql" overwrite="true">
             <filterchain>
                     <replacetokens begintoken="##" endtoken="##">
-                        <token key="bxcms_" value="${database.prefix}live__"/>
+                        <!--<token key="bxcms_" value="${database.prefix}live__"/>-->
+                        <token key="bxcms_" value="${database.prefix}"/>
                     </replacetokens>
                 </filterchain>
         </copy>
