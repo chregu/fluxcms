@@ -456,6 +456,7 @@ INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`,
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (7, 'login', '<login/>', 2, 4, '2006-06-25 01:18:55', 1);
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (8, 'archive', '<archive/>', 2, 2, '2006-06-25 01:18:55', 1);
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (9, 'categories', '<categories/>', 1, 0, '2006-06-25 01:18:55', 1);
+INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (10, 'latest_comments', '<h3 class="blog">Latest Comments</h3>\n<latest_comments/>', 0, 0, '2006-06-25 01:18:55', 1);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
