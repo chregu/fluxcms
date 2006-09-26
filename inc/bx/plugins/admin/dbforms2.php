@@ -74,7 +74,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 // create a new DOM document out of the posted string
                 $xmlData = new DOMDocument();
                 $xmlData->loadXML($GLOBALS['HTTP_RAW_POST_DATA']);
-                bx_log::log($xmlData->saveXML());
                 
                 // get values as an array
                 $values = bx_dbforms2_data::getValuesByXML($form, $xmlData);
@@ -105,7 +104,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
                     
                     $insertid = $xmlData->documentElement->getAttribute('insertid');
-                    bx_log::log('insert id is: ' +$insertid);
                     if(!empty($insertid)) {
                         $form->currentID = $insertid;
                     } else {
