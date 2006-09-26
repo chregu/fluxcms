@@ -277,7 +277,7 @@ class Log_file extends Log
      * @return boolean  True on success or false on failure.
      * @access public
      */
-    function log($message, $priority = null)
+    function log($message, $priority = null, $ctx = NULL)
     {
         /* If a priority hasn't been specified, use the default value. */
         if ($priority === null) {
@@ -299,7 +299,7 @@ class Log_file extends Log
 
         /* Build the string containing the complete log line. */
         $line = sprintf($this->_lineFormat, strftime($this->_timeFormat),
-                $this->_ident, $this->priorityToString($priority),
+                $this->_ident."/$ctx", $this->priorityToString($priority),
                 $message) . $this->_eol;
 
         /* If locking is enabled, acquire an exclusive lock on the file. */
