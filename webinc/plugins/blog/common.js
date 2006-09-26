@@ -43,6 +43,7 @@ function reallyDelete() {
 
 
 function formCheck(form) {
+
 	if (!checkTitle()) {
 		alert("You did not provide a title, but you have to.");
 		return false;
@@ -56,9 +57,70 @@ function formCheck(form) {
 		return false;
 	}
 	fixEntities();
-	return checkValidXML(form);
+	if (! checkValidXML(form)){
+		return false;
+	}
+	return blogPost();
 	
 }
+
+function blogPost() {
+	var saveButton = document.getElementById("Save");
+	saveButton.value = "Saving"
+	var form = document.getElementById('entry');
+	
+	try {
+		var postString = '';
+		
+		updateTextAreasOnly();
+		
+		for (var i = 0; i < form.elements.length; i++) {
+			var xml = form.elements[i].value;
+			if (form.elements[i].type == "checkbox") {
+				if (form.elements[i].checked) {
+					postString += form.elements[i].name;
+					postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
+				} 
+			} else {
+				postString += form.elements[i].name;
+				postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
+			}
+		}
+		postString += 'ajax=1';
+	}
+	catch(e)
+	{
+		alert("foo" + e);
+		return true;
+	}
+	new ajax ('./testo.html', {
+	postBody: postString,
+	method: 'post',
+	onComplete: ajaxPostComplete
+	});
+	
+	return false;
+}
+
+function ajaxPostComplete(req)  {
+	var saveButton = document.getElementById("Save");
+	var id = document.getElementById('id');
+	var uri = document.getElementById('uri');
+	var values = eval('('+req.responseXML.documentElement.firstChild.nodeValue+')');
+	
+	id.value = values.id;
+	uri.value = values.uri;
+	
+	saveButton.value = "Saved";
+	
+	setTimeout("savedToSave()",3000);
+}
+
+function savedToSave() {
+	var saveButton = document.getElementById("Save");
+	saveButton.value = "Save";
+}
+
 
 function fixEntities() {
 	

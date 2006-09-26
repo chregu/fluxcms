@@ -43,9 +43,14 @@ function initFckExtended() {
 
 }
 
-
 function updateTextAreas() {
-	var oEditor = FCKeditorAPI.GetInstance("bx[plugins][admin_edit][content]") ;
+   updateTextAreasOnly();
+	return formCheck();
+}
+                                           
+function updateTextAreasOnly() {
+	
+		var oEditor = FCKeditorAPI.GetInstance("bx[plugins][admin_edit][content]") ;
 	var xml = oEditor.GetXHTML(true);
 	document.getElementById("bx[plugins][admin_edit][content]").value = xml;
 	
@@ -56,9 +61,7 @@ function updateTextAreas() {
 	} else {
 		document.getElementById("bx[plugins][admin_edit][content_extended]").value = "";
 	}
-	return formCheck();
 }
-
 
 function insertImageForKupu(url) {
 	var oEditor = FCKeditorAPI.GetInstance("bx[plugins][admin_edit][content]") ;
