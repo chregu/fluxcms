@@ -34,6 +34,12 @@
         <script type="text/javascript" src="{$webroot}webinc/plugins/blog/fck.js">
             <xsl:text> </xsl:text>
         </script>
+		<script type="text/javascript" src="{$webroot}webinc/js/prototype.lite.js">
+		<xsl:text> </xsl:text>
+		</script>
+            <script type="text/javascript" src="{$webroot}webinc/js/moo.ajax.js">
+		<xsl:text> </xsl:text>
+		</script>
         <script type="text/javascript">
             var fckBasePath	= "<xsl:value-of select="$webroot"/>webinc/fck/";
             var bx_webroot = "<xsl:value-of select="$webroot"/>";
@@ -428,8 +434,8 @@
 <xsl:template name="buttons">
 <xsl:param name="accesskeys" select="'false'"/>
     
-                 <input class="button" type="submit" i18n:attr="value" value="Save"  >
-                    <xsl:if test="$accesskeys = 'true'">
+                 <input class="button" type="submit" i18n:attr="value" value="Save" id="Save">
+				 <xsl:if test="$accesskeys = 'true'">
                        <xsl:attribute name="accesskey">s</xsl:attribute>
                     </xsl:if>
                 </input>

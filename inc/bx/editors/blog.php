@@ -12,11 +12,14 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
         $params['pipelineName'] = 'blog';
         $parts = bx_collections::getCollectionUriAndFileParts($id,'admin');
         $params['xslt'] = $this->getStylesheetName($parts['colluri'], $parts['rawname']);
-        return $params;
+		if (!(empty($_POST['ajax']) && empty($_GET['ajax']))) {
+			$params['output-mimetype'] = 'text/xml';
+		}
+		return $params;
     }
     
     protected function getStylesheetName($path,$id) {
-        switch ($id) {
+	    switch ($id) {
             case ".":
             return "start.xsl";
             
@@ -29,13 +32,18 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
             return $this->getStylesheetNameBySubEditor($subEditor);
             
         }
-        return "post-fck.xsl"; // very strange default value... -- qmax
+		if (!(empty($_POST['ajax'])  && empty($_GET['ajax']))) {
+			return "post-ajax.xsl";	
+		} else {
+			return "post-fck.xsl"; // very strange default value... -- qmax
+		}
         
     }
     
     public function handlePOST($path, $id, $data) {
     	
-    	$sub = substr($id, strrpos($id, '/', -3)+1, -2);
+		
+		$sub = substr($id, strrpos($id, '/', -3)+1, -2);
     	$perm = bx_permm::getInstance();
 	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
         	throw new BxPageNotAllowedException();
@@ -163,8 +171,12 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 
                 fwrite($fd, '</entry>');
                 fclose($fd);
-                if ("/".$data['uri'].".html" != $id) {
-                    header("Location: ".$data['uri'] .".html");
+                if ( "/".$data['uri'].".html" != $id) {
+                    if (empty($_POST['ajax'])  && empty($_GET['ajax'])) {
+						header("Location: ".$data['uri'] .".html");
+					} else {
+						header("Location: ".$data['uri'] .".html?ajax=1");
+					}
                 }
             }
         }
@@ -173,7 +185,6 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     public function getEditContentById($id) {
         
     	$sub = substr($id, strrpos($id, '/', -2)+1, -1);
-    	
     	$perm = bx_permm::getInstance();
 	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
         	throw new BxPageNotAllowedException();
