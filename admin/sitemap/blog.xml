@@ -2,79 +2,88 @@
 
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
 
-    <map:pipelines>
+	<map:pipelines>
 
-        <map:pipeline>
-            <map:match type="uri" pattern="*">
-                <map:include label="standardPipeline"/>
-            </map:match>
-        </map:pipeline>
+		<map:pipeline>
+			<map:match type="uri" pattern="*">
+				<map:include label="standardPipeline"/>
+			</map:match>
+		</map:pipeline>
 
-        <map:pipeline>
-            <map:match type="always" pattern="*">
+		<map:pipeline>
+			<map:match type="always" pattern="*">
 
-                <map:include label="standardPipeline"/>
-            </map:match>
-        </map:pipeline>
+				<map:include label="standardPipeline"/>
+			</map:match>
+		</map:pipeline>
 
-    </map:pipelines>
+	</map:pipelines>
 
-    <map:include-definitions>
-        <map:include-definition label="standardPipeline">
-            <map:select type="any" var="{../id}">
+	<map:include-definitions>
+		<map:include-definition label="standardPipeline">
+			<map:select type="any" var="{../id}">
 
-                <map:when test="sub/*">
-                    <map:generate type="bxcmsadmin" src="{../id}">
-                        <map:parameter name="type" value="content"/>
-                        <map:parameter name="collection" value="{../collection}"/>
-                        <map:parameter name="id" value="{../id}"/>
-                    </map:generate>
-                </map:when>
+				<map:when test="sub/*">
+					<map:generate type="bxcmsadmin" src="{../id}">
+						<map:parameter name="type" value="content"/>
+						<map:parameter name="collection" value="{../collection}"/>
+						<map:parameter name="id" value="{../id}"/>
+					</map:generate>
+				</map:when>
 
-                <map:when test="uploadimage.xml">
-                    <map:generate type="xmlfile" src="constant(BX_PROJECT_DIR)/webinc/plugins/blog/empty.html"/>
-                </map:when>
+				<map:when test="uploadimage.xml">
+					<map:generate type="xmlfile" src="constant(BX_PROJECT_DIR)/webinc/plugins/blog/empty.html"/>
+				</map:when>
 
-                <map:otherwise>
-                    <map:generate type="xmlfile" src="{../dataUri}"/>
-                </map:otherwise>
-                
-            </map:select>
-            <map:select type="phpglobalvars" var="GET" key="XML">
+				<map:otherwise>
+					<map:generate type="xmlfile" src="{../dataUri}"/>
+				</map:otherwise>
 
-                <map:when test="1">
-                    <map:serialize type="xml">
-                        <map:parameter name="trickMozillaDisplay" value="true"/>
-                    </map:serialize>
+			</map:select>
+			<map:select type="phpglobalvars" var="GET" key="XML">
 
-                </map:when>
-                <map:otherwise>
-                
-                    <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/blog/{../xslt}">
-                        <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
-                        <map:parameter name="collectionUri" value="{../collectionUri}"/>
-                        <map:parameter name="collectionUriOfId" value="{../collectionUriOfId}"/>
-                        <map:parameter name="url" value="{1}"/>
-                        <map:parameter name="dataUri" value="{../dataUri}"/>
-                        <map:parameter name="id" value="{../id}"/>
-                        <map:parameter type="options" name="registerPhpFunctions" value="true"/>
-                        
-                    </map:transform>
-                    
+				<map:when test="1">
+					<map:serialize type="xml">
+						<map:parameter name="trickMozillaDisplay" value="true"/>
+					</map:serialize>
+
+				</map:when>
+				<map:otherwise>
+
+					<map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/blog/{../xslt}">
+						<map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+						<map:parameter name="collectionUri" value="{../collectionUri}"/>
+						<map:parameter name="collectionUriOfId" value="{../collectionUriOfId}"/>
+						<map:parameter name="url" value="{1}"/>
+						<map:parameter name="dataUri" value="{../dataUri}"/>
+						<map:parameter name="id" value="{../id}"/>
+						<map:parameter type="options" name="registerPhpFunctions" value="true"/>
+
+					</map:transform>
                  
-                   <map:transform type="i18n" src="constant(BX_PROJECT_DIR)/admin/lang/master">
-                        <map:parameter name="locale" value="{../locale}"/>
-                        <map:parameter name="driver" value="xml"/>
-<!--                        <map:parameter name="generateKeys" value="constant(BX_TEMP_DIR)/newkeys.xml"/>-->
-                    </map:transform>
-                    
-                    
-                    <map:serialize type="xhtml">
-                        <map:parameter name="stripScriptCDATA" value="true"/>
-                    </map:serialize>
-                </map:otherwise>
-            </map:select>
-        </map:include-definition>
 
-    </map:include-definitions>
+					<map:transform type="i18n" src="constant(BX_PROJECT_DIR)/admin/lang/master">
+						<map:parameter name="locale" value="{../locale}"/>
+						<map:parameter name="driver" value="xml"/>
+<!--                        <map:parameter name="generateKeys" value="constant(BX_TEMP_DIR)/newkeys.xml"/>-->
+					</map:transform>
+
+					<map:select type="any" var="{../output-mimetype}">
+						<map:when test="text/xml">
+							<map:serialize type="xml" contentType="text/xml; charset=utf-8">
+								<map:parameter name="removeDefaultPrefix" value="true"/>
+							</map:serialize>
+
+						</map:when>
+						<map:otherwise>
+							<map:serialize type="xhtml">
+								<map:parameter name="stripScriptCDATA" value="true"/>
+							</map:serialize>
+						</map:otherwise>
+					</map:select>
+				</map:otherwise>
+			</map:select>
+		</map:include-definition>
+
+	</map:include-definitions>
 </map:sitemap>
