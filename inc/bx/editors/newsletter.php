@@ -59,10 +59,16 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             $year = date("Y") . "/";
             
             // replace whitespaces to get a clean url
-            $clearSubject = str_replace(" ", "-", $data['subject']);
+            $clearSubject = substr(bx_helpers_string::makeUri($data['subject']), 0, 50);
             if(!empty($data["htmlfile"])) {
                 if($testMode == 0) {
                     $newHtmlFile = $year.date("Ymd-").$clearSubject.".".$htmllanguage.".xhtml";
+                    $i = 0;
+                    //check for dupes
+                    while (file_exists($newHtmlFile)) {
+                        $newHtmlFile = $year.date("Ymd-").$clearSubject.".".$htmllanguage."-".$i.".xhtml";
+                        $i++;
+                    }
                     rename("data".$colluri."drafts/".$data["htmlfile"], "data".$colluri."archive/".$newHtmlFile);
                     $this->removeNewsletterProperties($colluri."drafts/".$data["htmlfile"]);
                     $this->addNewsletterProperties($colluri."archive/".$newHtmlFile, $data["subject"],$colluri);
@@ -78,6 +84,12 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             if(!empty($data["textfile"]) and $data["htmlfile"] != $data["textfile"]) {
                 if($testMode == 0) {    
                     $newTextFile = $year.date("Ymd-").$clearSubject."-txt.".$textlanguage.".xhtml";
+                    $i = 0;
+                    //check for dupes
+                    while (file_exists($newTextFile)) {
+                        $newTextFile = $year.date("Ymd-").$clearSubject."-txt.".$textlanguage."-".$i.".xhtml";
+                        $i++;
+                    }
                     rename("data".$colluri."drafts/".$data["textfile"], "data".$colluri."archive/".$newTextFile);
                     $this->removeNewsletterProperties($colluri."drafts/".$data["textfile"]);
                     $this->addNewsletterProperties($colluri."archive/".$newTextFile, $data["subject"],$colluri);
@@ -358,8 +370,8 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
     
     protected function generatePreviewMailView($colluri) {
         $xhtml = new domdocument();
-        $xhtml->load(BX_DATA_DIR.$colluri.$_GET['file']);        
-            
+        $xhtml->load(BX_DATA_DIR.$colluri.$_GET['file']);
+
         $classname = $this->getConfigParameter($colluri,"sendclass");
         $newsmailer = bx_editors_newsmailer_newsmailer::newsMailerFactory($classname);
         $tr =  $newsmailer->transformHTML($xhtml);
@@ -629,7 +641,11 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             $users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
             
             foreach($users as $user) {
-                $user['gender'] = $user['gender'] == 0 ? "male" : "female";
+		switch ($user['gender']) {
+		    case 0: $user['gender'] = "male"; break;
+		    case 1: $user['gender'] = "female"; break;
+		    default: $user['gender'] = "group"; break;
+                }
                 $user['email'] = '<a href="'.BX_WEBROOT.'admin/dbforms2/newsletter_users/?id='.$user['id'].'">'.$user['email'].'</a>';
                 
                 $xml .= '<tr>';
