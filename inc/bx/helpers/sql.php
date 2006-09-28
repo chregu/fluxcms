@@ -39,7 +39,7 @@ class bx_helpers_sql {
         
         
         foreach($data as $name => $value) {
-            if(in_array($name, $fields) OR sizeof($fields) == 0) {
+            if((in_array($name, $fields) || (sizeof($fields) == 0)) && $value !== NULL ) {
                 $qfields[] = $name;
                 $qvalues[] = $value;
             }
@@ -95,6 +95,32 @@ class bx_helpers_sql {
         } else {
             $tree->importTree($rootid,true,"name","","",(($blogid-1)*1000)+1);
         }    
+    }
+    
+    /**
+     *  Queries all fields of the given table using the given id and returns 
+     *  exactly one entry.
+     *
+     *  @param  string $table Tablename
+     *  @param  string $id The id of the entry to get
+     *  @param  string $idField If the id field is not called 'id', use this to override it
+     *  @access public
+     *  @return array The queried entry on success or FALSE on failure.
+     */
+    
+    public static function getOneRowById($table, $id, $idField = 'id') {
+        $tp = $GLOBALS['POOL']->config->getTablePrefix();
+        $db = $GLOBALS['POOL']->db;
+
+        $query = "select * from {$tp}{$table} where {$idField} = $id";
+        bx_log::log($query);
+        $res = $db->query($query);
+        if(!MDB2::isError($res) && $res->numRows() > 0) {
+            return $res->fetchRow(MDB2_FETCHMODE_ASSOC);
+        }
+        
+        return FALSE;
+        
     }
     
 }
