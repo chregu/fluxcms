@@ -113,7 +113,6 @@ class bx_helpers_sql {
         $db = $GLOBALS['POOL']->db;
 
         $query = "select * from {$tp}{$table} where {$idField} = $id";
-        bx_log::log($query);
         $res = $db->query($query);
         if(!MDB2::isError($res) && $res->numRows() > 0) {
             return $res->fetchRow(MDB2_FETCHMODE_ASSOC);
