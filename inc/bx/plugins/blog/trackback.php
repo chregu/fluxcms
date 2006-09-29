@@ -18,6 +18,8 @@ class bx_plugins_blog_trackback {
     
     static function getContentById($path,$id,$params, $p = null, $tablePrefix = "") {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+          error_log("Flux: Blog Comment Discarded for " . BX_WEBROOT ." : Trackback. No POST Request");     
+
             return '<error/>';
         }
         
@@ -43,10 +45,12 @@ class bx_plugins_blog_trackback {
         
         $onemonthago = time() - 2678800; 
         if ($GLOBALS['POOL']->config->blogTrackbacksTimeLimit == 'true' && $onemonthago > $row['unixtime']) {
+          error_log("Flux: Blog Comment Discarded for " . BX_WEBROOT ." : Trackback. Post older than a month");     
             return '<error/>';
         }
         
         if (!($row['post_comment_mode'] == 2 || ($row['post_comment_mode'] == 1 && $onemonthago < $row['unixtime']))) {
+          error_log("Flux: Blog Comment Discarded for " . BX_WEBROOT ." : Trackback. Post older than a month");     
             return '<error/>';
         }
         
