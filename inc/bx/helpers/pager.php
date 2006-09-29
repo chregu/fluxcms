@@ -37,6 +37,10 @@ class bx_helpers_pager {
         self::$pagers[$id]['currentPage'] = $num;
     }
 
+    public static function getCurrentPage($id) {
+        return self::$pagers[$id]['currentPage'];
+    }
+
     public static function setEntriesPerPage($id, $num) {
         self::$pagers[$id]['entriesPerPage'] = $num;
     }
@@ -46,7 +50,11 @@ class bx_helpers_pager {
         self::$pagers[$id]['numberOfEntries'] = $max;
         self::$pagers[$id]['currentPage'] = $currpage;
         self::$pagers[$id]['entriesPerPage'] = $entriesperpage;
-        }
+    }
+    
+    public static function getValues($id) {
+        return self::$pagers[$id];
+    }
 
     public static function getNumberOfPages($id) {
         return (self::$pagers[$id]['numberOfEntries'] > 0) ? ceil(self::$pagers[$id]['numberOfEntries'] / self::$pagers[$id]['entriesPerPage']) : 1;
