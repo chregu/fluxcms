@@ -626,36 +626,107 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             $cols .= '<th class="stdBorder">'.$col.'</th>';
         }
         $cols .= '</tr>';
-        
+           if (empty($_GET['start'])) {
+                $start = 0;
+            } else {
+                $start = (int) $_GET['start'];
+            }
+            
+            if (empty($_GET['q'])) {
+                $q = '';
+            } else {
+                $q = $_GET['q'];
+            }
+            
         $xml = '<newsletter>
         <h2>'.$txtUserMan.'</h2>
+        <form method="get" action="./">
+        Suche: <input name="q" value="'. htmlspecialchars($q) .'"/>
+        </form>
+       
+        
         <form enctype="multipart/form-data" name="bx_news_users" action="./" method="post">';
+        
+      
+         $limit = 50;
         
         foreach($groups as $group)
         {
-            $xml .= '<h3>'.$group["name"].'</h3>
-            <table>'.$cols;            
+            
+            $db = $GLOBALS['POOL']->db;
+            $xml .= '<h3>'.$group["name"].'</h3>';
+            
+            $query = "select SQL_CALC_FOUND_ROWS  * from ".$prefix."newsletter_users2groups,".$prefix."newsletter_users where fk_group=".$group["id"]." and ".$prefix."newsletter_users.id=fk_user";
+            if ($q) {
+                $qe = $db->quote("%$q%");
+                $query .= ' and (firstname like '.$qe.' or  lastname like '.$qe.' or email like '.$qe.')';
+            }
+            
+            $query .= " LIMIT $start,$limit";
+            $users = $db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
+            $max =  $db->queryOne('SELECT FOUND_ROWS()');
+            
+            if ($max > $limit) {
+            
+            $pages = ceil($max / $limit);
+            if ($start > 0) {
+                $xml .= '<a href="?q='.$q.'&amp;start='. ($start - $limit) .'">prev</a> ';
+            } else {
+                $xml .= 'prev ';
+            }
+            
+            if (($start + $limit) < $max) {
+                $xml .= '<a href="?q='.$q.'&amp;start='. ($start + $limit) .'">next</a> ';
+            } else {
+                $xml .= 'next ';
+            }
+            $page = floor($start / $limit);
+            for ($i = 0; $i < $pages; $i++) {
+                
+                if ($i < 3 || $i > $pages - 4 || ( $i > $page -3 && $i < $page + 3)) {
+                if ($i == $page) {
+                    $xml .= ($i + 1) . ' ';
+                } else {
+                    $xml .= '<a href="?q='.$q.'&amp;start='. $i * $limit.'">'.($i + 1).'</a> ';
+                }
+                }
+                
+                elseif ( $i == $page -3 ) {
+                    $xml .= " ... ";
+                }
+                elseif ( $i == $page  + 3 ) {
+                    $xml .= " ... ";
+                }
+            }
+            }
+            
+            
+            $xml .= '<table>'.$cols;            
             
             // get this group's users
-            $query = "select * from ".$prefix."newsletter_users2groups,".$prefix."newsletter_users where fk_group=".$group["id"]." and ".$prefix."newsletter_users.id=fk_user";
-            $users = $GLOBALS['POOL']->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
             
+           
             foreach($users as $user) {
-		switch ($user['gender']) {
-		    case 0: $user['gender'] = "male"; break;
-		    case 1: $user['gender'] = "female"; break;
-		    default: $user['gender'] = "group"; break;
+                switch ($user['gender']) {
+                    case 0: $user['gender'] = "male"; break;
+                    case 1: $user['gender'] = "female"; break;
+                    default: $user['gender'] = "group"; break;
                 }
-                $user['email'] = '<a href="'.BX_WEBROOT.'admin/dbforms2/newsletter_users/?id='.$user['id'].'">'.$user['email'].'</a>';
                 
                 $xml .= '<tr>';
                 foreach($columns as $col=>$val) {
-                    $xml .= '<td>'.$user[$col].'</td>';
+                    if ($col == 'email') {
+                        $xml .= '<td><a href="'.BX_WEBROOT.'admin/dbforms2/newsletter_users/?id='.$user['id'].'">'.htmlspecialchars($user['email']).'</a></td>';
+                    } else {
+                        $xml .= '<td>'.htmlspecialchars($user[$col]).'</td>';
+                    }
                 }
                 $xml .= '</tr>';
             }
             
             $xml .= '</table><br/>';
+            
+            
         }
         
         $groupsHTML = '<select name="importgroup" size="1">';
