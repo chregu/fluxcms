@@ -116,7 +116,7 @@
                                                             </a>
                                                         </xsl:when>
                                                         
-                                                        <xsl:when test="starts-with(@href,'http://')">
+                                                        <xsl:when test="starts-with(@href,'http://') or starts-with(@href, 'https://')">
                                                          <a href="{@href}" i18n:attr="title">
                                                              <xsl:if test="@style">
                                                             <xsl:attribute name="style"><xsl:value-of select="@style"/></xsl:attribute>
