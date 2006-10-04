@@ -89,7 +89,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     // return the newly created id
                     $dom = $this->createResponse(0, $newId);
                     $dom->documentElement->setAttribute('id', $newId);
-                    bx_log::log($dom->saveXML());
+                    //bx_log::log($dom->saveXML());
                     return $dom;
                     
                 } else if($xmlData->documentElement->getAttribute("delete") == "true" && $form->currentID != 0) {
