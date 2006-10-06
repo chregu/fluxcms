@@ -1,3 +1,5 @@
+var check = 0;
+
 function checkCategories() {
 	var cats = document.getElementById('categories');
 	for (var i = 0; i < cats.childNodes.length; i++) {
@@ -43,7 +45,6 @@ function reallyDelete() {
 
 
 function formCheck(form) {
-
 	if (!checkTitle()) {
 		alert("You did not provide a title, but you have to.");
 		return false;
@@ -60,13 +61,14 @@ function formCheck(form) {
 	if (! checkValidXML(form)){
 		return false;
 	}
-	return blogPost();
+	return blogPost(form);
 	
 }
 
-function blogPost() {
+function blogPost(draft) {
 	var saveButton = document.getElementById("Save");
-	saveButton.value = "Saving"
+	saveButton.value = "Saving...";
+	saveButton.style.backgroundColor = "green";
 	var form = document.getElementById('entry');
 	
 	try {
@@ -82,6 +84,13 @@ function blogPost() {
 					postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
 				} 
 			} else {
+				if(form.elements[i].name == 'bx[plugins][admin_edit][uri]') {
+					var uri = form.elements[i].value;
+				}
+				if(form.elements[i].name == 'bx[plugins][admin_edit][status]' && draft == 'draft') {
+					form.elements[i].value = 4;
+				}
+				
 				postString += form.elements[i].name;
 				postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
 			}
@@ -90,10 +99,11 @@ function blogPost() {
 	}
 	catch(e)
 	{
-		alert("foo" + e);
+		alert(e);
 		return true;
 	}
-	new ajax ('./testo.html', {
+	
+	new ajax (uri, {
 	postBody: postString,
 	method: 'post',
 	onComplete: ajaxPostComplete
@@ -119,6 +129,8 @@ function ajaxPostComplete(req)  {
 function savedToSave() {
 	var saveButton = document.getElementById("Save");
 	saveButton.value = "Save";
+	saveButton.style.backgroundColor = "#006486";
+	return false;
 }
 
 
@@ -383,4 +395,57 @@ function closeUserAdvanced() {
     var cook = "userAdvancedView=none";
     ExpireDate.setTime(ExpireDate.getTime() + (30 * 24 * 3600 * 1000));
     document.cookie = cook + "; expires=" + ExpireDate.toGMTString();
+}
+
+function FCKeditor_OnComplete(instance) {
+	if(instance.Name == 'bx[plugins][admin_edit][content]') {
+		var aktiv = window.setInterval("storeContent();", 1200);
+	} else {
+	}
+}
+
+function storeContent() {
+	
+	var form = document.getElementById('entry');
+	
+	if(form.elements['bx[plugins][admin_edit][title]'].value != '') {
+	
+		try {
+			var postString = '';
+			
+			updateTextAreasOnly();
+			
+			for (var i = 0; i < form.elements.length; i++) {
+				var xml = form.elements[i].value;
+				if (form.elements[i].type == "checkbox") {
+					if (form.elements[i].checked) {
+						postString += form.elements[i].name;
+						postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
+					} 
+				} else {
+					if(form.elements[i].name == 'bx[plugins][admin_edit][uri]') {
+						var uri = form.elements[i].value;
+					}
+					postString += form.elements[i].name;
+					postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
+				}
+			}
+			postString += 'store=1';
+		}
+		catch(e)
+		{
+			alert(e);
+			return true;
+		}
+		
+		if(check != postString && postString) {
+			new ajax (uri, {
+			postBody: postString,
+			method: 'post'
+			});
+			check = postString;
+		}
+	}
+	
+	return false;
 }

@@ -24,8 +24,6 @@ function initFck() {
 			
 			initFckExtended();
 		}
-
-	
 }
 
 function initFckExtended() {
@@ -73,4 +71,3 @@ function insertImageForKupu(url) {
 function checkValidXML() {
 	return true;
 }
-
