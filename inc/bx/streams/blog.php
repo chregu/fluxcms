@@ -407,7 +407,9 @@ class bx_streams_blog extends bx_streams_buffer {
 	}
         if ($fixed =  trim(bx_helpers_config::getProperty("blogWeblogsPingFixed",true))) {
             $servicesExtended[] = $fixed;
+            $servicesExtended = array_unique($servicesExtended);
         }
+        
         $blogname = bx_helpers_config::getProperty("blogname"); 
         if (!$blogname) {
             $blogname = bx_helpers_config::getProperty("sitename");
