@@ -50,7 +50,7 @@ class bx_streams_blog extends bx_streams_buffer {
             $section = "";
             $name = $parts["name"];
         }
-        switch ($section) {
+		switch ($section) {
             case "categories":
                 return $this->returnCategories();
             
@@ -73,15 +73,31 @@ class bx_streams_blog extends bx_streams_buffer {
                 $xml = $p->getContentById("$colluri","_all/index");
                 $xsl = new DomDocument();
                 $xsl->load(BX_LIBS_DIR."/streams/blog/html2feedfull.xsl");
-            break;        
-            default:
+            break;
+			case "storage":
+              return file_get_contents(BX_DATA_DIR.$colluri.'storage.xml');
+		      break; 
+			
+			default:
                 try {
                     $xml = $p->getContentById("$colluri",$parts["name"]);
                     $appendPostComments = TRUE;
                 } catch (BxPageNotFoundException $e) {
                     $xml = new DomDocument();
                     $xml->load(BX_LIBS_DIR."/streams/blog/newentry.xml");
-                    $xp = new DomXPath($xml);
+					//FIXME: Abfrage nach storage.xml
+                    if(file_exists(BX_DATA_DIR."blog/storage.xml") && $section != 'storage') {
+						$filetime = date ("F d Y H:i:s.", filemtime(BX_DATA_DIR."blog/storage.xml"));
+						$fileString = file_get_contents(BX_PROJECT_DIR."data/blog/storage.xml"); 
+						
+						preg_match('#<title>(.*)</title>#', $fileString, $matches);
+						
+						$xml->documentElement->setAttribute("hasStorage", "true");
+						$xml->documentElement->setAttribute("storageDate", $filetime);
+						$xml->documentElement->setAttribute("storageTitle", $matches['1']);
+					}
+        
+					$xp = new DomXPath($xml);
                     $res = $xp->query("/atom:entry/atom:author/atom:name/text()");
                     
                     if ($res->length > 0 ) {
@@ -129,6 +145,10 @@ class bx_streams_blog extends bx_streams_buffer {
         $proc = new XSltProcessor();
         $proc->importStylesheet($xsl);
         $proc->setParameter("","webroot",BX_WEBROOT);
+		//FIXME Abfrage
+		if(file_exists(BX_DATA_DIR."blog/storage.xml") && $section != 'storage') {
+		$proc->setParameter("","hasStorage",'true');
+		}
         $proc->setParameter("","colluri",$colluri);
         $xml = $proc->transformToDoc($xml);
          

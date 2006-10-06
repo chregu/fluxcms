@@ -1,7 +1,12 @@
-
 <xsl:stylesheet version="1.0" xmlns="http://purl.org/atom/ns#" xmlns:atom="http://purl.org/atom/ns#" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://www.purl.org/dc" xmlns:bxf="http://bitflux.org/functions" xmlns:rss="http://purl.org/rss/1.0/" xmlns:blog="http://bitflux.org/doctypes/blog" exclude-result-prefixes="rdf dc xhtml rss bxf blog">
-    <xsl:template match="/">
+<xsl:param name="hasStorage"/>
+<xsl:param name="storageDate"/>
+<xsl:param name="storageTitle"/>
+<xsl:template match="/">
         <entry xmlns="http://purl.org/atom/ns#">
+		<xsl:if test="$hasStorage = 'true'">
+		<xsl:attribute name="hasStorage">true</xsl:attribute>
+		</xsl:if>
             <xsl:apply-templates/>
         </entry>
     </xsl:template>

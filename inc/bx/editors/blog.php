@@ -8,7 +8,8 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     
     /** bx_editor::getPipelineParametersById */
     public function getPipelineParametersById($path, $id) {
-        $params=array();
+		
+		$params=array();
         $params['pipelineName'] = 'blog';
         $parts = bx_collections::getCollectionUriAndFileParts($id,'admin');
         $params['xslt'] = $this->getStylesheetName($parts['colluri'], $parts['rawname']);
@@ -32,6 +33,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
             return $this->getStylesheetNameBySubEditor($subEditor);
             
         }
+		
 		if (!(empty($_POST['ajax'])  && empty($_GET['ajax']))) {
 			return "post-ajax.xsl";	
 		} else {
@@ -41,15 +43,12 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function handlePOST($path, $id, $data) {
-    	
-		
 		$sub = substr($id, strrpos($id, '/', -3)+1, -2);
     	$perm = bx_permm::getInstance();
 	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
         	throw new BxPageNotAllowedException();
     	}	
-    	
-        $parts =  bx_collections::getCollectionAndFileParts($id, "output");
+    	$parts =  bx_collections::getCollectionAndFileParts($id, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
@@ -69,8 +68,8 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
             
             $this->deletePosts($data['deleteposts'],bx_streams_blog::getTablePrefix($id));
         }
-        
-        if(!empty($data['uri'])) {
+		
+        if(!empty($data['uri']) || !empty($_POST['store'])) {
             if ($data['delete'] == 1 && $data['id']) {
                 bx_streams_blog::deleteEntryDirect($data['id'],$id);
                 header("Location: ./newpost.xml");
@@ -121,13 +120,16 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                         $data[$key] = html_entity_decode(str_replace(array("&amp;","&lt;","&gt;","&quot;"),array("&amp;amp;","&amp;lt;","&amp;gt;","&amp;quot;"),$data[$key]),ENT_NOQUOTES,"UTF-8");
                     }
                 }
-                
-                $fd = fopen("blog://".$id,"w");
-                $data['uri'] = bx_helpers_string::makeUri($data['uri']);
-                if (!isset($data['id']) || !($data['id'])) {
-                    $data['uri'] =  bx_streams_blog::getUniqueUri($data['uri'],$id);
-                }
-                if (isset($data['nl2br']) && $data['nl2br'] == 1) {
+                if (!empty($_POST['store'])) {
+					$fd = fopen(BX_PROJECT_DIR."data".$colluri."storage.xml","w");   
+				} else {
+					$fd = fopen("blog://".$id,"w");
+					$data['uri'] = bx_helpers_string::makeUri($data['uri']);
+					if (!isset($data['id']) || !($data['id'])) {
+						$data['uri'] =  bx_streams_blog::getUniqueUri($data['uri'],$id);
+					}
+				}
+				if (isset($data['nl2br']) && $data['nl2br'] == 1) {
                     //our own nl2br
                     $data['content'] = preg_replace("#\r#","",$data['content']);
                     $data['content'] = preg_replace("#([^>])[\n]{2,}#","$1<br/>\n<br/>\n",$data['content']);
@@ -170,11 +172,17 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 fwrite ($fd, '</categories>');
                 
                 fwrite($fd, '</entry>');
+		
+				
                 fclose($fd);
-                if ( "/".$data['uri'].".html" != $id) {
-                    if (empty($_POST['ajax'])  && empty($_GET['ajax'])) {
+				if ( "/".$data['uri'].".html" != $id) {
+					
+					if (!empty($_POST['store']) ) {
+						// send ok...
+					} else if (empty($_POST['ajax'])  && empty($_GET['ajax'])) {
 						header("Location: ".$data['uri'] .".html");
 					} else {
+						unlink(BX_PROJECT_DIR."data".$colluri."storage.xml");
 						header("Location: ".$data['uri'] .".html?ajax=1");
 					}
                 }

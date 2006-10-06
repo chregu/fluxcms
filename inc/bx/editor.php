@@ -3,6 +3,7 @@
 class bx_editor {
     
     public function handlePOST($path, $id, $data) {
+		die("here");
         /*$parts = bx_collections::getCollectionAndFileParts($id,"admin");
         var_dump($parts['coll']->resourceExistsById($parts['rawname']));
         */    

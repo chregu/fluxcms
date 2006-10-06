@@ -110,9 +110,17 @@
     <xsl:template match="atom:entry">
         <form onsubmit="return formCheck(this);"  method="post" name="entry" action=".">
          <xsl:call-template name="buttons">
-         <xsl:with-param name="accesskeys" select="'true'"/>
+		 
+		 <xsl:with-param name="accesskeys" select="'true'"/>
          </xsl:call-template>
-            <input type="hidden" id="id" name="bx[plugins][admin_edit][id]" value="{atom:id}"/>
+         <xsl:if test="/atom:entry/@hasStorage = 'true'">
+		 <br/><a href="./storage.xml">You have a unsaved entry 
+		 (Titel: <xsl:value-of select="/atom:entry/@storageTitle"/> on <xsl:value-of select="/atom:entry/@storageDate"/>), 
+		 do you want to load it? 
+		 </a>
+		 </xsl:if>
+          
+		 <input type="hidden" id="id" name="bx[plugins][admin_edit][id]" value="{atom:id}"/>
             <input type="hidden" id="delete" name="bx[plugins][admin_edit][delete]" value="0"/>
             <div class="formTable">
                     <xsl:variable name="cats" select="/atom:entry/atom:categories"/>
@@ -459,6 +467,8 @@
                </xsl:otherwise>
                </xsl:choose>
        </input>
+	   
+	   <input type="button" class="button" i18n:attr="value" value="Draft" onclick="formCheck('draft')"/>
        
 </xsl:template>
     

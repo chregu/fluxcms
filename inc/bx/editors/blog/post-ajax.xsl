@@ -11,7 +11,6 @@
     <xsl:param name="dataUri" select="''"/>
     
   <xsl:template match="/">
-    
   <entry>
  <!-- FIXME: escape values & check for ampersand & < problems -->
   {"id":"<xsl:value-of select="/atom:entry/atom:id"/>","uri":"<xsl:value-of select="/atom:entry/atom:uri"/>"}
