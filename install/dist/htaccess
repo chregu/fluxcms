@@ -109,5 +109,5 @@ RewriteCond  %{REQUEST_URI}  ^/*##DIR##admin/webinc/img/icons/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ ./admin/webinc/img/icons/unknown.gif [L]
 
-ErrorDocument 403 /index.php?path=/_forbidden/
-ErrorDocument 404 /index.php?path=/_notfound/
+ErrorDocument 403 /index.php?path=/__forbidden/
+ErrorDocument 404 /index.php?path=/__notfound/
