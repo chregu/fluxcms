@@ -66,7 +66,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
              * only for internal for example in bx_streams_blog 
              *   $xml = $p->getContentById("/","_all/index");
              */
-            if (strpos($fulluri,"/_") > 0) {
+            if (strpos($fulluri,"/__") !== false) {
                  throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
             $mo = false;
