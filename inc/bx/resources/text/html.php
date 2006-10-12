@@ -10,13 +10,15 @@ class bx_resources_text_html extends bx_resource {
     protected $lang = "";
     
     public function __construct($id, $new = false) {
+      
         $this->mimetype = "text/html";
         $this->fulluri = $id;
         $this->props['fileuri'] = BX_DATA_DIR.$id;
         $this->id = $id;
         if ($new === true) {
           $this->mock = true;
-        }
+        } 
+        //TODO, check if file really exists...
         
     }
         
@@ -153,19 +155,19 @@ class bx_resources_text_html extends bx_resource {
      
      
      public function addResource($name, $parentUri, $options=array()) {
-    	$perm = bx_permm::getInstance();
-    	$localUri = substr($this->id, 0, strrpos($this->id, '/')+1);
- 		if (!$perm->isAllowed($localUri,array('xhtml-back-edit_'.$options['editor']))) {
-        	throw new BxPageNotAllowedException();
-    	}	
-    	
+         $perm = bx_permm::getInstance();
+         $localUri = substr($this->id, 0, strrpos($this->id, '/')+1);
+         if (!$perm->isAllowed($localUri,array('xhtml-back-edit_'.$options['editor']))) {
+             throw new BxPageNotAllowedException();
+         }    
+         
          $template = (isset($options['template'])) ? $options['template'] : 'default.xhtml';
          $editor = isset($options['editor']) ? '&editor='.$options['editor'] : '';
          $location = sprintf("%sadmin/edit%s?template=%s%s", BX_WEBROOT, $this->fulluri, $template, $editor);
          
          header("Location: $location");
          exit(0);
-     
+         
      }
      
      public function delete() {

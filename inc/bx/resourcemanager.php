@@ -249,13 +249,17 @@ class bx_resourcemanager {
         $GLOBALS['POOL']->cache->del("res_".$path.":".$namespace);
         
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "delete from ".$prefix."properties where path = '$path' ";
+        $query = "from ".$prefix."properties where path = '$path' ";
         
         if ($namespace) {
             $query .= " and ns = '$namespace'";
         }
+        $res = $GLOBALS['POOL']->dbwrite->query("select * ".$query);
+        while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+              $GLOBALS['POOL']->cache->del("res_".$path.":".$row['name'].":".$row['ns']);
+        }
         
-        $res = $GLOBALS['POOL']->dbwrite->query($query);
+        $res = $GLOBALS['POOL']->dbwrite->query("delete ".$query);
         if (MDB2::isError($res)) {
             return FALSE;
         }

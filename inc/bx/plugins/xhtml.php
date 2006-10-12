@@ -126,17 +126,17 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     */
     
     public function getResourceById($path, $id, $mock = false) {
-    	$perm = bx_permm::getInstance();
-    	if($id == "thisfiledoesnotexist.xhtml") {
-			if (!$perm->isAllowed($path, array('xhtml-back-create'))) {
+        $perm = bx_permm::getInstance();
+        if($id == "thisfiledoesnotexist.xhtml") {
+            if (!$perm->isAllowed($path, array('xhtml-back-create'))) {
                 throw new BxPageNotAllowedException();
-	    	}
-    	}
-    	
+            }
+        }
+        
         $id = $path.$id;
         if (!isset($this->res[$id])) {
             $mimetype = bx_resourcemanager::getMimeType($id);
-            if ($mimetype== "text/html") {
+            if ($mimetype == "text/html") {
                 $this->res[$id] = new bx_resources_text_html($id);
             } else if ($mimetype == "text/wiki") {
                 $this->res[$id] = new bx_resources_text_wiki($id);
