@@ -279,7 +279,7 @@ class bx_plugins_gallery extends bx_plugin {
     }
    
    public function addResource($name, $parentUri, $options=array(), $resourceType = null, $returnAfterwards = FALSE) {
-       //d();
+	   //d();
        // if not collection, then it's a file
        if (!isset($options['collection'])) {
            $parts = bx_collections::getCollectionUriAndFileParts($parentUri);
@@ -463,7 +463,7 @@ class bx_plugins_gallery_flickr {
     }
     
     function getImagesAndAlbums (&$options) {
-        $photos = $this->f->getPhotos($this->albumID);
+		$photos = $this->f->getPhotos($this->albumID);
         foreach ($photos as $set) {
             
             
@@ -493,6 +493,7 @@ class bx_plugins_gallery_flickr {
 }
 
 class bx_plugins_gallery_file {
+	
     static function getInstance($dom,$path,$id) {
             return new bx_plugins_gallery_file($dom,$path,$id);
     }
@@ -504,8 +505,8 @@ class bx_plugins_gallery_file {
     }
     
     function getImagesAndAlbums(& $options) {
-        $dir = new ImageDirectoryIterator($options['root']);
-       $files = array();
+	   $dir = new ImageDirectoryIterator($options['root']);
+	   $files = array();
         foreach ($dir as $file) {
             $f = new StdClass(); 
             $f->name = $file->getFileName();
@@ -524,7 +525,20 @@ class bx_plugins_gallery_file {
                     $node = $this->dom->createElement('album');
                     $node->setAttribute('name', $name);
                     $node->setAttribute('href', $name.'/');
-                    $options['albums']->appendChild($node);
+                    $prefix = $GLOBALS['POOL']->config->getTablePrefix();
+					$subgallery = "/".$options['path'].$name."/";
+					
+					$query = "select path from ".$prefix."properties where path like '".$subgallery."%' and name = 'preview' and value = '1'";
+					foreach ( $GLOBALS['POOL']->db->queryCol($query) as $pic) {
+						$pic = str_replace($subgallery,"",$pic);
+						
+						if (strpos($pic,"/") === false) {
+							$node->setAttribute("preview",$pic);
+						}
+					}
+					$options['albums']->appendChild($node);
+					
+					
                     $options['numberOfAlbums']++;
                 } else if ($file->isImage) {
                     if(($options['mode']=='image' ) || ($options['numberOfImages'] + 1 > ($options['currentPage'] - 1) * $options['imagesPerPage']) && ($options['numberOfImages'] + 1<= ($options['currentPage']) * $options['imagesPerPage'])) {
@@ -532,11 +546,17 @@ class bx_plugins_gallery_file {
                         $node->setAttribute('href', $name);
                         $node->setAttribute('id', $name);
                         $options['images']->appendChild($node);
-                        
+                        //bx_helpers_debug::webdump($options['path'].$name);
                         /* this code would allow captions and title in overviews as well... */
-                        
+                        $preview = bx_resourcemanager::getProperty("/".$options['path'].$name,"preview",'bx:'.$lang);
+						//bx_helpers_debug::webdump($preview);
+						if ($preview) {
+							$node->appendChild($this->dom->createTextNode(html_entity_decode($preview,ENT_COMPAT,"UTF-8")));
+						}
+							
                         if ($options['mode'] != 'image' && $options['descriptionInOverview']) {
-                            $description = bx_resourcemanager::getProperty("/".$options['path'].$name,"description",'bx:'.$lang);
+							
+							$description = bx_resourcemanager::getProperty("/".$options['path']."subgallery","description",'bx:'.$lang);
                             if ($description) {
                                 $node->appendChild($this->dom->createTextNode(html_entity_decode($description,ENT_COMPAT,"UTF-8")));
                             }

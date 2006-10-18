@@ -25,7 +25,7 @@ class bx_editors_blog_sub_gallery {
     }
     
     public function getEditContentById($id) {
-        $galleryId = $this->getGalleryById($id);
+		$galleryId = $this->getGalleryById($id);
 
         // check for an image to be deleted
         if(isset($_GET['del']) && $_GET['del'] != '') {
@@ -74,7 +74,27 @@ class bx_editors_blog_sub_gallery {
     }
 
     public function handlePOST($path, $id, $data) {
-        if(isset($data['id'])) {
+		
+		if(isset($data['preview'])) {
+			$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+			
+			preg_match("#/(.*)/#", $data['id'], $matches);
+			
+			$query = "select path from ".$prefix."properties where path like '".$matches['0']."%' and name = 'preview' and value = '1'";
+				
+			foreach ( $GLOBALS['POOL']->db->queryCol($query) as $pic) {
+				$pic = str_replace($subgallery,"",$pic);
+				if (strpos($pic,"/") === false) {
+					
+				} else {
+					$query = "delete from ".$prefix."properties where path = '".$pic."' and name = 'preview'";
+					$res = $GLOBALS['POOL']->dbwrite->query($query);
+				}
+			}
+			bx_resourcemanager::setProperty($data['id'], 'preview', '1', 'bx:');
+		}
+		
+		if(isset($data['id'])) {
             self::$currentImageId = $data['id'];
             
             $id = $data['id'];
@@ -153,14 +173,18 @@ class bx_editors_blog_sub_gallery {
                     $image = $dom->createElement('image');
                     $image->setAttribute('href', $name);
                     $image->setAttribute('id', $this->virtualRoot.$galleryId.$name);
-                    
+					
+					$preview = bx_resourcemanager::getProperty($this->virtualRoot.$galleryId.$name, 'preview', 'bx:');
+					if($preview == 1) {
+						$image->setAttribute('preview', 'true');
+                    }
+					
                     $titleNode = $dom->createElement('title');
                     $descrNode = $dom->createElement('description');
                     
                     foreach($GLOBALS['POOL']->config->getOutputLanguages() as $lang) {
                         $title = bx_resourcemanager::getProperty($this->virtualRoot.$galleryId.$name, 'title', 'bx:'.$lang);
                         $descr = bx_resourcemanager::getProperty($this->virtualRoot.$galleryId.$name, 'description', 'bx:'.$lang);
-                        
                         $titleTN = $dom->createElement($lang);
                         $titleTN->appendChild($dom->createTextNode(html_entity_decode($title, ENT_COMPAT, 'UTF-8')));
                         $descrTN = $dom->createElement($lang);

@@ -35,8 +35,6 @@
         <![CDATA[
             function onLoad() {
             
-                if(typeof i18n == 'undefined')
-                    i18n = parent.i18n;
                     
                 if(currentImageId == '') {
                     switchTab('addimage', false, true);
@@ -46,12 +44,12 @@
             }
             
             function confirmDelete(id) {
-                if(confirm(i18n.translate('Do you really want to delete the image "{0}"?', [id])) == true) 
+                if(confirm('Do you really want to delete the image "{0}"?', [id]) == true) 
                     window.location.href = '.?del=' + id;
             }
             
             function confirmGalleryDelete(id) {
-                if(confirm(i18n.translate('Do you really want to delete the gallery "{0}"?', [id])) == true) 
+                if(confirm('Do you really want to delete the gallery "{0}"?', [id]) == true) 
                     window.location.href = '.?gdel=' + id;
             }
             
@@ -126,7 +124,19 @@
                                     <tr><td><i18n:text>Description</i18n:text><xsl:value-of select="$langCode"/></td><td><input id="description-{.}" type="text" name="{$formName}[description][{.}]" value="{$imageNode/description/*[local-name() = current()/@language]/text()}"/></td></tr>
                                     <tr><td colspan="2">&#160;</td></tr>
                                 </xsl:for-each>
-                                <tr><td width="120"></td><td><input name="{$formName}[submit]" type="submit" class="button" value="Submit" i18n:attr="value"/></td></tr>
+								
+								<xsl:variable name="preview_name" select="/bx/plugin/images/image[@preview = 'true']"/>
+								<tr>
+									<td>Preview</td>
+									<td><input type="checkbox" style="width:15px;" name="{$formName}[preview]">
+									<xsl:if test="$preview_name = $imageNode">
+										<xsl:attribute name="checked">checked</xsl:attribute>
+									</xsl:if>
+									</input>
+									</td>
+								</tr>
+								
+								<tr><td width="120"></td><td><input name="{$formName}[submit]" type="submit" class="button" value="Submit" i18n:attr="value"/></td></tr>
                                 <tr><td colspan="2">&#160;</td></tr>
                             </table>
                             <input id="id" type="hidden" name="{$formName}[id]" value="{$imageNode/@id}"/><br/>
