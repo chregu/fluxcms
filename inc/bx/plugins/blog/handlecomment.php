@@ -185,6 +185,9 @@ class bx_plugins_blog_handlecomment {
                     $commentRejected .= "* More than 5 unique links in comment (".count($urls) .")\n";
                     if (count($urls) > ($maxurls + 5)) {
                         $deleteIt = true;
+                       if (count($urls) > $maxurls + 10) {
+                           self::discardIt(" More than 15 unique links in comment  (". count($urls) .")");
+                       }
                     }
                 }
                 $_rbl = bx_plugins_blog_spam::checkRBLs($urls);
