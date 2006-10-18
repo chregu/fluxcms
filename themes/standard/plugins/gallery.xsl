@@ -20,6 +20,7 @@
          <xsl:choose>
             <xsl:when test="$gallery/@mode= 'page'">
             <div id="gallerie">
+			        
                 <xsl:for-each select="$images/image">
                 
                 <xsl:call-template name="gallery_displayImageSmall">
@@ -34,22 +35,32 @@
                 <br class="antileft" />
 </xsl:if>
         </div>
-<br class="antifloat"/>
+		
+
+		<br class="antifloat"/>
 &#160;
+			<!-- preview -->
+			<hr/>
+			<xsl:call-template name="gallerie_preview"/>
+
 
             </xsl:when>
+
             <xsl:when test="$gallery/@mode = 'preview'">
             
                 <div id="gallerie_preview">
                     <div id="gallerie_preview_title">
                         <i18n:text>Latest updated Gallery</i18n:text>: <xsl:value-of select="$gallery/@name" />
                     </div>
+					    
                     <xsl:for-each select="$images/image">
-
-                        <xsl:call-template name="gallery_displayImageSmall">
-
+                        
+						<xsl:call-template name="gallery_displayImageSmall">
+						
+						
                         </xsl:call-template>
-                        <xsl:if test="position() mod $numCols = 0">
+						
+						<xsl:if test="position() mod $numCols = 0">
                         <br class="antileft"/>
                         </xsl:if>
 
@@ -80,7 +91,6 @@
     <!-- displays the content of cell -->
     <xsl:template name="gallery_displayImageSmall">
         
-        
         <xsl:variable name="href">
             <xsl:choose>
                 <xsl:when test="starts-with(@href,'http://')">
@@ -109,8 +119,7 @@
             <xsl:otherwise>
                 <a href="{$webrootLangW}{../../@collUri}{@href}">
                     <img src="{$webroot}dynimages/{$thumbWidth}/{$href}" border="0"  alt="{$href}"/>
-                </a>
-             </xsl:otherwise>
+                </a>             </xsl:otherwise>
         </xsl:choose>
 <!-- this code would allow captions in overviews as well. commented out, 'cause we don't want that right now 
                     <br/>
@@ -317,5 +326,23 @@
         </xsl:if>
    </xsl:template>
    
-    
+   <xsl:template name="gallerie_preview">
+   		<h1>Subgalleries</h1>
+		<div class="subgallery_preview" style="margin:20px 0px 0px 25px;">
+		
+		<xsl:variable name="path" select="/bx/plugin[@name='gallery']/gallery/@path"/>
+		<xsl:variable name="collUri" select="/bx/plugin[@name='gallery']/gallery/@collUri" />
+		<xsl:for-each select="/bx/plugin[@name='gallery']/gallery/albums/album">
+			<xsl:if test="@preview">
+				<div style="margin-top:10px;">
+					<a href="{$gallery_collUri}{@name}">
+					<xsl:value-of select="@name"/>
+					<br/>
+						<img alt="preview" src="/{$path}{@name}/{@preview}" width="150px"/>
+					</a>
+				</div>
+			</xsl:if>
+		</xsl:for-each>
+   	</div>
+   </xsl:template>
 </xsl:stylesheet>
