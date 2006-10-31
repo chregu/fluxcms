@@ -149,13 +149,14 @@ class bx_config_generate {
             $c  = "'".preg_replace("/\{([a-zA-Z0-9_\$'\[\]]*)\}/","'.$1.'",str_replace('\\','/',$c))."'";
             $c = str_replace("'http(s)://","((!empty(\$_SERVER['HTTPS']))?'https':'http').'://", $c);
             
-            if ($name == 'BX_WEBROOT') {
+/*            if ($name == 'BX_WEBROOT') {
                 fwrite($fd,"define('BX_WEBROOT_POST',"); 
                 fwrite($fd,$c);
                 fwrite($fd,");\n");
                 // if someone comes from the coral cache network, set BX_WEBROOT differently
                 $c = "((!empty(\$_SERVER['HTTP_VIA']) && strpos(\$_SERVER['HTTP_USER_AGENT'],'CoralWeb') == 0 ) ? ". preg_replace("#\.'/'$#",".'.nyud.net:8080/'",$c) ." : BX_WEBROOT_POST)";
             }
+            */
             fwrite($fd,"define('".$name."',"); 
             fwrite($fd,$c);
             fwrite($fd,");\n");
