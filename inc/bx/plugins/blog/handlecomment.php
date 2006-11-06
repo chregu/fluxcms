@@ -167,7 +167,7 @@ class bx_plugins_blog_handlecomment {
             $deleteIt = true;
         }
         
-	if (strpos($data['comments'],"[URL]") !== false) {
+	if (stripos($data['comments'],"[URL") !== false) {
 		   $commentRejected .= "* Non-supported '[URL]' used\n";
 	}
         /* Max 5 links per post and SURBL check */
