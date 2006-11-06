@@ -154,19 +154,22 @@ class bx_plugins_blog_handlecomment {
         if (isset($_SERVER['HTTP_VIA']) && stripos($_SERVER['HTTP_VIA'],'pinappleproxy') !== false) {
             $commentRejected .= "* Uses known spammer proxy: ". $_SERVER['HTTP_VIA'] . "\n";
         }
-        
+                
         
         /* If url field is filled in, it was a bot ...*/
         if (isset($data['url']) && $data['url'] != "") {
             $commentRejected .= "* Hidden URL field was not empty, assuming bot: " . $data['url']."\n";
             
             if(strpos($data['url'], "\n") !== FALSE or strpos($data['url'], "\r") !== FALSE) {
-                $commentReject .= "* Multi line hidden URL field \n";
+                $commentRejected .= "* Multi line hidden URL field \n";
             }
             self::discardIt(" Hidden URL field was not empty, assuming bot: " . $data['url']);
             $deleteIt = true;
         }
         
+	if (strpos($data['comments'],"[URL]") !== false) {
+		   $commentRejected .= "* Non-supported '[URL]' used\n";
+	}
         /* Max 5 links per post and SURBL check */
         /* No check, when logged in */
         if (!$username && (preg_match_all("#http://[\/\w\.\-]+|[\/\w\.\-]+@[\/\w\.\-]+#",$data['comments'], $matches) || $data['openid_url'] != '')) {
@@ -185,7 +188,7 @@ class bx_plugins_blog_handlecomment {
                     $commentRejected .= "* More than 5 unique links in comment (".count($urls) .")\n";
                     if (count($urls) > ($maxurls + 5)) {
                         $deleteIt = true;
-                       if (count($urls) > $maxurls + 10) {
+                       if (count($urls) >= $maxurls + 10) {
                            self::discardIt(" More than 15 unique links in comment  (". count($urls) .")");
                        }
                     }
