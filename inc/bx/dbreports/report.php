@@ -64,13 +64,22 @@ class bx_dbreports_report {
             }
         }
         $qfields = substr($qfields, 0, -1);
+
+        $qwhere = 'WHERE 1 ';
+        foreach($section->filters->filter as $filter) {
+            switch((string)$filter['type']) {
+                case 'requestvar':
+                    $qwhere .= 'AND '.$tp.(string)$filter['target'].'='.$_REQUEST[(string)$filter['value']].' ';
+                break;
+            }
+        }
         
 
         $query = "SELECT {$qfields} ";
         $query .= "FROM $tp".(string)$section->datasource->table['name']."";
         $query .= $qleftjoins;
-        $query .= "$qgroup";
-
+        $query .= $qwhere;
+        $query .= $qgroup;
         
         return $query;
         
@@ -83,6 +92,10 @@ class bx_dbreports_report {
     
     protected function sanitizeSqlNames($sql) {
         return preg_replace('/(\w+)\.(\w+)/i', '$1_$2', $sql);
+    }
+    
+    public function getData() {
+        
     }
 
 }
