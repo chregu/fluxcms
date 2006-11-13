@@ -94,7 +94,21 @@ class bx_dbreports_report {
         return preg_replace('/(\w+)\.(\w+)/i', '$1_$2', $sql);
     }
     
+    public function getDataBySection($section) {
+        $query = $this->getQueryBySection($section);
+        var_dump($query);
+        $res = $GLOBALS['POOL']->db->query($query);
+        return $res->fetchAll(MDB2_FETCHMODE_ASSOC);
+    }
+    
     public function getData() {
+        $data = array();
+        
+        foreach($this->getSections() as $section) {
+            $data[(string)$section['name']] = $this->getDataBySection($section);
+        }
+        
+        var_dump($data);
         
     }
 

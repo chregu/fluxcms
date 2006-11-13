@@ -13,7 +13,7 @@ class bx_helpers_sql {
         return $quoted;
     }
     
-    static public function getUpdateQuery($table, $data, $fields = array(), $id = NULL) {
+    static public function getUpdateQuery($table, $data, $fields = array(), $id = NULL, $where = NULL) {
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $query = "UPDATE ".$tablePrefix.$table." SET ";
         foreach($data as $name => $value) {
@@ -24,9 +24,12 @@ class bx_helpers_sql {
         // cut off the last comma
         $query = substr($query, 0, -1);
         
-        if(isset($id)) {
+        if($where === NULL && isset($id)) {
             $query.= " WHERE id=$id";
+        } else if($where !== NULL) {
+            $query.= " WHERE $where";
         }
+        
         return $query;
     }
     

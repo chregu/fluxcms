@@ -222,7 +222,7 @@ class bx_filters_patforms extends bx_filter {
             
             // replace patForms:Form node by transformed xml from form
             if (function_exists('iconv')) {
-             $formXML = @iconv("UTF-8", "UTF-8//IGNORE", $formXML);   
+                $formXML = @iconv("UTF-8", "UTF-8//IGNORE", $formXML);   
             }
             
             $formDOM->loadXML($formXML);

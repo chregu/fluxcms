@@ -69,7 +69,9 @@ class bx_plugins_admin_overview extends bx_plugin {
                     foreach($GLOBALS['POOL']->config->adminOverviewInfoBoxes as $box) {
                         if ($box != "null") {
                             $pinfo = call_user_func(array("bx_plugins_".$box,"getInstance"));
-                            $root->appendChild($dom->importNode( $pinfo->getOverviewSections($path,true)->documentElement,true));
+                            if($pinfo !== NULL) {
+                                $root->appendChild($dom->importNode( $pinfo->getOverviewSections($path,true)->documentElement,true));
+                            }
                         }
                     }
                 }

@@ -569,7 +569,7 @@ class bx_dbforms2_config {
                 }
             }
         }
-        
+
         return $ehandlers;
     }
     
