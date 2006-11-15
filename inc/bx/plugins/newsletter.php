@@ -231,6 +231,14 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         //delete groups
         $query = "delete from ".$prefix."newsletter_users2groups where fk_user='".$userid."' and fk_group in ($groups);";
         $db->exec($query);
+        
+        //TODO cp newsletter_users2groups to newsletter_users2groups_unsub and enable this secion
+        //insert into unsub table
+        /*foreach (explode(",",$groups) as $group) {
+            $query = "insert into ".$prefix."newsletter_users2groups_unsub (fk_user,fk_group) VALUES('".$userid."',".$group.")";
+            $db->exec($query);
+        */
+        
         // check if there are more groups
         
         $res = $db->query("select id from ".$prefix."newsletter_users2groups where fk_user = ".$userid);
