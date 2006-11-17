@@ -78,6 +78,13 @@
 	                    <xsl:with-param name="selected" select="$selected"/>
 	                </xsl:call-template>
 	            </xsl:if>   
+				<xsl:if test="php:functionString('bx_editors_blog::isTabAllowed','generalcomments') = 'true'">    
+	                <xsl:call-template name="doTab">
+	                    <xsl:with-param name="name" select="'General Comments'"/> 
+	                    <xsl:with-param name="uri" select="'sub/generalcomments/'"/> 
+	                    <xsl:with-param name="selected" select="$selected"/>
+	                </xsl:call-template>
+	            </xsl:if>   
             </ul>
               <br clear="all"/>
         </div>

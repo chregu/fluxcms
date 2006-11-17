@@ -206,8 +206,8 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     protected function getSubEditorNameById($id) {
-        if(preg_match('#sub/([^\/]+)\/#', $id, $m)) {
-            return $m[1];
+		if(preg_match('#sub/([^\/]+)\/#', $id, $m)) {
+			return $m[1];
         }
         return FALSE;
     }
@@ -222,7 +222,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     protected function getStylesheetNameBySubEditor($editor) {
-        return "sub/xsl/$editor.xsl";
+		return "sub/xsl/$editor.xsl";
     }
     
     protected function getSubEditorInstance($editor) {

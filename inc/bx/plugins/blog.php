@@ -623,7 +623,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $perm = bx_permm::getInstance();
                     if (!$perm->isLoggedIn()) {
 			$days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
-                        $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
+			            $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
                     } else {
                         $isCaptcha = false;
                     }
@@ -884,7 +884,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         
         $remember = null;
         $data = $this->commentData;
-        if($data == null) {
+		if($data == null) {
             $data['name'] = null;
             $data['openid_url'] = null;
             $data['email'] = null;
