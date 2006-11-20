@@ -329,7 +329,8 @@ if ($lastVersion < 7720) {
 }
 
 if ($lastVersion < 8244) {
-    $res = doQueryTable("CREATE TABLE `".$tablePrefix."blograting` (
+    $res = doQueryTable("
+		CREATE TABLE `".$tablePrefix."blograting` (
 	  `id` int(11) NOT NULL auto_increment,
 	  `postid` int(11) NOT NULL default '0',
 	  `blogid` int(11) NOT NULL default '0',
