@@ -335,7 +335,7 @@ if ($lastVersion < 8244) {
 	  `blogid` int(11) NOT NULL default '0',
 	  `rating` int(11) NOT NULL default '0',
 	  `username` varchar(255) NOT NULL default '',
-	  PRIMARY KEY  (`id`)");
+	  PRIMARY KEY  (`id`)", 'blograting');
 
       updateLastVersion(8244);
 }
