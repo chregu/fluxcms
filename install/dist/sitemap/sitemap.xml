@@ -116,8 +116,8 @@
                         <map:part strip-root="true">
                             <map:generate type="bxcms" src="{../1}">
                                 <map:parameter name="collection" value="/"/>
-                                <map:parameter name="filename" value="index"/>
-                                <map:parameter name="ext" value="html"/>
+                                  <map:parameter name="filename" value="__pagenotallowed"/>
+                                  <map:parameter name="ext" value="html"/>
 
 
                             </map:generate>
