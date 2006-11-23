@@ -122,7 +122,7 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         if ($q  || $tag) {
             
              
-            $pages = $this->getPages(stripslashes($q), $tag);
+            $pages = $this->getPages(bx_helpers_global::stripMagicQuotes($q), $tag);
         
             
             foreach($pages as $key => $results) {
