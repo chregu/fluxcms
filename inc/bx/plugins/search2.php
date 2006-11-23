@@ -122,7 +122,7 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         if ($q  || $tag) {
             
              
-            $pages = $this->getPages($q,$tag);
+            $pages = $this->getPages(stripslashes($q), $tag);
         
             
             foreach($pages as $key => $results) {
@@ -142,6 +142,10 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
                     }
                 }
             }
+        
+            $root->appendChild($dom->createElement('query', $q));
+            $root->appendChild($dom->createElement('tag', $tag));
+        
         }
         
         return $dom;
@@ -166,11 +170,11 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         */
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
-        $query = "select  properties.path, properties.value, sum(MATCH (value) AGAINST (". $db->quote($search) .")) as cnt
+        $query = "select  properties.path, properties.value, sum(MATCH (value) AGAINST (". $db->quote($search) ." IN BOOLEAN MODE)) as cnt
         from ".$tablePrefix."properties as properties  where 1 = 1 ";
         
         if ($search) {
-            $query .= " and MATCH (value) AGAINST (" . $db->quote($search) ." ) ";
+            $query .= " and MATCH (value) AGAINST (" . $db->quote($search) ." IN BOOLEAN MODE) ";
         }
         /*if ($excludePath) {
             $query .= " and properties.path != ".$db->quote($excludePath) ." ";
