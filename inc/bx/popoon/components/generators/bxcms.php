@@ -73,8 +73,16 @@ class popoon_components_generators_bxcms extends popoon_components_generator {
             header("Location: $relink");
             exit(0);
         }
-        
-        $xml = $collection->getContentByRequest($this->getParameterDefault("filename"),$this->getParameterDefault("ext"));
+        $filename = $this->getParameterDefault("filename");
+        if ($filename == "__pagenotallowed" ) {
+            try {
+                $xml = $collection->getContentByRequest($filename,$this->getParameterDefault("ext"));
+            } catch (BxPageNotAllowedException $e) {
+            }
+        } else {
+            $xml = $collection->getContentByRequest($filename,$this->getParameterDefault("ext"));
+        }
+
         if ($lastModified = $collection->getLastModifiedResource()) {
            $this->sitemap->setHeader("Last-Modified",gmdate('D, d M Y H:i:s T',$lastModified));
         }
