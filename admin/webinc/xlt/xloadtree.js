@@ -73,7 +73,6 @@ function WebFXLoadTree(sText, sXmlSrc, sAction, sBehavior, sIcon, sOpenIcon, sIc
 	this.loading = false;
 	this.loaded = false;
 	this.errorText = "";
-	
 	// check start state and load if open
 	if (this.open)
 		_startLoadXmlTree(this.src, this);
@@ -199,14 +198,26 @@ function _startLoadXmlTree(sSrc, jsNode,expandSrc) {
     xmlHttp.open("GET", sSrc, true);	// async
 	
     xmlHttp.onreadystatechange = function () {
-		
         if (xmlHttp.readyState == 4) {
             _xmlFileLoaded(xmlHttp.responseXML, jsNode, expandSrc);
 		}
 	};
 	// call in new thread to allow ui to update
+	
 	window.setTimeout(function () {
 		xmlHttp.send(null);
+		//bug in firebug 1.0 beta
+		// readyState should be 1 immediatly after send
+		if (xmlHttp.readyState == 0) {
+			
+			window.setTimeout(function () {
+				//if it still is 0 after 0.5 sec, do a reload..
+				if (xmlHttp.readyState == 0 && !window.location.href.match(/firebugreload=1/)) {
+					xmlHttp.abort();
+					window.location.href = window.location.href +"?firebugreload=1";
+				}
+			}, 200);
+		}
 	}, 10);
 	
 }
