@@ -22,7 +22,7 @@ class bx_plugins_blog_montharchive {
 
         $colluri =  bx_collections::getCollectionUri($path);
         $blogid =  $p->getParameter($colluri,"blogid");
-		$bloglanguage = $GLOBALS['POOL']->config->bloglanguage;
+		$bloglanguage = $GLOBALS['POOL']->config->blogShowOnlyOneLanguage;
 		$lang = $GLOBALS['POOL']->config->getOutputLanguage();
         
         if (!$blogid) {$blogid = 1;};

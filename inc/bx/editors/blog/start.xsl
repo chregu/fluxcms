@@ -87,6 +87,9 @@ xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://purl.org/atom/ns#
                                 <i18n:text>title</i18n:text>
                             </th>
                             <th>
+                                <i18n:text>lang</i18n:text>
+                            </th>
+                            <th>
                                 <i18n:text>author</i18n:text>
                             </th>
                             <th>
@@ -102,7 +105,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://purl.org/atom/ns#
                         </tr>
                         <xsl:apply-templates select="/atom:feed/atom:entry"/>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                     <input type="checkbox" onclick="toggleCheckboxes(this.checked,'posts')" class="checkbox"/>
                                     <i18n:text>check1</i18n:text>
                          
@@ -204,9 +207,13 @@ xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://purl.org/atom/ns#
                 </td>
                 <td>
                     <a href="./{atom:uri}.html">
-                        <xsl:value-of select="atom:title"/> [<xsl:value-of select="atom:lang"/>]
+                        <xsl:value-of select="atom:title"/>
                     </a>
                     <br/>
+                </td>
+                <td>
+                <xsl:value-of select="atom:lang"/>
+                <br/>
                 </td>
                 <td>
                     <xsl:value-of select="atom:author/atom:name"/>

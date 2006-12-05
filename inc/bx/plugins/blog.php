@@ -192,7 +192,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $archivewhere = "";
         $total = 0;
         $gmnow = gmdate("Y-m-d H:i:00",time()  + 60);
-        $bloglanguage = $GLOBALS['POOL']->config->bloglanguage;
+        $bloglanguage = $GLOBALS['POOL']->config->blogShowOnlyOneLanguage;
         $lang = $GLOBALS['POOL']->config->getOutputLanguage();
         if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
