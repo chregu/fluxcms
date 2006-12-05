@@ -56,14 +56,14 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
     
     public function getPermissionList() {
-    	return array(	"blog-back-post",
-    					"blog-back-options",
-    					"blog-back-files",
-    					"blog-back-gallery",
-    					"blog-back-blogroll",
-    					"blog-back-categories",
-    					"blog-back-private",
-    					"admin_dbforms2-back-blogcomments");	
+        return array(    "blog-back-post",
+                        "blog-back-options",
+                        "blog-back-files",
+                        "blog-back-gallery",
+                        "blog-back-blogroll",
+                        "blog-back-categories",
+                        "blog-back-private",
+                        "admin_dbforms2-back-blogcomments");    
     }
 
     /**
@@ -103,9 +103,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     public function getContentById($path, $id) {
         $perm = bx_permm::getInstance();
         if($id == "newpost" or $id == "_all/index") {
-	        if (!$perm->isAllowed($path,array('blog-back-post'))) {
-	            throw new BxPageNotAllowedException();
-	        }
+            if (!$perm->isAllowed($path,array('blog-back-post'))) {
+                throw new BxPageNotAllowedException();
+            }
         }
         $this->setJavaScriptSource('webinc/js/livesearch.js');
         $this->setJavaScriptSource('webinc/js/openId.js');
@@ -180,9 +180,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         } else {
             $cat = "";
         }
-	$sidebar = true;
+    $sidebar = true;
         if ($mode == "rss") {
-	    $sidebar = false;
+        $sidebar = false;
             $id = "index";
         }
         
@@ -192,8 +192,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $archivewhere = "";
         $total = 0;
         $gmnow = gmdate("Y-m-d H:i:00",time()  + 60);
-		$bloglanguage = $GLOBALS['POOL']->config->bloglanguage;
-		$lang = $GLOBALS['POOL']->config->getOutputLanguage();
+        $bloglanguage = $GLOBALS['POOL']->config->bloglanguage;
+        $lang = $GLOBALS['POOL']->config->getOutputLanguage();
         if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
             $query .=" where (MATCH (post_content,post_title) AGAINST ('" . $_GET['q'] ."') or  post_title like '%" .  $_GET['q']  . "%') and ".
@@ -244,18 +244,18 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                } else if (strpos($cat,"tag") === 0) {
                    $tag = substr($cat,4);
                    $tquery="select path from ".$tablePrefix."tags as tags left join ".$tablePrefix."properties2tags as properties2tags
- 			on tags.id = properties2tags.tag_id where tags.tag = '".$tag."'";
+             on tags.id = properties2tags.tag_id where tags.tag = '".$tag."'";
                    $tres = $GLOBALS['POOL']->db->query($tquery);
                    $uris = array();
                    while ($trow = $tres->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                        $uri = preg_replace("#^".$path."#","",$trow['path']);
                        $uris[] = $GLOBALS['POOL']->db->quote(substr($uri,0,-5));
                    }
-		   if (count ($uris) > 0) {
-	                   $archivewhere .= " and post_uri in (".implode(",",$uris).")";
-		   } else {
-			  $archivewhere .= " and 1 = 2";
-		   }
+           if (count ($uris) > 0) {
+                       $archivewhere .= " and post_uri in (".implode(",",$uris).")";
+           } else {
+              $archivewhere .= " and 1 = 2";
+           }
                    $cat = false;
                }
                
@@ -268,8 +268,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             else if ($cat == "root") {
                 throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
-			if (isset($cat)  && $cat && $cat != '_all') {
-			    $lres = $GLOBALS['POOL']->db->query("select l,r from ".$tablePrefix."blogcategories where ".$tablePrefix."blogcategories.fulluri = '$cat' and ".$tablePrefix."blogcategories.status=1 ");
+            if (isset($cat)  && $cat && $cat != '_all') {
+                $lres = $GLOBALS['POOL']->db->query("select l,r from ".$tablePrefix."blogcategories where ".$tablePrefix."blogcategories.fulluri = '$cat' and ".$tablePrefix."blogcategories.status=1 ");
                 if (MDB2::isError($lres)) {
                     throw new PopoonDBException($lres);
                 }
@@ -297,11 +297,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
             $archivewhere .= $tablePrefix.'blogposts.id > 0 and ' . $tablePrefix.'blogposts.post_status & ' . $this->overviewPerm ;
             $archivewhere .= ' and '.$tablePrefix.'blogposts.blog_id = '.$blogid;
-				
-			if ($this->overviewPerm != 7) {
-				if ($bloglanguage == 'true') {
-					$archivewhere .= ' and ('.$tablePrefix.'blogposts.post_lang = "'.$lang.'" or '.$tablePrefix.'blogposts.post_lang = "")';
-				}
+                
+            if ($this->overviewPerm != 7) {
+                if ($bloglanguage == 'true') {
+                    $archivewhere .= ' and ('.$tablePrefix.'blogposts.post_lang = "'.$lang.'" or '.$tablePrefix.'blogposts.post_lang = "")';
+                }
                 
                 $archivewhere .= " and post_date < '".$gmnow."'";
                 
@@ -312,7 +312,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $archivewhere .= $tablePrefix."blogposts.post_expires >= '".$gmnow ."')";
                 }
             }
-			$res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
+            $res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
             
             if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
@@ -407,8 +407,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $dom->loadXML($xml);
         }
        if ($sidebar && $dom->documentElement) {
-        	$this->getSidebarData($dom->documentElement);	
-	}
+            $this->getSidebarData($dom->documentElement);    
+    }
         return $dom;
     }
     
@@ -490,9 +490,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= ' id = "entry'.$row['id'].'"';
             $xml .= ' blog:blog_id="'.$row['blog_id'].'" ' ;
             if(isset($row['post_lang'])) {
-					$xml .= ' blog:blog_lang="'.$row['post_lang'].'" ' ;
+                    $xml .= ' blog:blog_lang="'.$row['post_lang'].'" ' ;
             }
-			$xml .= ' blog:post_uri="'.$row['post_uri'].'" ' ;
+            $xml .= ' blog:post_uri="'.$row['post_uri'].'" ' ;
             $xml .= ' blog:post_date_iso="'.$row['post_date_iso'].'" ' ;
             $xml .= ' blog:post_status="'.$row['post_status'].'" ' ;
             $xml .= ' blog:post_comment_mode="'.$row['post_comment_mode'].'" ' ;
@@ -631,8 +631,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $imgid = 0;
                     $perm = bx_permm::getInstance();
                     if (!$perm->isLoggedIn()) {
-			$days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
-			            $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
+            $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
+                        $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
                     } else {
                         $isCaptcha = false;
                     }
@@ -718,10 +718,10 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $xml .= '<span class="comment_author">';
                 if ($row['comment_author_url']) {
                     $xml .= '<a href="';
-			if (strpos($row['comment_author_url'],'http:') !== 0) {
-				$xml .= 'http://';
-			}
-			$xml .= $row['comment_author_url'].'">'.$row['comment_author'].'</a></span>';
+            if (strpos($row['comment_author_url'],'http:') !== 0) {
+                $xml .= 'http://';
+            }
+            $xml .= $row['comment_author_url'].'">'.$row['comment_author'].'</a></span>';
                 } else {
                     $xml .= $row['comment_author'].'</span>';
                 }
@@ -839,7 +839,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
     
     public function getOverviewSections($path,$mainOverview) {
-		$perm = bx_permm::getInstance();
+        $perm = bx_permm::getInstance();
 
         $sections = array();
         $dom = new bx_domdocs_overview();
@@ -849,23 +849,23 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $dom->setIcon("blog");
 
         if($perm->isAllowed('/blog/',array('blog-back-post'))) {
-        	 $dom->addLink("Make new Blog Entry",'edit'.$path."newpost.xml");
-        	 $dom->addLink("Blog Posts Overview / Latest Comments",'edit'.$path);
-    	}	
+             $dom->addLink("Make new Blog Entry",'edit'.$path."newpost.xml");
+             $dom->addLink("Blog Posts Overview / Latest Comments",'edit'.$path);
+        }    
 
         $dom->addTab("Edit Categories/Links");
         if($perm->isAllowed($path,array('blog-back-categories'))) {
-        	$dom->addLink("Edit Categories",'edit'.$path.'sub/categories/');
+            $dom->addLink("Edit Categories",'edit'.$path.'sub/categories/');
         }
         if($perm->isAllowed($path,array('blog-back-blogroll'))) {
-        	$dom->addLink("Edit Links and Linkcategories",'edit'.$path.'sub/blogroll/');
+            $dom->addLink("Edit Links and Linkcategories",'edit'.$path.'sub/blogroll/');
         }
         if($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-blogcomments'))) {
-        	$dom->addLink("Edit Comments",'dbforms2/blogcomments/');
+            $dom->addLink("Edit Comments",'dbforms2/blogcomments/');
         }
         
          if($perm->isAllowed($path,array('blog-back-sidebars'))) {
-        	$dom->addLink("Edit Sidebars",'edit'.$path.'sub/sidebar/');
+            $dom->addLink("Edit Sidebars",'edit'.$path.'sub/sidebar/');
         }
         
         
@@ -893,7 +893,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         
         $remember = null;
         $data = $this->commentData;
-		if($data == null) {
+        if($data == null) {
             $data['name'] = null;
             $data['openid_url'] = null;
             $data['email'] = null;
@@ -1064,9 +1064,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     protected function getSidebarData($root) {
         $query = "SELECT sidebar, name, content, isxml FROM ".$this->tablePrefix."sidebar AS sidebar WHERE sidebar != '0' order by sidebar,position";
         $res = $GLOBALS['POOL']->db->query($query);
-	if ($GLOBALS['POOL']->db->isError($res)) {
-		return;
-	}
+    if ($GLOBALS['POOL']->db->isError($res)) {
+        return;
+    }
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $s = $root->appendChild($root->ownerDocument->createElement("sidebar"));
             $s->setAttribute("sidebar",$row['sidebar']);
