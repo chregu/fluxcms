@@ -112,6 +112,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                     //set checkbox
                     $data['categories'][$data['newcategory']] = "on";
                 }
+				
                 bx_global::registerStream("blog");
                 
                 // remove  html enitities sometimes sent by fckeditor
@@ -150,7 +151,8 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 fwrite($fd, '<entry xmlns="http://purl.org/atom/ns#">');
                 
                 fwrite($fd, '<title>'.$data['title'].'</title>');
-                fwrite($fd, '<id>'.$data['id'].'</id>');
+                fwrite($fd, '<lang>'.$data['lang'].'</lang>');
+				fwrite($fd, '<id>'.$data['id'].'</id>');
                 fwrite($fd, '<uri>'.$data['uri'].'</uri>');
                 fwrite($fd, '<created>'.$data['created'].'</created>');
                 fwrite($fd, '<expires>'.$data['expires'].'</expires>');

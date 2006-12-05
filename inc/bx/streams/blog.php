@@ -260,10 +260,10 @@ class bx_streams_blog extends bx_streams_buffer {
     }
     
     function getPostObject() {
-        
         //it's defined at the end of this file
         $post = new bx_streams_blog_post();
-        $post->title = $this->getElement("title",true);
+        
+		$post->title = $this->getElement("title",true);
         $post->content = $this->getElement("content",true);
         $post->content_extended = $this->getElement("content_extended",true);
         $post->summary = $this->getElement("summary",true);
@@ -284,12 +284,12 @@ class bx_streams_blog extends bx_streams_buffer {
         }
         $post->date = $this->fixDate($this->getElement("created"));
         $post->expires = $this->fixDate($this->getElement("expires"),false);
-        $post->post_info = "";
+        $post->lang = $this->getElement("lang", true);
+		$post->post_info = "";
         return $post;
     }
     
     function insertEntry($id = null) {
-        
         $parts =  bx_collections::getCollectionAndFileParts($this->path, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
@@ -302,8 +302,8 @@ class bx_streams_blog extends bx_streams_buffer {
         
         $db = $GLOBALS['POOL']->db;
         $dbwrite = $GLOBALS['POOL']->dbwrite;
-        $post = $this->getPostObject();
-        if ($id) {
+		$post = $this->getPostObject();
+		if ($id) {
             //delete cache
             $GLOBALS['POOL']->cache->flush("plugins_blog_id_".$id);
             $post->id = $id;
@@ -319,11 +319,11 @@ class bx_streams_blog extends bx_streams_buffer {
             }
         }
         
-        foreach (self::$adminPlugins as $plugin) {
+		foreach (self::$adminPlugins as $plugin) {
             $post = call_user_func(array("bx_plugins_blog_".$plugin,"onInsertNewPost"),$post);
         }
-        $query = "insert into ".$this->tablePrefix."blogposts 
-            (id, blog_id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode) values 
+		$query = "insert into ".$this->tablePrefix."blogposts 
+            (id, blog_id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode, post_lang) values 
             ($post->id, 
             $blogid, 
             ".$db->quote($post->author,'text').", 
@@ -335,7 +335,8 @@ class bx_streams_blog extends bx_streams_buffer {
             ".$db->quote($post->uri,'text').",
             ".$db->quote(bx_helpers_string::utf2entities($post->getInfoString()),'text').",
             ".$db->quote($post->status).",
-            ".$db->quote($post->comment_mode)."
+            ".$db->quote($post->comment_mode).",
+			".$db->quote($post->lang)."
             )";
         
         $res = $dbwrite->query($query);
@@ -500,7 +501,10 @@ class bx_streams_blog extends bx_streams_buffer {
         "post_status = ". $db->quote($post->status) .",".
         "post_expires = ".$db->quote($post->expires).",".
         "post_comment_mode = ". $db->quote($post->comment_mode);
-        if ($post->date) {
+        if ($post->lang) {
+            $query .= ", post_lang = ".$db->quote($post->lang);
+        }
+		if ($post->date) {
             $query .= ", post_date = ".$db->quote($post->date);
         }
         if ($post->uri) {
@@ -634,9 +638,10 @@ class bx_streams_blog extends bx_streams_buffer {
     }
     function getElement($element,$clean = false) {
         $res = $this->xp->query("/atom:entry/atom:$element/*|/atom:entry/atom:$element/text()");
-        $xml = "";
+		
+		$xml = "";
         foreach($res as $node) {
-            if ($node->nodeType == 1 && $node->getAttribute("keep") == "true") {
+			if ($node->nodeType == 1 && $node->getAttribute("keep") == "true") {
                 return false;
             }
             $xml .= $this->dom->saveXML($node);

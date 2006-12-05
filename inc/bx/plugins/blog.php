@@ -192,7 +192,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $archivewhere = "";
         $total = 0;
         $gmnow = gmdate("Y-m-d H:i:00",time()  + 60);
-
+		$bloglanguage = $GLOBALS['POOL']->config->bloglanguage;
+		$lang = $GLOBALS['POOL']->config->getOutputLanguage();
         if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
             $query .=" where (MATCH (post_content,post_title) AGAINST ('" . $_GET['q'] ."') or  post_title like '%" .  $_GET['q']  . "%') and ".
@@ -267,8 +268,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             else if ($cat == "root") {
                 throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
-            if (isset($cat)  && $cat && $cat != '_all') {
-                $lres = $GLOBALS['POOL']->db->query("select l,r from ".$tablePrefix."blogcategories where ".$tablePrefix."blogcategories.fulluri = '$cat' and ".$tablePrefix."blogcategories.status=1 ");
+			if (isset($cat)  && $cat && $cat != '_all') {
+			    $lres = $GLOBALS['POOL']->db->query("select l,r from ".$tablePrefix."blogcategories where ".$tablePrefix."blogcategories.fulluri = '$cat' and ".$tablePrefix."blogcategories.status=1 ");
                 if (MDB2::isError($lres)) {
                     throw new PopoonDBException($lres);
                 }
@@ -296,7 +297,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
             $archivewhere .= $tablePrefix.'blogposts.id > 0 and ' . $tablePrefix.'blogposts.post_status & ' . $this->overviewPerm ;
             $archivewhere .= ' and '.$tablePrefix.'blogposts.blog_id = '.$blogid;
-            if ($this->overviewPerm != 7) {
+				
+			if ($this->overviewPerm != 7) {
+				if ($bloglanguage == 'true') {
+					$archivewhere .= ' and ('.$tablePrefix.'blogposts.post_lang = "'.$lang.'" or '.$tablePrefix.'blogposts.post_lang = "")';
+				}
                 
                 $archivewhere .= " and post_date < '".$gmnow."'";
                 
@@ -307,7 +312,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $archivewhere .= $tablePrefix."blogposts.post_expires >= '".$gmnow ."')";
                 }
             }
-            $res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
+			$res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
             
             if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
@@ -445,12 +450,13 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $xml = "";
         $query = 'SELECT blogposts.post_uri,blogposts.id,
         blogposts.blog_id,
+        blogposts.post_lang,
         blogposts.post_title,
         blogposts.post_uri,
         blogposts.post_content,
         blogposts.post_content_extended,
         blogposts.post_info,
-        blogposts.post_status,
+        blogposts.post_status, 
         blogposts.post_guid_version,
         
         unix_timestamp(blogposts.changed) as lastmodified,
@@ -483,7 +489,10 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             
             $xml .= ' id = "entry'.$row['id'].'"';
             $xml .= ' blog:blog_id="'.$row['blog_id'].'" ' ;
-            $xml .= ' blog:post_uri="'.$row['post_uri'].'" ' ;
+            if(isset($row['post_lang'])) {
+					$xml .= ' blog:blog_lang="'.$row['post_lang'].'" ' ;
+            }
+			$xml .= ' blog:post_uri="'.$row['post_uri'].'" ' ;
             $xml .= ' blog:post_date_iso="'.$row['post_date_iso'].'" ' ;
             $xml .= ' blog:post_status="'.$row['post_status'].'" ' ;
             $xml .= ' blog:post_comment_mode="'.$row['post_comment_mode'].'" ' ;

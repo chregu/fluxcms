@@ -75,6 +75,11 @@
           <comment_mode>
             <xsl:value-of select="@blog:post_comment_mode"/>
         </comment_mode>
+		
+		<lang>
+            <xsl:value-of select="@blog:blog_lang"/>
+        </lang>
+        
         <xsl:apply-templates/>
     </xsl:template>
 

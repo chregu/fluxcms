@@ -53,6 +53,10 @@
         <link rel="service.edit">
             <xsl:value-of select="$webroot"/>admin/content/<xsl:value-of select="@blog:post_uri"/>.html
         </link>
+		<xsl:value-of select="$break"/>
+		<lang>
+            <xsl:value-of select="@blog:blog_lang"/>
+        </lang>
         <xsl:value-of select="$break"/>
         
         <xsl:apply-templates/>

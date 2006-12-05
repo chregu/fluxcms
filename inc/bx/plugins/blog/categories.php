@@ -11,6 +11,9 @@ class bx_plugins_blog_categories {
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
         $blogid =  $p->getParameter($colluri,"blogid");
+        $bloglanguage = $GLOBALS['POOL']->config->bloglanguage;
+		$lang = $GLOBALS['POOL']->config->getOutputLanguage();
+        
         if (!$blogid) {
             $blogid = 1;
         }
@@ -36,6 +39,9 @@ class bx_plugins_blog_categories {
            left join ".$tablePrefix."blogposts  on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id
            where  ".$tablePrefix."blogposts.id > 0 and " . $tablePrefix."blogposts.post_status & " . $overviewPerm;
            $query .= " and  blogcategories.blog_id = ".$blogid;
+           if ($bloglanguage == 'true') {
+               $q .= ' and (blogposts.post_lang = "'.$lang.'" or blogposts.post_lang = "")';
+           }
            
            $query .= " group by ".$tablePrefix."blogposts2categories.blogcategories_id order by l desc";
            $res = $GLOBALS['POOL']->db->query($query);

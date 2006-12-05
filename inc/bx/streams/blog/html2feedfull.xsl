@@ -86,6 +86,10 @@
         <title>
             <xsl:value-of select="."/>
         </title>
+		<xsl:value-of select="$break"/>
+		<lang>
+            <xsl:value-of select="@blog:blog_lang"/>
+        </lang>
         <xsl:value-of select="$break"/>
     </xsl:template>
 

@@ -204,7 +204,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://purl.org/atom/ns#
                 </td>
                 <td>
                     <a href="./{atom:uri}.html">
-                        <xsl:value-of select="atom:title"/>
+                        <xsl:value-of select="atom:title"/> [<xsl:value-of select="atom:lang"/>]
                     </a>
                     <br/>
                 </td>

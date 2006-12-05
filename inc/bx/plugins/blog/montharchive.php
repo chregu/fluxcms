@@ -22,6 +22,9 @@ class bx_plugins_blog_montharchive {
 
         $colluri =  bx_collections::getCollectionUri($path);
         $blogid =  $p->getParameter($colluri,"blogid");
+		$bloglanguage = $GLOBALS['POOL']->config->bloglanguage;
+		$lang = $GLOBALS['POOL']->config->getOutputLanguage();
+        
         if (!$blogid) {$blogid = 1;};
         
        if ($perm->isLoggedIn()) {
@@ -29,8 +32,14 @@ class bx_plugins_blog_montharchive {
        } else {
            $overviewPerm = 1;
        }
-       $q="select  count(*) as count, date_format(post_date,'%M') as monthlong, date_format(post_date,'%m') as month, year(post_date) as year from ".$tablePrefix."blogposts as blogposts  where  blogposts.id > 0 and blog_id = ".$blogid." and blogposts.post_status & $overviewPerm group by year(post_date), month(post_date) order by post_date DESC";
-       $res = $db->query($q);
+       $q="select  count(*) as count, date_format(post_date,'%M') as monthlong, date_format(post_date,'%m') as month, year(post_date) as year from ".$tablePrefix."blogposts as blogposts  where  blogposts.id > 0";
+       
+       if ($bloglanguage == 'true') {
+           $q .= ' and (blogposts.post_lang = "'.$lang.'" or blogposts.post_lang = "")';
+       }
+	   
+	   $q .= " and blog_id = ".$blogid." and blogposts.post_status & $overviewPerm group by year(post_date), month(post_date) order by post_date DESC";
+	   $res = $db->query($q);
        if (MDB2::isError($res)) {
            return "<error/>";
        }

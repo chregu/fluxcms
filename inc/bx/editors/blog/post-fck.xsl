@@ -14,6 +14,7 @@
     <xsl:param name="collectionUriOfId" select="''"/>
     <xsl:param name="dataUri" select="''"/>
     
+    <xsl:variable name="langsAvail" select="php:functionString('bx_helpers_config::getLangsAvailXML')"/>
     <xsl:variable name="showAdvancedView" select="php:functionString('bx_helpers_globals::COOKIE','blogAdvancedView')"/> 
     <xsl:variable name="editor" select="php:functionString('bx_helpers_config::getOption','blogDefaultEditor')"/> 
     <xsl:variable name="doFck" select="php:functionString('popoon_classes_browser::hasContentEditable') and $editor != 'source'"/>
@@ -170,7 +171,7 @@
                     </tr>
                     
                     
-                    
+					
                     <tr>
                         <td>Uri:
                         <span onmouseout="document.getElementById('uri_help').style.display = 'none';"
@@ -301,6 +302,26 @@
                         </td>
                     </tr>
                     
+                    <tr id="advanced5">
+                        <xsl:call-template name="displayOrNot"/>
+                        <td>Lang:
+                        <xsl:value-of select="$langsAvail/langs"/>
+                        </td>
+                        <td >
+                        <select id="lang" name="bx[plugins][admin_edit][lang]">
+                            <option value="">
+                                None
+                            </option>
+                        <xsl:for-each select="$langsAvail/langs/entry">
+                            <option value="{.}">
+                                <xsl:value-of select="."/>
+                            </option>
+                        </xsl:for-each>    
+                            </select>
+                        </td>
+                        <td></td>
+                    </tr>
+                    
                     <tr id="advanced7">
                     <xsl:call-template name="displayOrNot"/>
                         <td><i18n:text>Expiration Date</i18n:text>:</td>
@@ -313,7 +334,6 @@
                         </td>
                     </tr>
 
-                    
                     
                     <tr id="advanced5">
                         <xsl:call-template name="displayOrNot"/>
