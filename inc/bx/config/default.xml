@@ -127,6 +127,7 @@
         <blogCaptchaAfterDays allowFromDB="true">-1</blogCaptchaAfterDays>
         <blogCaptchaFontPath allowFromDB="true">inc/bx/helpers/captcha/</blogCaptchaFontPath>
         <blogCaptchaFontFile allowFromDB="true">Courier_New.ttf</blogCaptchaFontFile>
+        <blogShowOnlyOneLanguage allowFromDB="true">false</blogShowOnlyOneLanguage>
     
         <openIdEnabled  allowFromDB="true">false</openIdEnabled>
         <adminDeleteTmp>true</adminDeleteTmp>
