@@ -110,14 +110,14 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                         $form->currentID = $db->nextID($form->tablePrefix.'_sequences');
                     }
                     
-                    $query = bx_dbforms2_sql::getInsertQueryByForm($form);
                     $form->callEventHandlers(bx_dbforms2::EVENT_INSERT_PRE);
+                    $query = bx_dbforms2_sql::getInsertQueryByForm($form);
                 
                 } else {
                     // update an existing entry
                     $form->queryMode = bx_dbforms2::QUERYMODE_UPDATE;
-                    $query = bx_dbforms2_sql::getUpdateQueryByForm($form);
                     $form->callEventHandlers(bx_dbforms2::EVENT_UPDATE_PRE);
+                    $query = bx_dbforms2_sql::getUpdateQueryByForm($form);
                 }
                 
                 // give it a go
