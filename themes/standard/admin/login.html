@@ -1,3 +1,26 @@
+<?php
+
+if (!empty($_GET['back'])) {
+    //remove webroot and add it again, so that we don't get redirected to something else..
+    $_GET['back'] = BX_WEBROOT. preg_replace("#^".BX_WEBROOT."#",'',$_GET['back']);
+}
+
+if (!empty($_POST) && isset($_POST['username'])) {
+    if (!empty($_GET['back'])) {
+        if (strpos($_GET['back'],'?') === false) {
+            $_GET['back'] .= '?loginerror=1';
+        } else {
+            $_GET['back'] .= '&loginerror=1';
+        }    
+        header("Location: ".$_GET['back']);
+    } else {
+        $error = '<label>&#160;</label><p style="color: red;">'.$GLOBALS['POOL']->i18nadmin->translate('Wrong login or password.').'</p>';
+    }
+} else {
+    $error = '';
+}
+        
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html >
@@ -72,6 +95,9 @@ echo '
         $perm = bx_permm::getInstance();
         $username = $perm->getUsername();
       
+            
+        
+        
         if ($username) {
         
             print "You're already logged in as " .$username.".<p/>";
@@ -103,12 +129,7 @@ EOT;
     $newone = $GLOBALS['POOL']->i18nadmin->translate('Get a new one.');
     $remember = $GLOBALS['POOL']->i18nadmin->translate('Remember me:');
 	$authservices = $GLOBALS['POOL']->i18nadmin->translate('Auth Services:');
-    
-    if (!empty($_POST) && isset($_POST['username'])) {
-    $error = '<label>&#160;</label><p style="color: red;">'.$GLOBALS['POOL']->i18nadmin->translate('Wrong login or password.').'</p>';
-    } else {
-    $error = '';
-    }
+
     
     
 print <<<EOT

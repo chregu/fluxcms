@@ -77,6 +77,7 @@
         WebFXTreeObjectId = object;
         WebFXTreeOpenId = WebFXTreeObjectId.getAttribute('id').match(/[0-9]{1,}/);
         ap = adminPopUp.create('<xsl:value-of select="$webroot"/>admin/navi/popup');
+        alert(path);
         ap.load(path);
     } 
     
