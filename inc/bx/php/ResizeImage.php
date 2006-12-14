@@ -458,6 +458,7 @@ $fd = fopen ($this->endImgFile,"w");
    }
    function gravatar() {
         $grav_url = 'http://www.gravatar.com/avatar.php?'.$_SERVER['QUERY_STRING'];
+        $grav_url .=   "&default=".BX_WEBROOT.'webinc/images/blind.gif';
         $imageName = $this->endImgFile;
         $imageDir = $this->endImgPath;
         $expireTime = 86400;
@@ -476,13 +477,11 @@ $fd = fopen ($this->endImgFile,"w");
             include_once("HTTP/Request.php");
             $req = new HTTP_Request($grav_url,array("timeout" => 5));
             $req->addHeader("User-Agent",'Flux CMS HTTP Fetcher+Cacher $Rev: 2815 $ (http://flux-cms.org)');
-
             $req->sendRequest();
             if( $req->getResponseCode() == 200) {
                 $img = $req->getResponseBody();
                 $fs = strlen($img);
                 if ($fs > 0) {
-                    
                     if ($fs > 250 && $lastM) {
                         file_put_contents($imageName,$img);
                         $ok = true;
@@ -493,7 +492,12 @@ $fd = fopen ($this->endImgFile,"w");
                         $ok = false;
                     }
                 } 
-            } 
+            }
+            // 301 == redirect :)
+            else if ( $req->getResponseCode() == 301) {
+                  copy(BX_PROJECT_DIR.'webinc/images/blank.gif',$imageName);
+                  $ok = true;
+            }
             if (!$ok) {
                 //if not ok (could not really download from gravatar)
                 //  and file exists and filesize is > 0
