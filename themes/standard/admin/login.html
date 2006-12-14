@@ -103,10 +103,19 @@ EOT;
     $newone = $GLOBALS['POOL']->i18nadmin->translate('Get a new one.');
     $remember = $GLOBALS['POOL']->i18nadmin->translate('Remember me:');
 	$authservices = $GLOBALS['POOL']->i18nadmin->translate('Auth Services:');
+    
+    if (!empty($_POST) && isset($_POST['username'])) {
+    $error = '<label>&#160;</label><p style="color: red;">'.$GLOBALS['POOL']->i18nadmin->translate('Wrong login or password.').'</p>';
+    } else {
+    $error = '';
+    }
+    
+    
 print <<<EOT
 
         Admin Login  </legend>
 	   <label>&#160;</label><p>$title</p>
+       $error
 <label>$user</label> <input name="username" type="text" class="input"/>
   
 EOT;
