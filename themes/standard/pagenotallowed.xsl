@@ -23,9 +23,20 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/
            <a href="/admin/?back={php:functionString('bx_helpers_uri::getRequestUri')}&amp;logout">Logout</a>
        </xsl:when>
        <xsl:otherwise>
-<p>
-       You're not logged in.
-</p>
+           
+        <xsl:choose>
+            <xsl:when test="/bx/error:notify/error:extra[@description='userInfo']">
+            <p style="color: red;">
+            <xsl:value-of select="/bx/error:notify/error:extra[@description='userInfo']"/>
+            </p>
+            </xsl:when>
+            <xsl:otherwise>
+           <p>
+             You're not logged in.
+             </p>
+        </xsl:otherwise>
+        </xsl:choose>
+            
 <div class="form">
        Please login:
          <form method="post" action="/admin/?back={php:functionString('bx_helpers_uri::getRequestUri')}">

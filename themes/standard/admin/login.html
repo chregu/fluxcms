@@ -3,6 +3,8 @@
 if (!empty($_GET['back'])) {
     //remove webroot and add it again, so that we don't get redirected to something else..
     $_GET['back'] = BX_WEBROOT. preg_replace("#^".BX_WEBROOT."#",'',$_GET['back']);
+    $_GET['back'] = preg_replace("#.loginerror=1#",'',$_GET['back']);
+        
 }
 
 if (!empty($_POST) && isset($_POST['username'])) {
