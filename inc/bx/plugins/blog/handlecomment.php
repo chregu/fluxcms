@@ -208,6 +208,8 @@ class bx_plugins_blog_handlecomment {
         } else {
             $xblcheck = '';
         }
+        $comment_notification_hash = md5($data['email'] . rand().microtime(true));
+        
         if (!$deleteIt) {  
             
                 include_once(BX_LIBS_DIR.'plugins/blog/akismet2.php');
@@ -219,6 +221,7 @@ class bx_plugins_blog_handlecomment {
                 $akismet->setCommentAuthorURL($data['openid_url']);
                 $akismet->setCommentContent($data['comments']);
                 $akismet->setPermalink(BX_WEBROOT.$path.$id);
+                $akismet->setParam("comment_notification_hash",$comment_notification_hash);
                 $isSpam = explode("\n",$akismet->isCommentSpam());
                 if (!empty($isSpam[0]) && $isSpam[0] == 'true') {
                   $commentRejected .= "* rest.flux-cms.org thinks, this is spam\n";
@@ -286,7 +289,6 @@ class bx_plugins_blog_handlecomment {
             print ("Comment rejected. Looks like you're trying to spam the world....");
             die();
         }
-        $comment_notification_hash = md5($data['email'] . rand().microtime(true));
         $db = $GLOBALS['POOL']->dbwrite;
         if (!isset($data['comment_notification'])) {
             $data['comment_notification'] = 0;

@@ -28,4 +28,8 @@ class Akismet2 extends Akismet {
         return $response[1];
     }
     
+    public function setParam($key,$value) {
+        $this->comment[$key] = $value;
+    }
+    
 }
