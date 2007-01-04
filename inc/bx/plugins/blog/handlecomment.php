@@ -223,6 +223,7 @@ class bx_plugins_blog_handlecomment {
                 if (!empty($isSpam[0]) && $isSpam[0] == 'true') {
                   $commentRejected .= "* rest.flux-cms.org thinks, this is spam\n";
                   array_shift($isSpam);
+                  $_spamLevel = array_shift($isSpam);
                   $commentRejected .= implode("\n",$isSpam);
                   $deleteIt = true;
                 }
