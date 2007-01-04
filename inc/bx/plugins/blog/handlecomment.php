@@ -208,6 +208,27 @@ class bx_plugins_blog_handlecomment {
         } else {
             $xblcheck = '';
         }
+        if (!$deleteIt) {  
+            
+                include_once(BX_LIBS_DIR.'plugins/blog/akismet2.php');
+                    
+                $akismet = new Akismet2(BX_WEBROOT.$path,'');
+                $akismet->setAkismetServer("rest.flux-cms.org");
+                $akismet->setCommentAuthor($data['name']);
+                $akismet->setCommentAuthorEmail($data['email']);
+                $akismet->setCommentAuthorURL($data['openid_url']);
+                $akismet->setCommentContent($data['comments']);
+                $akismet->setPermalink(BX_WEBROOT.$path.$id);
+                $isSpam = explode("\n",$akismet->isCommentSpam());
+                if (!empty($isSpam[0]) && $isSpam[0] == 'true') {
+                  $commentRejected .= "* rest.flux-cms.org thinks, this is spam\n";
+                  array_shift($isSpam);
+                  $commentRejected .= implode("\n",$isSpam);
+                  $deleteIt = true;
+                }
+        }
+        
+        
         //akismet 
         if (!$deleteIt) {  
             
@@ -233,6 +254,7 @@ class bx_plugins_blog_handlecomment {
                 }
             }
         }
+        
         
         
         if (!$commentRejected) {

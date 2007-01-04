@@ -51,16 +51,16 @@
  */
 class Akismet
 	{
-	private $version = '0.2';
-	private $wordPressAPIKey;
-	private $blogURL;
-	private $comment;
-	private $apiPort;
-	private $akismetServer;
-	private $akismetVersion;
+	protected $version = '0.2';
+	protected $wordPressAPIKey;
+	protected $blogURL;
+	protected $comment;
+	protected $apiPort;
+	protected $akismetServer;
+	protected $akismetVersion;
 	
 	// This prevents some potentially sensitive information from being sent accross the wire.
-	private $ignore = array('HTTP_COOKIE', 
+	protected $ignore = array('HTTP_COOKIE', 
 							'HTTP_X_FORWARDED_FOR', 
 							'HTTP_X_FORWARDED_HOST', 
 							'HTTP_MAX_FORWARDS', 
@@ -112,7 +112,7 @@ class Akismet
 			}
 		}
 	
-	private function http_post($request, $host, $path)
+	protected function http_post($request, $host, $path)
 		{
 		$http_request  = "POST " . $path . " HTTP/1.1\r\n";
 		$http_request .= "Host: " . $host . "\r\n";
@@ -121,7 +121,6 @@ class Akismet
 		$http_request .= "User-Agent: Akismet PHP5 Class " . $this->version . " | Akismet/1.11\r\n";
 		$http_request .= "\r\n";
 		$http_request .= $request;
-		
 		$socketWriteRead = new SocketWriteRead($host, $this->apiPort, $http_request);
 		$socketWriteRead->send();
 		
@@ -129,7 +128,7 @@ class Akismet
 		}
 	
 	// Formats the data for transmission	echo $sql;
-	private function getQueryString()
+	protected function getQueryString()
 		{
 		foreach($_SERVER as $key => $value)
 			{
@@ -306,13 +305,13 @@ class Akismet
  */
 class SocketWriteRead
 	{
-	private $host;
-	private $port;
-	private $request;
-	private $response;
-	private $responseLength;
-	private $errorNumber;
-	private $errorString;
+	protected $host;
+	protected $port;
+	protected $request;
+	protected $response;
+	protected $responseLength;
+	protected $errorNumber;
+	protected $errorString;
 	
 	/**
 	 *	@param	string	$host			The host to send/receive data.
