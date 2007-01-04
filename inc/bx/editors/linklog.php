@@ -40,13 +40,9 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
     public function __construct(){
         $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $this->db = $GLOBALS['POOL']->db;    
+		$this->tagCacheFile = BX_TEMP_DIR.$this->tablePrefix.'linklogtags.arr';
     }
     
-/*
-    public function getPipelineName() {
-        return 'linklog';
-    }
-*/  
     public function getDisplayName() {
         return 'Linklog Editor';
     }	
@@ -78,6 +74,9 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
         }else{
             $this->updateLink($data['id']);
         }
+
+		return $this->resetCache();
+
      }
      
 	 /**
@@ -170,11 +169,13 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
      * passing the postdata to local variables and basic check and set some values - pass tags to array 
 	 * */
     private function setPostData($data){
-	 	$this->title 		= trim($data['title']);
-	 	$this->url 			= str_replace("&","&amp;",trim($data['url']));
+
+	 	$this->title 		= bx_helpers_string::utf2entities(htmlspecialchars(trim($data['title'])));
+	 	$this->url 			= bx_helpers_string::utf2entities(htmlspecialchars(trim($data['url'])));
 
 		// check description
-	 	$this->description 	= trim($data['description']);
+	 	$this->description 	= bx_helpers_string::utf2entities(htmlspecialchars(trim($data['description'])));
+	
 		if($this->description == ''){
 			$this->description = 'no description';
 		}
@@ -220,6 +221,8 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
                 }
                 $dom->loadXML($xml);
               //  print htmlentities($dom->saveXML());
+				file_put_contents("/tmp/links.xml", $dom->saveXML());
+				
                 return $dom;                   
 	}
     
@@ -248,14 +251,11 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
             $xml .= '<title>'.$row['title'].'</title>';
             $xml .= '<description>'.$row['description'] .'</description>';
             $xml .= '<time>'.$row['time'].'</time>';
-            $xml .= '<url>'.str_replace('&','&amp;',$row['url']).'</url>';
+            $xml .= '<url>'. $row['url'] .'</url>';
             $xml .= '<tags>'.$tagstring.'</tags>';
             $xml .= '</link>';
             $xml .= $this->getTags();
             $xml .= '</linklog>';
-            
-
-            
             
             $dom = new DomDocument();
             if (function_exists('iconv')) {
@@ -281,21 +281,14 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
          */
         $query = 'insert into '.$this->tablePrefix.$this->linksTable.' (title, description, url, status, time)' .
                  'VALUES ("'.$this->title.'", "'.$this->description.'", "'.$this->url.'", 1, now())';
-        
+
         $res = $this->db->query($query);    
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
         }
 
         // get back id:
-        $query = 'select id from '.$this->tablePrefix.$this->linksTable.' order by id DESC LIMIT 0,1';
-        $res = $this->db->query($query);
-        if (MDB2::isError($res)) {
-               throw new PopoonDBException($res);
-        }
-        
-        $lid = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
-        $linkid = $lid['id'];
+        $linkid = $this->db->lastInsertID($this->tablePrefix.$this->linksTable, 'id');
         
         /*
          * do the tags:
@@ -304,6 +297,7 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
         foreach($tag_array as $tagid){
             $this->insertLinks2Tags($tagid, $linkid);            
         }
+
         return $linkid;		
 	}
 
@@ -402,7 +396,7 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
         foreach($tag_array as $tagid){
             $this->insertLinks2Tags($tagid, $linkid);            
         }
-        
+
         return true;
     }
 
@@ -588,6 +582,7 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
                 exit;
             }           
          }
+
          return true;
     }
     
@@ -639,6 +634,14 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
             
             return $xml;
     }
+
+	private function resetCache(){
+		if(file_exists($this->tagCacheFile)){
+			unlink($this->tagCacheFile);
+		}
+		return true;
+	}
+
 }
 
 ?>
