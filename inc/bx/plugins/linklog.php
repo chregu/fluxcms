@@ -83,7 +83,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
         $this->db 		 	= $GLOBALS['POOL']->db;
         $this->mode 			= $mode;
 		
-        $this->cache4tags	= BX_TEMP_DIR."/linklogtags.arr";
+        $this->cache4tags	= BX_TEMP_DIR."/". $this->tablePrefix."linklogtags.arr";
         /*
         * check if logged in:
         */
@@ -155,7 +155,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
                   '"%Y-%m-%dT%H:%i:%SZ") as isotime '.
                   'FROM '.$this->tablePrefix.$this->linksTable.'  ' .
                   'ORDER BY time desc limit 0,30';       
-        
+//  print_r($query);      
         $res = $this->db->query($query);
         return $this->processLinks($res);
     }      
@@ -230,7 +230,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
                   ''.$this->tablePrefix.$this->links2tagsTable.'.tagid='.$this->tablePrefix.$this->tagsTable.'.id
                    WHERE '.$this->tablePrefix.$this->links2tagsTable.'.tagid='.$c['id'].' ' .
                   'ORDER BY '.$this->tablePrefix.$this->linksTable.'.time DESC';
-               
                 $links = $this->db->query($q);
                 
                  if (MDB2::isError($links)) {
