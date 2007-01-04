@@ -209,6 +209,7 @@ class bx_plugins_blog_handlecomment {
             $xblcheck = '';
         }
         $comment_notification_hash = md5($data['email'] . rand().microtime(true));
+        $comment_hash = md5($_SERVER['REMOTE_ADDR'] . rand().microtime(true));
         
         if (!$deleteIt) {  
             
@@ -221,7 +222,7 @@ class bx_plugins_blog_handlecomment {
                 $akismet->setCommentAuthorURL($data['openid_url']);
                 $akismet->setCommentContent($data['comments']);
                 $akismet->setPermalink(BX_WEBROOT.$path.$id);
-                $akismet->setParam("comment_notification_hash",$comment_notification_hash);
+                $akismet->setParam("comment_hash",md5($comment_hash));
                 $isSpam = explode("\n",$akismet->isCommentSpam());
                 if (!empty($isSpam[0]) && $isSpam[0] == 'true') {
                   $commentRejected .= "* rest.flux-cms.org thinks, this is spam\n";
@@ -336,10 +337,9 @@ class bx_plugins_blog_handlecomment {
                     $data['accepturi'] = "(Click the link to reject this comment [1]) :\n";
                 }
                 // insert hash
-                $hash = md5($lastID . rand().microtime(true));
-                $query = 'update '.$blogTablePrefix.'blogcomments set comment_hash = ' . $GLOBALS['POOL']->db->quote($hashPrefix . $hash) . ' where id = ' . $lastID; 
+                $query = 'update '.$blogTablePrefix.'blogcomments set comment_hash = ' . $GLOBALS['POOL']->db->quote($hashPrefix . $comment_hash) . ' where id = ' . $lastID; 
                 $GLOBALS['POOL']->dbwrite->query($query);
-                $data['accepturi'] .= " ".BX_WEBROOT.'admin/webinc/approval/?hash='.$hashPrefix.$hash;  
+                $data['accepturi'] .= " ".BX_WEBROOT.'admin/webinc/approval/?hash='.$hashPrefix.$comment_hash;  
                 $data['edituri'] = BX_WEBROOT.'admin/edit/blog/sub/comments/?id='.$lastID;
                 $emailSubject .= "New comment on '" . html_entity_decode($row['post_title'],ENT_QUOTES,'ISO-8859-1') . "'";
                 

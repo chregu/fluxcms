@@ -30,14 +30,17 @@ if (!$row) {
 }
 $prefix = substr($row['comment_hash'], 0,1);
 
-
+$hash = substr($row['comment_hash'], 1);
+             
 if ($prefix == "r") {
     $query = "update ".$tablePrefix."blogcomments set comment_status = 2, comment_hash = '' where id = " .$row['id'];
     $db->query($query);
+    $url = 'http://rest.flux-cms.org/1.1/report-spam?hash='.md5($hash);
     print "Comment by " . $row['comment_author'] . ' set to moderated.<p/>';
 } else if ($prefix == "a") {
     $query = "update ".$tablePrefix."blogcomments set comment_status = 1, comment_hash = '' where id = " .$row['id'];
     $db->query($query);
+    $url = 'http://rest.flux-cms.org/1.1/report-ham?hash='.md5($hash);
     print "Comment by " . $row['comment_author'] . ' set to approved.<p/>';
 } else {
     die("Invalid Hash");
@@ -45,6 +48,12 @@ if ($prefix == "r") {
 
 print "If you want to edit the comment, go to <br/>";
 print '<a href="'.BX_WEBROOT.'admin/edit/blog/sub/comments/?id='.$row['id'].'">'.BX_WEBROOT.'admin/edit/blog/sub/comments/?id='.$row['id'].'</a>';
+
+$req = new HTTP_Request($url,array("timeout" => 5));
+    $req->sendRequest();
+
+
+
 ?>
 </body>
 </html>
