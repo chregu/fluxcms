@@ -131,10 +131,13 @@ class bx_plugins_blog_handlecomment {
         
         
         $commentRejected = "";
+        //deleteIt == true => Rejected comment
+        $deleteIt = false;
         
         if (strpos($_SERVER['REQUEST_URI'],"#") !== false) {
-		$commentRejected .= '* # in Uri... ('.$_SERVER['REQUEST_URI'].").\n";
-	}
+            $commentRejected .= '* # in Uri... ('.$_SERVER['REQUEST_URI'].").\n";
+            $deleteIt = true;
+        }
         //if uri in post is the same as in the session then do openid = true(1)
         @session_start();
         if(isset($_SESSION['flux_openid_url'] ) && $_SESSION['flux_openid_url'] == $data['openid_url']) {
@@ -148,8 +151,6 @@ class bx_plugins_blog_handlecomment {
         /* known spammer user */
         $simplecache = popoon_helpers_simplecache::getInstance();
         $simplecache->cacheDir = BX_TEMP_DIR;
-        //deleteIt == true => Rejected comment
-        $deleteIt = false;
         //check for pineapleproxy
         if (isset($_SERVER['HTTP_VIA']) && stripos($_SERVER['HTTP_VIA'],'pinappleproxy') !== false) {
             $commentRejected .= "* Uses known spammer proxy: ". $_SERVER['HTTP_VIA'] . "\n";
