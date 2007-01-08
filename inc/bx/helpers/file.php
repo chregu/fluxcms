@@ -121,4 +121,21 @@ class bx_helpers_file {
         }
         closedir($folder);
     }
+    
+    static function getFileEncoding($src) {
+            if (function_exists("finfo_open")) {
+                    $res = finfo_open(FILEINFO_MIME);
+                    $m = finfo_file($res, $src);
+                    finfo_close($res);
+                } elseif(!strpos(ini_get('disable_functions'),'exec')) {
+                    exec(escapeshellcmd('file -ib '. escapeshellarg($src)), $out);
+                    $m = array_shift($out);
+                }  
+                
+                if ( strpos($m,'charset=') !== false) {
+                    return  substr($m,strpos($m,'charset=') + 8);
+                } else {
+                    return null;
+                }
+    }
 }
