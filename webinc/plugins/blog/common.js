@@ -66,36 +66,42 @@ function formCheck(form) {
 }
 
 function blogPost(draft) {
-	var saveButton = document.getElementById("Save");
-	saveButton.value = "Saving...";
-	saveButton.style.backgroundColor = "green";
-	var form = document.getElementById('entry');
-	
-	try {
-		var postString = '';
-		
-		updateTextAreasOnly();
-		
-		for (var i = 0; i < form.elements.length; i++) {
-			var xml = form.elements[i].value;
-			if (form.elements[i].type == "checkbox") {
-				if (form.elements[i].checked) {
-					postString += form.elements[i].name;
-					postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
-				} 
-			} else {
-				if(form.elements[i].name == 'bx[plugins][admin_edit][uri]') {
-					var uri = form.elements[i].value;
-				}
-				if(form.elements[i].name == 'bx[plugins][admin_edit][status]' && draft == 'draft') {
-					form.elements[i].value = 4;
-				}
-				
-				postString += form.elements[i].name;
-				postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
-			}
-		}
-		postString += 'ajax=1';
+    var saveButton = document.getElementById("Save");
+    var saveButtonBottom = document.getElementById("SaveBottom");
+    
+    saveButton.value = "Saving...";
+    saveButton.style.backgroundColor = "green";
+    
+    saveButtonBottom.value = "Saving...";
+    saveButtonBottom.style.backgroundColor = "green";
+    
+    var form = document.getElementById('entry');
+    
+    try {
+        var postString = '';
+        
+        updateTextAreasOnly();
+        
+        for (var i = 0; i < form.elements.length; i++) {
+            var xml = form.elements[i].value;
+            if (form.elements[i].type == "checkbox") {
+                if (form.elements[i].checked) {
+                    postString += form.elements[i].name;
+                    postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
+                } 
+            } else {
+                if(form.elements[i].name == 'bx[plugins][admin_edit][uri]') {
+                    var uri = form.elements[i].value;
+                }
+                if(form.elements[i].name == 'bx[plugins][admin_edit][status]' && draft == 'draft') {
+                    form.elements[i].value = 4;
+                }
+                
+                postString += form.elements[i].name;
+                postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
+            }
+        }
+        postString += 'ajax=1';
 	}
 	catch(e)
 	{
@@ -114,6 +120,7 @@ function blogPost(draft) {
 
 function ajaxPostComplete(req)  {
 	var saveButton = document.getElementById("Save");
+	var saveButtonBottom = document.getElementById("SaveBottom");
 	var id = document.getElementById('id');
 	var uri = document.getElementById('uri');
 	var values = eval('('+req.responseXML.documentElement.firstChild.nodeValue+')');
@@ -122,15 +129,21 @@ function ajaxPostComplete(req)  {
 	uri.value = values.uri;
 	
 	saveButton.value = "Saved";
-	
+	saveButtonBottom.value = "Saved";
+    
 	setTimeout("savedToSave()",3000);
 }
 
 function savedToSave() {
 	var saveButton = document.getElementById("Save");
-	saveButton.value = "Save";
+	var saveButtonBottom = document.getElementById("SaveBottom");
+	
+    saveButton.value = "Save";
 	saveButton.style.backgroundColor = "#006486";
-	return false;
+	saveButtonBottom.value = "Save";
+	saveButtonBottom.style.backgroundColor = "#006486";
+	
+    return false;
 }
 
 
