@@ -377,22 +377,23 @@ class bx_streams_blog extends bx_streams_buffer {
         }
         
         $post->uri  = bx_collections::sanitizeUrl(dirname($this->path)).$post->uri.'.html';
-        
-        bx_metaindex::setTags($post->uri,bx_metaindex::implodeTags($post->tags),true);
-        bx_resourcemanager::setProperty($post->uri,"subject",bx_metaindex::implodeTags($post->tags),'http://purl.org/dc/elements/1.1/');
-        bx_resourcemanager::setProperty($post->uri,"title",$post->title,'bx:');
-        bx_resourcemanager::setProperty($post->uri,"content",$post->content,'bx:');
-        
-        
-        $this->updateCategories($post->id);
-        
-        if ($post->status == 1) {
-            $this->weblogsPing();
+        if ($post->id > 0 ) {
+            bx_metaindex::setTags($post->uri,bx_metaindex::implodeTags($post->tags),true);
+            bx_resourcemanager::setProperty($post->uri,"subject",bx_metaindex::implodeTags($post->tags),'http://purl.org/dc/elements/1.1/');
+            bx_resourcemanager::setProperty($post->uri,"title",$post->title,'bx:');
+            bx_resourcemanager::setProperty($post->uri,"content",$post->content,'bx:');
+            
+            
+            $this->updateCategories($post->id);
+            
+            if ($post->status == 1) {
+                $this->weblogsPing();
+            }
+            if($post->autodiscovery){
+                $this->getRemotePage($post->title,$post->content,$post->uri);    
+            }
+            $this->sendTrackbacks($post->trackbacks,$post->title,$post->content,$post->uri);
         }
-        if($post->autodiscovery){
-           $this->getRemotePage($post->title,$post->content,$post->uri);    
-        }
-        $this->sendTrackbacks($post->trackbacks,$post->title,$post->content,$post->uri);
         
     }
     
@@ -517,21 +518,22 @@ class bx_streams_blog extends bx_streams_buffer {
         }
         $query .= " where id = '".$post->id."'";
         $res = $db->query($query);
-
-        if($post->autodiscovery){
-           $this->getRemotePage($post->title,$post->content,$post->uri);    
-        }
-        $this->sendTrackbacks($post->trackbacks,$post->title,$post->content,$post->uri);
-        
         $post->uri  = bx_collections::sanitizeUrl(dirname($this->path)).$post->uri.'.html';
-        bx_metaindex::setTags($post->uri, bx_metaindex::implodeTags($post->tags),true);
-        bx_resourcemanager::setProperty($post->uri,"subject",bx_metaindex::implodeTags($post->tags),'http://purl.org/dc/elements/1.1/');
-        //update categories
-        bx_resourcemanager::setProperty($post->uri,"title",$post->title,'bx:');
-        bx_resourcemanager::setProperty($post->uri,"content",$post->content,'bx:');
-        $this->updateCategories($post->id);
-        if ($post->status == 1 ) { // && $post->status_old != 1) {
-            $this->weblogsPing();
+        
+        if ($post->id > 0) {
+            if($post->autodiscovery){
+                $this->getRemotePage($post->title,$post->content,$post->uri);    
+            }
+            $this->sendTrackbacks($post->trackbacks,$post->title,$post->content,$post->uri);
+            bx_metaindex::setTags($post->uri, bx_metaindex::implodeTags($post->tags),true);
+            bx_resourcemanager::setProperty($post->uri,"subject",bx_metaindex::implodeTags($post->tags),'http://purl.org/dc/elements/1.1/');
+            //update categories
+            bx_resourcemanager::setProperty($post->uri,"title",$post->title,'bx:');
+            bx_resourcemanager::setProperty($post->uri,"content",$post->content,'bx:');
+            $this->updateCategories($post->id);
+            if ($post->status == 1) { // && $post->status_old != 1) {
+                    $this->weblogsPing();
+            }
         }
        
     }
