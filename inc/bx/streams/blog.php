@@ -753,8 +753,10 @@ class bx_streams_blog extends bx_streams_buffer {
                 $req->setMethod(HTTP_REQUEST_METHOD_POST);
                 $req->addPostData("title", html_entity_decode(strip_tags($title),ENT_COMPAT,'UTF-8'));
                 $req->addPostData("excerpt", substr(html_entity_decode(strip_tags($content),ENT_COMPAT,'UTF-8'),0,200)." ...");
-                $uri = substr($uri,strrpos($uri,"/") + 1 );
+                $uri = substr($uri,strrpos($uri,"/") );
+                $uri = str_replace("/","",$uri);
                 $uri = BX_WEBROOT_W.dirname($this->path).'/archive/'.$uri;
+                
                 $req->addPostData("url", $uri);
                 if ($GLOBALS['POOL']->config->blogname) {
                     $blogname = $GLOBALS['POOL']->config->blogname;
