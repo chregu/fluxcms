@@ -28,7 +28,7 @@
         <script type="text/javascript" language="JavaScript">
             liveSearchRoot = "<xsl:value-of select="$webroot"/>";
             liveSearchRootSubDir = "<xsl:value-of select="concat($collectionUri,$id)"/>";
-            liveSearchParams = "&amp;blogadmin=1";
+            liveSearchParams = "blogadmin=1";
         </script>
     </xsl:template>
   
