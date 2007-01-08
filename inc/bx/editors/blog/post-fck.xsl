@@ -418,7 +418,7 @@
                 </table>
 
             </div>
-            <xsl:call-template name="buttons"/>
+            <xsl:call-template name="buttonsBottom"/>
             
             </form>            
             <xsl:call-template name="postcomments"/>
@@ -492,6 +492,38 @@
        
 </xsl:template>
     
+<xsl:template name="buttonsBottom">
+<xsl:param name="accesskeys" select="'false'"/>
+    
+                 <input class="button" type="submit" i18n:attr="value" value="Save" id="SaveBottom">
+				 <xsl:if test="$accesskeys = 'true'">
+                       <xsl:attribute name="accesskey">s</xsl:attribute>
+                    </xsl:if>
+                </input>
+                
+                
+              
+       
+<!--         <input type="button" class="button" i18n:attr="value" value="New"  onclick="  reallyNew()" />-->
+       <xsl:if test="atom:id ">
+            
+       <input type="button" value="Delete" i18n:attr="value" class="button" onclick=" if (reallyDelete()) this.form.submit();" />
+         </xsl:if>
+       <input type="button" class="button" i18n:attr="value" value="Preview">
+    <xsl:choose>
+               <xsl:when test="$doFck">
+               <xsl:attribute name="onclick">if(updateTextAreas()) { startPreview(this.form);}</xsl:attribute>
+               </xsl:when>
+               <xsl:otherwise>
+               <xsl:attribute name="onclick">if(formCheck()) { startPreview(this.form);}</xsl:attribute>
+               
+               </xsl:otherwise>
+               </xsl:choose>
+       </input>
+	   
+	   <input type="button" class="button" i18n:attr="value" value="Draft" onclick="formCheck('draft')"/>
+       
+</xsl:template>
    
  
     
