@@ -43,7 +43,9 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function handlePOST($path, $id, $data) {
-		$sub = substr($id, strrpos($id, '/', -3)+1, -2);
+        bx_log::log($data);
+    	
+        $sub = substr($id, strrpos($id, '/', -3)+1, -2);
     	$perm = bx_permm::getInstance();
 	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
         	throw new BxPageNotAllowedException();
@@ -68,23 +70,25 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
             
             $this->deletePosts($data['deleteposts'],bx_streams_blog::getTablePrefix($id));
         }
-		
+        
         if(!empty($data['uri']) || !empty($_POST['store'])) {
             if ($data['delete'] == 1 && $data['id']) {
                 bx_streams_blog::deleteEntryDirect($data['id'],$id);
                 header("Location: ./newpost.xml");
                 die();
             } else {
-                if(!empty($data['newcategory'])) {
+                if(!empty($data['newcategory']) && $_POST['store'] != 1) {
                     $dbwrite = $GLOBALS['POOL']->dbwrite;
                     $tableprefix = $GLOBALS['POOL']->config->getTablePrefix();
-                    
                     $quoted = array();
                     $dataN['name'] = $data['newcategory'];
                     $dataN['uri'] = bx_helpers_string::makeUri($data['newcategory']);
                     $quoted = bx_helpers_sql::quotePostData($dataN);
                     $rootQuery = "select id from ".$tableprefix."blogcategories where parentid = 0 and blog_id = ".$blogid;
                     $rootid = $dbwrite->queryOne($rootQuery);
+                    
+                    $checkQuery = "SELECT id FROM fluxcms_blogcategories where name = '".$data ['newcategory']."'";
+                    $catid = $dbwrite->queryOne($checkQuery);
                     if (!$rootid) {
                         $data['name'] = "'All'";
                         $data['uri'] = "'root'";
@@ -95,8 +99,10 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                         $data['status'] = "1";
                         $data['blog_id'] = $blogid;
                         
-                        $query = bx_helpers_sql::getInsertQuery('blogcategories', $data, array('name', 'uri', 'fulluri', 'parentid', 'fullname', 'changed', 'status', 'blog_id'));
-                        $GLOBALS['POOL']->dbwrite->query($query);
+                        if(!isset($catid)) {
+                            $query = bx_helpers_sql::getInsertQuery('blogcategories', $data, array('name', 'uri', 'fulluri', 'parentid', 'fullname', 'changed', 'status', 'blog_id'));
+                            $GLOBALS['POOL']->dbwrite->query($query);
+                        }
                         $dom = $this->getCategoriesXML($blogid);
                     }
                     
@@ -104,13 +110,17 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                     $quoted['parentid'] = $rootid;
                     
                     $quoted['blog_id'] = $blogid;
-                    $query = bx_helpers_sql::getInsertQuery('blogcategories', $quoted, array('name', 'uri', 'parentid', 'blog_id'));
-                    $res = $dbwrite->query($query);
-                    if($res) {
-                        bx_helpers_sql::updateCategoriesTree($blogid);
+                    
+                    if(!isset($catid)) {
+                        $query = bx_helpers_sql::getInsertQuery('blogcategories', $quoted, array('name', 'uri', 'parentid', 'blog_id'));
+                        
+                        $res = $dbwrite->query($query);
+                        if($res) {
+                            bx_helpers_sql::updateCategoriesTree($blogid);
+                        }
+                        //set checkbox
+                        $data['categories'][$data['newcategory']] = "on";
                     }
-                    //set checkbox
-                    $data['categories'][$data['newcategory']] = "on";
                 }
 				
                 bx_global::registerStream("blog");
@@ -193,8 +203,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     public function getEditContentById($id) {
-        
-    	$sub = substr($id, strrpos($id, '/', -2)+1, -1);
+        $sub = substr($id, strrpos($id, '/', -2)+1, -1);
     	$perm = bx_permm::getInstance();
 	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
         	throw new BxPageNotAllowedException();

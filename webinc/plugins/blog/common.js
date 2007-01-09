@@ -61,11 +61,13 @@ function formCheck(form) {
 	if (! checkValidXML(form)){
 		return false;
 	}
+    console.log("here");
 	return blogPost(form);
 	
 }
 
 function blogPost(draft) {
+    console.log("there");
     var saveButton = document.getElementById("Save");
     var saveButtonBottom = document.getElementById("SaveBottom");
     
@@ -108,8 +110,7 @@ function blogPost(draft) {
 		alert(e);
 		return true;
 	}
-	
-	new ajax (uri, {
+    new ajax (uri, {
 	postBody: postString,
 	method: 'post',
 	onComplete: ajaxPostComplete
@@ -412,53 +413,54 @@ function closeUserAdvanced() {
 
 function FCKeditor_OnComplete(instance) {
 	if(instance.Name == 'bx[plugins][admin_edit][content]') {
-		var aktiv = window.setInterval("storeContent();", 1200);
+		var aktiv = window.setInterval("storeContent();", 20000);
 	} else {
 	}
 }
 
 function storeContent() {
-	
-	var form = document.getElementById('entry');
-	
-	if(form.elements['bx[plugins][admin_edit][title]'].value != '') {
-	
-		try {
-			var postString = '';
-			
-			updateTextAreasOnly();
-			
-			for (var i = 0; i < form.elements.length; i++) {
-				var xml = form.elements[i].value;
-				if (form.elements[i].type == "checkbox") {
-					if (form.elements[i].checked) {
-						postString += form.elements[i].name;
-						postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
-					} 
-				} else {
-					if(form.elements[i].name == 'bx[plugins][admin_edit][uri]') {
-						var uri = form.elements[i].value;
-					}
-					postString += form.elements[i].name;
-					postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
-				}
-			}
-			postString += 'store=1';
-		}
-		catch(e)
-		{
-			alert(e);
-			return true;
-		}
-		
-		if(check != postString && postString) {
-			new ajax (uri, {
-			postBody: postString,
-			method: 'post'
-			});
-			check = postString;
-		}
-	}
-	
-	return false;
+    var form = document.getElementById('entry');
+    
+    if(form.elements['bx[plugins][admin_edit][title]'].value != '') {
+    
+        try {
+            var postString = '';
+            
+            updateTextAreasOnly();
+            
+            for (var i = 0; i < form.elements.length; i++) {
+                var xml = form.elements[i].value;
+                if(form.elements[i].name != "bx[plugins][admin_edit][saveBotton]" && form.elements[i].name != "bx[plugins][admin_edit][save]") {
+                    if (form.elements[i].type == "checkbox") {
+                        if (form.elements[i].checked) {
+                            postString += form.elements[i].name;
+                            postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
+                        } 
+                    } else {
+                        if(form.elements[i].name == 'bx[plugins][admin_edit][uri]') {
+                            var uri = form.elements[i].value;
+                        }
+                        postString += form.elements[i].name;
+                        postString += "=" + encodeURIComponent(form.elements[i].value) +"&";
+                    }
+                }
+            }
+            postString += 'store=1';
+        }
+        catch(e)
+        {
+            alert(e);
+            return true;
+        }
+        
+        if(check != postString && postString) {
+            new ajax (uri, {
+            postBody: postString,
+            method: 'post'
+            });
+            check = postString;
+        }
+    }
+    
+    return false;
 }

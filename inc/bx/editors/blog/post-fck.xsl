@@ -462,7 +462,7 @@
 <xsl:template name="buttons">
 <xsl:param name="accesskeys" select="'false'"/>
     
-                 <input class="button" type="submit" i18n:attr="value" value="Save" id="Save">
+                 <input class="button" type="submit" i18n:attr="value" value="Save" id="Save" name="bx[plugins][admin_edit][save]">
 				 <xsl:if test="$accesskeys = 'true'">
                        <xsl:attribute name="accesskey">s</xsl:attribute>
                     </xsl:if>
@@ -495,7 +495,7 @@
 <xsl:template name="buttonsBottom">
 <xsl:param name="accesskeys" select="'false'"/>
     
-                 <input class="button" type="submit" i18n:attr="value" value="Save" id="SaveBottom">
+                 <input class="button" type="submit" i18n:attr="value" value="Save" id="SaveBottom" name="bx[plugins][admin_edit][saveBottom]">
 				 <xsl:if test="$accesskeys = 'true'">
                        <xsl:attribute name="accesskey">s</xsl:attribute>
                     </xsl:if>
