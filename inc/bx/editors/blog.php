@@ -87,7 +87,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                     $rootQuery = "select id from ".$tableprefix."blogcategories where parentid = 0 and blog_id = ".$blogid;
                     $rootid = $dbwrite->queryOne($rootQuery);
                     
-                    $checkQuery = "SELECT id FROM fluxcms_blogcategories where name = '".$data ['newcategory']."'";
+                    $checkQuery = "SELECT id FROM ".$tableprefix."blogcategories where name = '".$data ['newcategory']."'";
                     $catid = $dbwrite->queryOne($checkQuery);
                     if (!$rootid) {
                         $data['name'] = "'All'";
