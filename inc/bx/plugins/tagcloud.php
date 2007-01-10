@@ -53,10 +53,11 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
     }
     
     public function getContentById($path, $id){
+        $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $tags = array();
         $locations = $this->getParameter($path,"locations");
         
-        $query="select count(".$tablePrefix."tags.tag) as tagcount, tag from ".$tablePrefix."tags left join ".$tablePrefix."properties2tags on ".$tablePrefix."properties2tags.tag_id = ".$tablePrefix."tags.id where ".$tablePrefix."tags.id <> '11' and ".$tablePrefix."properties2tags.path like '/blog/%' group by ".$tablePrefix."tags.tag";
+        $query="select count(".$tablePrefix."tags.tag) as tagcount, tag from ".$tablePrefix."tags left join ".$tablePrefix."properties2tags on ".$tablePrefix."properties2tags.tag_id = ".$tablePrefix."tags.id where ".$tablePrefix."tags.id <> '11' and ".$tablePrefix."properties2tags.path like '".$locations."%' group by ".$tablePrefix."tags.tag";
         $res = $GLOBALS['POOL']->db->query($query);
         
         while($row = $res->fetchAll(MDB2_FETCHMODE_ASSOC)) {
