@@ -454,7 +454,7 @@ class bx_plugins_blog_handlecomment {
     }
     
     static public function cleanUpComment($body) {
-        
+            
         if (class_exists('tidy')) {
             $tidy = new tidy();
             if(!$tidy) {
@@ -480,8 +480,21 @@ class bx_plugins_blog_handlecomment {
             $body = (string) $tidy;
         } else {
             $body =  popoon_classes_externalinput::basicClean(strip_tags(nl2br($body),$allowedTagsString));
+            $dom = new domdocument();
+            $dom->recover = true;
+            // check if wellformed
+            if ($dom->loadXML('<body>'.$body.'</body>')) {
+                $body = "";
+                foreach($dom->documentElement->childNodes as $node) {
+                    $body .= $dom->saveXML($node);
+                }
+            } else {
+                //just strip all tags, if we can't recover and it's not wellformed
+                $body = nl2br(strip_tags($body));
+            }
+                
         }
-    return $body;    
+        return $body;    
     }
     
     

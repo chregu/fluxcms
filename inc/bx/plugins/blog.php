@@ -166,6 +166,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
             if (is_string($xml)) {
                 $dom = new DomDocument();
+                $dom->recover = true;
                 $dom->loadXML($xml);
                 return $dom;
             } else {
@@ -397,7 +398,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         
         $xml .= '</body></html>';
         $dom = new DomDocument();
-
+        $dom->recover = true;
         if (!@$dom->loadXML($xml)) {
             //if it didn't work loading, try with replacing ampersand
             //FIXME: DIRTY HACK, works only in special cases..
