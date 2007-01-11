@@ -4,6 +4,7 @@
     xmlns:xhtml="http://www.w3.org/1999/xhtml" 
     xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
     xmlns="http://www.w3.org/1999/xhtml"
+exclude-result-prefixes="xhtml i18n xsl"
     > 
     <xsl:param name="webroot" value="'/'"/>
     <xsl:variable name="pluginName" select="/bx/plugin/@name"/>
@@ -14,13 +15,11 @@
             <xsl:when test="/bx/plugin[@name='admin_themes']/installed">
                 <head><title><i18n:text>Themes</i18n:text></title>
                 <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
-                <script type="text/javascript" src="{$webroot}admin/webinc/js/adminfields.js"/>
                 </head>
             </xsl:when>
             <xsl:otherwise>
                 <head><title><i18n:text>Themes</i18n:text></title>
                 <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
-                <script type="text/javascript" src="{$webroot}admin/webinc/js/adminfields.js"/>
                 </head>
             </xsl:otherwise>
             </xsl:choose>
