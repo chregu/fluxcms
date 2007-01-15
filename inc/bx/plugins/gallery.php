@@ -289,10 +289,8 @@ class bx_plugins_gallery extends bx_plugin {
            // basename() cuts that off
            
            $filename = basename($_FILES['bx']['name']['plugins']['admin_addresource']['file']);
-           // prevent filenames with _8476.ext, since that's special in BxCMS
-           if (preg_match("#_[0-9]+\.[a-zA-Z]+$#",$filename)) {
-               $filename = preg_replace("#_([0-9]+)(\.[a-zA-Z]+)$#","_$1a$2",$filename);
-           }
+           // prevent illegal filenames
+           $filename = bx_helpers_string::makeUri($filename,true);
            $to = $rootPath .$parts['rawname']. $filename;
            bx_helpers_file::mkPath(dirname($to));  
            $id = str_replace(BX_OPEN_BASEDIR,"/",$to);
