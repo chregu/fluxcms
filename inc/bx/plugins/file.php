@@ -152,7 +152,7 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
         return array('file','archive');
     }
 
-    public function getAddResourceParams($type, $path = null, $options = array()) {   
+    public static function getAddResourceParams($type, $path = null, $options = array()) {   
         $i18n = $GLOBALS['POOL']->i18nadmin;
         $dom = new domDocument();
 
