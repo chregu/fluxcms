@@ -241,12 +241,6 @@
 </xsl:text>
         </xsl:if>
 
-        <link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="{$blogroot}rss.xml"/>
-        <xsl:text>
-</xsl:text>
-        <link rel="alternate" type="application/rss+xml" title="RSS 2.0 Comments Feed" href="{$blogroot}latestcomments.xml"/>
-        <xsl:text>
-</xsl:text>
         <link rel="EditURI" type="application/rsd+xml" title="RSD" href="{$blogroot}xmlrpc.rsd"/>
         <xsl:text>
 </xsl:text>
@@ -255,7 +249,9 @@
         <xsl:text>
 </xsl:text>
 
+<xsl:call-template name="html_head_feeds"/>
 <xsl:call-template name="html_head_microsummary"/> 
+
 <xsl:call-template name="html_head_osd"/>        
        
 
@@ -481,6 +477,16 @@
 
     </xsl:template>
  
+    <xsl:template name="html_head_feeds">
+    
+    <link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="{$blogroot}rss.xml"/>
+        <xsl:text>
+</xsl:text>
+        <link rel="alternate" type="application/rss+xml" title="RSS 2.0 Comments Feed" href="{$blogroot}latestcomments.xml"/>
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+     
     <xsl:template name="html_head_microsummary">
     <link rel="microsummary" type="application/x.microsummary+xml" href="{$blogroot}microsummary.txt" />
         <xsl:text>
