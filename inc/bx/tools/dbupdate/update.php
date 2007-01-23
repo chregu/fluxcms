@@ -328,20 +328,6 @@ if ($lastVersion < 7720) {
       updateLastVersion(7720);
 }
 
-if ($lastVersion < 8244) {
-    $res = doQueryTable("
-		CREATE TABLE `".$tablePrefix."blograting` (
-	  `id` int(11) NOT NULL auto_increment,
-	  `postid` int(11) NOT NULL default '0',
-	  `blogid` int(11) NOT NULL default '0',
-	  `rating` int(11) NOT NULL default '0',
-	  `username` varchar(255) NOT NULL default '',
-	  PRIMARY KEY  (`id`
-))",'blograting');
-
-      updateLastVersion(8244);
-}
-
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
