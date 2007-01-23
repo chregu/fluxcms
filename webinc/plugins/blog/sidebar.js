@@ -63,7 +63,7 @@ function editItem(id) {
 	return false;
 }
 
-function showEdit(request) {
+function showEdit(request) {
 	var data = eval("(" + request.responseText.replace(/<\?xml.*?>/,"") + ")");
 	
 	$('sidebar_edit').style.display="block";
