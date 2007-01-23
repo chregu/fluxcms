@@ -187,7 +187,17 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $id = "index";
         }
         
-        $query = "SELECT ".$tablePrefix."blogposts.id from ".$tablePrefix."blogposts ";
+        $query = "SELECT ".$tablePrefix."blogposts.id ";
+        
+        if (!empty($_GET['qmode'])) {
+            if (preg_match('#.*[a-z0-9]$#',$_GET['qmode'])) {
+                $plugin = "bx_plugins_blog_qmode_".$_GET['qmode'];
+                $query .=  call_user_func(array($plugin,"getQueryFields"), $path, $id, $this, $tablePrefix);
+            }
+            
+        }
+        
+        $query .= "from ".$tablePrefix."blogposts ";
         
         $archivepath = "";
         $archivewhere = "";
@@ -195,7 +205,14 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $gmnow = gmdate("Y-m-d H:i:00",time()  + 60);
         $bloglanguage = $GLOBALS['POOL']->config->blogShowOnlyOneLanguage;
         $lang = $GLOBALS['POOL']->config->getOutputLanguage();
-        if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
+        if (!empty($_GET['qmode'])) {
+            
+            if (preg_match('#.*[a-z0-9]$#',$_GET['qmode'])) {
+                $plugin = "bx_plugins_blog_qmode_".$_GET['qmode'];
+                $query .=  call_user_func(array($plugin,"getQueryWhere"), $path, $id, $this, $tablePrefix);
+            }
+            
+        } else if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
             $query .=" where (MATCH (post_content,post_title) AGAINST ('" . $_GET['q'] ."') or  post_title like '%" .  $_GET['q']  . "%') and ".
             $tablePrefix."blogposts.post_status & ".$this->overviewPerm;
@@ -440,6 +457,8 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         
         
         $blogid = $this->getParameter($path,"blogid");
+        $blograting = $this->getParameter($path,"blograting");
+        
         if (!$blogid) {$blogid = 1;};
         if (self::$timezone === NULL) {
                self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
@@ -490,6 +509,17 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             
             $xml .= ' id = "entry'.$row['id'].'"';
             $xml .= ' blog:blog_id="'.$row['blog_id'].'" ' ;
+            
+            if($blograting == 'true') {
+                $rating = bx_plugins_blog_rating::getRatingById($row['id']);
+                if($rating) {
+                    $xml .= $rating.' ';
+                } else {
+                    $xml .= ' blog:rating="0" blog:myrating="0" ';
+                }
+            }
+            
+            
             if(isset($row['post_lang'])) {
                     $xml .= ' blog:blog_lang="'.$row['post_lang'].'" ' ;
             }
