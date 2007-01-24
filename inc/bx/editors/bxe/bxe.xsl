@@ -30,14 +30,17 @@
    <link href="{$webroot}webinc/bxe/css/editor.css" rel="stylesheet" media="screen" type="text/css"/>
   
    <script>
-   <xsl:if test="$template = '' or not($template)">
-    <xsl:variable name="template" select="'default.xhtml'"/>
-   </xsl:if>
-   var template ='<xsl:value-of select="$template"/>' 
+   <xsl:variable name="dtemplate">
+        <xsl:choose>
+            <xsl:when test="not($template='')"><xsl:value-of select="$template"/></xsl:when>
+            <xsl:otherwise><xsl:text>default.xhtml</xsl:text></xsl:otherwise>
+        </xsl:choose>
+   </xsl:variable>
+   var template ='<xsl:value-of select="$dtemplate"/>' 
    var params = new Array();
-   params["xmlfile"] = '<xsl:value-of select="$webroot"/>admin/content/<xsl:value-of select="$url"/>?template=<xsl:choose><xsl:when test="not($template='')"><xsl:value-of select="$template"/></xsl:when><xsl:otherwise><xsl:text>default.xhtml</xsl:text></xsl:otherwise></xsl:choose>';
-   params["xhtmlfile"] = '<xsl:value-of select="$webroot"/><xsl:value-of select="substring-before(substring-before($url,'.xhtml'),'.')"/>.html?admin=1';
-  params["exit"] = '<xsl:value-of select="$webroot"/>admin/overview/<xsl:value-of select="$url"/>';
+   params["xmlfile"] = '<xsl:value-of select="$webroot"/>admin/content/<xsl:value-of select="$url"/>?template=<xsl:value-of select="$dtemplate"/>';
+   params["xhtmlfile"] = '<xsl:value-of select="$webroot"/><xsl:value-of select="substring-before(substring-before($url,'.xhtml'),'.')"/>.html?admin=1&amp;template=<xsl:value-of select="$dtemplate"/>';
+   params["exit"] = '<xsl:value-of select="$webroot"/>admin/overview/<xsl:value-of select="$url"/>';
   
    </script>
     <xsl:apply-templates/>
