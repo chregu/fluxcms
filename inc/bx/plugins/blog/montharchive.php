@@ -32,7 +32,7 @@ class bx_plugins_blog_montharchive {
        } else {
            $overviewPerm = 1;
        }
-       $q="select  count(*) as count, date_format(post_date,'%M') as monthlong, date_format(post_date,'%m') as month, year(post_date) as year from ".$tablePrefix."blogposts as blogposts  where  blogposts.id > 0";
+       $q="select  count(*) as count, date_format(post_date,'%M') as monthlong, date_format(post_date,'%m') as month, year(post_date) as year from ".$tablePrefix."blogposts as blogposts  where  blogposts.id > 0 and post_date < now()";
        
        if ($bloglanguage == 'true') {
            $q .= ' and (blogposts.post_lang = "'.$lang.'" or blogposts.post_lang = "")';
