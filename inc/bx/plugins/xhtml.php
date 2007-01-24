@@ -42,6 +42,7 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     public function getIdByRequest($path, $name = NULL, $ext  = NULL) {
         $lang = $GLOBALS['POOL']->config->getOutputLanguage();
         $name = "$name.$lang";
+        $perm = bx_permm::getInstance();
         if (!isset($this->idMapper[$path.$name])) {
             $id = str_replace($path,"",bx_resourcemanager::getResourceId($path,$name,$ext));
             
@@ -61,12 +62,16 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
                     $ext = "html";
 
                     $id = str_replace($path,"",bx_resourcemanager::getResourceId($path,$name,$ext));
+                } else if (!empty($_GET['admin'])) {
+                    if ($perm->isAllowed($path.$id,array('admin'))) {
+                        $id = $name.".".$ext;
+                    }
                 }
+                
+        
             }
-            
             $this->idMapper[$path.$name] = $id;
         }
-        $perm = bx_permm::getInstance();
         if (!$perm->isAllowed($path.$id,array('read'))) {
            throw new BxPageNotAllowedException();
         }
@@ -81,7 +86,12 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
    public function getContentById($path, $id) {
         $dom = new domDocument();
         $res = $this->getResourceById($path,$id);
-        $dom->load($res->getContentUri());
+        if (!$res && !empty($_GET['admin'])) {
+            $res = $this->getResourceById($path,$id,true);
+            $dom->load($res->getContentUriSample());
+        } else {
+            $dom->load($res->getContentUri());
+        }
         $dom->xinclude();
         return $dom;
     }
@@ -351,7 +361,6 @@ class bx_plugins_xhtml extends bx_plugin implements bxIplugin {
     }
     
     public function adminResourceExists($path, $id, $ext=null, $sample = false) {
-        
         if ($ext == "xhtml") {
         $res = $this->getResourceById($path, $id.".".$ext,$sample); 
         if ($res) {
