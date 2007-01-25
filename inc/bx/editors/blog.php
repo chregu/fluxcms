@@ -178,7 +178,8 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 fwrite($fd, '<categories xmlns="http://sixapart.com/atom/category#"  xmlns:dc="http://purl.org/dc/elements/1.1/">');
                 if (isset($data['categories']) && is_array($data['categories'])) { 
                     foreach ($data['categories'] as $value => $cat) {
-                        fwrite ($fd, '<dc:subject>'.$value.'</dc:subject>');
+                        
+                        fwrite ($fd, '<dc:subject>'.htmlentities($value).'</dc:subject>');
                     }
                 }
                 fwrite ($fd, '</categories>');

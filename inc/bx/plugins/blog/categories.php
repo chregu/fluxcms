@@ -114,9 +114,10 @@ class bx_plugins_blog_categories {
             } else {
                 $coll->setAttribute("selected","all");
             }
-            $titel = $dom->createElement("title",$row['name']);
-            $uri = $dom->createElement("uri",BX_WEBROOT_W.$path.$row['fulluri']."/");
-            $do = $dom->createElement("display-order",$row['l']);
+            
+            $titel = $dom->createElement("title",htmlspecialchars($row['name']));
+            $uri = $dom->createElement("uri",htmlspecialchars(BX_WEBROOT_W.$path.$row['fulluri']."/"));
+            $do = $dom->createElement("display-order",htmlspecialchars($row['l']));
 
             $coll->appendChild($titel);
             $coll->appendChild($uri);
@@ -127,11 +128,11 @@ class bx_plugins_blog_categories {
         $coll = $dom->createElement("collection");
         $coll->setAttribute("selected","all");
         if (isset($roottitle)) {
-            $titel = $dom->createElement("title",$roottitle);
+            $titel = $dom->createElement("title",htmlspecialchars($roottitle));
         } else {
             $titel = $dom->createElement("title","");
         }
-        $uri = $dom->createElement("uri",$path);
+        $uri = $dom->createElement("uri",htmlspecialchars($path));
         $do = $dom->createElement("display-order","0.1");
 
         $coll->appendChild($titel);

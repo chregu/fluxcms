@@ -374,7 +374,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 throw new PopoonDBException($_r);
             }
             $catname = $_r->fetchOne(0);
-            $xml .= " :: " . $catname;
+            $xml .= " :: " . htmlspecialchars($catname);
         }
         $xml .= '</title></head>';
         $xml .= '<body>';
@@ -416,6 +416,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $xml .= '</body></html>';
         $dom = new DomDocument();
         $dom->recover = true;
+        
         if (!@$dom->loadXML($xml)) {
             //if it didn't work loading, try with replacing ampersand
             //FIXME: DIRTY HACK, works only in special cases..
@@ -568,10 +569,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '<div class="post_meta_data">';
             $xml .= '<span class="post_categories">';
             foreach ($catrows as $catrow) {
-                $xml .= '<span id="cat'.$catrow['id'].'" class="post_category"><a rel="tag" href="'.BX_WEBROOT_W.$path.$catrow['fulluri'].'/">'.$catrow['fullname'].'</a></span>';
+                $xml .= '<span id="cat'.$catrow['id'].'" class="post_category"><a rel="tag" href="'.BX_WEBROOT_W.$path.$catrow['fulluri'].'/">'.htmlspecialchars($catrow['fullname']).'</a></span>';
             }
             $xml .= '</span>';
-
             // author
             $post_author_fullname =  bx_helpers_users::getFullnameByUsername($row['post_author']);
             if ($post_author_fullname) {
@@ -647,7 +647,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
             $xml .= '</div>';
             
-            
             //get comments
             // don't do it if doComments = 2 (for extended POsts only..)
             if ($doComments && $doComments !== 2) {
@@ -685,6 +684,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '</div>';
 
         }
+            
         return $xml;
     }
 

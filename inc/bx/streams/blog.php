@@ -690,7 +690,7 @@ class bx_streams_blog extends bx_streams_buffer {
         $xml = '<categories xmlns="http://sixapart.com/atom/category#"  xmlns:dc="http://purl.org/dc/elements/1.1/">';
 
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-            $xml .='<dc:subject xml:id="cat'.$row['id'].'">'.$row['fullname'].'</dc:subject>';   
+            $xml .='<dc:subject xml:id="cat'.$row['id'].'">'.htmlspecialchars($row['fullname']).'</dc:subject>';   
         }
         
         $xml .= '</categories>';
