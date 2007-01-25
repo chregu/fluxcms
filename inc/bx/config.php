@@ -165,11 +165,11 @@ class bx_config extends popoon_classes_config {
     
     public function getTablePrefix($withStaging = true) {
         if (isset($this->dsn['tableprefix'])) {
-            if (!$withStaging || BX_STAGE == '') {
+//            if (!$withStaging || BX_STAGE == '') {
                 return $this->dsn['tableprefix'];
-            } else {
+ /*           } else {
                 return $this->dsn['tableprefix']. BX_STAGE.'__';
-            }
+            }*/
         } else {
             return "";
         }
