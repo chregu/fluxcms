@@ -1,5 +1,36 @@
 <?php
 
+/*
+
+table you need to use generalcomments plugin
+
+CREATE TABLE `fluxcms2_comments` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `comment_posts_id` int(11) NOT NULL default '0',
+  `comment_author` tinytext NOT NULL,
+  `comment_author_email` varchar(100) NOT NULL default '',
+  `comment_author_url` varchar(100) NOT NULL default '',
+  `comment_author_ip` varchar(100) NOT NULL default '',
+  `comment_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `comment_content` text NOT NULL,
+  `comment_karma` int(11) NOT NULL default '0',
+  `changed` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `comment_type` varchar(20) NOT NULL default '',
+  `comment_status` tinyint(4) NOT NULL default '1',
+  `comment_rejectreason` text,
+  `comment_hash` varchar(33) default NULL,
+  `comment_notification` tinyint(4) default '0',
+  `comment_notification_hash` varchar(32) default '',
+  `openid` tinyint(4) NOT NULL default '0',
+  `comment_username` varchar(100) NOT NULL default '',
+  `path` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `comment_posts_id` (`comment_posts_id`),
+  KEY `comment_status` (`comment_status`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=71 ;
+
+*/
+
 class bx_plugins_comments extends bx_plugin implements bxIplugin {
 
 	static private $allowedTags = array('b','i','a','ul','li','ol','pre','blockquote','br','p');
@@ -71,7 +102,7 @@ class bx_plugins_comments extends bx_plugin implements bxIplugin {
 		$dom = new domDocument();
 		$xml = '<div class="comments_new">';
         
-		$query = "select id, openid, comment_author, DATE_FORMAT(date_add(comment_date, INTERVAL ". self::$timezone." SECOND),'%d.%m.%Y %H:%i') as comment_date, comment_author_email, comment_type, comment_author_url, comment_content from ".$prefix."comments where comment_status = 1 order by ".$prefix."comments.comment_date";
+		$query = "select id, openid, comment_author, DATE_FORMAT(date_add(comment_date, INTERVAL ". self::$timezone." SECOND),'%d.%m.%Y %H:%i') as comment_date, comment_author_email, comment_type, comment_author_url, comment_content from ".$prefix."comments where comment_status = 1 and path = '".BX_WEBROOT.$_SERVER['REQUEST_URI']."' order by ".$prefix."comments.comment_date";
 		$cres = $GLOBALS['POOL']->db->query($query);
 		if (MDB2::isError($cres)) {
 			throw new PopoonDBException($cres);
@@ -319,19 +350,21 @@ class bx_plugins_comments extends bx_plugin implements bxIplugin {
             $deleteIt= true;
             $commentRejected .= "* Notification value too long\n";
         }
+		$commentpath = BX_WEBROOT.$_SERVER['REQUEST_URI'];
 		$query =     'insert into '.$prefix.'comments (comment_posts_id, comment_author, comment_author_email, comment_author_ip,
             comment_date, comment_content,comment_status, comment_notification, comment_notification_hash,
-            comment_author_url, comment_username         
+            comment_author_url, comment_username, path
             ) VALUES ("'.$row['id'].'",'.$db->quote($data['name'])
             .','.$db->quote($data['email'],'text').','.$db->quote($data['remote_ip']).',
             "'.gmdate('c').'",'.$db->quote(bx_helpers_string::utf2entities($data['comments'])).',
             '.$comment_status.','.$db->quote($data['comment_notification']).',
             "'.$comment_notification_hash.'",'.$db->quote($data['openid_url'],'text').',
-            '.$db->quote($username).')';
+            '.$db->quote($username).', "'.$commentpath.'")';
 			
 			if (!trim($data['name'])) {
 				$commentRejected .= "* Name was empty: '".$data['name']."'\n";
-			}
+		}
+		bx_helpers_debug::webdump($query);
 		$res = $GLOBALS['POOL']->dbwrite->query($query);
         
 		
@@ -373,7 +406,7 @@ class bx_plugins_comments extends bx_plugin implements bxIplugin {
         //if ($this->newCommentError) {
         //   $xml .= '<p style="color:red;">'.$this->newCommentError.'</p>';
         //}
-            $xml = '<form name="bx_foo" action="'.$posturipath.'#commentform" method="post">
+            $xml = '<form name="bx_foo" action="'.$_SERVER['REQUEST_URI'].'#commentform" method="post">
                <table class="form" style="margin-left:25px;" border="0" cellspacing="0" cellpadding="0" id="commentform">
                <tr>
                <td valign="top"><i18n:text i18n:key="blogCommentName">Name</i18n:text>*</td>
