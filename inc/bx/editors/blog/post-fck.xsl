@@ -29,16 +29,16 @@
                 <link rel="stylesheet" href="{$webroot}themes/standard/admin/css/formedit.css" type="text/css"/>
                 <xsl:choose>
             <xsl:when test="$doFck">
-              <script type="text/javascript" src="{$webroot}webinc/fck/fckeditor.js">
+              <script type="text/javascript" src="/webinc/fck/fckeditor.js">
             <xsl:text> </xsl:text>
         </script>
-        <script type="text/javascript" src="{$webroot}webinc/plugins/blog/fck.js">
+        <script type="text/javascript" src="/webinc/plugins/blog/fck.js">
             <xsl:text> </xsl:text>
         </script>
-		<script type="text/javascript" src="{$webroot}webinc/js/prototype.lite.js">
+		<script type="text/javascript" src="/webinc/js/prototype.lite.js">
 		<xsl:text> </xsl:text>
 		</script>
-            <script type="text/javascript" src="{$webroot}webinc/js/moo.ajax.js">
+            <script type="text/javascript" src="/webinc/js/moo.ajax.js">
 		<xsl:text> </xsl:text>
 		</script>
         <script type="text/javascript">
