@@ -114,8 +114,7 @@ class bx_plugins_blog_categories {
             } else {
                 $coll->setAttribute("selected","all");
             }
-            
-            $titel = $dom->createElement("title",htmlspecialchars($row['name']));
+            $titel = $dom->createElement("title",htmlspecialchars(html_entity_decode($row['name'],ENT_NOQUOTES,'UTF-8')));
             $uri = $dom->createElement("uri",htmlspecialchars(BX_WEBROOT_W.$path.$row['fulluri']."/"));
             $do = $dom->createElement("display-order",htmlspecialchars($row['l']));
 

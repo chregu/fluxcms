@@ -374,7 +374,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 throw new PopoonDBException($_r);
             }
             $catname = $_r->fetchOne(0);
-            $xml .= " :: " . htmlspecialchars($catname);
+            $xml .= " :: " . htmlspecialchars(html_entity_decode($catname,ENT_NOQUOTES,'UTF-8'));
         }
         $xml .= '</title></head>';
         $xml .= '<body>';
@@ -569,7 +569,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '<div class="post_meta_data">';
             $xml .= '<span class="post_categories">';
             foreach ($catrows as $catrow) {
-                $xml .= '<span id="cat'.$catrow['id'].'" class="post_category"><a rel="tag" href="'.BX_WEBROOT_W.$path.$catrow['fulluri'].'/">'.htmlspecialchars($catrow['fullname']).'</a></span>';
+                $xml .= '<span id="cat'.$catrow['id'].'" class="post_category"><a rel="tag" href="'.BX_WEBROOT_W.$path.$catrow['fulluri'].'/">'.htmlspecialchars(html_entity_decode($catrow['fullname'],ENT_NOQUOTES,'UTF-8')).'</a></span>';
             }
             $xml .= '</span>';
             // author
