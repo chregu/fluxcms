@@ -327,22 +327,24 @@
    </xsl:template>
    
    <xsl:template name="gallerie_preview">
-   		<h1>Subgalleries</h1>
-		<div class="subgallery_preview" style="margin:20px 0px 0px 25px;">
-		
-		<xsl:variable name="path" select="/bx/plugin[@name='gallery']/gallery/@path"/>
-		<xsl:variable name="collUri" select="/bx/plugin[@name='gallery']/gallery/@collUri" />
-		<xsl:for-each select="/bx/plugin[@name='gallery']/gallery/albums/album">
-			<xsl:if test="@preview">
-				<div style="margin-top:10px;">
-					<a href="{$gallery_collUri}{@name}">
-					<xsl:value-of select="@name"/>
-					<br/>
-						<img alt="preview" src="/{$path}{@name}/{@preview}" width="150px"/>
-					</a>
-				</div>
-			</xsl:if>
-		</xsl:for-each>
-   	</div>
+        <xsl:if test="/bx/plugin[@name='gallery']/gallery/albums/album/@preview">
+        <h1>Subgalleries</h1>
+        <div class="subgallery_preview" style="margin:20px 0px 0px 25px;">
+        
+        <xsl:variable name="path" select="/bx/plugin[@name='gallery']/gallery/@path"/>
+        <xsl:variable name="collUri" select="/bx/plugin[@name='gallery']/gallery/@collUri" />
+        <xsl:for-each select="/bx/plugin[@name='gallery']/gallery/albums/album">
+            <xsl:if test="@preview">
+                <div style="margin-top:10px;">
+                    <a href="{$gallery_collUri}{@name}">
+                    <xsl:value-of select="@name"/>
+                    <br/>
+                        <img alt="preview" src="/{$path}{@name}/{@preview}" width="150px"/>
+                    </a>
+                </div>
+            </xsl:if>
+        </xsl:for-each>
+    </div>
+    </xsl:if>
    </xsl:template>
 </xsl:stylesheet>
