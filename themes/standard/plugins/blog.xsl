@@ -68,7 +68,7 @@
     </xsl:template>
     
 
-    <xsl:template match="categories" mode="xhtml">
+    <xsl:template match="categories" mode="xhtml" disable-output-escaping="yes">
         <xsl:apply-templates select="document(concat('portlet://',$collectionUri,'plugin=categories(',$filename,',count).xml'))/bx/plugin/collection"/>
     </xsl:template>
 
@@ -99,7 +99,7 @@
 <ul>
  <xsl:for-each select="document(concat('portlet://',$collectionUri,'latestcomments.xml'))/bx/plugin/comments/comment">
       <li><xsl:value-of select="author"/>:<br/>
-        <cite>"<a title="Am {date} zum Thema: {post_title}" href="{$webrootW}{$collectionUri}archives/{post_permauri}#comments"><xsl:value-of disable-output-escaping="yes" select="substring(content,1,50)"/>
+        <cite>"<a title="Am {date} zum Thema: {post_title}" href="{$webrootW}{$collectionUri}archives/{post_permauri}#comments"><xsl:value-of disable-output-escaping="yes" select="substring(php:functionString('strip_tags',content),1,50)"/>
         <xsl:if test="string-length(content) &gt; 50">..</xsl:if>
        </a>"
       </cite></li>
