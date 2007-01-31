@@ -56,6 +56,16 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
         $tags = array();
         $locations = $this->getParameter($path,"locations");
         
+        if($this->getParameter($path,"maxfontsize")) {
+            $this->maxFontSize = $this->getParameter($path,"maxfontsize");
+        } else {
+            $this->maxFontSize = 36;
+        }
+        if($this->getParameter($path,"minfontsize")) {
+            $this->minFontSize = $this->getParameter($path,"minfontsize");
+        } else {
+            $this->minFontSize = 12;
+        }
         $query="select count(".$tablePrefix."tags.tag) as tagcount, tag from ".$tablePrefix."tags left join ".$tablePrefix."properties2tags on ".$tablePrefix."properties2tags.tag_id = ".$tablePrefix."tags.id where ".$tablePrefix."tags.id <> '11' and ".$tablePrefix."properties2tags.path like '".$locations."%' group by ".$tablePrefix."tags.tag";
         $res = $GLOBALS['POOL']->db->query($query);
         
@@ -86,12 +96,10 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
     public function getFontSize($count, $max, $path) {
         $count = $count-1;
         $max = $max-1;
-        $maxFontSize = $this->getParameter($path,"maxfontsize");
-        $minFontSize = $this->getParameter($path,"minfontsize");
-        $diff = $maxFontSize - $minFontSize;
+        $diff = $this->maxFontSize - $this->minFontSize;
         $percent = $count / $max * 100;
         $size = $percent / 100 * $diff;
-        $res = $minFontSize + $size;
+        $res = $this->minFontSize + $size;
         
         return round($res);
     }
