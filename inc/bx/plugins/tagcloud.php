@@ -10,10 +10,9 @@
 <plugin type="navitree">
         </plugin>
         <plugin type="tagcloud">
-            <!-- path to the blog -->
             <parameter name="locations" value="/blog/"/>
-            <!-- max fontsize -->
-            <parameter name="fontsize" value="36"/>
+            <parameter name="maxfontsize" value="36"/>
+            <parameter name="minfontsize" value="12"/>
         </plugin>
     </plugins>
 </bxcms>
@@ -85,10 +84,17 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
     }
     
     public function getFontSize($count, $max, $path) {
-        $maxFontSize = $this->getParameter($path,"fontsize");
+        $maxFontSize = $this->getParameter($path,"maxfontsize");
+        $minFontSize = $this->getParameter($path,"minfontsize");
         $percent = $count / $max * 100;
         $size = $percent / 100 * $maxFontSize;
-        return round($size);
+        
+        $res = round($size);
+        if($res < $minFontSize) {
+            $res = $minFontSize;
+        }
+        
+        return $res;
     }
     
     public function maxof($array) {
