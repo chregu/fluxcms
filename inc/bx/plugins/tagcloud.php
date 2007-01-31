@@ -84,17 +84,16 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
     }
     
     public function getFontSize($count, $max, $path) {
+        $count = $count-1;
+        $max = $max-1;
         $maxFontSize = $this->getParameter($path,"maxfontsize");
         $minFontSize = $this->getParameter($path,"minfontsize");
+        $diff = $maxFontSize - $minFontSize;
         $percent = $count / $max * 100;
-        $size = $percent / 100 * $maxFontSize;
+        $size = $percent / 100 * $diff;
+        $res = $minFontSize + $size;
         
-        $res = round($size);
-        if($res < $minFontSize) {
-            $res = $minFontSize;
-        }
-        
-        return $res;
+        return round($res);
     }
     
     public function maxof($array) {
