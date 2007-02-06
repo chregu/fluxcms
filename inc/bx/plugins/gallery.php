@@ -51,8 +51,7 @@ class bx_plugins_gallery extends bx_plugin {
         return new bx_resources_file($this->getGalleryRoot($path).$id);
     }
     public function adminResourceExists ($path, $id, $ext=null, $sample = false) {
-        $mimetype = popoon_helpers_mimetypes::getFromFileLocation($path.$id.".".$ext);
-        
+        $mimetype = popoon_helpers_mimetypes::getFromFileLocation($this->getGalleryRoot($path.$id).".".$ext);
         if (strpos ($mimetype, "image") !== false) {
             return $this;
         }
