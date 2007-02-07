@@ -20,7 +20,7 @@ class bx_streams_blog extends bx_streams_buffer {
     "doctype" => "loose",
     "numeric-entities" => true,
     "drop-proprietary-attributes" => true
-    );
+    ); 
 
     private $zeroDate = "0000-00-00 00:00:00";
     
@@ -589,6 +589,14 @@ class bx_streams_blog extends bx_streams_buffer {
                         $res = $GLOBALS['POOL']->db->query($query);
                         $ids = $res->fetchCol();
                     }
+                    // if no ids found, try with enforced utf2entities
+                    if (count($ids) != count($cats)) {
+                        $query = "select id from ".$tablePrefix."blogcategories  where fullname in ('".bx_helpers_string::utf2entities(implode("','",$cats),true)."')";
+                        $res = $GLOBALS['POOL']->db->query($query);
+                        $ids = $res->fetchCol();
+                    }
+
+
                 // } // end else
                 // if still not found, and its $cats[0] contains  "moblog"... or __default
                 if (count($ids) == 0 && ($cats[0] == '__default' || strpos(strtolower($cats[0]),"moblog") !== false )) {

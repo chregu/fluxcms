@@ -179,7 +179,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 if (isset($data['categories']) && is_array($data['categories'])) { 
                     foreach ($data['categories'] as $value => $cat) {
                         
-                        fwrite ($fd, '<dc:subject>'.htmlentities($value).'</dc:subject>');
+                        fwrite ($fd, '<dc:subject>'.htmlspecialchars($value,ENT_NOQUOTES,'UTF-8').'</dc:subject>');
                     }
                 }
                 fwrite ($fd, '</categories>');
