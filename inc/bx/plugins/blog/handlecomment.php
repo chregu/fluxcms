@@ -168,9 +168,10 @@ class bx_plugins_blog_handlecomment {
             $deleteIt = true;
         }
         
-	if (stripos($data['comments'],"[URL") !== false) {
-		   $commentRejected .= "* Non-supported '[URL]' used\n";
-	}
+        if (stripos($data['comments'],"[URL") !== false) {
+            $commentRejected .= "* Non-supported '[URL]' used\n";
+            self::discardIt(" Non-supported '[URL]' used");
+        }
         /* Max 5 links per post and SURBL check */
         /* No check, when logged in */
         if (!$username && (preg_match_all("#http://[\/\w\.\-]+|[\/\w\.\-]+@[\/\w\.\-]+#",$data['comments'], $matches) || $data['openid_url'] != '')) {
