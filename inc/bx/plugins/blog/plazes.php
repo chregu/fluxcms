@@ -38,10 +38,10 @@ class bx_plugins_blog_plazes {
         if (!$row['plazes_username']) {
             return "";
         }
-        $params = array(new XML_RPC_Value($row['plazes_username'], 'string'), new XML_RPC_Value($row['plazes_password'], 'string'));
-        $ask = new XML_RPC_Message('plazes.whereami', $params);
-        $rpc = new XML_RPC_Client('/xmlrpc/whereami.php', 'beta.plazes.com');
-        
+        $params = array(new XML_RPC_Value("c780e7677aeb5299a631cca5f25173aa",'string'),new XML_RPC_Value($row['plazes_username'], 'string'), new XML_RPC_Value($row['plazes_password'], 'string'),new XML_RPC_Value(0));
+           $ask = new XML_RPC_Message('user.trazes', $params);
+        $rpc = new XML_RPC_Client('/api/plazes/xmlrpc', 'beta.plazes.com');
+
         $resp = $rpc->send($ask);
         
         if (!$resp) {
@@ -55,13 +55,30 @@ class bx_plugins_blog_plazes {
         $value = $resp->value();
      
         $plaze = $value->getval();
-        if (!is_array($plaze)) {
+        
+        if (!is_array($plaze)  || count($plaze) == 0) {
             return "";
         }
-        if ($plaze['plazelon'] > 181) {
+        if (!isset($plaze[0])) {
+            return "";
+        }
+        if (!isset($plaze[0]['plaze'])) {
+            return "";
+        }
+        
+        $plaze = $plaze[0]['plaze']->getval();
+        
+        if ($plaze['longitude'] > 181) {
             error_log("Plazes error, Longitude was bigger than 180");
             return "";
         }
+        //for BC reasons to old api
+        $plaze['plazelon'] = $plaze['longitude'];
+        $plaze['plazelat'] = $plaze['latitude'];
+        $plaze['plazename'] = $plaze['name'];
+        $plaze['plazeurl'] = $plaze['url'];
+        
+        
         $xml = "<plazes>\n";
         if (isset($plaze['username'])) {
             unset($plaze['username']);
