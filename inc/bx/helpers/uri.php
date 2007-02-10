@@ -11,12 +11,11 @@ class bx_helpers_uri {
     }
     
     static function translateUri($uri) {
-        
-        /*FIXME don't append hardcoded extension */
-        preg_match("#\.(\w{2}\.\w{3,})$#", $uri, $matches);
-        if (isset($matches[1]) && !empty($matches[1])) {
-            $uri = sprintf("%s%s", str_replace($matches[1], "", $uri), "html");
-        }
+        $host = (defined('BX_WEBROOT')) ? BX_WEBROOT : $_SERVER['HTTP_HOST']; 
+        preg_match("#\.(\w{2}\.(\w{3,}))$#", $uri, $matches);
+        if (isset($matches[1]) && !empty($matches[1]) && strpos($uri, $host) !== FALSE) {
+            $uri = sprintf("%s%s", str_replace($matches[1], "", $uri), $matches[2]);
+        } 
 
         return $uri; 
     }    
