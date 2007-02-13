@@ -308,14 +308,20 @@
                         <xsl:value-of select="$langsAvail/langs"/>
                         </td>
                         <td >
+                        <xsl:variable name="postLang" select="/atom:entry/atom:lang"/>
                         <select id="lang" name="bx[plugins][admin_edit][lang]">
                             <option value="">
                                 None
                             </option>
                         <xsl:for-each select="$langsAvail/langs/entry">
+                            <xsl:variable name="lang" select="."/>
                             <option value="{.}">
+                                <xsl:if test="$lang = $postLang">
+                                    <xsl:attribute name="selected">selected</xsl:attribute>
+                                </xsl:if>
                                 <xsl:value-of select="."/>
                             </option>
+                            
                         </xsl:for-each>    
                             </select>
                         </td>
