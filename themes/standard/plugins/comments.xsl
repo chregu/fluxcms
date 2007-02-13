@@ -15,7 +15,7 @@
 	<xsl:variable name="commentRoot" select="bx/plugin[@name='comments']/div[@class='comments_new']"/>
 	
 	
-    <xsl:template name="content">
+    <xsl:template name="comments">
 		<h3 class="blog">
             <i18n:text i18n:key="blogComments">Comments</i18n:text>
         </h3>
