@@ -328,6 +328,36 @@ if ($lastVersion < 7720) {
       updateLastVersion(7720);
 }
 
+if ($lastVersion < 8453) {
+    $res = doQueryTable("
+   CREATE TABLE `".$tablePrefix."comments` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `comment_posts_id` int(11) NOT NULL default '0',
+  `comment_author` tinytext NOT NULL,
+  `comment_author_email` varchar(100) NOT NULL default '',
+  `comment_author_url` varchar(100) NOT NULL default '',
+  `comment_author_ip` varchar(100) NOT NULL default '',
+  `comment_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `comment_content` text NOT NULL,
+  `comment_karma` int(11) NOT NULL default '0',
+  `changed` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `comment_type` varchar(20) NOT NULL default '',
+  `comment_status` tinyint(4) NOT NULL default '1',
+  `comment_rejectreason` text,
+  `comment_hash` varchar(33) default NULL,
+  `comment_notification` tinyint(4) default '0',
+  `comment_notification_hash` varchar(32) default '',
+  `openid` tinyint(4) NOT NULL default '0',
+  `comment_username` varchar(100) NOT NULL default '',
+  `path` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `comment_posts_id` (`comment_posts_id`),
+  KEY `comment_status` (`comment_status`)
+  )",'comments');
+
+      updateLastVersion(8453);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
