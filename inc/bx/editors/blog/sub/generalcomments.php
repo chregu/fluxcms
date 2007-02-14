@@ -108,7 +108,6 @@ class bx_editors_blog_sub_generalcomments extends bx_editors_blog_sub {
     }
     
     static protected function getLatestComments($tablePrefix = null, $blogid) {
-        bx_helpers_debug::webdump('here');
         
         $gmnow = gmdate("Y-m-d H:i:00",time() + 60);
         if (!$tablePrefix) {
@@ -141,7 +140,6 @@ class bx_editors_blog_sub_generalcomments extends bx_editors_blog_sub {
         }
         
         $query .= " order by comment_date desc limit 10";
-        bx_helpers_debug::webdump($query);
         $res = $GLOBALS['POOL']->db->query($query);
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
