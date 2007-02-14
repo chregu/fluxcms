@@ -9,7 +9,7 @@
         xmlns:php="http://php.net/xsl" 
         exclude-result-prefixes="php blog bxf xhtml i18n">
 		
-    <xsl:output encoding="utf-8" method="xhtml"/>
+    <xsl:output encoding="utf-8" method="xml"/>
 	            
 	<xsl:variable name="comment" select="bx/plugin[@name='comments']/div[@class='comments_new']/div[@class='comments']"/>
 	<xsl:variable name="commentRoot" select="bx/plugin[@name='comments']/div[@class='comments_new']"/>
