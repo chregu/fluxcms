@@ -557,12 +557,23 @@ class bx_streams_blog extends bx_streams_buffer {
     
     static function deleteEntryDirect($id,$path) {
         $tablePrefix = self::getTablePrefix($path);
-        $query = "delete from ".$tablePrefix."blogposts where id = '$id'";
+        $query = "select post_uri, blog_id from ".$tablePrefix."blogposts where id = '$id'";
+        $res = $GLOBALS['POOL']->db->query($query);
+        $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
+        $postPath = substr($path, 0, -1).$row['post_uri'].'.html';
+        
+        $query = "delete from ".$tablePrefix."properties where path = '$postPath'";
+        $GLOBALS['POOL']->dbwrite->query("$query");
+        $query = "delete from ".$tablePrefix."properties2tags where path = '$postPath'";
+        $GLOBALS['POOL']->dbwrite->query("$query");
+        
+        $query = "delete from ".$tablePrefix."blogposts where id = '$id' and blog_id = '".$row['blog_id']."'";
         $GLOBALS['POOL']->dbwrite->query("$query");
         $query = "delete from ".$tablePrefix."blogposts2categories where blogposts_id = '$id'";
         $GLOBALS['POOL']->dbwrite->query("$query");
         $query = "delete from ".$tablePrefix."blogcomments where  comment_posts_id = '$id'";
         $GLOBALS['POOL']->dbwrite->query("$query");
+        
         return true;
     }
     
