@@ -100,7 +100,7 @@ class bx_plugins_comments extends bx_plugin implements bxIplugin {
 		}
 		
 		$dom = new domDocument();
-		$xml = '<div class="comments_new">';
+		$xml = '<div   xmlns:i18n="http://apache.org/cocoon/i18n/2.1" class="comments_new">';
         
 		$query = "select id, openid, comment_author, DATE_FORMAT(date_add(comment_date, INTERVAL ". self::$timezone." SECOND),'%d.%m.%Y %H:%i') as comment_date, comment_author_email, comment_type, comment_author_url, comment_content from ".$prefix."comments where comment_status = 1 and path = '".BX_WEBROOT.$_SERVER['REQUEST_URI']."' order by ".$prefix."comments.comment_date";
 		$cres = $GLOBALS['POOL']->db->query($query);
