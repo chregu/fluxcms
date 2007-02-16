@@ -51,7 +51,7 @@ if (isset($_REQUEST['username'])) {
     if(!$row) {
         print "<tr><td>There's no email adress for that user available (or user is not in our database)</td></tr>";
         print "</table>";
-        print "<p>If you don't know your username or did not provide a valid email adress, we can't revover your password and you have to get in touch with your system administrator</p>";
+        print "<p>If you don't know your username or did not provide a valid email adress, we can't recover your password and you have to get in touch with your system administrator</p>";
    
     } else {
         $email = $row['user_email'];
@@ -148,7 +148,7 @@ function getUsername() {
    print '  <p>
                     <input type="submit" name="send" value="submit"/>
                 </p>';
-   print "(If you don't know your username or did not provide a valid email adress, we can't revover your password and you have to get in touch with your system administrator)";
+   print "(If you don't know your username or did not provide a valid email adress, we can't recover your password and you have to get in touch with your system administrator)";
     
 }
 
