@@ -3,6 +3,7 @@
 <bxcms xmlns="http://bitflux.org/config">
 
  <variable name="blogid" value="1"/>
+ <variable name="postsperpage" value="10"/>
  
  <plugins inGetChildren="false">
         <extension type="xml"/>
