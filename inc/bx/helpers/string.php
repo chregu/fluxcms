@@ -260,6 +260,60 @@ class bx_helpers_string {
     }
     
     /**
+    * Takes a data array and generates a simple ASCII table out of it according
+    * to the given array of definitions.
+    *
+    * @param array $data Array of arrays containing the data
+    * @param array $tableDef Array of array containing the header and column definitions 
+    * @return string Formatted ASCII table
+    * @access public
+    */
+    static function asciiTable($data, $tableDef) {
+        if(empty($data) || !is_array($data)) {
+            return '';
+        }
+        
+        $columnFormats = array();
+        $out = '';
+        $sep = '';
+        $header = '';
+        
+        foreach($tableDef as $i => $column) {
+            $cHeading = $column[0];
+            $cWidth = $column[1];
+            $cOrientation = '-';
+            if(isset($column[2]) && strtolower($column[2]) === 'r') {
+                $cOrientation = '';
+            }
+            
+            // resize column if needed
+            if($cWidth < strlen($cHeading)) {
+                $cWidth = strlen($cHeading);
+            }
+            $header.= '|'.sprintf(" %-{$cWidth}.{$cWidth}s ", $column[0]);
+            $sep.= '+'.str_repeat('-', $cWidth+2);
+            
+            // save column format for later use 
+            $columnFormats[$i] = " %{$cOrientation}{$cWidth}.{$cWidth}s ";
+        }
+        $header.= '|';
+        $sep.= '+';
+        
+        foreach($data as $row => $columns) {
+            foreach($columns as $i => $column) {
+                $out.= '|'.sprintf($columnFormats[$i], $column);
+            }
+            $out.= "|\n";
+        }
+
+        if($out != ' ') {
+            return $sep."\n".$header."\n".$sep."\n".$out.$sep;
+        } else {
+            return '';
+        }
+    }
+    
+    /**
     * strips all newlines (\r and \n) from the given string (utf8 save),
     * shortens repeating whitespaces to one character and strips ws from 
     * the beginning and the end.
