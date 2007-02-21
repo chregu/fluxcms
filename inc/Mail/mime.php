@@ -286,16 +286,19 @@ class Mail_mime
         if (!is_readable($file_name)) {
             return PEAR::raiseError('File is not readable ' . $file_name);
         }
+        /*
         if (!$fd = fopen($file_name, 'rb')) {
             return PEAR::raiseError('Could not open ' . $file_name);
         }
+        */
         $filesize = filesize($file_name);
         if ($filesize == 0){
             $cont =  "";
         }else{
-            $cont = fread($fd, $filesize);
+            //$cont = fread($fd, $filesize);
+            $cont = file_get_contents($file_name);
         }
-        fclose($fd);
+        //fclose($fd);
         return $cont;
     }
 
