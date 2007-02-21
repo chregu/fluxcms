@@ -63,7 +63,7 @@ class bx_plugins_blogauthors extends bx_plugin implements bxIplugin {
             $xml .= '<author>';
             $xml .= '<authorname>'.$row['post_author'].'</authorname>';
             foreach($row as $author) {
-                $queryPost = "select post_title, post_uri from fluxcms_blogposts where blog_id = 1 and post_author = '".$author."'";
+                $queryPost = "select post_title, post_uri from ".$tablePrefix."blogposts where blog_id = 1 and post_author = '".$author."'";
                 $resPost = $db->query($queryPost);
                 while($rowPost = $resPost->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                     $xml .= '<entry>';
