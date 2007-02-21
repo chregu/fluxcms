@@ -176,6 +176,50 @@
   <text/>
 </define>
 
+<!-- inserted by chregu -->
+<define name="button">
+  <element name="button">
+    <ref name="button.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define>
+
+<define name="button.attlist">
+  <ref name="Common.attrib"/>
+  <optional>
+    <attribute name="name"/>
+  </optional>
+  <optional>
+    <attribute name="value"/>
+  </optional>
+  <optional>
+    <attribute name="type">
+      <choice>
+        <value>button</value>
+        <value>submit</value>
+        <value>reset</value>
+      </choice>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="disabled">
+      <value>disabled</value>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="tabindex">
+      <ref name="Number.datatype"/>
+    </attribute>
+  </optional>
+  <optional>
+    <attribute name="accesskey">
+      <ref name="Character.datatype"/>
+    </attribute>
+  </optional>
+</define>
+
+
+
 <define name="Form.class">
   <ref name="form"/>
 </define>
@@ -186,6 +230,7 @@
     <ref name="label"/>
     <ref name="select"/>
     <ref name="textarea"/>
+    <ref name="button"/>
   </choice>
 </define>
 
@@ -196,5 +241,7 @@
 <define name="Inline.class" combine="choice">
   <ref name="Formctrl.class"/>
 </define>
+
+
 
 </grammar>
