@@ -1,5 +1,6 @@
 <?php
 /*
+-config.xml
 <?xml version="1.0"?>
 <bxcms xmlns="http://bitflux.org/config">
 
@@ -13,6 +14,24 @@
          </plugin>
     </plugins>
 </bxcms>
+
+-XSL
+<xsl:template name="content">
+    <xsl:for-each select="/bx/plugin[@name='blogauthors']/authors/author">
+        <div class="blogauthors">
+        <h2 class="post_title"><xsl:value-of select="authorname"/></h2>
+        <ul>
+        <xsl:for-each select="entry">
+            <li>
+                <a href="{$webrootLangW}{uri}"><xsl:value-of select="title"/></a>
+            </li>
+        </xsl:for-each>
+        </ul>
+        </div>
+    </xsl:for-each>
+    
+</xsl:template>
+    
 */
 class bx_plugins_blogauthors extends bx_plugin implements bxIplugin {
     
@@ -63,13 +82,14 @@ class bx_plugins_blogauthors extends bx_plugin implements bxIplugin {
             $xml .= '<author>';
             $xml .= '<authorname>'.$row['post_author'].'</authorname>';
             foreach($row as $author) {
-                $queryPost = "select post_title, post_uri from ".$tablePrefix."blogposts where blog_id = 1 and post_author = '".$author."'";
+                $queryPost = "select post_title, post_uri, date_format(post_date, '%Y/%m/%d') as date from ".$tablePrefix."blogposts where blog_id = 1 and post_author = '".$author."'";
                 $resPost = $db->query($queryPost);
                 while($rowPost = $resPost->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                     $xml .= '<entry>';
                     $xml .= '<title>'.$rowPost['post_title'].'</title>';
+                    $xml .= '<date>'.$rowPost['date'].'</date>';
                     if(isset($blogPath)) {
-                        $xml .= '<uri>'.$blogPath.$rowPost['post_uri'].'.html</uri>';
+                        $xml .= '<uri>'.$blogPath.'archive/'.$rowPost['date'].'/'.$rowPost['post_uri'].'.html</uri>';
                     }
                     $xml .= '</entry>';
                 }
