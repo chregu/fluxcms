@@ -592,7 +592,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= '</div>';   
             
             if($doComments){
-                $xml .= '<div class="post_content_extended" name="post_content_extended">';
+                $xml .= '<a name="post_content_extended"/><div class="post_content_extended">';
 
                 $xml .= $row['post_content_extended'].'</div>';
             }
