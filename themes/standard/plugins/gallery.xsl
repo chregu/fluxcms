@@ -84,9 +84,9 @@
                 </xsl:call-template>
             </xsl:otherwise>
             </xsl:choose>
-            
+           <!-- 
             <xsl:call-template name="comments"/>
-           
+           -->
     </xsl:template>
 
     
