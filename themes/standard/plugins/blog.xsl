@@ -313,6 +313,7 @@
     </xsl:template>
 
     <xsl:template match="xhtml:div[@class='comment' or @class='comments_not']" mode="xhtml">
+    
         <div class="post_content">
             <xsl:apply-templates mode="xhtml"/>
         </div>
@@ -374,9 +375,7 @@
     <xsl:template match="xhtml:span[@class = 'post_comments_count']" mode="xhtml">
         <xsl:variable name="entry" select="../.."/>
         <xsl:if test="$entry[@blog:post_comment_allowed = 1 or @blog:comment_count &gt; 0]">
-            <a href="{xhtml:a/@href}">
-                <i18n:text i18n:key="blogComments">Comments</i18n:text> (<xsl:value-of select="."/>)
-                </a>
+            <a href="{xhtml:a/@href}"><i18n:text i18n:key="blogComments">Comments</i18n:text> (<xsl:value-of select="."/>)</a>
         </xsl:if>
     </xsl:template>
 
