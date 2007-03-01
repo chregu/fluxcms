@@ -28,6 +28,8 @@ DBFORMS2_EVENT_FORM_NEW_POST        = 10;
 DBFORMS2_EVENT_PARENTFORM_SAVE      = 20;
 DBFORMS2_EVENT_PARENTFORM_NEW       = 21;
 
+DBFORMS2_DEBUGLOG_ENABLED = false;
+
 
 /*
 DBFORMS2_EVENT_FORM__PRE        = ;
@@ -112,12 +114,6 @@ dbforms2.init = function(formConfig) {
     this.mainform.toolbar.unlockButton('new');
     dbforms2.statusText('Ready.');
     dbforms2_log.log('dbforms2 initialized');
-    
-    // firebug breaks xmlhttprequests
-    if(typeof console != 'undefined') {
-        console.warn("NOTE: Firebug 0.4 breaks XMLHttpRequests, when 'Options -> Show XMLHttpRequests' is enabled!");
-    }
-
 }
 
 dbforms2.statusText = function(msg) {

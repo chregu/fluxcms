@@ -8,9 +8,9 @@ dbforms2_log.init = function () {
 }
 
 dbforms2_log.log = function(msg) {
-    if(_BX_HELPERS_IS_MOZ) {
+    if(_BX_HELPERS_IS_MOZ && DBFORMS2_DEBUGLOG_ENABLED == true) {
         var msg = this.getDateStr()+" "+msg+"\n";
-        dump(msg);
+        // check for firebug console
         if(typeof console != 'undefined') {
             console.log(msg);
         }
