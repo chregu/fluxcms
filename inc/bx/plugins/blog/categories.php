@@ -100,7 +100,7 @@ class bx_plugins_blog_categories {
             }
 
             $coll = $dom->createElement("collection");
-
+            $coll->setAttribute("level",$row['level']);
             if ($catCount) {
                 if (isset($catCount[$row['id']]) && $catCount[$row['id']][0] > 0) {
                     $coll->setAttribute("count",  $catCount[$row['id']][0]);
