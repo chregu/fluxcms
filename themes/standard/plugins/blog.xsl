@@ -609,4 +609,16 @@ var commentButtonName      = "bx[plugins][blog][_all]";
     
     <xsl:template name="html_head_custom"/>
 
+
+<xsl:template name="html_head_description">
+
+    <xsl:choose>
+            <xsl:when test="$singlePost = 'true'">
+<xsl:variable name="entry" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div/xhtml:div[@class='post_content']"/>
+<meta name="description" content="{translate(substring($entry,0,160),'&#10;','')}"/>
+</xsl:when>
+
+</xsl:choose>
+</xsl:template>
+
 </xsl:stylesheet>
