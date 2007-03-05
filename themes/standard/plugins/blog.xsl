@@ -456,7 +456,7 @@
 
     <xsl:template match="xhtml:span[@class='comment_author_email']" mode="xhtml">
         <xsl:if test="string-length(.) &gt; 5">
-            <img class="blog_gravatar" src="{php:functionString('bx_plugins_blog_gravatar::getLink',text(),'40','aaaaaa')}"/>
+            <img class="blog_gravatar" src="{php:functionString('bx_plugins_blog_gravatar::getLink',text(),'40','aaaaaa')}" alt=""/>
         </xsl:if>
     </xsl:template>
 
