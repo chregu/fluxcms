@@ -46,7 +46,7 @@ class bx_propertyconfig {
             $property = array(
                 'deleteOnEmpty' => FALSE
             );
-
+            $property['node'] = $node;
             $property['name'] = $node->getAttribute('name');
             $property['namespace'] = $node->getAttribute('ns');
             if($node->getAttribute('multilang') != '') {
@@ -274,7 +274,7 @@ class bx_propertyconfig {
     public function getMetadatasByCategoryAndResourceName($category, $resource) {
         $metadatas = array();
         foreach($this->getPropertiesByCategoryAndResourceName($category, $resource) as $fullName => $property) {
-            $metadatas[$fullName] = $this->getMetadataInstance($property['metadata'], $property);
+        $metadatas[$fullName] = $this->getMetadataInstance($property['metadata'], $property);
         }
         return $metadatas;
     }
@@ -287,7 +287,6 @@ class bx_propertyconfig {
     */
     protected function getMetadataInstance($type, $property=array()) {
         $mobj = null;
-        
         if ($type) {
             $className = "bx_metadatas_".$type;
         } else {

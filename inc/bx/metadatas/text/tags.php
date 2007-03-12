@@ -13,7 +13,6 @@ class bx_metadatas_text_tags extends bx_metadatas_text_textfield {
 
     public function serializeToDOM() {
         $dom = new domDocument();
-        
         $textField = $dom->createElement('metadata');
         $textField->setAttribute('type', 'textfield');
         $textField->setAttribute('size', $this->size);

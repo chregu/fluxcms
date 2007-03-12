@@ -96,7 +96,6 @@ class bx_metadata {
     
     
     public function setProperties($props = array()) {
-        
         if (sizeof($props) > 0 ) {
             foreach($props as $propn => $propv) {
                 if (isset($this->$propn)) {
