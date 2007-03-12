@@ -263,7 +263,14 @@
         <tr>
             <td>
                 <div class="blackH5">
-                    <xsl:value-of select="concat(../@namespace, ':', ../@name)"/>
+                     <xsl:choose>
+                        <xsl:when test="../@niceName">
+                            <xsl:value-of select="../@niceName"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat(../@namespace, ':', ../@name)"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </div>
             </td>
             <td class="blackH5">
