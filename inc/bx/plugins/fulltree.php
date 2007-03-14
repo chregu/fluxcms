@@ -42,7 +42,11 @@ Class bx_plugins_fulltree extends bx_plugin {
         $selectedColls = Array();
         $coll = bx_collections::getCollection($path, $this->mode);
         $this->currentPage = $coll->uri;
-        $this->getSitemapTree("/", $dom, $sn, $selectedColls);
+        $starturi = $this->getParameter($path,"starturi");
+        if (!$starturi) {
+            $starturi = '/';
+        }
+        $this->getSitemapTree($starturi, $dom, $sn, $selectedColls);
         
         $dom->appendChild($sn);
         return $dom;
