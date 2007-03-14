@@ -69,7 +69,7 @@ abstract class bx_resource implements bxIresource {
     }
 
     public function removeProperty($name, $namespace = BX_PROPERTY_DEFAULT_NAMESPACE) {
-        bx_resourcemanager::removeProperty($this->uri, $name, $namespace);
+        bx_resourcemanager::removeProperty($this->id, $name, $namespace);
     }
         
     public function saveFile($file , $uploadInfo = NULL) {
