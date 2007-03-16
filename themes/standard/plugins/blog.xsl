@@ -211,6 +211,20 @@
 
         </ul>
     </xsl:template>
+    
+    <xsl:template name="externalFeed" match="externalFeed" mode="xhtml">
+    <xsl:param name="title" select="@title"/>
+    <xsl:param name="url" select="@url"/>
+    <xsl:param name="rss" select="@rss"/>
+   <h3 class="blog"><a href="{$url}"><xsl:value-of select="$title"/></a></h3>
+    <ul>
+    <xsl:for-each select="php:functionString('bx_helpers_simplecache::staticHttpReadAsDom',$rss)/rss/channel/item[position() &lt; 10]"> 
+           <li><a title="{title}" href="{link}"><xsl:value-of select="title"/></a></li>
+    </xsl:for-each>
+
+    </ul>
+
+</xsl:template>
 
     <xsl:template name="archive" match="archive" mode="xhtml">
         <h3 class="blog">Archive</h3>
