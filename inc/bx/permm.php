@@ -82,7 +82,7 @@ Class bx_permm {
         }
         
         if (!empty($_COOKIE['fluxcms_login'])) {
-            setcookie('fluxcms_login', '', 0,"/");
+            setcookie('fluxcms_login', '', 0,"/",null,null,true);
             unset($_COOKIE['fluxcms_login']);
         }
         

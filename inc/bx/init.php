@@ -2,7 +2,7 @@
 
 define('BXCMS_VERSION', "1.6-dev");
 define('BXCMS_BUILD','200612150500');
-define('BXCMS_REVISION',preg_replace('/\$Rev: ([0-9]+) \$/','r$1','$Rev$'));
+define('BXCMS_REVISION',preg_replace('/\$Rev$'));
     
 
 class bx_init {
@@ -55,6 +55,7 @@ class bx_init {
         $bx_config->staticFileCache = false;
 
         ini_set('include_path',BX_INCLUDE_DIR.PATH_SEPARATOR.ini_get('include_path'));
+        ini_set('session.cookie_httponly',true);
         //for staging, will be improved later
         bx_errorhandler::getInstance();
         

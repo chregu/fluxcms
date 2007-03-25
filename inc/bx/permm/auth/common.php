@@ -98,7 +98,7 @@ abstract class bx_permm_auth_common {
         } elseif (!empty($_POST) && !empty($_POST['remember']) && !empty($_POST['username']) && !empty($_POST['password'])) {
                 $hash = $_POST['username'].':'.md5($_POST['username'].md5($_POST['password']));
                 if (! (isset($_COOKIE['fluxcms_login']) && $_COOKIE['fluxcms_login'] == $hash)) {
-                    setcookie('fluxcms_login',$hash, time() + 3600*24*365,"/");
+                    setcookie('fluxcms_login',$hash, time() + 3600*24*365,"/",null,null,true);
                     $_COOKIE['fluxcms_login'] = $hash;
                 }
         }
