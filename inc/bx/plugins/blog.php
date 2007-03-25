@@ -214,11 +214,14 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             
         } else if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
-            $query .=" where (MATCH (post_content,post_title) AGAINST ('" . $_GET['q'] ."') or  post_title like '%" .  $_GET['q']  . "%') and ".
+
+            $_GET['q'] =  popoon_classes_externalinput::basicClean(bx_helpers_globals::stripMagicQuotes($_GET['q']));
+
+            $query .=" where (MATCH (post_content,post_title) AGAINST (" . $GLOBALS['POOL']->db->quote($_GET['q']) .") or  post_title like " .  $GLOBALS['POOL']->db->quote("%".$_GET['q']."%")  . ") and ".
             $tablePrefix."blogposts.post_status & ".$this->overviewPerm;
             $query .= " and blog_id = ".$blogid;
             $query .= " and post_date < '".$gmnow."' ";
-            $doComments = false;
+            $doComments = false; 
             $total = $GLOBALS['POOL']->db->query($query)->fetchOne(0);
 
             $query .= " order by post_date desc limit ".$startEntry . "," . $maxPosts;
