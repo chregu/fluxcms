@@ -115,7 +115,7 @@ CREATE TABLE `##bxcms_##bloglinks` (
 --
 
 INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (5,'Freeflux.net','http://freeflux.net','','',4,'2005-04-08 15:05:55',1,NULL,1,NULL);
-INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (6,'Bitflux GmbH','http://www.bitflux.ch/','','',4,'2005-04-08 15:06:09',2,NULL,1,NULL);
+INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (6,'Liip AG','http://www.liip.ch/','','',4,'2005-04-08 15:06:09',2,NULL,1,NULL);
 INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (7,'netzwirt.ch','http://www.netzwirt.ch/','','',4,'2005-04-08 17:06:10',3,NULL,1,NULL);
 INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (8,'monorom.com','http://www.monorom.com/','','',4,'2005-04-08 17:06:10',4,NULL,1,NULL);
 
@@ -173,7 +173,7 @@ CREATE TABLE `##bxcms_##blogposts` (
 -- Dumping data for table `##bxcms_##blogposts`
 --
 
-INSERT INTO `##bxcms_##blogposts` (`id`, `post_author`, `post_date`, `post_expires`, `post_content`, `post_content_extended`, `post_content_summary`, `post_title`, `post_uri`, `changed`, `blog_id`, `post_comment_mode`, `post_status`, `post_lang`, `post_info`, `post_guid_version`) VALUES (8,'test',date_sub(now(), INTERVAL 1 DAY),'0000-00-00 00:00:00','<p>Welcome to Flux CMS and its blog plugin.</p>\n\n<p>You can edit and posts in the admin section, if you click on the blog collection on the left side.</p>\n<p>Links and Categories can be managed via the Quicklinks dropdown on the top-right in the admin.</p>\n<p>If you have any questions, look at the <a href=\"http://docs.bitflux.org/en/user/blog/\">blog documentation</a>,  ask on the <a href=\"http://forum.freeflux.net/\">Forum</a> or on our <a href=\"http://wiki.bitflux.org/Support\">Mailinglist</a>.\n\n</p><p>But now, have fun ;) </p>','','','Your first Post','your-first-post',now(),1,99,1,NULL,NULL,1);
+INSERT INTO `##bxcms_##blogposts` (`id`, `post_author`, `post_date`, `post_expires`, `post_content`, `post_content_extended`, `post_content_summary`, `post_title`, `post_uri`, `changed`, `blog_id`, `post_comment_mode`, `post_status`, `post_lang`, `post_info`, `post_guid_version`) VALUES (8,'test',date_sub(now(), INTERVAL 1 DAY),'0000-00-00 00:00:00','<p>Welcome to Flux CMS and its blog plugin.</p>\n\n<p>You can edit and posts in the admin section, if you click on the blog collection on the left side.</p>\n<p>Links and Categories can be managed via the Quicklinks dropdown on the top-right in the admin.</p>\n<p>If you have any questions, look at the <a href=\"http://docs.flux-cms.org/en/user/blog/\">blog documentation</a>,  ask on the <a href=\"http://forum.freeflux.net/\">Forum</a> or on our <a href=\"http://wiki.flux-cms.org/Support\">Mailinglist</a>.\n\n</p><p>But now, have fun ;) </p>','','','Your first Post','your-first-post',now(),1,99,1,NULL,NULL,1);
 
 --
 -- Table structure for table `##bxcms_##blogposts2categories`
