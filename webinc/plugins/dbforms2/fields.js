@@ -555,7 +555,7 @@ dbforms2_field_fixed_datetime.prototype = new dbforms2_field_fixed();
 function dbforms2_field_file(DOMNode) {
     
     var uploadDir = '';
-
+    
 	this.init = function(DOMNode) {
         this.initField(DOMNode);
         this.uploadDir = this.DOMNode.getAttribute('uploaddir');
@@ -614,7 +614,8 @@ function dbforms2_field_file(DOMNode) {
 	
 }
 dbforms2_field_file.prototype = new dbforms2_field();
-
+//in trunk is called upload
+dbforms2_field_upload = dbforms2_field_file;
 
 
 /**
