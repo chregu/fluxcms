@@ -739,37 +739,45 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                  self::$timezoneString = bx_helpers_config::getTimezoneAsString();
         }
         if(!MDB2::isError($res)) {
+            $d = new domdocument();
             $xml = '<a name="comments"/><div class="comments">';
             while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                 //$this->lastModified = max ($this->lastModified,$row['lastmodified']);
-                $xml .= '<div class="comment" ';
-                $xml .= ' id = "'.$row['id'].'"';
-                $xml .= '>';
-                $xml .= '<a name="comment'.$row['id'].'"/>';
-                $xml .= '<div class="comment_meta_data">';
+                $sxml = '<div class="comment" ';
+                $sxml .= ' id = "'.$row['id'].'"';
+                $sxml .= '>';
+                $sxml .= '<a name="comment'.$row['id'].'"/>';
+                $sxml .= '<div class="comment_meta_data">';
                 
-                $xml .= '<span class="comment_author_email">'.$row['comment_author_email'].'</span>';
-                $xml .= '<span class="comment_author">';
+                $sxml .= '<span class="comment_author_email">'.$row['comment_author_email'].'</span>';
+                $sxml .= '<span class="comment_author">';
                 if ($row['comment_author_url']) {
-                    $xml .= '<a href="';
+                    $sxml .= '<a href="';
             if (strpos($row['comment_author_url'],'http:') !== 0) {
-                $xml .= 'http://';
+                $sxml .= 'http://';
             }
-            $xml .= $row['comment_author_url'].'">'.$row['comment_author'].'</a></span>';
+            $sxml .= $row['comment_author_url'].'">'.$row['comment_author'].'</a></span>';
                 } else {
-                    $xml .= $row['comment_author'].'</span>';
+                    $sxml .= $row['comment_author'].'</span>';
                 }
-                $xml .= '<span class="comment_date">'.$row['comment_date'].' '. self::$timezoneString . '</span>';
+                $sxml .= '<span class="comment_date">'.$row['comment_date'].' '. self::$timezoneString . '</span>';
                 if($row['openid'] == 1) {
-                    $xml .= '<img class="openid" src="'.BX_WEBROOT.'webinc/images/openid.gif"/>';
+                    $sxml .= '<img class="openid" src="'.BX_WEBROOT.'webinc/images/openid.gif"/>';
                 }
                 
-                $xml .= '<span class="comment_type">'.$row['comment_type'].'</span>';
-                $xml .= '</div>';
-                $xml .= '<div class="comment_content">';
+                $sxml .= '<span class="comment_type">'.$row['comment_type'].'</span>';
+                $sxml .= '</div>';
+                $sxml .= '<div class="comment_content">';
 
-                $xml .= bx_helpers_string::makeLinksClickable($row['comment_content']).'</div>';
-                $xml .= "</div>";
+                $sxml .= bx_helpers_string::makeLinksClickable($row['comment_content']).'</div>';
+                $sxml .= "</div>";
+                                if (!$d->loadXML($sxml)) {
+                    $d->recover = true;
+                    $d->loadXML($sxml);
+                    $sxml = $d->saveXML($d->documentElement);
+                    $d->recover = false;
+                }
+                $xml .= $sxml;
                 
             }
             $xml .= '</div>';
@@ -1039,7 +1047,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                }
                $xml .= '<tr>
                <td valign="top"><i18n:text i18n:key="blogCommentComment">Comment</i18n:text>*</td>
-               <td><textarea rows="10" cols="40" name="comments">'.$data['comments'].'</textarea></td>
+               <td><textarea rows="10" cols="40" name="comments" id="comments">'.$data['comments'].'</textarea></td>
                </tr><tr>
                <td colspan="2" valign="top"><input type="checkbox" name="comment_notification" />
                <i18n:text i18n:key="blogCommentNotify">Notify me via E-Mail when new comments are made to this entry</i18n:text></td>
@@ -1085,6 +1093,18 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     }
     
     public function handlePublicPost($path,$id, $data) {
+        
+        if (!empty($data['email'])) {
+            $data['email'] = htmlspecialchars(strip_tags($data['email'] ));
+        }
+        if (!empty($data['name'])) {
+            $data['name'] = htmlspecialchars(strip_tags($data['name']));
+        } 
+        
+        if (!empty($data['openid_url'])) {
+            $data['openid_url'] = htmlspecialchars(strip_tags($data['openid_url']));
+        }
+        
         $error = bx_plugins_blog_handlecomment::handlePost($path,$id,$data);
         $this->commentData = $data;
         if ($error) {

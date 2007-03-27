@@ -24,22 +24,20 @@ class bx_plugins_blog_handlecomment {
     
  function handlePost ($path,$id, $data)  {
      
+      
+            
+        //add some more data and clean some others
+        $data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
+
         if(!($data['name'] && $data['comments'])) {
             
             return '<i18n:text i18n:key="blogFieldsMissing">Please fill in all needed fields</i18n:text>';
         }
-            
-        //add some more data and clean some others
-        $data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
-        $data['email'] = strip_tags($data['email'] );
-        $data['name'] = strip_tags($data['name']);
-        $data['openid_url'] = strip_tags($data['openid_url']);
         
-     
         $timezone = bx_helpers_config::getTimezoneAsSeconds();
         $isok = false;
         foreach($data as $name => $value) {
-            $data[$name] = bx_helpers_string::utf2entities(str_replace("&","&amp;",trim($value)));
+            $data[$name] = bx_helpers_string::utf2entities(trim($value));
         }
 
         if (($pos = strrpos($id,"/")) > 0) {
