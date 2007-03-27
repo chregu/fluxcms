@@ -98,7 +98,7 @@
    <xsl:template match="latest_comments" name="latest_comments" mode="xhtml">
 <ul>
  <xsl:for-each select="document(concat('portlet://',$collectionUri,'latestcomments.xml'))/bx/plugin/comments/comment">
-      <li><xsl:value-of select="author"/>:<br/>
+      <li><xsl:value-of select="author" disable-output-escaping="yes"/>:<br/>
         <cite>"<a title="Am {date} zum Thema: {post_title}" href="{$webrootW}{$collectionUri}archives/{post_permauri}#comments"><xsl:value-of disable-output-escaping="yes" select="substring(php:functionString('strip_tags',content),1,50)"/>
         <xsl:if test="string-length(content) &gt; 50">..</xsl:if>
        </a>"
