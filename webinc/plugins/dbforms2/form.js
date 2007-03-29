@@ -346,7 +346,7 @@ function dbforms2_form() {
         this.transport.onLoadCallback = wrappedCallback.execute;
         
         this.startTransportTimeout();
-        this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_LOAD_PRE);
+        this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_LOAD_POST);
         this.transport.loadXML(uri);
     }
     
