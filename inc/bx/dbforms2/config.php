@@ -175,6 +175,8 @@ class bx_dbforms2_config {
                                 $liveSelect->tableName = $lsNode->getAttribute('table');
                                 $liveSelect->orderBy = $lsNode->getAttribute('orderby');
                                 $liveSelect->limit = $lsNode->getAttribute('limit');
+                                $liveSelect->setLeftJoin($lsNode->getAttribute('leftjoin'));
+
                                 if(!$liveSelect->limit) {
                                     $liveSelect->limit  = 20;
                                 }
