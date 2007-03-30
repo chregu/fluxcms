@@ -12,7 +12,8 @@
     <map:pipelines>
 
         <map:pipeline>
-            <map:match type="uri" pattern="content/*">
+            <map:match type="uri" matchtype="regex" pattern="#^/*content/(.*)$#">
+<!--            <map:match type="uri"  pattern="content/*">-->
                 <map:act uri="{1}" type="bxcmsauth">
                     <map:parameter type="actions" name="action1" value="admin"/>
                     <map:parameter type="actions" name="action2" value="edit"/>
