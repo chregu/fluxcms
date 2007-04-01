@@ -52,7 +52,13 @@
 			)
 			</pre> */
 			$imgurl = $matches[1];
- 			$imgurlmod = str_replace("/files/", "/dynimages/$width/files/", $imgurl);
+			if(!strpos($imgurl, 'dynimages')){
+ 				$imgurlmod = str_replace("/files/", "/dynimages/$width/files/", $imgurl);
+			}else{
+				$tmp = explode('/', $imgurl);
+				$tmp[5] = $width;
+				$imgurlmod = implode('/', $tmp);
+			}
  			return $imgurlmod;			
  	}
  }
