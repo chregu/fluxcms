@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+    <dbform:fields table="staticpages">
+        
+        <dbform:field name="ord" type="text" descr="Text Order"/>
+        
+        <dbform:field name="text" type="text_wysiwyg" descr="Text"/>
+        
+    </dbform:fields>    
+</dbform:form>

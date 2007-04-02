@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+    <dbform:fields table="projekte" thatidfield="subprojektid">
+        
+        <dbform:field name="ord" type="text" descr="Bild Order">
+            <dbform:datasource type="foreign" table="projekte" namefield="ord" idfield="id" order="id"/>
+        </dbform:field>
+        
+        <dbform:field name="bildtext" type="text_wysiwyg" descr="Text">
+            <dbform:datasource type="foreign" table="projekte" namefield="text" idfield="id" order="id"/>
+        </dbform:field>
+        
+        <dbform:field name="bild" type="file_browser" descr="Bild">
+            <dbform:datasource type="foreign" table="projekte" namefield="bild" idfield="id" order="id"/>
+        </dbform:field>
+        
+    </dbform:fields>    
+</dbform:form>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+
+<dbform:fields table="projekte">
+   <dbform:field name="titel" type="text" descr="Titel"/>
+
+</dbform:fields>
+
+<dbform:chooser namefield="concat(titel)" wherefields="titel" limit="5"/>
+</dbform:form>
+

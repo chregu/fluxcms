@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<dbform:fields table="subprojekte">
+    
+    <dbform:field name="projektid" type="select" descr="Projekte">
+        <dbform:datasource type="foreign" namefield="titel" idfield="id" table="projekte" order="ord"></dbform:datasource>
+    </dbform:field>
+    
+   <dbform:field name="titel" type="text" descr="Sub-Titel"/>
+   <dbform:field name="text" type="text_wysiwyg" descr="Text"/>
+   <dbform:field name="ord" type="text" descr="Sub-Order"/>
+   
+    <dbform:form name="bilder" title="Bilder">
+        <dbform:fields table="bilder" thatidfield="subprojektid">
+            <dbform:field type="listview_12n" name="bilder" thatidfield="subprojektid" idfield="id" namefield="concat(ord,' - ',bild)" orderby="ord" />
+
+            <xi:include href="bilder.xml#xmlns(dbform=http://bitflux.org/dbforms2/1.0)xpointer(/dbform:form/dbform:fields/dbform:field)" parse="xml"/>
+        </dbform:fields>
+    </dbform:form>
+
+</dbform:fields>
+
+<dbform:chooser namefield="concat(titel,' - ', ord)" wherefields="titel" limit="5"/>
+</dbform:form>
+

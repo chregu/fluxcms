@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+
+    <dbform:fields table="blogposts">
+        <dbform:field name="post_title" type="text" descr="Title"/>
+        <dbform:field name="post_content" type="text_wysiwyg" isxml="true" descr="Content"/>
+    </dbform:fields>
+
+    <dbform:chooser namefield="concat( post_title )" wherefields="post_title" 
+     orderby="post_title ASC" limit="35"/>
+
+</dbform:form>
