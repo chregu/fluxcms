@@ -1,0 +1,5 @@
+<bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
+    <bxst:section name="staticpages" where="1=1" orderby="ord">
+        <bxst:table name="staticpages" fields="id , text , ord , titel"/>
+    </bxst:section>
+</bxst:structure>

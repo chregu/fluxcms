@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
+        
+    <bxst:section name="blogpodcasts" orderby="id">
+        <bxst:table name="blogpodcasts" fields=" id, post_author, post_date, post_expires, post_content, post_content_extended, post_content_summary, post_title, post_uri, blog_id, post_comment_mode, post_status, post_lang, post_info, post_guid_version, post_podcast">
+        </bxst:table>
+            
+    </bxst:section>
+
+</bxst:structure>                                                                                                                                                                                                     

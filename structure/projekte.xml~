@@ -1,0 +1,9 @@
+<bxst:structure xmlns:bxst="http://bitflux.org/structure/1.0">
+    <bxst:section name="projekt" where="1 = 1" orderby="projekte.ord, projekte.kategorie">
+        <bxst:table name="projekte" fields="id , titel , ord, kategorie">
+            <bxst:table name="subprojekte" thatfield="id" thisfield="projektid">
+                <bxst:table name="bilder" thatfield="id" thisfield="subprojektid"/>
+            </bxst:table>
+        </bxst:table>
+    </bxst:section>
+</bxst:structure>

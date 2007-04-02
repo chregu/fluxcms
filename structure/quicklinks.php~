@@ -5,8 +5,6 @@ $quicklinks = array (
 // 'admin/dbforms2/blogposts/' => 'Blogposts',
 'users' => 'Users',
 'admin/dbforms2/blogpodcasts' => 'Blog - Podcasts',
-'admin/dbforms2/projekte' => 'Projekte',
-'admin/dbforms2/subprojekte' => 'Sub-Projekte',
 //'options' => 'options (dbform)',
 );
 
