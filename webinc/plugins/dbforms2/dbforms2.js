@@ -30,15 +30,6 @@ DBFORMS2_EVENT_PARENTFORM_NEW       = 21;
 
 DBFORMS2_DEBUGLOG_ENABLED = false;
 
-
-/*
-DBFORMS2_EVENT_FORM__PRE        = ;
-DBFORMS2_EVENT_FORM__POST       = ;
-DBFORMS2_EVENT_FORM__PRE        = ;
-DBFORMS2_EVENT_FORM__POST       = ;
-*/
-
-
 /**
  *  Get the next available id to register a global object.
  *
