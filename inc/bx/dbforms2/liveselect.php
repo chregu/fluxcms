@@ -91,11 +91,10 @@ class bx_dbforms2_liveselect {
     public $currentPage = null;
     
     /**
-     *  DOCUMENT_ME
+     *  Normalizes the liveselect query (e.g. strips whitespace)
      *
-     *  @param  type  $var descr
      *  @access public
-     *  @return type descr
+     *  @return string
      */
     public function getNormalizedQuery() {
         // strip ws
@@ -103,17 +102,27 @@ class bx_dbforms2_liveselect {
     }
 
     /**
-     *  DOCUMENT_ME
+     *  Sets an optional left join
      *
-     *  @param  type  $var descr
+     *  @param  string $leftJoib The left join incl. condition, SQL
      *  @access public
-     *  @return type descr
      */
     public function setLeftJoin($leftJoin) {
         if ($leftJoin) {
-            $leftJoin = str_replace('{tablePrefix}', $this->tablePrefix,$leftJoin);
-            $this->leftJoin = "left join " . $leftJoin;
+            $this->leftJoin = "left join ".$this->replaceTablePrefix($leftJoin);
         }
+    }
+    
+    /**
+     *  Replaces all occurences of {tablePrefix} in the given string with the
+     *  current table prefix.
+     *
+     *  @param  string $strIn Input string
+     *  @access protected
+     *  @return string
+     */
+    protected function replaceTablePrefix($strIn) {
+        return str_replace('{tablePrefix}', $this->tablePrefix, $strIn);
     }
     
     protected function getMainSelectQuery() {
@@ -136,10 +145,10 @@ class bx_dbforms2_liveselect {
         }
         
         if ($this->where) {
-            $where .=" AND ". $this->where;
+            $where .=" AND ". $this->replaceTablePrefix($this->where);
         }
         
-        $orderby = !empty($this->orderBy) ? $this->orderBy : $this->idField;
+        $orderby = !empty($this->orderBy) ? $this->replaceTablePrefix($this->orderBy) : $this->idField;
 		$matcher = (!empty($this->getMatcher) AND isset($_GET[$this->getMatcher]) )? ' AND '.$this->getMatcher.' = "'.$_GET[$this->getMatcher].'" ' : '';
         
         return 'FROM '.$table.' '. $this->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby;
@@ -152,8 +161,8 @@ class bx_dbforms2_liveselect {
         if(isset($this->currentPage)) {
             $limit = $this->currentPage * $this->limit.','.$this->limit;
         }
-
-        $query = 'SELECT '.$table.'.'.$this->idField.' AS _id, '.$this->nameField.' AS _title '.$this->getMainSelectQuery().' LIMIT '.$limit;
+        
+        $query = 'SELECT '.$table.'.'.$this->idField.' AS _id, '.$this->replaceTablePrefix($this->nameField).' AS _title '.$this->getMainSelectQuery().' LIMIT '.$limit;
         return $query;
     }
     
