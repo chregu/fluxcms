@@ -139,7 +139,7 @@ class bx_config extends popoon_classes_config {
         return "";
     }
     
-    public function setConfProperty($key,$value) {
+    public static function setConfProperty($key,$value) {
         $GLOBALS['POOL']->config->{$key} = $value;
         $db = $GLOBALS['POOL']->db;
         $dbwrite = $GLOBALS['POOL']->dbwrite;
