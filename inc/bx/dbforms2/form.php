@@ -222,6 +222,7 @@ class bx_dbforms2_form {
     public function getConfigAttributes() {
         return array(
             'onsavejs'      => 'string',
+            'onloadjs'      => 'string',
             'onsavephp'     => 'string',
             'alternate'     => 'string',
             'xsl'           => 'string',
