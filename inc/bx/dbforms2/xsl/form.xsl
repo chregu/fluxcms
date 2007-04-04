@@ -99,7 +99,7 @@
         formConfig['tablePrefix']           = '<xsl:value-of select="$tablePrefix"/>';
 
         formConfig['onSaveJS']              = '<xsl:value-of select="php:functionString('addslashes', @onsavejs)"/>';
-        formConfig['onLoadJS']              = '<xsl:value-of select="php:functionString('addslashes', @onload)"/>';
+        formConfig['onLoadJS']              = '<xsl:value-of select="php:functionString('addslashes', @onloadjs)"/>';
         
         formConfig['thisidfield']           = '<xsl:value-of select="php:functionString('addslashes', @thisidfield)"/>';
         formConfig['thatidfield']           = '<xsl:value-of select="php:functionString('addslashes', @thatidfield)"/>';
@@ -113,9 +113,7 @@
                     group['isGroup'] = true;
                     group['type'] = '<xsl:value-of select="@type"/>';
                     <xsl:for-each select="fields/*[local-name() != 'nofield']">
-                        <xsl:call-template name="genJSConfig">
-                            <xsl:with-param name="field" select="."/>
-                        </xsl:call-template>
+                        <xsl:apply-templates select="." mode="jsconfig"/>
                         group['fields']['<xsl:value-of select="@name"/>'] = field;
                     </xsl:for-each>
                     formConfig['fields']['<xsl:value-of select="@name"/>'] = group;

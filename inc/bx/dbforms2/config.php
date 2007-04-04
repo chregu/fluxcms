@@ -186,7 +186,7 @@ class bx_dbforms2_config {
                                 $fieldInstance->liveSelect = $liveSelect;
                             }
                         } else if($field->localName == 'group') {
-                            $fieldInstance->setFields($this->getFields($field));
+                            $fieldInstance->setFields($this->getFields($field, $parentForm));
                         
                         } else if($field->localName == 'nofield') {
                             $fieldInstance->setValue($field->getAttribute('value'));				
