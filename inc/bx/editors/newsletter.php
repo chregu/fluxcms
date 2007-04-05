@@ -851,11 +851,10 @@ class bx_editors_newsletter extends bx_editor implements bxIeditor {
             // quote values
             $tokens = explode(",", $line);
             for($i=0; $i<count($tokens); $i++) {
-                $tokens[$i] = "'" . $tokens[$i] . "'";    
+                $tokens[$i] =  $db->quote($tokens[$i]);    
             }
             $line = implode(",", $tokens);
             $db = $GLOBALS['POOL']->dbwrite;
-            
             $id = $db->nextID($prefix."_sequences");                       
             $query = "insert into ".$prefix."newsletter_users (id,".$queryFields.",created) value($id,".$line.",NOW())";
             // try to insert

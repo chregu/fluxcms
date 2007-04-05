@@ -46,8 +46,9 @@ class bx_resourcemanager {
         if (($val = $GLOBALS['POOL']->cache->get($key)) !== false) {
             return $val;
         }
-        $query = "select path from ".$GLOBALS['POOL']->config->getTablePrefix()."properties where path like '$dir$filename%'  LIMIT 1";
-        $res =  $GLOBALS['POOL']->db->query($query);
+        $db =  $GLOBALS['POOL']->db;
+        $query = "select path from ".$GLOBALS['POOL']->config->getTablePrefix()."properties where path like ".$db->quote($dir.$filename.'%')."  LIMIT 1";
+        $res = $db->query($query);
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
         }
@@ -63,7 +64,7 @@ class bx_resourcemanager {
     static public function getChildrenByMimeType(bx_collection $coll, $mimetype) {
         $children = array();
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "select p1.path as path, p2.value as mimetype from ".$prefix."properties as p1 left join ".$prefix."properties as p2 on p1.path = p2.path where p1.name = 'parent-uri' and p1.value = '".$coll->uri."' and p2.name='mimetype' and p2.value = '$mimetype'";
+        $query = "select p1.path as path, p2.value as mimetype from ".$prefix."properties as p1 left join ".$prefix."properties as p2 on p1.path = p2.path where p1.name = 'parent-uri' and p1.value = ". $GLOBALS['POOL']->db->quote($coll->uri)." and p2.name='mimetype' and p2.value = '$mimetype'";
         
         $res =  $GLOBALS['POOL']->db->query($query);
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
@@ -240,7 +241,7 @@ class bx_resourcemanager {
         $GLOBALS['POOL']->cache->del("res_".$path.":".$namespace);
         
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "delete from ".$prefix."properties where path = '$path' and name = '$name' and ns = '$namespace'"; 
+        $query = "delete from ".$prefix."properties where path = ".$GLOBALS['POOL']->dbwrite->quote($path)." and name = '$name' and ns = '$namespace'"; 
         $res = $GLOBALS['POOL']->dbwrite->query($query);
         return TRUE;
     }
@@ -249,7 +250,7 @@ class bx_resourcemanager {
         $GLOBALS['POOL']->cache->del("res_".$path.":".$namespace);
         
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $query = "from ".$prefix."properties where path = '$path' ";
+        $query = "from ".$prefix."properties where path = ".$GLOBALS['POOL']->dbwrite->quote($path);
         
         if ($namespace) {
             $query .= " and ns = '$namespace'";
