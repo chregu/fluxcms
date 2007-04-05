@@ -155,7 +155,7 @@ class bx_config_generate {
                 fwrite($fd,");\n");
                 // if someone comes from the coral cache network, set BX_WEBROOT differently
                 // but POST doesn't work then...
-//                $c = "((!empty(\$_SERVER['HTTP_VIA']) && strpos(\$_SERVER['HTTP_USER_AGENT'],'CoralWeb') === 0 ) ? ". preg_replace("#\.'/'$#",".'.nyud.net:8080/'",$c) ." : BX_WEBROOT_POST)";
+//                $c = "((!empty(\$_SERVER['HTTP_VIA']) && strpos(\$_SERVER['HTTP_USER_AGENT'],'CoralWeb') == 0 ) ? ". preg_replace("#\.'/'$#",".'.nyud.net:8080/'",$c) ." : BX_WEBROOT_POST)";
             }
             
             fwrite($fd,"define('".$name."',"); 
