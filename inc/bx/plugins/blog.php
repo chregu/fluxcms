@@ -816,7 +816,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 unix_timestamp(date_add(blogposts.post_date, INTERVAL ". self::$timezone." SECOND)) as cdate
                 FROM ".$tablePrefix."blogposts as blogposts where post_uri = ". $db->quote($id);
                 $r = $db->query($query);
-                $row = $r->fetchRow(MDB2_FETCHMODE_ASSOC);
+
+		if (MDB2::isError($r)) {
+			throw new PopoonDBException($r);
+		}
+               $row = $r->fetchRow(MDB2_FETCHMODE_ASSOC);
                 $GLOBALS['POOL']->cache->set("plugins_blog_path_".$pathid,$row,0,"plugins_blog_id_".$row['id']);
             }
             $res = new bx_resources_simple($pathid);
