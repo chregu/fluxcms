@@ -277,8 +277,8 @@
 
         <script type="text/javascript">
     var liveSearchRoot = '<xsl:value-of select="$webroot"/>';
-    var liveSearchParams = 'root=<xsl:value-of select="$webrootW"/>
-    <xsl:call-template name="html_head_cocomment"/>
+    var liveSearchParams = 'blogid=<xsl:value-of select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:blog_id"/>&amp;root=<xsl:value-of select="$webrootW"/>
+   <xsl:call-template name="html_head_cocomment"/>
         </script>
         
         <xsl:call-template name="html_head_custom"/>
