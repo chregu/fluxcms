@@ -162,18 +162,22 @@ class Auth_OpenID_FileStore extends Auth_OpenID_OpenIDStore {
 
         fwrite($file_obj, $auth_key);
         fflush($file_obj);
+        fclose($file_obj);
 
-        if (!link($tmp, $this->auth_key_name)) {
+        if (function_exists('link')) {
+            // Posix filesystem
+            $saved = link($tmp, $this->auth_key_name);
+            Auth_OpenID_FileStore::_removeIfPresent($tmp);
+        } else {
+            // Windows filesystem
+            $saved = rename($tmp, $this->auth_key_name);
+        }
+
+        if (!$saved) {
             // The link failed, either because we lack the permission,
             // or because the file already exists; try to read the key
             // in case the file already existed.
             $auth_key = $this->readAuthKey();
-
-            if (!$auth_key) {
-                return null;
-            } else {
-                Auth_OpenID_FileStore::_removeIfPresent($tmp);
-            }
         }
 
         return $auth_key;
@@ -295,7 +299,7 @@ class Auth_OpenID_FileStore extends Auth_OpenID_OpenIDStore {
 
     /**
      * Retrieve an association. If no handle is specified, return the
-     * association with the latest expiration.
+     * association with the most recent issue time.
      *
      * @return mixed $association
      */
@@ -324,7 +328,7 @@ class Auth_OpenID_FileStore extends Auth_OpenID_OpenIDStore {
             // strip off the path to do the comparison
             $name = basename($filename);
             foreach ($association_files as $association_file) {
-                if (strpos($association_file, $name) == 0) {
+                if (strpos($association_file, $name) === 0) {
                     $matching_files[] = $association_file;
                 }
             }

@@ -15,9 +15,14 @@
 
 /**
  * Require the PEAR DB module because we'll need it for the SQL-based
- * stores implemented here.
+ * stores implemented here.  We silence any errors from the inclusion
+ * because it might not be present, and a user of the SQL stores may
+ * supply an Auth_OpenID_DatabaseConnection instance that implements
+ * its own storage.
  */
-require_once 'DB.php';
+global $__Auth_OpenID_PEAR_AVAILABLE;
+$GLOBALS['__Auth_OpenID_PEAR_AVAILABLE'] = @include_once 'DB.php';
+
 /**
  * @access private
  */
@@ -56,9 +61,11 @@ class Auth_OpenID_SQLStore extends Auth_OpenID_OpenIDStore {
      * established database connection be given to it, and it allows
      * overriding the default table names.
      *
-     * @param connection $conn This must be an established connection
-     * to a database of the correct type for the SQLStore subclass
-     * you're using.
+     * @param connection $connection This must be an established
+     * connection to a database of the correct type for the SQLStore
+     * subclass you're using.  This must either be an PEAR DB
+     * connection handle or an instance of a subclass of
+     * Auth_OpenID_DatabaseConnection.
      *
      * @param string $settings_table This is an optional parameter to
      * specify the name of the table used for this store's settings.
@@ -76,6 +83,8 @@ class Auth_OpenID_SQLStore extends Auth_OpenID_OpenIDStore {
                                   $associations_table = null,
                                   $nonces_table = null)
     {
+        global $__Auth_OpenID_PEAR_AVAILABLE;
+
         $this->settings_table_name = "oid_settings";
         $this->associations_table_name = "oid_associations";
         $this->nonces_table_name = "oid_nonces";
@@ -95,8 +104,13 @@ class Auth_OpenID_SQLStore extends Auth_OpenID_OpenIDStore {
         $this->connection = $connection;
 
         // Be sure to set the fetch mode so the results are keyed on
-        // column name instead of column index.
-        $this->connection->setFetchMode(DB_FETCHMODE_ASSOC);
+        // column name instead of column index.  This is a PEAR
+        // constant, so only try to use it if PEAR is present.  Note
+        // that Auth_Openid_Databaseconnection instances need not
+        // implement ::setFetchMode for this reason.
+        if ($__Auth_OpenID_PEAR_AVAILABLE) {
+            $this->connection->setFetchMode(DB_FETCHMODE_ASSOC);
+        }
 
         if ($settings_table) {
             $this->settings_table_name = $settings_table;
@@ -431,13 +445,19 @@ class Auth_OpenID_SQLStore extends Auth_OpenID_OpenIDStore {
      */
     function _get_assocs($server_url)
     {
-        return $this->connection->getAll($this->sql['get_assocs'],
-                                         array($server_url));
+        $result = $this->connection->getAll($this->sql['get_assocs'],
+                                            array($server_url));
+
+        if ($this->isError($result)) {
+            return array();
+        } else {
+            return $result;
+        }
     }
 
     function removeAssociation($server_url, $handle)
     {
-        if (!$this->getAssociation($server_url, $handle)) {
+        if ($this->_get_assoc($server_url, $handle) == null) {
             return false;
         }
 
@@ -465,7 +485,7 @@ class Auth_OpenID_SQLStore extends Auth_OpenID_OpenIDStore {
             $assocs = $this->_get_assocs($server_url);
         }
 
-        if (count($assocs) == 0) {
+        if (!$assocs || (count($assocs) == 0)) {
             return null;
         } else {
             $associations = array();

@@ -20,17 +20,6 @@
  */
 class Auth_OpenID_KVForm {
     /**
-     * Issue a warning when parsing KV form
-     *
-     * @static
-     * @access private
-     */
-    function _warn($msg)
-    {
-        trigger_error($msg, E_USER_WARNING);
-    }
-
-    /**
      * Convert an OpenID colon/newline separated string into an
      * associative array
      *
@@ -43,8 +32,6 @@ class Auth_OpenID_KVForm {
 
         $last = array_pop($lines);
         if ($last !== '') {
-            $msg = 'No newline at end of kv string:' . var_export($kvs, true);
-            Auth_OpenID_KVForm::_warn($msg);
             array_push($lines, $last);
             if ($strict) {
                 return false;
@@ -57,8 +44,6 @@ class Auth_OpenID_KVForm {
             $line = $lines[$lineno];
             $kv = explode(':', $line, 2);
             if (count($kv) != 2) {
-                $msg = "No colon on line $lineno: " . var_export($line, true);
-                Auth_OpenID_KVForm::_warn($msg);
                 if ($strict) {
                     return false;
                 }
@@ -68,9 +53,6 @@ class Auth_OpenID_KVForm {
             $key = $kv[0];
             $tkey = trim($key);
             if ($tkey != $key) {
-                $msg = "Whitespace in key on line $lineno:" .
-                    var_export($key, true);
-                Auth_OpenID_KVForm::_warn($msg);
                 if ($strict) {
                     return false;
                 }
@@ -79,9 +61,6 @@ class Auth_OpenID_KVForm {
             $value = $kv[1];
             $tval = trim($value);
             if ($tval != $value) {
-                $msg = "Whitespace in value on line $lineno: " .
-                    var_export($value, true);
-                Auth_OpenID_KVForm::_warn($msg);
                 if ($strict) {
                     return false;
                 }
@@ -105,27 +84,23 @@ class Auth_OpenID_KVForm {
             return null;
         }
 
+        ksort($values);
+
         $serialized = '';
         foreach ($values as $key => $value) {
             if (is_array($value)) {
-                list($key, $value) = $value;
+                list($key, $value) = array($value[0], $value[1]);
             }
 
             if (strpos($key, ':') !== false) {
-                $msg = '":" in key:' . var_export($key, true);
-                Auth_OpenID_KVForm::_warn($msg);
                 return null;
             }
 
             if (strpos($key, "\n") !== false) {
-                $msg = '"\n" in key:' . var_export($key, true);
-                Auth_OpenID_KVForm::_warn($msg);
                 return null;
             }
 
             if (strpos($value, "\n") !== false) {
-                $msg = '"\n" in value:' . var_export($value, true);
-                Auth_OpenID_KVForm::_warn($msg);
                 return null;
             }
             $serialized .= "$key:$value\n";

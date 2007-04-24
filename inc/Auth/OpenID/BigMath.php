@@ -26,8 +26,7 @@ require_once 'Auth/OpenID/CryptUtil.php';
  * @package OpenID
  */
 class Auth_OpenID_MathLibrary {
-
-        /**
+    /**
      * Given a long integer, returns the number converted to a binary
      * string.  This function accepts long integer values of arbitrary
      * magnitude and uses the local large-number math library when
@@ -107,7 +106,13 @@ class Auth_OpenID_MathLibrary {
 
     function base64ToLong($str)
     {
-        return $this->binaryToLong(base64_decode($str));
+        $b64 = base64_decode($str);
+
+        if ($b64 === false) {
+            return false;
+        }
+
+        return $this->binaryToLong($b64);
     }
 
     function longToBase64($str)
@@ -330,6 +335,14 @@ class Auth_OpenID_GmpMathWrapper extends Auth_OpenID_MathLibrary{
  * You can define new math library implementations and add them to
  * this array.
  */
+$GLOBALS['_Auth_OpenID_math_extensions'] = array(
+    array('modules' => array('gmp', 'php_gmp'),
+          'extension' => 'gmp',
+          'class' => 'Auth_OpenID_GmpMathWrapper'),
+    array('modules' => array('bcmath', 'php_bcmath'),
+          'extension' => 'bcmath',
+          'class' => 'Auth_OpenID_BcMathWrapper')
+    );
 
 /**
  * Detect which (if any) math library is available
@@ -400,20 +413,14 @@ function &Auth_OpenID_getMathLib()
     }
 
     if (defined('Auth_OpenID_NO_MATH_SUPPORT')) {
-        return null;
+        $null = null;
+        return $null;
     }
 
     // If this method has not been called before, look at
     // $Auth_OpenID_math_extensions and try to find an extension that
     // works.
-    $_Auth_OpenID_math_extensions = array(
-    array('modules' => array('gmp', 'php_gmp'),
-          'extension' => 'gmp',
-          'class' => 'Auth_OpenID_GmpMathWrapper'),
-    array('modules' => array('bcmath', 'php_bcmath'),
-          'extension' => 'bcmath',
-          'class' => 'Auth_OpenID_BcMathWrapper')
-    );
+    global $_Auth_OpenID_math_extensions;
     $ext = Auth_OpenID_detectMathLibrary($_Auth_OpenID_math_extensions);
     if ($ext === false) {
         $tried = array();

@@ -20,8 +20,8 @@
 /**
  * Require the fetcher code.
  */
-require_once "Auth/OpenID/PlainHTTPFetcher.php";
-require_once "Auth/OpenID/ParanoidHTTPFetcher.php";
+require_once "Services/Yadis/PlainHTTPFetcher.php";
+require_once "Services/Yadis/ParanoidHTTPFetcher.php";
 
 /**
  * Status code returned by the server when the only option is to show
@@ -64,10 +64,10 @@ define('Auth_OpenID_REDIRECT', 'redirect');
 
 /**
  * Status code returned when the caller needs to authenticate the
- * user. The associated value is a Auth_OpenID_ServerRequest
+ * user. The associated value is a {@link Auth_OpenID_ServerRequest}
  * object that can be used to complete the authentication. If the user
  * has taken some authentication action, use the retry() method of the
- * Auth_OpenID_ServerRequest object to complete the request.
+ * {@link Auth_OpenID_ServerRequest} object to complete the request.
  *
  * @see Auth_OpenID_Server
  */
@@ -96,6 +96,14 @@ define('Auth_OpenID_punct',
        "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
 
 /**
+ * These namespaces are automatically fixed in query arguments by
+ * Auth_OpenID::fixArgs.
+ */
+global $_Auth_OpenID_namespaces;
+$GLOBALS['_Auth_OpenID_namespaces'] = array('openid',
+                                 'sreg');
+
+/**
  * The OpenID utility function class.
  *
  * @package OpenID
@@ -104,34 +112,28 @@ define('Auth_OpenID_punct',
 class Auth_OpenID {
 
     /**
-     * Factory function that will return an instance of the
-     * appropriate HTTP fetcher
-     */
-    function getHTTPFetcher()
-    {
-        if (defined('Auth_OpenID_CURL_PRESENT') &&
-            Auth_OpenID_CURL_PRESENT) {
-            $fetcher = new Auth_OpenID_ParanoidHTTPFetcher();
-        } else {
-            $fetcher = new Auth_OpenID_PlainHTTPFetcher();
-        }
-        return $fetcher;
-    }
-
-    /**
      * Rename query arguments back to 'openid.' from 'openid_'
      *
      * @access private
      * @param array $args An associative array of URL query arguments
      */
-    function fixArgs($args)
+    static function fixArgs($args)
     {
+        global $_Auth_OpenID_namespaces;
         foreach (array_keys($args) as $key) {
-            $fixed = preg_replace('/^openid_/', 'openid.', $key);
-            if ($fixed != $key) {
-                $val = $args[$key];
-                unset($args[$key]);
-                $args[$fixed] = $val;
+            $fixed = $key;
+            if (preg_match('/^openid/', $key)) {
+                foreach ($_Auth_OpenID_namespaces as $ns) {
+                    if (preg_match('/'.$ns.'_/', $key)) {
+                        $fixed = preg_replace('/'.$ns.'_/', $ns.'.', $fixed);
+                    }
+                }
+
+                if ($fixed != $key) {
+                    $val = $args[$key];
+                    unset($args[$key]);
+                    $args[$fixed] = $val;
+                }
             }
         }
 

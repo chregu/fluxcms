@@ -101,7 +101,7 @@ class Auth_OpenID_Parse {
      * Starts with the tag name at a word boundary, where the tag name
      * is not a namespace
      */
-    var $_tag_expr = "<%s\b(?!:)([^>]*?)(?:\/>|>(.*?)(?:<\/?%s\s*>|\Z))";
+    var $_tag_expr = "<%s\b(?!:)([^>]*?)(?:\/>|>(.*?)(?:<\/?%s[^>]*>|\Z))";
 
     var $_attr_find = '\b(\w+)=("[^"]*"|\'[^\']*\'|[^\'"\s\/<>]+)';
 
@@ -190,46 +190,21 @@ class Auth_OpenID_Parse {
      */
     function parseLinkAttrs($html)
     {
-        $stripped = preg_replace($this->_removed_re,
-                                 "",
-                                 $html);
-
-        // Try to find the <HTML> tag.
-        $html_re = $this->htmlFind();
-        $html_matches = array();
-        if (!preg_match($html_re, $stripped, $html_matches)) {
-            return array();
-        }
-
-        // Try to find the <HEAD> tag.
-        $head_re = $this->headFind();
-        $head_matches = array();
-        if (!preg_match($head_re, $html_matches[0], $head_matches)) {
-            return array();
-        }
-
+        
+        $dom = new domdocument();
+        $dom->loadHTML($html);
         $link_data = array();
-        $link_matches = array();
-
-        if (!preg_match_all($this->_link_find, $head_matches[0],
-                            $link_matches)) {
-            return array();
-        }
-
-        foreach ($link_matches[0] as $link) {
-            $attr_matches = array();
-            preg_match_all($this->_attr_find, $link, $attr_matches);
+        $xp = new domxpath($dom);
+        $link_matches = $xp->query("/html/head/link");
+        foreach ($link_matches as $link) {
             $link_attrs = array();
-            foreach ($attr_matches[0] as $index => $full_match) {
-                $name = $attr_matches[1][$index];
-                $value = $this->replaceEntities(
-                              $this->removeQuotes($attr_matches[2][$index]));
-
-                $link_attrs[strtolower($name)] = $value;
+            foreach ($link->attributes as $attr) {
+            
+                $link_attrs[strtolower($attr->name)] = $attr->value;
             }
+            
             $link_data[] = $link_attrs;
         }
-
         return $link_data;
     }
 
@@ -284,6 +259,23 @@ class Auth_OpenID_Parse {
         }
         $first = $matches[0];
         return Auth_OpenID::arrayGet($first, 'href', null);
+    }
+}
+
+function Auth_OpenID_legacy_discover($html_text)
+{
+    $p = new Auth_OpenID_Parse();
+
+    $link_attrs = $p->parseLinkAttrs($html_text);
+    $server_url = $p->findFirstHref($link_attrs,
+                                    'openid.server');
+
+    if ($server_url === null) {
+        return false;
+    } else {
+        $delegate_url = $p->findFirstHref($link_attrs,
+                                          'openid.delegate');
+        return array($delegate_url, $server_url);
     }
 }
 
