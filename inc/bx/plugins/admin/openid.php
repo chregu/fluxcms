@@ -29,6 +29,7 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         include_once("Auth/OpenID/Server.php");
         //throw new BxPageNotAllowedException();
         $server = bx_helpers_openid::getServer();
+        $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         
         $conf = bx_config::getInstance();
         
@@ -36,8 +37,9 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $permObj = bx_permm::getInstance($confvars);
         
         //hier werden die user ∈der übersich editiert
+        
         if(isset($_POST['UserEditForm'])) {
-            $this->saveUserProfile($_POST);
+            $this->saveUserProfile($_POST, $tablePrefix);
         }
         
         if (!$permObj->isAllowed('/',array('admin')) &&  !(isset($_POST['openid_mode']) && ($_POST['openid_mode'] == 'associate' || $_POST['openid_mode'] == 'check_authentication'))) {
@@ -96,8 +98,13 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         
         if (!$request && !isset($_GET['answer'])) {
             
-            $xml = $this->do_about();
-            $xml .= $this->getUserEditForm();
+            $xml = $this->do_about($tablePrefix);
+            if(isset($_POST['UserProfileForm'])) {
+                $xml .= $this->getUserEditForm($tablePrefix, $_POST);
+            } else {
+                $xml .= $this->getUserEditForm($tablePrefix);
+            }
+            
             $xml .= "</body></html>";
             $dom = new DomDocument();
             $dom->loadXML($xml);
@@ -115,7 +122,7 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
                     header("Location: " . BX_WEBROOT."admin/?back=".urlencode($_SERVER['REQUEST_URI']));
                     die();
                 }
-                $xml = $this->do_auth($request);
+                $xml = $this->do_auth($request, $tablePrefix);
                 $xml .= $this->getUserForm();
                 $xml .= "</body></html>";
                 $dom = new DomDocument();
@@ -170,7 +177,7 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         //print "</html>";
     }
 
-    static function do_about() {
+    static function do_about($tablePrefix) {
         $xml = '';
         if(isset($_GET['id'])) {
             
@@ -179,12 +186,13 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
             $xml .= '<meta http-equiv="refresh" content="1; URL=http://'.$_SERVER['HTTP_HOST'].'/admin/webinc/openid">';
         }
         
-        $query = "select * from ". $GLOBALS['POOL']->config->getTablePrefix(). "openid_uri";
+        $query = "select * from ". $tablePrefix . "openid_uri";
         $result = $GLOBALS['POOL']->db->query($query);
         $xml .= bx_plugins_admin_openid::printHeader();
         $xml .= '<body>';
         $xml .= '<h2 class="openIdPage">'. bx_helpers_config::getOption('sitename'). ' - Flux CMS OpenID</h2>';
         $xml .= "<div class='openIdTrust'>";
+        $xml .= '<h3>Trusted Sites</h3>';
         $xml .= "<table>";
         while($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $xml .= "<tr><td><a href='?id=".$row['id']."'><img style='border:0px;' src='".BX_WEBROOT."admin/webinc/img/icons/delete.gif'/></a></td><td>".$row['uri']."</td><td>".$row['date']."</td></tr>\n";
@@ -195,7 +203,7 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         return $xml;
     }
     
-    static function do_auth($request) {
+    static function do_auth($request, $tablePrefix) {
         $xml = bx_plugins_admin_openid::printHeader();
         $xml .= '<body>';
         $xml .= '<h2 class="openIdPage">'. bx_helpers_config::getOption('sitename'). ' - Flux CMS OpenID</h2>';
@@ -216,14 +224,53 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $xml = '<html>';
         $xml .= '<head>';
         $xml .= '<link type="text/css" href="'.BX_WEBROOT.'/themes/standard/admin/css/formedit.css" rel="stylesheet"/>';
+        $xml .= '<script src="'.BX_WEBROOT.'webinc/js/openId.js" type="text/javascript"></script>';
         $xml .= '</head>';
         
         return $xml;
         
     }
     
-    static function getUserEditForm() {
+    static function getUserEditForm($tablePrefix, $data=null) {
+        $userid = bx_helpers_perm::getUserId();
+        
+        $profiles_query = "select * from ". $tablePrefix . "openid_profiles where userid = '".$userid."'";
+        $profiles_res = $GLOBALS['POOL']->db->query($profiles_query);
+        
         $xml = "<div class='openIdTrust'>";
+        
+        $xml .= '<form action="" method="post" class="personaform" name="personaForm">
+        <select name="profiles" onchange="submit();">';
+        
+        while ($profiles_row = $profiles_res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+            if(isset($data['profiles']) && $data['UserProfileForm'] == 1 && $data['profiles'] == $profiles_row['id']) {
+                $xml .= '<option selected="selected" value="'.$profiles_row['id'].'">'.$profiles_row['persona'].'</option>';
+            }
+            
+            
+            
+            if($profiles_row['standard'] == 'on' && !isset($data['profiles']) && $data['UserProfileForm'] != 1) {
+                $xml .= '<option selected="selected" value="'.$profiles_row['id'].'">'.$profiles_row['persona'].'</option>';
+            } elseif($data['profiles'] != $profiles_row['id']) {
+                $xml .= '<option value="'.$profiles_row['id'].'">'.$profiles_row['persona'].'</option>';
+            }
+        }
+        
+        
+        //vielleicht doppelter code
+        if(isset($data['profiles']) && $data['UserProfileForm'] == 1) {
+            $default_profile_query = "select * from ". $tablePrefix . "openid_profiles where id = '".$data['profiles']."'";
+        } else {
+            $default_profile_query = "select * from ". $tablePrefix . "openid_profiles where standard = 'on' and userid = '".$userid."'";
+        }
+        
+        
+        $default_profile_res = $GLOBALS['POOL']->db->query($default_profile_query);
+        
+        $default_profile_row = $default_profile_res->fetchRow(MDB2_FETCHMODE_ASSOC);
+        
+        $xml .= '</select><input type="text" name="UserProfileForm" style="display:none" value="1"/></form>';
+        
         $xml .= '<h3>Personas</h3>';
         $xml .= '<form action="" method="post">';
         $xml .= '<input type="text" name="UserEditForm" style="display:none" value="1"/>';
@@ -232,11 +279,11 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $xml .= '<tr><td>';
         $xml .= 'Persona Name';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="persona"/>';
+        $xml .= '<input type="text" name="persona" value="'.$default_profile_row['persona'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
-        $xml .= '<input type="checkbox" name="default"/>';
+        $xml .= '<input type="checkbox" name="default" value="'.$default_profile_row['standard'].'"/>';
         $xml .= '</td><td>';
         $xml .= 'Make this my default persona';
         $xml .= '</td></tr>';
@@ -244,55 +291,55 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $xml .= '<tr><td>';
         $xml .= 'Nickname';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="nickname"/>';
+        $xml .= '<input type="text" name="nickname" value="'.$default_profile_row['nickname'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
         $xml .= 'Full Name';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="name"/>';
+        $xml .= '<input type="text" name="name" value="'.$default_profile_row['name'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
         $xml .= 'E-Mail Adress';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="mail"/>';
+        $xml .= '<input type="text" name="mail" value="'.$default_profile_row['mail'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
         $xml .= 'Birth date';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="bla"/>';
+        $xml .= '<input type="text" name="bla" value="'.$default_profile_row['birthdate'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
         $xml .= 'Postal Code';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="postal"/>';
+        $xml .= '<input type="text" name="postal" value="'.$default_profile_row['postal'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
         $xml .= 'Gender';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="gender"/>';
+        $xml .= '<input type="text" name="gender" value="'.$default_profile_row['gender'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
         $xml .= 'Country';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="country"/>';
+        $xml .= '<input type="text" name="country" value="'.$default_profile_row['country'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
         $xml .= 'Time Zone';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="timezone"/>';
+        $xml .= '<input type="text" name="timezone" value="'.$default_profile_row['timezone'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
         $xml .= 'Preferred Language';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="lang"/>';
+        $xml .= '<input type="text" name="lang" value="'.$default_profile_row['lang'].'"/>';
         $xml .= '</td></tr>';
         
         $xml .= '<tr>';
@@ -386,12 +433,23 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         return $xml;
     }
     
-    static function saveUserProfile($data) {
+    static function saveUserProfile($data, $tablePrefix) {
         
-        bx_helpers_debug::webdump($data);
-        $username = bx_helpers_perm::getUserId();
-        bx_helpers_debug::webdump($username);
-        //$insert_query = '';
+        $userid = bx_helpers_perm::getUserId();
+        
+        if($data['default'] == 'on') {
+            $remove_default_query = 'update '.$tablePrefix.'openid_profiles set standard = 0 where standard = "on" and userid = "'.$userid.'"';
+            $GLOBALS['POOL']->db->query($remove_default_query);
+            
+        }
+        
+        $insert_query = 'insert into '.$tablePrefix.'openid_profiles (persona , nickname , name 
+        , mail , birthdate , postal , gender , country , timezone , lang , standard , userid) 
+        values("'.$data['persona'].'" , "'.$data['nickname'].'" , "'.$data['name'].'" 
+        , "'.$data['mail'].'" , "'.$data['bla'].'" , "'.$data['postal'].'" , "'.$data['gender'].'" , "'.$data['country'].'" 
+        , "'.$data['timezone'].'" , "'.$data['lang'].'" , "'.$data['default'].'" , "'.$userid.'")';
+        
+        $GLOBALS['POOL']->db->query($insert_query);
         
     }
     
