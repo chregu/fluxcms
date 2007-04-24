@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/config">
+    <plugins>
+        <parameter name="xslt" type="pipeline" value="openid.xsl"/>
+        <plugin type="admin_openid" admin="true"></plugin>
+    </plugins>
+ </bxcms>
