@@ -8,6 +8,11 @@ class bx_helpers_perm {
         return $perm->getUsername();
     }
     
+    static function getUserId() {
+        $perm = bx_permm::getInstance();
+        return $perm->getUserId();
+    }
+    
     static function getUserGid() {
         $perm = bx_permm::getInstance();
         return $perm->getUserGid();
