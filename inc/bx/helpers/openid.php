@@ -5,8 +5,8 @@ class bx_helpers_openid {
     static function getServer() {
         if (!isset(self::$server)) {
             $store =  self::getOpenIDStore();
-            $serverURL = self::getServerURL();
-            self::$server = new Auth_OpenID_Server($serverURL, $store);
+            //$serverURL = self::getServerURL();
+            self::$server = new Auth_OpenID_Server( $store);
         }
         return self::$server;
     }
@@ -17,7 +17,7 @@ class bx_helpers_openid {
     }
     
     static function getOpenIDStore() {    
-        $a = new Auth_OpenID_FileStore("/tmp");
+        //$a = new Auth_OpenID_FileStore("/tmp");
         return new Auth_OpenID_FileStore("/tmp");
     }
     
