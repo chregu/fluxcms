@@ -109,6 +109,39 @@
                 </map:act>
             </map:match>
         </map:pipeline>
+        <map:pipeline>
+            <map:match type="uri" matchtype="regex" pattern="#^/*openid/*$#">
+                  <map:act type="bxcmsadmin" uri="{../1}">
+
+                        <map:parameter name="editor" value="phpglobals://_GET[editor]"/>
+                        <map:select type="any" var="{pipelineName}">
+
+                            <map:when test="xml">
+                                <map:include label="bxcmsGenerator"/>
+                                <map:transform type="xslt" src="constant(BX_LIBS_DIR)xsl/plugin2xml.xsl">
+                                    <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                                    <map:parameter name="requestUri" value="{requestUri}"/>
+                                    <map:parameter name="mode" value="{mode}"/>
+
+                                </map:transform>
+                                <map:serialize type="xml" contentType="text/xml; charset=utf-8">
+                                    <map:parameter name="outputErrors" value="bx_errorhandler"/>
+                                </map:serialize>
+                            </map:when>
+                            <map:when test="standard">
+                                <map:include label="bxcmsGenerator"/>
+                                <map:include label="standardOutput"/>
+                            </map:when>
+                            <map:otherwise>
+                                <map:mount src="admin/sitemap/{pipelineName}.xml" uri-prefix="edit/"/>
+                            </map:otherwise>
+                        </map:select>
+                    </map:act>
+            </map:match>
+        </map:pipeline>
+        
+        
+        
         
         <map:pipeline>
             <map:match type="uri" matchtype="regex" pattern="#^/*$#">
@@ -129,7 +162,6 @@
                 </map:act>
             </map:match>
         </map:pipeline>
-        
         <map:pipeline>
             <map:match type="uri" pattern="*">
                 <map:act uri="{1}" type="bxcmsauth">
@@ -184,6 +216,15 @@
                     <map:serialize type="xhtml">
                         <map:parameter type="header" name="HTTP" value="404 Not Found"/>
                     </map:serialize>
+                </map:when>
+                 <map:when test="BxPageNotAllowedException">
+                               <map:generate type="xmlfile" src="constant(BX_THEMES_DIR)/standard/admin/login.html"/>
+            <map:transform type="phpprocessor"/>
+            <map:serialize type="xhtml">
+                <map:parameter name="stripXMLDeclaration" value="true"/>
+                <map:parameter name="stripScriptCDATA" value="true"/>
+            </map:serialize>
+
                 </map:when>
             </map:select>
         </map:handle-errors>
