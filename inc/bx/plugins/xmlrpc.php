@@ -21,23 +21,23 @@ class bx_plugins_xmlrpc extends bx_plugin {
     }
     
     public function getContentById($path, $id) {
+         global  $HTTP_RAW_POST_DATA;
          // create a global self-reference for doing callbacks
         //$GLOBALS['_popoon_generator_xmlrpc_server']['foo'] = $this;
+        $HTTP_RAW_POST_DATA = file_get_contents('php://input');
         $this->path = $path;
         $this->id = $id;
         $this->registerFunctions();
         $this->_server = new XML_RPC_Server($this->_dispatchMap, FALSE);  
         try {
             $xml = $this->_server->server_payload;
-            
-            
-            
         } catch (Exception $e) {
         
             $r = new XML_RPC_Response(0,$e->getCode(),$e->getMessage());
             $xml = '<?xml version="1.0" ?>'.$r->serialize();
         }
         $dom = new DomDocument();
+        
         $dom->loadXML($xml);
         return $dom;
     }
