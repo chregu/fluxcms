@@ -67,13 +67,13 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
         $mode = $this->getDisplayModeByID($id);
         
         if($mode == 'data') {
-            
-            if(isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
+            $rawpost = file_get_contents('php://input');
+            if(!empty($rawpost)) {
                 $db = $GLOBALS['POOL']->dbwrite;
                 
                 // create a new DOM document out of the posted string
                 $xmlData = new DOMDocument();
-                $xmlData->loadXML($GLOBALS['HTTP_RAW_POST_DATA']);
+                $xmlData->loadXML($rawpost);
                 
                 // get values as an array
                 $values = bx_dbforms2_data::getValuesByXML($form, $xmlData);
