@@ -87,25 +87,21 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         } 
         
         $mode = "default";
-        
-        
         //Details des standard oder ausgewählten Profil
-            if(!isset($_POST['profiles']) && isset($_SESSION["openid.sreg.optional"])) {
+            if(!isset($_GET['profile']) && isset($_SESSION["openid.sreg.optional"])) {
                 //liest das default profil aus der Datenbank
                 $profile_query = "select persona as persona_name , nickname as nickname , name as fullname , mail as email , birthdate , postal as postcode , gender , country , timezone , lang as language 
                 from ". $tablePrefix . "openid_profiles where standard = 'on' and userid = '".$userid."'";
                 $profile_res = $GLOBALS['POOL']->db->query($profile_query);
                 $profile_row = $profile_res->fetchRow(MDB2_FETCHMODE_ASSOC);
-            } elseif(isset($_POST['profiles']) && isset($_SESSION["openid.sreg.optional"])) {
+            } elseif(isset($_GET['profile']) && isset($_SESSION["openid.sreg.optional"])) {
                 //liest das ausgewählte profil aus der Datenbank
                 $profile_query = "select persona as persona_name , nickname as nickname , name as fullname , mail as email , birthdate , postal as postcode , gender , country , timezone , lang as language 
-                from ". $tablePrefix . "openid_profiles where id = '".$_POST['profiles']."' and userid = '".$userid."'";
+                from ". $tablePrefix . "openid_profiles where id = '".$_GET['profile']."' and userid = '".$userid."'";
                 $profile_res = $GLOBALS['POOL']->db->query($profile_query);
                 $profile_row = $profile_res->fetchRow(MDB2_FETCHMODE_ASSOC);
             }
             
-            
-        
         
         if (isset($_GET['answer']) && $_GET['answer'] == 'yes') {
             $info = bx_helpers_openid::getRequestInfo();
@@ -118,7 +114,6 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
             
             //Bestätigung nach erfolgreicher Anmeldung
             $response = $info->answer(true);
-            
             if (is_array($_SESSION["openid.sreg.optional"])) {
                 foreach ($_SESSION["openid.sreg.optional"] as $k => $v) {
                     $response->addField('sreg', $v, 
@@ -153,7 +148,10 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         
         //OpenID Request Handling
         $request = Auth_OpenID::fixArgs($request);
-        $_SESSION["openid.sreg.optional"] = split(",", $request['openid.sreg.optional']);
+        if(isset($request['openid.sreg.optional'])) {
+            $_SESSION["openid.sreg.optional"] = split(",", $request['openid.sreg.optional']);
+        }
+        
         $request = $server->decodeRequest($request);
         
         bx_helpers_openid::setRequestInfo($request);
@@ -186,7 +184,13 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
                     header("Location: " . BX_WEBROOT."admin/?back=".urlencode($_SERVER['REQUEST_URI']));
                     die();
                 }
-                $xml = $this->do_auth($request, $tablePrefix);
+                if(isset($_POST['UserProfileIdNext'])) {
+                    $xml = $this->do_auth($request, $tablePrefix, $_POST['UserProfileIdNext']);
+                } elseif(isset($_POST['profiles'])) {
+                    $xml = $this->do_auth($request, $tablePrefix, $_POST['profiles']);
+                } else {
+                    $xml = $this->do_auth($request, $tablePrefix);
+                }
                 
                 //Anzeigen der Profile des jeweiligen Users wenn von redirect kommend
                 if(isset($_POST['UserProfileForm']) || isset($_POST['editId'])) {
@@ -272,13 +276,16 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         while($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $xml .= "<tr><td><a href='?id=".$row['id']."'><img style='border:0px;' src='".BX_WEBROOT."admin/webinc/img/icons/delete.gif'/></a></td><td>".$row['uri']."</td><td>".$row['date']."</td></tr>\n";
         }
+        if(!$result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+            $xml .= "<tr><td colspan='2'>Keine erlaubten Websiten vorhanden</td></tr>\n";
+        }
         $xml .= "</table>";
         $xml .= "</div>";
         
         return $xml;
     }
     
-    static function do_auth($request, $tablePrefix) {
+    static function do_auth($request, $tablePrefix, $profile=null) {
         $xml = bx_plugins_admin_openid::printHeader();
         $xml .= '<body>';
         $xml .= '<h2 class="openIdPage">'. bx_helpers_config::getOption('sitename'). ' - Flux CMS OpenID</h2>';
@@ -286,7 +293,12 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $xml .= '<br/>';
         $xml .= "<p style='padding-left: 20px; margin:0px;'>Do you want to trust " . $request->trust_root ."?</p>";
         $xml .= '<br/>';
-        $xml .= '<a  style="padding-left: 20px; " href="?answer=yes&#38;always=true">Always yes</a> | <a href="?answer=yes">yes</a> | <a href="?answer=no">no</a> ';
+        if($profile == null) {
+            $xml .= '<a  style="padding-left: 20px; " href="?answer=yes&#38;always=true">Always yes</a> | <a href="?answer=yes">yes</a> | <a href="?answer=no">no</a> ';
+        } else {
+            $xml .= '<a  style="padding-left: 20px; " href="?answer=yes&#38;always=true&#38;profile='.$profile.'">Always yes</a> | <a href="?answer=yes&#38;profile='.$profile.'">yes</a> | <a href="?answer=no">no</a> ';
+        }
+        
         $xml .= '</div>';
         
         return $xml;
@@ -344,32 +356,11 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
                     $xml .= '<option value="'.$profiles_row['id'].'">'.$profiles_row['persona'].'</option>';
                 }
             }
-            
-            /* TAKE A LOOK */
-        /*    if(isset($data['profiles']) && isset($data['UserProfileForm']) && $data['UserProfileForm'] == 1 && $data['profiles'] == $profiles_row['id']) {
-                $xml .= '<option selected="selected" value="'.$profiles_row['id'].'">'.$profiles_row['persona'].' </option>';
-            } 
-            if($profiles_row['standard'] == 'on' && !isset($data['profiles']) && isset($data['UserProfileForm']) && $data['UserProfileForm'] != 1 && !isset($this_profile_id)) {
-                $xml .= '<option selected="selected" value="'.$profiles_row['id'].'">'.$profiles_row['persona'].' (DEFAULT)</option>';
-            } elseif($profiles_row['id'] == $this_profile_id) {
-                $xml .= '<option selected="selected" value="'.$profiles_row['id'].'">'.$profiles_row['persona'].'</option>';
-            bx_helpers_debug::webdump($data);
-            bx_helpers_debug::webdump($profiles_row);
-                    
-            } elseif(isset($data['profiles']) && $data['profiles'] != $profiles_row['id']) {
-                if($profiles_row['standard'] == 'on') {
-                    $xml .= '<option value="'.$profiles_row['id'].'">'.$profiles_row['persona'].' (DEFAULT)</option>';
-                } else {
-                    $xml .= '<option value="'.$profiles_row['id'].'">'.$profiles_row['persona'].'</option>';
-                }
-            }*/
-            
-            
         }
         if($data['profiles'] == 'new') {
-            $xml .= '<option selected="selected" value="new">New</option>';
+            $xml .= '<option selected="selected" value="new">Neu</option>';
         } elseif($data['profiles'] != 'new') {
-            $xml .= '<option value="new">New</option>';
+            $xml .= '<option value="new">Neu</option>';
         }
             
         $xml .= '</select><input type="text" name="UserProfileForm" style="display:none" value="1"/></form>';
@@ -530,88 +521,127 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
             }
         }
         if($data['profiles'] != 'new') {
-            $xml .= '<option value="new">New</option>';
+            $xml .= '<option value="new">Neu</option>';
         }
             
         $xml .= '</select><input type="text" name="UserProfileForm" style="display:none" value="1"/></form>';
         
         
         if(isset($this_profile_id)) {
-            $default_profile_query = "select * from ". $tablePrefix . "openid_profiles where id = '".$this_profile_id."'";
+            $default_profile_query = "select id , persona as persona_name , nickname as nickname , name as fullname , mail as email , birthdate , postal as postcode , gender , country , timezone , lang as language 
+                 from ". $tablePrefix . "openid_profiles where id = '".$this_profile_id."'";
         } elseif(isset($data['profiles']) && $data['UserProfileForm'] == 1 && !isset($this_profile_id)) {
-            $default_profile_query = "select * from ". $tablePrefix . "openid_profiles where id = '".$data['profiles']."'";
+            $default_profile_query = "select id , persona as persona_name , nickname as nickname , name as fullname , mail as email , birthdate , postal as postcode , gender , country , timezone , lang as language 
+                 from ". $tablePrefix . "openid_profiles where id = '".$data['profiles']."'";
         } else {
-            $default_profile_query = "select * from ". $tablePrefix . "openid_profiles where standard = 'on' and userid = '".$userid."'";
+            $default_profile_query = "select id , persona as persona_name , nickname as nickname , name as fullname , mail as email , birthdate , postal as postcode , gender , country , timezone , lang as language 
+                 from ". $tablePrefix . "openid_profiles where standard = 'on' and userid = '".$userid."'";
         }
         
-        
         $default_profile_res = $GLOBALS['POOL']->db->query($default_profile_query);
-        
         $default_profile_row = $default_profile_res->fetchRow(MDB2_FETCHMODE_ASSOC);
-        bx_helpers_debug::webdump($_SESSION);
+        $xml .= '<h3>Personas</h3><p>Graue Felder können von dem Client verarbeitet werden</p>';
         
-        $xml .= '<h3>Personas</h3>';
+        $xml .= '<table class="profileTable">';
         
-        $xml .= '<table>';
-        
-        $xml .= '<tr><td>';
+        if (in_array("persona_name", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Persona:';
         $xml .= '</td><td>';
-        $xml .= $default_profile_row['persona'];
+        $xml .= $default_profile_row['persona_name'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("nickname", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Nickname:';
         $xml .= '</td><td>';
         $xml .= $default_profile_row['nickname'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("fullname", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Name:';
         $xml .= '</td><td>';
-        $xml .= $default_profile_row['name'];
+        $xml .= $default_profile_row['fullname'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("email", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'E-Mail:';
         $xml .= '</td><td>';
-        $xml .= $default_profile_row['mail'];
+        $xml .= $default_profile_row['email'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("birthdate", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Birth Date:';
         $xml .= '</td><td>';
         $xml .= $default_profile_row['birthdate'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("postcode", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Postal Code:';
         $xml .= '</td><td>';
-        $xml .= $default_profile_row['postal'];
+        $xml .= $default_profile_row['postcode'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("gender", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Gender:';
         $xml .= '</td><td>';
         $xml .= $default_profile_row['gender'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("country", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Country:';
         $xml .= '</td><td>';
         $xml .= $default_profile_row['country'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("timezone", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Timezone:';
         $xml .= '</td><td>';
         $xml .= $default_profile_row['timezone'];
         $xml .= '</td></tr>';
         
-        $xml .= '<tr><td>';
+        if (in_array("language", $_SESSION['openid.sreg.optional'])) {
+            $xml .= '<tr class="used"><td>';
+        } else {
+            $xml .= '<tr><td>';
+        }
         $xml .= 'Language:';
         $xml .= '</td><td>';
-        $xml .= $default_profile_row['lang'];
+        $xml .= $default_profile_row['language'];
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td colspan="2"><form action="" method="post">';
