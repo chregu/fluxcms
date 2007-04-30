@@ -282,3 +282,10 @@ h2.userPage {
 	margin:0px;
 }
 
+.profileTable {
+    border:0px;
+}
+
+.used {
+background-color: #9a9a9a;
+}
