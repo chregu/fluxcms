@@ -214,6 +214,10 @@ body#upload{
 color: #000000;
 }
 
+.personaform select {
+    width:300px;
+}
+
 
 h1.pageTitle, h1.page, h2.openIdPage {
     margin:0px;
