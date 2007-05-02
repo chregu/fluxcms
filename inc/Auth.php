@@ -263,8 +263,7 @@ class Auth {
         $storage_path = 'Auth/Container/' . $driver . '.php';
         $storage_class = 'Auth_Container_' . $driver;
 
-        require_once $storage_path;
-
+        //require_once $storage_path;
         return new $storage_class($options);
     }
 

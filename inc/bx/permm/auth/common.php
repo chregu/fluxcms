@@ -180,10 +180,51 @@ abstract class bx_permm_auth_common {
         @session_start();
         return $this->authObj->getUserId();
     }
+    
+    protected function MDB2Constructor($options,$pearcontainer = 'MDB2',$additionalOpts = array()) {
+          $opts = array(
+            'dsn'           => $this->dsn,
+            'usernamecol'   => $this->auth_usernamecol,
+            'passwordcol'   => $this->auth_passwordcol,
+            'gupicol'       => $this->auth_gupicol,
+            'emailcol'      => $this->auth_emailcol,
+            'idcol'         => $this->auth_idcol,
+            'db_fields'     => $this->auth_dbfields,
+            'cryptType'     => $this->auth_crypttype,
+            );
+        
+        if (empty($options['auth_prependTablePrefix']) || $options['auth_prependTablePrefix'] == 'true') {
+          $opts['table'] =  $GLOBALS['POOL']->config->getTablePrefix().$this->auth_table;
+        } else {
+            $opts['table'] = $this->auth_table;
+        }
+        foreach ($additionalOpts as $key) {
+             $opts[$key] = $options[$key];
+        }
+        
+        // if someone tries to "login" via http_auth, let them do that :)
+        if ((!empty($_GET['httpauth'])) | (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $GLOBALS['POOL']->config->allowHTTPAuthentication == "true") ) {
+            $opts['mode'] = '0644';
+            $this->authObj = new Auth_HTTP($pearcontainer, $opts);
+            $this->authObj->realm = 'Flux CMS HTTP Auth Login';
+        } else {
+            $this->authObj = new Auth($pearcontainer, $opts, "bxLoginFunction");
+        }
+    }
 
 
 }
 
+
+/**
+ * BX Function for Loginscreen
+ * does nothing since loginscreen is 
+ * handled via sitemap
+ *
+ */
+function bxLoginFunction() {
+    return true;
+}
 
 
 ?>
