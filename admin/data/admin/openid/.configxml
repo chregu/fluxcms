@@ -1,7 +1,18 @@
 <?xml version="1.0"?>
 
 <bxcms xmlns="http://bitflux.org/config">
+
     <plugins>
+    
+    <extension type="xml"/>
+        <parameter name="pipelineName" type="pipeline" value="xrds"/>
+        
+        <parameter name="xslt" type="pipeline" value="xrds.xsl"/>
+        <plugin type="admin_openid" admin="true"></plugin>
+        
+    </plugins>
+
+<plugins>
         <parameter name="xslt" type="pipeline" value="openid.xsl"/>
         <plugin type="admin_openid" admin="true"></plugin>
     </plugins>
