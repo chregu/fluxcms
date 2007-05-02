@@ -80,7 +80,7 @@
                 <meta http-equiv="imagetoolbar" content="no"/>
 <xsl:text>
 </xsl:text>                
-                <link rel="openid.server" href="{$webroot}admin/webinc/openid/" />
+                <link rel="openid.server" href="{$webroot}/admin/openid/" />
 <xsl:text>
 </xsl:text>                
                 <link type="text/css" href="{$webroot}themes/{$theme}/css/{$themeCss}" rel="stylesheet" media="screen"/>
