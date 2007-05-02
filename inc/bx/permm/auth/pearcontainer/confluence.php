@@ -39,7 +39,7 @@ class Auth_Container_confluence extends Auth_Container_MDB2
     function verifyPassword( $password,$password2, $cryptType = "md5", $username = '')
     {
         try {
-            if (!$this->token) {
+            if (!$this->token && class_exists('SoapClient')) {
                 $this->client = new  SoapClient($this->wsdlurl);
                 $this->token  = $this->client->login($username,$password);
             }
