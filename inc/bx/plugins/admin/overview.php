@@ -61,6 +61,9 @@ class bx_plugins_admin_overview extends bx_plugin {
                     if ($perm->isAllowed('/permissions/',array('permissions-back-themes'))) {
                     	$opt->addLink("Download more themes","/themes/");
                     }
+                    if ($perm->isAllowed('/openid/',array('openid'))) {
+                    	$opt->addLink("OpenID","openid/",null,null,'openid');
+                    }
                     
                     $root->appendChild($dom->importNode($opt->documentElement,true));
                 }
