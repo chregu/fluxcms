@@ -129,6 +129,11 @@
                                                                         <xsl:value-of select="helptext"/>
                                                                     </xsl:attribute>
                                                                 </xsl:if>
+                                                                <xsl:if test="title">
+                                                                    <xsl:attribute name="title">
+                                                                        <xsl:value-of select="title"/>
+                                                                    </xsl:attribute>
+                                                                </xsl:if>
 
                                                                 <i18n:text><xsl:value-of select="title"/></i18n:text>
                                                             </a>
@@ -142,6 +147,11 @@
                                                                 <xsl:if test="helptext">
                                                                     <xsl:attribute name="title">
                                                                         <xsl:value-of select="helptext"/>
+                                                                    </xsl:attribute>
+                                                                </xsl:if>
+                                                                <xsl:if test="title">
+                                                                    <xsl:attribute name="title">
+                                                                        <xsl:value-of select="title"/>
                                                                     </xsl:attribute>
                                                                 </xsl:if>
 
