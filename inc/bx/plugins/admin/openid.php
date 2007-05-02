@@ -40,7 +40,7 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         
     }
     
-    public function getContentById() {
+    public function getContentById($path,$id) {
         include_once("Auth/OpenID/Server.php");
         //OpenID Server Objekt
         $server = bx_helpers_openid::getServer();
@@ -50,6 +50,30 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         
         $confvars = $conf->getConfProperty('permm');
         $permObj = bx_permm::getInstance($confvars);
+        if (!$permObj->isAllowed('/',array('admin')) &&  !(isset($_POST['openid_mode']) && ($_POST['openid_mode'] == 'associate' || $_POST['openid_mode'] == 'check_authentication'))) {
+            if($id == '/xrds.xml') {
+                header("Content-Type: application/xrds+xml");
+                $xrds = '<webroot>'.BX_WEBROOT.'</webroot>';
+                
+                $dom = new DomDocument();
+                $dom->loadXML($xrds);
+                
+                return $dom;
+                         
+            } elseif (isset($_GET["openid_mode"]) && $_GET["openid_mode"]== 'checkid_immediate') {
+                $server = bx_helpers_openid::getServer();
+                $answer = $server->getOpenIDResponse(false,"GET");
+                if ($answer[0] == "redirect") {
+                    header("Location: " .$answer[1]);
+                } else {
+                    print "Unknown mode";
+                }
+            } else {
+                header("Location: " . BX_WEBROOT."admin/?back=".urlencode($_SERVER['REQUEST_URI']));
+            }
+            
+            die();
+        }
         
         //die profileid wird auf NULL gestellt da wodurch das standard profile angezeigt wird
         if(!isset($this_profile_id)) {
@@ -69,22 +93,6 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
                 }
             }
         }
-        
-        if (!$permObj->isAllowed('/',array('admin')) &&  !(isset($_POST['openid_mode']) && ($_POST['openid_mode'] == 'associate' || $_POST['openid_mode'] == 'check_authentication'))) {
-            if (isset($_GET["openid_mode"]) && $_GET["openid_mode"]== 'checkid_immediate') {
-                $server = bx_helpers_openid::getServer();
-                $answer = $server->getOpenIDResponse(false,"GET");
-                if ($answer[0] == "redirect") {
-                    header("Location: " .$answer[1]);
-                } else {
-                    print "Unknown mode";
-                }
-            } else {
-                header("Location: " . BX_WEBROOT."admin/?back=".urlencode($_SERVER['REQUEST_URI']));
-            }
-            
-            die();
-        } 
         
         $mode = "default";
         //Details des standard oder ausgewählten Profil
@@ -358,9 +366,9 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
             }
         }
         if($data['profiles'] == 'new') {
-            $xml .= '<option selected="selected" value="new">Neu</option>';
+            $xml .= '<option selected="selected" value="new">Neues Profil erstellen()</option>';
         } elseif($data['profiles'] != 'new') {
-            $xml .= '<option value="new">Neu</option>';
+            $xml .= '<option value="new">Neues Profil erstellen()</option>';
         }
             
         $xml .= '</select><input type="text" name="UserProfileForm" style="display:none" value="1"/></form>';
@@ -443,7 +451,22 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $xml .= '<tr><td>';
         $xml .= 'Gender';
         $xml .= '</td><td>';
-        $xml .= '<input type="text" name="gender" value="'.$default_profile_row['gender'].'"/>';
+        $xml .= '<select name="gender">';
+        
+        if($default_profile_row['gender'] == 'w') {
+            $xml .= '<option selected="selected" value="m">Mann</option>';
+        } else {
+            $xml .= '<option value="m">Mann</option>';
+        }
+        
+        if($default_profile_row['gender'] == 'w') {
+            $xml .= '<option selected="selected" value="w">Frau</option>';
+        } else {
+            $xml .= '<option value="w">Frau</option>';
+        }
+       
+        $xml .= '</select>';
+        
         $xml .= '</td></tr>';
         
         $xml .= '<tr><td>';
@@ -521,7 +544,7 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
             }
         }
         if($data['profiles'] != 'new') {
-            $xml .= '<option value="new">Neu</option>';
+            $xml .= '<option value="new">Neues Profil erstellen()</option>';
         }
             
         $xml .= '</select><input type="text" name="UserProfileForm" style="display:none" value="1"/></form>';
@@ -669,22 +692,29 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
             $GLOBALS['POOL']->db->query($remove_default_query);
         }
         
-        if(isset($data['UserProfileIdNext'])) {
+        //säubert data von HTML elementen
+        $data_clean = array();
+        foreach($data as $k => $v) {
+            $data_clean[$k] = htmlentities($v);
+        }
+        
+        
+        if(isset($data_clean['UserProfileIdNext'])) {
             $insert_query = 'insert into '.$tablePrefix.'openid_profiles (id , persona , nickname , name 
             , mail , birthdate , postal , gender , country , timezone , lang , standard , userid) 
-            values("'.$data['UserProfileIdNext'].'" , "'.$data['persona'].'" , "'.$data['nickname'].'" , "'.$data['name'].'" 
-            , "'.$data['mail'].'" , "'.$data['bla'].'" , "'.$data['postal'].'" , "'.$data['gender'].'" , "'.$data['country'].'" 
-            , "'.$data['timezone'].'" , "'.$data['lang'].'" ';
+            values("'.$data_clean['UserProfileIdNext'].'" , "'.$data_clean['persona'].'" , "'.$data_clean['nickname'].'" , "'.$data_clean['name'].'" 
+            , "'.$data_clean['mail'].'" , "'.$data_clean['bla'].'" , "'.$data_clean['postal'].'" , "'.$data_clean['gender'].'" , "'.$data_clean['country'].'" 
+            , "'.$data_clean['timezone'].'" , "'.$data_clean['lang'].'" ';
         } else {
             $insert_query = 'insert into '.$tablePrefix.'openid_profiles (persona , nickname , name 
             , mail , birthdate , postal , gender , country , timezone , lang , standard , userid) 
-            values("'.$data['persona'].'" , "'.$data['nickname'].'" , "'.$data['name'].'" 
-            , "'.$data['mail'].'" , "'.$data['bla'].'" , "'.$data['postal'].'" , "'.$data['gender'].'" , "'.$data['country'].'" 
-            , "'.$data['timezone'].'" , "'.$data['lang'].'" ';
+            values("'.$data_clean['persona'].'" , "'.$data_clean['nickname'].'" , "'.$data_clean['name'].'" 
+            , "'.$data_clean['mail'].'" , "'.$data_clean['bla'].'" , "'.$data_clean['postal'].'" , "'.$data_clean['gender'].'" , "'.$data_clean['country'].'" 
+            , "'.$data_clean['timezone'].'" , "'.$data_clean['lang'].'" ';
         }
         
-        if(isset($data['default'])) {
-            $insert_query .= ', "'.$data['default'].'" ';
+        if(isset($data_clean['default'])) {
+            $insert_query .= ', "'.$data_clean['default'].'" ';
         } elseif($check_default__row['standard'] != 'on') {
             $insert_query .= ', "on" ';
         } else {
@@ -695,8 +725,8 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         
         $GLOBALS['POOL']->db->query($insert_query);
         
-        if(isset($data['UserProfileIdNext'])) {
-            return $data['UserProfileIdNext'];
+        if(isset($data_clean['UserProfileIdNext'])) {
+            return $data_clean['UserProfileIdNext'];
         }
         
     }
@@ -710,21 +740,26 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
             
         }
         
+        //säubert data von HTML elementen
+        $data_clean = array();
+        foreach($data as $k => $v) {
+            $data_clean[$k] = htmlentities($v);
+        }
         
-        $update_query = 'update '.$tablePrefix.'openid_profiles set persona = "'.$data['persona'].'" , nickname = "'.$data['nickname'].'" , name = "'.$data['persona'].'" 
-        , mail = "'.$data['mail'].'" , birthdate = "'.$data['bla'].'" , postal = "'.$data['postal'].'" , gender = "'.$data['gender'].'" , country = "'.$data['country'].'" 
-        , timezone = "'.$data['timezone'].'" , lang = "'.$data['lang'].'" ' ;
+        $update_query = 'update '.$tablePrefix.'openid_profiles set persona = "'.$data_clean['persona'].'" , nickname = "'.$data_clean['nickname'].'" , name = "'.$data_clean['name'].'" 
+        , mail = "'.$data_clean['mail'].'" , birthdate = "'.$data_clean['bla'].'" , postal = "'.$data_clean['postal'].'" , gender = "'.$data_clean['gender'].'" , country = "'.$data_clean['country'].'" 
+        , timezone = "'.$data_clean['timezone'].'" , lang = "'.$data_clean['lang'].'" ' ;
         
-        if(isset($data['default'])) {
-            $update_query .= ', standard = "'.$data['default'].'" ';
+        if(isset($data_clean['default'])) {
+            $update_query .= ', standard = "'.$data_clean['default'].'" ';
         } else {
             $update_query .= ', standard = "0" ';
         }
         
-        $update_query .= ' where userid = "'.$userid.'" and id = "'.$data['UserProfileId'].'"';
+        $update_query .= ' where userid = "'.$userid.'" and id = "'.$data_clean['UserProfileId'].'"';
         $GLOBALS['POOL']->db->query($update_query);
         
-        return $data['UserProfileId'];
+        return $data_clean['UserProfileId'];
     }
     
     static function deleteUserProfile($data, $tablePrefix) {
