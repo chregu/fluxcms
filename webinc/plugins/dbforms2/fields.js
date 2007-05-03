@@ -406,9 +406,12 @@ function dbforms2_field_relation_n2m(DOMNode) {
 			var div = document.createElement("div");
 			var del = document.createElement("a");
             div.className = 'n2mvalue';
+			console.log(this);
 			del.appendChild(document.createTextNode("x"));
 			del.setAttribute("style","cursor: pointer;");
-
+			if (this.linktothat) {
+				div.setAttribute("onclick", 'window.location.href="' + BX_WEBROOT +'admin/dbforms2/' + this.linktothat + '/?id=' + id + '"');
+			}
             var wev = new bx_helpers_contextfixer(this.removeFieldValue, this, id);
             bx_helpers.addEventListener(del, 'click', wev.execute);
 			

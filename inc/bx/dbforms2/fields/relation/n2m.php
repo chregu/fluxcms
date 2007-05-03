@@ -28,6 +28,7 @@ class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
         parent::__construct($name);
         $this->XMLName = 'select';
         $this->type = 'relation_n2m';
+        
     }
 
     /**
@@ -41,6 +42,7 @@ class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
         $ret['relationtable'] = 'string';
         $ret['thisidfield'] = 'string';
         $ret['thatidfield'] = 'string';
+        $ret['linktothat'] = 'string';
         return $ret;
     }
     
@@ -148,6 +150,11 @@ class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
         }
         
         return null;     
+    }
+    
+    protected function getXMLAttributes() {
+        
+        return array('linktothat' => $this->attributes['linktothat']);
     }
    
 }

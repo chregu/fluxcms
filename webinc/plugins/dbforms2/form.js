@@ -71,7 +71,6 @@ function dbforms2_form() {
      *
      */
     this.initField = function(fieldID, fieldConfig) {
-
         fieldType = fieldConfig['type'];
         fieldNode = document.getElementById(this.name + '_' + fieldID);
         fieldClass = 'dbforms2_field_' + fieldType;
@@ -87,6 +86,9 @@ function dbforms2_form() {
         field.form = this;
         field.type = fieldType;
         field.init(fieldNode);
+		if (fieldConfig['linktothat']) {
+			field.linktothat = fieldConfig['linktothat'];
+		}
         _registerObj(fieldNode.id, field);
         return field;
     }

@@ -103,7 +103,6 @@
         
         formConfig['thisidfield']           = '<xsl:value-of select="php:functionString('addslashes', @thisidfield)"/>';
         formConfig['thatidfield']           = '<xsl:value-of select="php:functionString('addslashes', @thatidfield)"/>';
-        
         <xsl:for-each select="fields/*">
             <xsl:choose>
             
@@ -145,7 +144,11 @@
                     var field = new Array();
                     field['type'] ='<xsl:value-of select="@type"/>';
                     field['default'] ='<xsl:value-of select="php:functionString('addslashes', default)"/>';
+                    <xsl:if test="@linktothat">
+                    field['linktothat'] ='<xsl:value-of select="php:functionString('addslashes', @linktothat)"/>';
+                    </xsl:if>
                     formConfig['fields']['<xsl:value-of select="@name"/>'] = field;
+                    
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>

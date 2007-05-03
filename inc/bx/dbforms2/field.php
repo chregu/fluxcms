@@ -294,7 +294,6 @@ class bx_dbforms2_field {
         $node = $dom->createElement($this->XMLName);
 
         $attributes = array_merge($this->getStandardXMLAttributes(), $this->getXMLAttributes());
-        
         foreach($attributes as $attr => $value) {
             $node->setAttribute($attr, $value);
         }
