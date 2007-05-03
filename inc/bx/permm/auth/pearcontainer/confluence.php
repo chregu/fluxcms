@@ -65,7 +65,6 @@ class Auth_Container_confluence extends Auth_Container_MDB2
                 }
             }
         } catch (SoapFault $e) {
-            bx_helpers_debug::webdump($e);
         }
         //fall back to internal DB check
         return parent::verifyPassword($password,$password2,$cryptType, $username );
