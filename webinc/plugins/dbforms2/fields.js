@@ -404,13 +404,16 @@ function dbforms2_field_relation_n2m(DOMNode) {
 	this.addFieldValue = function(id, title) {
 		if (id != 0)  {
 			var div = document.createElement("div");
+			var span = document.createElement("span");
 			var del = document.createElement("a");
             div.className = 'n2mvalue';
-			console.log(this);
 			del.appendChild(document.createTextNode("x"));
 			del.setAttribute("style","cursor: pointer;");
 			if (this.linktothat) {
-				div.setAttribute("onclick", 'window.location.href="' + BX_WEBROOT +'admin/dbforms2/' + this.linktothat + '/?id=' + id + '"');
+				
+				span.setAttribute("onclick", 'window.location.href="' + BX_WEBROOT +'admin/dbforms2/' + this.linktothat + '/?id=' + id + '"');
+				span.setAttribute("style","cursor: pointer; text-decoration: underline");
+
 			}
             var wev = new bx_helpers_contextfixer(this.removeFieldValue, this, id);
             bx_helpers.addEventListener(del, 'click', wev.execute);
@@ -418,7 +421,9 @@ function dbforms2_field_relation_n2m(DOMNode) {
 			div.appendChild(del);
 			div.appendChild(document.createTextNode(" "));
 			
-			div.appendChild(document.createTextNode(title));
+			span.appendChild(document.createTextNode(title));
+			span = div.appendChild(span);
+			
 			div.setAttribute("_value_id", id);
 			div.setAttribute("id", this.DOMNode.id+"_value_id_"+id);
 			this.divElement.appendChild(div);
