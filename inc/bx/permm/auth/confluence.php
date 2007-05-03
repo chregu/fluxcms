@@ -9,7 +9,11 @@
      <authModule>
                 <type>confluence</type>
                 <wsdlurl>http://wiki.liip.ch:8081/rpc/soap-axis/confluenceservice-v1?wsdl</wsdlurl>
-                <!-- in which group the user has to be to be allowed a login -->
+                <!-- which space the user can see to be allowed a login -->
+                <allowedSpace>INTERN</allowedSpace>
+                <!-- or in which group the user has to be 
+                (this does not work for non-admin account in at least confluence 2.4.3
+                -->
                 <allowedGroup>internal-developers</allowedGroup>
                 
      ...
@@ -25,7 +29,7 @@ Class bx_permm_auth_confluence extends bx_permm_auth_pearauth {
     
     public function __construct($options = array()) {
         parent::__construct($options);
-        $this->MDB2Constructor($options,'confluence',array('wsdlurl','allowedGroup'));
+        $this->MDB2Constructor($options,'confluence',array('wsdlurl','allowedGroup','allowedSpace'));
         
     }
 }

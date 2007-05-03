@@ -199,7 +199,9 @@ abstract class bx_permm_auth_common {
             $opts['table'] = $this->auth_table;
         }
         foreach ($additionalOpts as $key) {
-             $opts[$key] = $options[$key];
+            if (isset($options[$key])) {
+                $opts[$key] = $options[$key];
+            }
         }
         
         // if someone tries to "login" via http_auth, let them do that :)

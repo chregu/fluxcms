@@ -6,6 +6,7 @@ class Auth_Container_confluence extends Auth_Container_MDB2
 
     var $wsdlurl = null;
     var $allowedGroup = null;
+    var $allowedSpace = null;
     var $client = null;
     var $token = null;
     var $groups = null;
@@ -20,6 +21,7 @@ class Auth_Container_confluence extends Auth_Container_MDB2
         parent::__construct($dsn);
         $this->wsdlurl = $dsn['wsdlurl'];
         $this->allowedGroup = $dsn['allowedGroup'];
+        $this->allowedSpace = $dsn['allowedSpace'];
         
     }
 
@@ -45,14 +47,25 @@ class Auth_Container_confluence extends Auth_Container_MDB2
             }
             if ($this->token) {
                 if (!$this->groups) {
-                    $this->groups = $this->client->getUserGroups($this->token,$username);
+                    if ($this->allowedSpace) {
+                        try {
+                            $this->groups = $this->client->getSpace($this->token,$this->allowedSpace);
+                        } catch (SoapFault $e) {
+                            $this->groups = "none";
+                        }
+                    } else {
+                        $this->groups = $this->client->getUserGroups($this->token,$username);
+                    }
+                    
                 }
-                if (in_array($this->allowedGroup,$this->groups)) {
+                if ($this->allowedSpace && is_object($this->groups) && $this->groups->key = $this->allowedSpace) {
+                    return true;
+                } else if (in_array($this->allowedGroup,$this->groups)) {
                     return true;
                 }
             }
         } catch (SoapFault $e) {
-            
+            bx_helpers_debug::webdump($e);
         }
         //fall back to internal DB check
         return parent::verifyPassword($password,$password2,$cryptType, $username );
