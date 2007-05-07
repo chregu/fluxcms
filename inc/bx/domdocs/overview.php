@@ -17,7 +17,7 @@ class bx_domdocs_overview extends domdocument {
     }
     
     
-    function addLink($title, $href = null, $helptext = null, $style = null , $titleattr = null) {
+    function addLink($title, $href = null, $helptext = null, $style = null, $titleattr = null, $target = NULL) {
         $link = $this->links->appendChild($this->createElement("link"));
         $link->setAttribute("href",$href);
         $link->appendChild($this->createElement("title",$title));
@@ -29,8 +29,7 @@ class bx_domdocs_overview extends domdocument {
             foreach ($helptext as $key=>$value) {
                 $link->setAttribute($key,$value);   
             }
-        }
-        else if ($helptext) {
+        } else if ($helptext) {
             $link->appendChild($this->createElement("helptext",$helptext));
         }
         if ($style) {
@@ -38,6 +37,9 @@ class bx_domdocs_overview extends domdocument {
         }
         if($titleattr) {
             $link->setAttribute("title",$titleattr);
+        }
+        if(isset($target)) {
+            $link->setAttribute('target', $target);
         }
     }
     
