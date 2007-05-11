@@ -110,24 +110,32 @@
             </map:match>
         </map:pipeline>
         <map:pipeline>
-            <map:match type="uri" matchtype="regex" pattern="#^/*openid/*$#">
+            <map:match type="uri" matchtype="regex" pattern="#^/*openid/.*$#">
                   <map:act type="bxcmsadmin" uri="{../1}">
 
                         <map:parameter name="editor" value="phpglobals://_GET[editor]"/>
                         <map:select type="any" var="{pipelineName}">
 
-                            <map:when test="xml">
+                            <map:when test="xrds">
                                 <map:include label="bxcmsGenerator"/>
-                                <map:transform type="xslt" src="constant(BX_LIBS_DIR)xsl/plugin2xml.xsl">
+                                <map:transform type="xslt" src="constant(BX_THEMES_DIR)/standard/admin/{xslt}">
                                     <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                                     <map:parameter name="requestUri" value="{requestUri}"/>
                                     <map:parameter name="mode" value="{mode}"/>
-
+                                    <map:parameter type="options" name="registerPhpFunctions" value="true"/>
                                 </map:transform>
-                                <map:serialize type="xml" contentType="text/xml; charset=utf-8">
+            
+                                <map:transform type="i18n" src="constant(BX_PROJECT_DIR)/admin/lang/master">
+                                    <map:parameter name="locale" value="{locale}"/>
+                                    <map:parameter name="driver" value="xml"/>
+                                </map:transform>
+            
+                                <map:serialize type="xml" contentType="application/xrds+xml; charset=utf-8">
+                                    <map:parameter name="stripScriptCDATA" value="true"/>
                                     <map:parameter name="outputErrors" value="bx_errorhandler"/>
+                                    <map:parameter name="stripXMLDeclaration" value="true"/>
                                 </map:serialize>
-                            </map:when>
+                             </map:when>
                             <map:when test="standard">
                                 <map:include label="bxcmsGenerator"/>
                                 <map:include label="standardOutput"/>
