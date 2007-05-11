@@ -10,6 +10,7 @@
 	xmlns:bxf="http://bitflux.org/functions"
 	xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="rdf rss dc php blog xhtml">
 
+
 	<xsl:import href="master.xsl" />
 	<xsl:import href="../standard/common.xsl" />
 	<xsl:output encoding="utf-8" method="xml" />
@@ -17,6 +18,7 @@
 	<xsl:template name="content">
 	
 		<h2>Blog Sitemap</h2>
+		
 		<xsl:copy-of disable-output-escaping="yes" select="/bx/plugin[@name = 'blogpostsall']/html/body" />
 		
 	</xsl:template>
