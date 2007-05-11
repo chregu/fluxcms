@@ -166,17 +166,25 @@ class bx_dbforms2_config {
                             $lsNS = $this->xpath->query('dbform:liveselect', $field);
                             if($lsNS->length > 0) {
                                 $lsNode = $lsNS->item(0);
-                                $liveSelect = new bx_dbforms2_liveselect();
                                 
-                                $liveSelect->nameField = $lsNode->getAttribute('namefield');
-                                $liveSelect->whereFields = $lsNode->getAttribute('wherefields');
-                                $liveSelect->where = $lsNode->getAttribute('where');
-                                $liveSelect->idField = $lsNode->getAttribute('idfield');
-                                $liveSelect->tableName = $lsNode->getAttribute('table');
-                                $liveSelect->orderBy = $lsNode->getAttribute('orderby');
-                                $liveSelect->limit = $lsNode->getAttribute('limit');
-                                $liveSelect->setLeftJoin($lsNode->getAttribute('leftjoin'));
-
+                                $type = $lsNode->getAttribute("type");
+                                
+                                if ($type == 'pagetree') {
+                                    $liveSelect = new bx_dbforms2_liveselect_pagetree();
+                                    $liveSelect->subtree = $lsNode->getAttribute('subtree');
+                                } else {
+                                    $liveSelect = new bx_dbforms2_liveselect();
+                                    
+                                    $liveSelect->nameField = $lsNode->getAttribute('namefield');
+                                    $liveSelect->whereFields = $lsNode->getAttribute('wherefields');
+                                    $liveSelect->where = $lsNode->getAttribute('where');
+                                    $liveSelect->idField = $lsNode->getAttribute('idfield');
+                                    $liveSelect->tableName = $lsNode->getAttribute('table');
+                                    $liveSelect->orderBy = $lsNode->getAttribute('orderby');
+                                    $liveSelect->limit = $lsNode->getAttribute('limit');
+                                    $liveSelect->setLeftJoin($lsNode->getAttribute('leftjoin'));
+                                }
+                                
                                 if(!$liveSelect->limit) {
                                     $liveSelect->limit  = 20;
                                 }

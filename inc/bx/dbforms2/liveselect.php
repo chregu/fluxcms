@@ -16,97 +16,97 @@
 // $Id$
 
 /**
- * DOCUMENT_ME
- *
- * @package bx_dbforms2
- * @category 
- * @author Bitflux GmbH <flux@bitflux.ch>
- */
+* DOCUMENT_ME
+*
+* @package bx_dbforms2
+* @category 
+* @author Bitflux GmbH <flux@bitflux.ch>
+*/
 class bx_dbforms2_liveselect {
-
+    
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $nameField = '';
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $whereFields = '';
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $limit = 10;
-
+    
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $idField = 'id';
-
+    
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $tableName = '';
-
+    
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $tablePrefix = '';
-
+    
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $query = '';
-
+    
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $leftJoin = '';
-
+    
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
     public $orderBy = 'id';
-
+    
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
 	public $getMatcher = '';
 	
     /**
-     *  DOCUMENT_ME
-     *  @var var
-     */
+    *  DOCUMENT_ME
+    *  @var var
+    */
 	public $notNullFields = '';
     
     public $currentPage = null;
     
     /**
-     *  Normalizes the liveselect query (e.g. strips whitespace)
-     *
-     *  @access public
-     *  @return string
-     */
+    *  Normalizes the liveselect query (e.g. strips whitespace)
+    *
+    *  @access public
+    *  @return string
+    */
     public function getNormalizedQuery() {
         // strip ws
         return trim($this->query);
     }
-
+    
     /**
-     *  Sets an optional left join
-     *
-     *  @param  string $leftJoib The left join incl. condition, SQL
-     *  @access public
-     */
+    *  Sets an optional left join
+    *
+    *  @param  string $leftJoib The left join incl. condition, SQL
+    *  @access public
+    */
     public function setLeftJoin($leftJoin) {
         if ($leftJoin) {
             $this->leftJoin = "left join ".$this->replaceTablePrefix($leftJoin);
@@ -114,13 +114,13 @@ class bx_dbforms2_liveselect {
     }
     
     /**
-     *  Replaces all occurences of {tablePrefix} in the given string with the
-     *  current table prefix.
-     *
-     *  @param  string $strIn Input string
-     *  @access protected
-     *  @return string
-     */
+    *  Replaces all occurences of {tablePrefix} in the given string with the
+    *  current table prefix.
+    *
+    *  @param  string $strIn Input string
+    *  @access protected
+    *  @return string
+    */
     protected function replaceTablePrefix($strIn) {
         return str_replace('{tablePrefix}', $this->tablePrefix, $strIn);
     }
@@ -136,7 +136,7 @@ class bx_dbforms2_liveselect {
             $where.= "OR $field like '%$q%' ";
         }
         $where .=" ) ";
-
+        
         $notNullFields = explode(',', $this->notNullFields);
         foreach($notNullFields as $field) {
 			if($field != ''){
@@ -150,7 +150,6 @@ class bx_dbforms2_liveselect {
         
         $orderby = !empty($this->orderBy) ? $this->replaceTablePrefix($this->orderBy) : $this->idField;
 		$matcher = (!empty($this->getMatcher) AND isset($_GET[$this->getMatcher]) )? ' AND '.$this->getMatcher.' = "'.$_GET[$this->getMatcher].'" ' : '';
-        
         return 'FROM '.$table.' '. $this->leftJoin .' WHERE '.$where.$matcher.' ORDER BY '.$orderby;
         
     }

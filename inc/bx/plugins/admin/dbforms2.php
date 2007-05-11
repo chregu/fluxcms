@@ -246,7 +246,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
             }
             
         } else if($mode == 'liveselect') {
-            
             if(isset($_GET['q'])) {
                 $parts = explode('/', $id);
                 $fieldName = empty($parts[sizeof($parts)-1]) ? $parts[sizeof($parts)-2] : $parts[sizeof($parts)-1];
