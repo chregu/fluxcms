@@ -583,8 +583,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             } else {
                 $xml .= '<span class="post_author"><a href="'.BX_WEBROOT_W.$path.'archive/author/'.$row['post_author'].'/">'.$row['post_author'].'</a></span>';
             }
+            
             //post date
-            $xml .= '<span class="post_date">'.$row['post_date'].' ' . self::$timezoneString . '</span>';
+            $xml .= '<span class="post_date">'. $this->getClickableDate($row['post_date'], $path) .' ' . self::$timezoneString . '</span>';
             $xml .= '</div>';
             $xml .= '<div class="post_content">';
             
@@ -1147,6 +1148,23 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         
         
     }
+    
+    
+    
+    private function getClickableDate($post_date, $blogpath){
+        
+        // FIXME: should actually take this directly from the db instead of splitting it here like this
+        $datetime = explode(" ", $post_date);
+        $date = explode(".", $datetime[0]);
+        
+        $year = '<a href="' . BX_WEBROOT_W . $blogpath . 'archive/'. $date[2] . '/">' . $date[2] . '</a>';
+        $month= '<a href="'.BX_WEBROOT_W. $blogpath.'archive/'.$date[2] . '/' . $date[1] . '/">' . $date[1] . '</a>';
+        $day  = '<a href="'.BX_WEBROOT_W. $blogpath.'archive/'.$date[2] . '/' . $date[1] . '/' . $date[0] .'/">' . $date[0] . '</a>';
+        
+        return $day.'.'.$month.'.'.$year.' ' . $datetime[1];
+        
+    }
+    
     
     
 }
