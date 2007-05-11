@@ -5,7 +5,7 @@
 <bxcms xmlns="http://bitflux.org/config">
 
     <plugins>
-        <parameter name="xslt" type="pipeline" value="blogpostsall.xsl"/>
+        <parameter name="xslt" type="pipeline" value="../standard/plugins/blog/allposts.xsl"/>
         <plugin type="blog_allposts">
             <!-- add blogpath here please if not set xml will not output the uri-->
             <parameter name="blogpath" value="/blog/"/>
@@ -14,13 +14,6 @@
          </plugin>
     </plugins>
 </bxcms>
-
--XSL
-<xsl:template name="content">
-   <xsl:for-each select="/bx/plugin[@name = 'blogpostsall']/html/body">
-        <xsl:apply-templates select="." mode="xhtml"/>
-   </xsl:for-each>
-</xsl:template>
 
 $Id$
 
