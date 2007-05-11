@@ -265,12 +265,13 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
     }
 
     static function do_about($tablePrefix) {
+        $test = false;
         $xml = '';
         if(isset($_GET['id'])) {
-            
             $dquery = "delete from ". $GLOBALS['POOL']->config->getTablePrefix(). "openid_uri where id = '". (int) $_GET['id']."'";
             $GLOBALS['POOL']->db->query($dquery);
-            $xml .= '<meta http-equiv="refresh" content="1; URL=http://'.$_SERVER['HTTP_HOST'].'/admin/openid">';
+            //$xml .= '<meta http-equiv="refresh" content="1; URL=http://'.BX_WEBROOT.'/admin/openid">';
+            header('Location:'.BX_WEBROOT.'admin/openid/');
         }
         
         $query = "select * from ". $tablePrefix . "openid_uri";
@@ -282,11 +283,14 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $xml .= '<h3>Trusted Sites</h3>';
         $xml .= "<table>";
         while($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+            $test = true;
             $xml .= "<tr><td><a href='?id=".$row['id']."'><img style='border:0px;' src='".BX_WEBROOT."admin/webinc/img/icons/delete.gif'/></a></td><td>".$row['uri']."</td><td>".$row['date']."</td></tr>\n";
         }
-        if(!$result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+        
+        if($test != true) {
             $xml .= "<tr><td colspan='2'>Keine erlaubten Websiten vorhanden</td></tr>\n";
         }
+        
         $xml .= "</table>";
         $xml .= "</div>";
         
