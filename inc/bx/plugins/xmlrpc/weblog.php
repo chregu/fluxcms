@@ -138,7 +138,7 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
             if (isset($content[0])) {            
                 $content = preg_replace("#<atom:content[^>]*>#","",$content[0]->asXML());
                 $content = str_replace("</atom:content>","",html_entity_decode(str_replace("&lt;","&amp;lt;",$content),ENT_NOQUOTES,'UTF-8'));
-                $content = str_replace('xmlns:blog="http://www.flux-cms.org/doctypes/blog"',"",$content);
+                $content = str_replace('xmlns:blog="http://bitflux.org/doctypes/blog"',"",$content);
             } else {
                 $content = "";
             }
@@ -147,7 +147,7 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
             if (isset($content_extended[0])) {            
                 $content_extended = preg_replace("#<atom:content_extended[^>]*>#","",$content_extended[0]->asXML());
                 $content_extended = str_replace("</atom:content_extended>","",html_entity_decode(str_replace("&lt;","&amp;lt;",$content_extended),ENT_NOQUOTES,'UTF-8'));
-                $content_extended = str_replace('xmlns:blog="http://www.flux-cms.org/doctypes/blog"',"",$content_extended);
+                $content_extended = str_replace('xmlns:blog="http://bitflux.org/doctypes/blog"',"",$content_extended);
             } else {
                 $content_extended = null;
             }
