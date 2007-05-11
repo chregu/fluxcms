@@ -85,7 +85,7 @@ class bx_dbforms2_datasource_pagetree {
               $sql .= ' path like "'.$args['subtree'] .'%" AND ';
         }
         
-        $sql .=  'path like "'.$this->subtree.'%" and name="output-mimetype" and value="httpd/unix-directory"';
+        $sql .=  'path like "'.$args['subtree'].'%" and name="output-mimetype" and value="httpd/unix-directory"';
         
         if (isset($args['order'])) {
            $sql .= ' order by ' . $args['order'];  
