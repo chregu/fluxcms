@@ -287,12 +287,21 @@
 
 
     <xsl:template match="xhtml:span[@class='post_author']" mode="xhtml">
+	<!-- 
+		if you want to link the post_author to the archive,
+		replace following line with:
+		 by <xsl:apply-templates mode="xhtml" />
+	 -->
     by <xsl:value-of select="."/>
     </xsl:template>
 
     <xsl:template match="xhtml:span[@class='post_date']" mode="xhtml">
+	<!-- 
+		if you want to link the post_date to the archive,
+		replace following line with:
+		 @ <xsl:apply-templates mode="xhtml" />
+	 -->
     @ <xsl:value-of select="."/>
-
     </xsl:template>
 
     <xsl:template match="xhtml:span[@class='comment_date']" mode="xhtml">
