@@ -1,7 +1,7 @@
 <?php
 
 define('BX_PATFORMS_NS',    'http://php-tools.net/patForms/1.0');
-define('BX_FORMS_NS',       'http://www.flux-cms.org/forms');
+define('BX_FORMS_NS',       'http://bitflux.org/forms');
 
 class bx_filters_patforms extends bx_filter {
     

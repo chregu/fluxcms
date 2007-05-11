@@ -35,7 +35,7 @@ class bx_filters_formwizard extends bx_filter {
         $this->lang =  $GLOBALS['POOL']->config->getOutputLanguage();
         $this->defaultLang = $GLOBALS['POOL']->config->getDefaultOutputLanguage();
         $ctxt = new Domxpath($xml);
-        $ctxt->registerNameSpace('forms', 'http://www.flux-cms.org/forms');
+        $ctxt->registerNameSpace('forms', 'http://bitflux.org/forms');
         
         $xforms = $ctxt->query("//forms:formwizard");
         $wizardnode = $xforms->item(0);
