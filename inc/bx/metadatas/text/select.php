@@ -44,7 +44,7 @@ class bx_metadatas_text_select extends bx_metadata {
     
     protected function getXPathNodes($xpath, $ctxt ) {
         $xp = new Domxpath($ctxt->ownerDocument);
-        $xp->registerNamespace("bxcms","http://www.flux-cms.org/propertyconfig");
+        $xp->registerNamespace("bxcms","http://bitflux.org/propertyconfig");
         if ($ctxt) {
             return  $xp->query($xpath, $ctxt);    
         } else {
