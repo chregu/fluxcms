@@ -358,6 +358,29 @@ if ($lastVersion < 8453) {
       updateLastVersion(8453);
 }
 
+if ($lastVersion < 8633) {
+    $res = doQueryTable("
+  CREATE TABLE `".$tablePrefix."openid_profiles` (
+  `id` int(11) NOT NULL auto_increment,
+  `persona` varchar(255) NOT NULL,
+  `nickname` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `mail` varchar(255) NOT NULL,
+  `birthdate` date NOT NULL,
+  `postal` varchar(10) NOT NULL,
+  `gender` varchar(2) NOT NULL,
+  `country` varchar(255) NOT NULL,
+  `timezone` varchar(255) NOT NULL,
+  `lang` varchar(10) NOT NULL,
+  `standard` varchar(2) NOT NULL,
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY  (`id`)
+  )",'openid_profiles');
+
+      updateLastVersion(8633);
+}
+
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
