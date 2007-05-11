@@ -861,7 +861,7 @@ class bx_editors_dbform_manager {
             
             $xslproc->setParameter("","isMozilla",popoon_classes_browser::isMozilla() ? "true": "false");
             $configxml = $xslproc->transformToXml($xml);
-            $this->xml->add($configxml,array("namespaces"=> array(array("bxco","http://www.flux-cms.org/config/1.0")), "xpath"=>"/bxco:config/bxco:fields/*","root"=>"master/master"));
+            $this->xml->add($configxml,array("namespaces"=> array(array("bxco","http://bitflux.org/config/1.0")), "xpath"=>"/bxco:config/bxco:fields/*","root"=>"master/master"));
         }
     } //end func setMasterXml
     

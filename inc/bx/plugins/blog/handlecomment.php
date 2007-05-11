@@ -415,7 +415,7 @@ class bx_plugins_blog_handlecomment {
             $config->load(BX_PROJECT_DIR."/xml/blogcomment.xml");
             
             $confctxt= new DOMxpath($config);
-            $confctxt->registerNameSpace("bxco","http://www.flux-cms.org/config/1.0");
+            $confctxt->registerNameSpace("bxco","http://bitflux.org/config/1.0");
             
         
         // this could be done with one xpath-query

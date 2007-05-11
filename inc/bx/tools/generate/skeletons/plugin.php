@@ -17,7 +17,7 @@
 /** 
 * To use this plugin in a collection, put the following into .configxml
 *** 
-<bxcms xmlns="http://www.flux-cms.org/config">
+<bxcms xmlns="http://bitflux.org/config">
 <plugins>
 <parameter name="xslt" type="pipeline" value="##pname##.xsl"/>
 <extension type="html"/>

@@ -72,7 +72,7 @@ class bx_filters_formwizard extends bx_filter {
             $this->config->load(BX_PROJECT_DIR."/$src");
             
             $this->confctxt = new DOMxpath($this->config);
-            $this->confctxt->registerNameSpace("bxco","http://www.flux-cms.org/config/1.0");
+            $this->confctxt->registerNameSpace("bxco","http://bitflux.org/config/1.0");
             
             $cookiename = $this->config->documentElement->getAttribute("cookiename");
             
@@ -335,7 +335,7 @@ class bx_filters_formwizard extends bx_filter {
         if (!MDB2::isError($res)) {
             if($res->numRows() > 0) {
                 while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-                    $node = $this->config->create_element_ns('http://www.flux-cms.org/config/1.0', $nodeName);
+                    $node = $this->config->create_element_ns('http://bitflux.org/config/1.0', $nodeName);
                     $node->set_attribute('name', utf8_encode($row['name']));
                     $node->set_attribute('value', utf8_encode($row['value']));
                     $nodes[] = $node;

@@ -14,7 +14,7 @@
 * To use this plugin in a collection, put the following into .configxml
 * and call /admin/webinc/install/linklog/ to create the databases.
 *** 
-<bxcms xmlns="http://www.flux-cms.org/config">
+<bxcms xmlns="http://bitflux.org/config">
     <plugins inGetChildren="false">
         <extension type="xml"/>
         <file preg="#plugin=#"/>
