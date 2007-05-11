@@ -18,7 +18,7 @@
 // $Id$
 
 /**
-* @author   Christian Stocker <chregu@bitflux.ch>
+* @author   Christian Stocker <chregu@liip.ch>
 * @version  $Id$
 * @package  XML_db2xml
 *

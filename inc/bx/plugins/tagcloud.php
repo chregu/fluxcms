@@ -3,7 +3,7 @@
 /*
 
 <?xml version="1.0"?>
-<bxcms xmlns="http://bitflux.org/config">
+<bxcms xmlns="http://www.flux-cms.org/config">
 
     <plugins>
         <parameter name="xslt" type="pipeline" value="tagcloud.xsl"/>

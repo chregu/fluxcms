@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | Bitflux CMS                                                          |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+// | Copyright (c) 2001-2006 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -10,7 +10,7 @@
 // | of the License, or (at your option) any later version.               |
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // +----------------------------------------------------------------------+
-// | Author: Christian Stocker <chregu@bitflux.ch>                        |
+// | Author: Christian Stocker <chregu@liip.ch>                        |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -22,7 +22,7 @@
 *  I'm not sure, if this really makes sense at all. but it makes it
 *   it certainly more clean... or at least should
 *
-* @author   Christian Stocker <chregu@bitflux.ch>
+* @author   Christian Stocker <chregu@liip.ch>
 * @version  $Id$
 * @package  admin
 *
@@ -861,7 +861,7 @@ class bx_editors_dbform_manager {
             
             $xslproc->setParameter("","isMozilla",popoon_classes_browser::isMozilla() ? "true": "false");
             $configxml = $xslproc->transformToXml($xml);
-            $this->xml->add($configxml,array("namespaces"=> array(array("bxco","http://bitflux.org/config/1.0")), "xpath"=>"/bxco:config/bxco:fields/*","root"=>"master/master"));
+            $this->xml->add($configxml,array("namespaces"=> array(array("bxco","http://www.flux-cms.org/config/1.0")), "xpath"=>"/bxco:config/bxco:fields/*","root"=>"master/master"));
         }
     } //end func setMasterXml
     

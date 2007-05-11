@@ -14,7 +14,7 @@
 // | license@php.net so we can mail you a copy immediately.               |
 // +----------------------------------------------------------------------+
 // | Authors: Hartmut Holzgraefe <hholzgra@php.net>                       |
-// |          Christian Stocker <chregu@bitflux.ch>                       |
+// |          Christian Stocker <chregu@liip.ch>                       |
 // +----------------------------------------------------------------------+
 //
 // $Id$

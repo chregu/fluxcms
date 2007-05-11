@@ -13,7 +13,7 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@php.net so we can mail you a copy immediately.               |
 // +----------------------------------------------------------------------+
-// | Authors: Christian Stocker <chregu@bitflux.ch>                         |
+// | Authors: Christian Stocker <chregu@liip.ch>                         |
 // |          Kristian K�hntopp (initial write)                           |
 // +----------------------------------------------------------------------+
 //

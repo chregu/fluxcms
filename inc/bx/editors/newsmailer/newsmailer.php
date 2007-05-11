@@ -418,9 +418,9 @@ class bx_editors_newsmailer_newsmailer {
      */
     protected function getBounceAddress($parameters)
     {
-		// Generate a special bounce address e.g. bounces+milo=bitflux.ch@bitflux.ch
+		// Generate a special bounce address e.g. bounces+milo=bitflux.ch@liip.ch
 		$bounceEmail = str_replace("@", "=", $parameters['email']);
-		return "bounces+".$bounceEmail."@bitflux.ch";    	
+		return "bounces+".$bounceEmail."@liip.ch";    	
     }
     
     /**

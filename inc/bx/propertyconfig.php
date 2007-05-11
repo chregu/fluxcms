@@ -312,7 +312,7 @@ class bx_propertyconfig {
     */
     protected function getXPathNodes($xpath, $ctxt = NULL) {
         $xp = new Domxpath($this->configXML);
-        $xp->registerNamespace("bxcms","http://bitflux.org/propertyconfig");
+        $xp->registerNamespace("bxcms","http://www.flux-cms.org/propertyconfig");
         if ($ctxt) {
             return  $xp->query($xpath, $ctxt);    
         } else {

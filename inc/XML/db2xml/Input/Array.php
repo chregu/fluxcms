@@ -21,7 +21,7 @@ function addTestBefore_Array($resultset)  {
        return is_array($resultset);
 }   
     /*
-    * @author   Christian Stocker <chregu@bitflux.ch>
+    * @author   Christian Stocker <chregu@liip.ch>
     * @version  $Id$
     * @package  XML_db2xml            
     */

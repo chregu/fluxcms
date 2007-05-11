@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | popoon                                                               |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+// | Copyright (c) 2001-2006 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | Licensed under the Apache License, Version 2.0 (the "License");      |
 // | you may not use this file except in compliance with the License.     |
@@ -14,14 +14,14 @@
 // | implied. See the License for the specific language governing         |
 // | permissions and limitations under the License.                       |
 // +----------------------------------------------------------------------+
-// | Author: Christian Stocker <chregu@bitflux.ch>                        |
+// | Author: Christian Stocker <chregu@liip.ch>                        |
 // +----------------------------------------------------------------------+
 //
 // $Id: bxcms.php 1459 2004-05-27 13:29:34Z chregu $
 
 /**
 *
-* @author   Silvan Zurbruegg <silvan@bitflux.ch>
+* @author   Silvan Zurbruegg <silvan@liip.ch>
 * @version  $Id: bxcmsauth.php 1459 2004-05-27 13:29:34Z silvan $
 * @package  popoon
 */

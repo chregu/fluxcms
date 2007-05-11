@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | Flux CMS                                                                |     
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+// | Copyright (c) 2001-2006 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |

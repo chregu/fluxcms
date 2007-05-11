@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | Bitflux CMS                                                          |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001,2002,2003 Bitflux GmbH                            |
+// | Copyright (c) 2001,2002,2003 Liip AG                                 |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -10,7 +10,7 @@
 // | of the License, or (at your option) any later version.               |
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // +----------------------------------------------------------------------+
-// | Author: Christian Stocker <chregu@bitflux.ch>                        |
+// | Author: Christian Stocker <chregu@liip.ch>                        |
 // +----------------------------------------------------------------------+
 //
 // $Id$

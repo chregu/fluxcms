@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------+
-// | BxCMS                                                                |
+// | Flux CMS                                                             |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+// | Copyright (c) 2001-2006 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -10,7 +10,7 @@
 // | of the License, or (at your option) any later version.               |
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // +----------------------------------------------------------------------+
-// | Author: Bitflux GmbH <flux@bitflux.ch>                               |
+// | Author: Liip AG      <contact@liip.ch>                               |
 // +----------------------------------------------------------------------+
 //
 // $Id: fluxcli.php 6796 2006-04-25 13:15:55Z philipp $

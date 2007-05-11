@@ -48,7 +48,7 @@
 *   http://php.chregu.tv/sql2xml
 *
 *
-* @author   Christian Stocker <chregu@bitflux.ch>
+* @author   Christian Stocker <chregu@liip.ch>
 * @version  $Id$
 * @package  XML_db2xml
 */

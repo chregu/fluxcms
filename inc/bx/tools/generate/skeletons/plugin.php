@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | Bx                                                                   |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2005 Bitflux GmbH                                      |
+// | Copyright (c) 2005 Liip AG                                           |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -11,13 +11,13 @@
 // | of the License, or (at your option) any later version.               |
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // +----------------------------------------------------------------------+
-// | Author: Bitflux GmbH <devel@bitflux.ch>                              |
+// | Author: Liip AG      <devel@liip.ch>                              |
 // +----------------------------------------------------------------------+
 
 /** 
 * To use this plugin in a collection, put the following into .configxml
 *** 
-<bxcms xmlns="http://bitflux.org/config">
+<bxcms xmlns="http://www.flux-cms.org/config">
 <plugins>
 <parameter name="xslt" type="pipeline" value="##pname##.xsl"/>
 <extension type="html"/>

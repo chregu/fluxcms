@@ -5,7 +5,7 @@
 * A central place for asking properties of resources.
 * mimetype etc..
 *
-* @author   Christian Stocker <chregu@bitflux.ch>
+* @author   Christian Stocker <chregu@liip.ch>
 * @version  $Id$
 * @package  bxcms
 */

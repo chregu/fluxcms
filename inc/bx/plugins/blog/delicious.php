@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | BxCms                                                                |     
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+// | Copyright (c) 2001-2006 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -11,7 +11,7 @@
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // | See also http://wiki.bitflux.org/License_FAQ                         |
 // +----------------------------------------------------------------------+
-// | Author: Bitflux GmbH <devel@bitflux.ch>                              |
+// | Author: Liip AG      <devel@liip.ch>                              |
 // +----------------------------------------------------------------------+
 
 class bx_plugins_blog_delicious {

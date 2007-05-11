@@ -36,7 +36,7 @@ include_once('XML/db2xml/Format/Extended.php');
  *   http://php.chregu.tv/db2xml/
  *   for the time being
  *
- * @author   Christian Stocker <chregu@bitflux.ch>
+ * @author   Christian Stocker <chregu@liip.ch>
  * @version  $Id$
  * @package  XML_db2xml
  */

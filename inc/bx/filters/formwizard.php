@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | Bx                                                                   |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+// | Copyright (c) 2001-2006 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -10,7 +10,7 @@
 // | of the License, or (at your option) any later version.               |
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // +----------------------------------------------------------------------+
-// | Author: Bitflux GmbH <devel@bitflux.ch>                              |
+// | Author: Liip AG      <devel@liip.ch>                              |
 // +----------------------------------------------------------------------+
 
 
@@ -35,7 +35,7 @@ class bx_filters_formwizard extends bx_filter {
         $this->lang =  $GLOBALS['POOL']->config->getOutputLanguage();
         $this->defaultLang = $GLOBALS['POOL']->config->getDefaultOutputLanguage();
         $ctxt = new Domxpath($xml);
-        $ctxt->registerNameSpace('forms', 'http://bitflux.org/forms');
+        $ctxt->registerNameSpace('forms', 'http://www.flux-cms.org/forms');
         
         $xforms = $ctxt->query("//forms:formwizard");
         $wizardnode = $xforms->item(0);
@@ -72,7 +72,7 @@ class bx_filters_formwizard extends bx_filter {
             $this->config->load(BX_PROJECT_DIR."/$src");
             
             $this->confctxt = new DOMxpath($this->config);
-            $this->confctxt->registerNameSpace("bxco","http://bitflux.org/config/1.0");
+            $this->confctxt->registerNameSpace("bxco","http://www.flux-cms.org/config/1.0");
             
             $cookiename = $this->config->documentElement->getAttribute("cookiename");
             
@@ -335,7 +335,7 @@ class bx_filters_formwizard extends bx_filter {
         if (!MDB2::isError($res)) {
             if($res->numRows() > 0) {
                 while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-                    $node = $this->config->create_element_ns('http://bitflux.org/config/1.0', $nodeName);
+                    $node = $this->config->create_element_ns('http://www.flux-cms.org/config/1.0', $nodeName);
                     $node->set_attribute('name', utf8_encode($row['name']));
                     $node->set_attribute('value', utf8_encode($row['value']));
                     $nodes[] = $node;

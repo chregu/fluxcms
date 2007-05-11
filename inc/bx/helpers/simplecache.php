@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | Bitflux CMS                                                          |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001,2002,2003 Bitflux GmbH                            |
+// | Copyright (c) 2001,2002,2003 Liip AG                                 |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -10,7 +10,7 @@
 // | of the License, or (at your option) any later version.               |
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // +----------------------------------------------------------------------+
-// | Author: Christian Stocker <chregu@bitflux.ch>                        |
+// | Author: Christian Stocker <chregu@liip.ch>                        |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -18,7 +18,7 @@
 /**
 * DEPRECATED, please use popoon_helpers_simplecache instead 
 *
-* @author   Christian Stocker <chregu@bitflux.ch>
+* @author   Christian Stocker <chregu@liip.ch>
 * @version  $Id$
 * @package  admin
 *
@@ -249,7 +249,7 @@ class bx_helpers_simplecache {
         else {
              include_once("HTTP/Request.php");
              $req = new HTTP_Request($url,array("timeout" => 5));
-             $req->addHeader("User-Agent",'BxCMS HTTP Fetcher+Cacher $Rev: 2815 $ (http://bitflux.org)');
+             $req->addHeader("User-Agent",'BxCMS HTTP Fetcher+Cacher $Rev: 2815 $ (http://www.flux-cms.org)');
 
              if ($cacheFileLastModified_mtime) {
                   $req->addHeader("If-Modified-Since",gmdate("D, d M Y H:i:s \G\M\T",$cacheFileLastModified_mtime));

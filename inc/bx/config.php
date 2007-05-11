@@ -187,7 +187,7 @@ class bx_config extends popoon_classes_config {
             $configXML = new DomDocument();
             if($configXML->load($configFile)) {
                 $xp = new Domxpath($configXML);
-                $xp->registerNamespace("bxcms","http://bitflux.org/editorconfig");
+                $xp->registerNamespace("bxcms","http://www.flux-cms.org/editorconfig");
                 
                 foreach($xp->query('/bxcms:bxcms/bxcms:editors/bxcms:editor') as $editorNode) {
                     $this->editorsByPlugin[$plugin][] = $editorNode->getAttribute('name');

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | Flux CMS                                                                |     
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+// | Copyright (c) 2001-2006 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -11,7 +11,7 @@
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // | See also http://wiki.bitflux.org/License_FAQ                         |
 // +----------------------------------------------------------------------+
-// | Author: Bitflux GmbH <devel@bitflux.ch>                              |
+// | Author: Liip AG      <devel@liip.ch>                              |
 // +----------------------------------------------------------------------+
 /**
  * class bx_plugins_blog_authorarchive
@@ -368,7 +368,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
         }
-        $xml = '<html xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns="http://www.w3.org/1999/xhtml"><head><title>';
+        $xml = '<html xmlns:blog="http://www.flux-cms.org/doctypes/blog" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns="http://www.w3.org/1999/xhtml"><head><title>';
         if ($cat) {
             $_r = $GLOBALS['POOL']->db->prepare("select fullname from ".$tablePrefix."blogcategories where fulluri = ?",array('text'),array('text'));
             $_r = $_r->execute( array($cat));
@@ -683,7 +683,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 }
 
             }
-            $xml .= "<blog:info xmlns='http://bitflux.org/doctypes/blog'>".$row['post_info'].'</blog:info>';
+            $xml .= "<blog:info xmlns='http://www.flux-cms.org/doctypes/blog'>".$row['post_info'].'</blog:info>';
 
             $xml .= '</div>';
 

@@ -9,7 +9,7 @@
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // +----------------------------------------------------------------------+
 // | Author: Carl Hasselskog <Carl@calle.nu>                              |
-// |         Christian Stocker <chregu@bitflux.ch>                        |
+// |         Christian Stocker <chregu@liip.ch>                        |
 // +----------------------------------------------------------------------+
 
 

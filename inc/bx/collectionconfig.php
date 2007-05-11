@@ -18,7 +18,7 @@ class bx_collectionconfig {
         $this->configxml->load("bxconfig://".$url);
         $xp = new domxpath($this->configxml);
         $xp->registerNamespace("xi","http://www.w3.org/2001/XInclude");
-        $xp->registerNamespace("bxcms","http://bitflux.org/config");
+        $xp->registerNamespace("bxcms","http://www.flux-cms.org/config");
         
         $res = $xp->query("//xi:include");
         foreach( $res as $node) {
@@ -241,7 +241,7 @@ class bx_collectionconfig {
     protected function getXPathNodes($xpath, $ctxt = NULL) {
 
         $xp = new Domxpath($this->configxml);
-        $xp->registerNamespace("bxcms","http://bitflux.org/config");
+        $xp->registerNamespace("bxcms","http://www.flux-cms.org/config");
         if ($ctxt) {
             return  $xp->query($xpath,$ctxt);
         } else {

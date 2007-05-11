@@ -46,7 +46,7 @@ Class XML_db2xml_Input_Http {
         
         include_once("HTTP/Request.php");
         $req = new HTTP_Request($file,array("timeout" => 5));
-        $req->addHeader("User-Agent","Popoon Aggregator (http://bitflux.org)");
+        $req->addHeader("User-Agent","Popoon Aggregator (http://www.flux-cms.org)");
         $req->sendRequest();
         $content = $req->getResponseBody();
         // replace "dangerous" code

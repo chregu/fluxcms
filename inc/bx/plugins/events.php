@@ -14,7 +14,7 @@ CREATE TABLE `bxcms_events` (
 
 and put in .configxml:
 
-<bxcms xmlns="http://bitflux.org/config">
+<bxcms xmlns="http://www.flux-cms.org/config">
     <plugins>
         <parameter name="xslt" type="pipeline" value="events.xsl"/>
         <extension type="html"/>
