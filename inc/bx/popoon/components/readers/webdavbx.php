@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | Bx                                                                   |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Liip AG                                      |
+// | Copyright (c) 2001-2007 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | Licensed under the Apache License, Version 2.0 (the "License");      |
 // | you may not use this file except in compliance with the License.     |

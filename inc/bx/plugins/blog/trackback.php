@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | BxCms                                                                |     
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2006 Liip AG                                      |
+// | Copyright (c) 2001-2007 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
