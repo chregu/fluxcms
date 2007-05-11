@@ -19,7 +19,7 @@
 	
 		<h2>Blog Sitemap</h2>
 		
-		<xsl:copy-of disable-output-escaping="yes" select="/bx/plugin[@name = 'blogpostsall']/html/body" />
+		<xsl:copy-of disable-output-escaping="yes" select="/bx/plugin[@name = 'blog_allposts']/html/body" />
 		
 	</xsl:template>
 </xsl:stylesheet>
