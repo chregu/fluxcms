@@ -11,7 +11,19 @@ class bx_streams_structure2xml extends bx_streams_buffer {
     }
 
     function contentOnRead($path) {
-        $this->db = $GLOBALS['POOL']->db;
+
+        $dsn = $this->getParameter('dsn');
+        //if no dsn given -> use default
+        if($dsn == ''){
+            $this->db = $GLOBALS['POOL']->db;
+        } else {
+            //check config
+            if(isset($GLOBALS['POOL']->config->$dsn)){
+                require_once("MDB2.php");
+                $this->db = @MDB2::connect($GLOBALS['POOL']->config->$dsn);
+            }
+        }
+        
         $parts = parse_url($path);
         if(preg_match('#^[\/]*(.*)\/$#', $parts['path'], $matches)) {
             $table = $matches[1];
