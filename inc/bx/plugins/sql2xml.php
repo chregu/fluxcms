@@ -64,16 +64,12 @@ class bx_plugins_sql2xml extends bx_plugin implements bxIplugin {
 
 	$db = $GLOBALS['POOL']->db;
 	foreach ($queries as $key => $query) {
-        	if(MDB2::isManip($query)) {
-			// "<nothingFound>manipulative queries are not allowed</nothingFound>";
-		} else {
-        		$res = $db->query($query);
-		        if (PEAR::isError($res) || $res->numRows() == 0) {
-        		    //$xml = "<nothingFound/>";    
-	        	} else {
-      	    			$db2xml->addWithInput("Dbresult",$res);
-        		}
-		}
+       		$res = $db->query($query);
+	        if (PEAR::isError($res) || $res->numRows() == 0) {
+       		    //$xml = "<nothingFound/>";    
+        	} else {
+    			$db2xml->addWithInput("Dbresult",$res);
+       		}
         }
 	$xml = $db2xml->getXMLObject();
         return $xml;
