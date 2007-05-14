@@ -2,6 +2,7 @@
 
 class bx_streams_structure2xml extends bx_streams_buffer {
     public $db = null;
+    public $config = null;
     public $defaultExpires = 3600;
     public $st2xmlCaching = "true";
 
@@ -9,6 +10,30 @@ class bx_streams_structure2xml extends bx_streams_buffer {
         parent::__construct();
 
     }
+
+
+     function checkForMysqlUtf8($dsn,$db) {
+        if ($this->config->dbIsUtf8 === null) {
+            if (popoon_pool::isMysqlFourOne($dsn,$db)) {
+                $this->config->dbIsFourOne = true;
+                if (popoon_pool::isMysqlUtf8($dsn,$db)) {
+                    $this->config->dbIsUtf8 = true;
+                }   
+            }
+        }
+        
+        if ($this->config->dbIsUtf8) {
+            $this->config->dbIsUtf8 = true;
+            $db->isUtf8 = true;
+        } else {
+            $db->isUtf8 = false;
+            $this->config->dbIsUtf8 = false;
+        }
+        
+        if ($this->config->dbIsFourOne) {
+            $db->query("set names 'utf8'");
+        }    
+     }
 
     function contentOnRead($path) {
 
@@ -19,8 +44,11 @@ class bx_streams_structure2xml extends bx_streams_buffer {
         } else {
             //check config
             if(isset($GLOBALS['POOL']->config->$dsn)){
+                $dsn = $GLOBALS['POOL']->config->$dsn;
+                $this->config = $GLOBALS['POOL']->config;
                 require_once("MDB2.php");
-                $this->db = @MDB2::connect($GLOBALS['POOL']->config->$dsn);
+                $this->db = @MDB2::connect($dsn);
+                $this->checkForMysqlUtf8($dsn,$this->db);
             }
         }
         
