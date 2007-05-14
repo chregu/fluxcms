@@ -4,6 +4,27 @@
 
  <variable name="blogid" value="1"/>
  <variable name="postsperpage" value="10"/>
+
+ <plugins inGetChildren="false">
+<extension type="xml"/>
+<file name="sitemap"/>
+
+        <parameter name="xslt" type="pipeline" value="../standard/copy.xsl"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+
+        <plugin type="guglsitemap">
+
+
+
+            <!-- add blogpath here please if not set xml will not output the uri-->
+            <parameter name="blogpath" value=""/>
+            <!-- add blogid here please(needed) if only one blog '1' should be default -->
+            <parameter name="blogid" value="1"/>
+            <!-- 0 for no, 1 for yes -->
+            <parameter name="isGoogleSitemap" value="1"/>            
+         </plugin>
+    </plugins>
+
  
  <plugins inGetChildren="false">
         <extension type="xml"/>
