@@ -175,7 +175,8 @@ class bx_filters_patforms extends bx_filter {
             // quick hack to replace i18n(.*) references with i18n compliant XML-tags
             $formXML = preg_replace('/(\S+)="i18n\(([^)]*)\)"/', '$1="$2" i18n:attr="$1"', $formXML);
             $formXML = preg_replace("/i18n\(([^)]*)\)/", "<i18n:text>\$1</i18n:text>", $formXML);
-
+            $formXML = str_replace(array("&lt;i18n:text&gt;","&lt;/i18n:text&gt;"),array("<i18n:text>","</i18n:text>"),$formXML);
+            
             // lookup forms:classoutput tag
             $classONS = $this->getXPathNodes('//forms:classoutput');
             $classONode = FALSE;
@@ -222,7 +223,7 @@ class bx_filters_patforms extends bx_filter {
             
             // replace patForms:Form node by transformed xml from form
             if (function_exists('iconv')) {
-                $formXML = @iconv("UTF-8", "UTF-8//IGNORE", $formXML);   
+             $formXML = @iconv("UTF-8", "UTF-8//IGNORE", $formXML);   
             }
             
             $formDOM->loadXML($formXML);
