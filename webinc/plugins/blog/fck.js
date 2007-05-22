@@ -41,9 +41,9 @@ function initFckExtended() {
 
 }
 
-function updateTextAreas() {
+function updateTextAreas(form, preview) {
    updateTextAreasOnly();
-	return formCheck();
+	return formCheck(form, preview);
 }
                                            
 function updateTextAreasOnly() {
