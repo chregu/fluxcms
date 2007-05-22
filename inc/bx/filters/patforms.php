@@ -120,10 +120,13 @@ class bx_filters_patforms extends bx_filter {
                     $point = PATFORMS_RULE_BEFORE_VALIDATION;
                 }
                 
-                if ($type == 'conditionalRequired') {
+                if ($type == 'conditionalRequired' || $type == 'conditionalRequiredPreg') {
                     // conditional required
-                    $rule = patForms::createRule('ConditionalRequired');
-                    
+                    if($type == 'conditionalRequired') {
+                        $rule =& patForms::createRule('ConditionalRequired');
+                    } else {
+                        $rule =& patForms::createRule('ConditionalRequiredPreg');
+                    }
                     // query conditions
                     foreach($this->getXPathNodes("forms:condition[@field != '' and @value != '']", $ruleNode) as $condNode) {
                         $cField = $condNode->getAttribute('field');
@@ -138,6 +141,7 @@ class bx_filters_patforms extends bx_filter {
                     }
                     $rule->setRequiredFields($requiredFields);
                     $form->addRule($rule, PATFORMS_RULE_BEFORE_VALIDATION);
+                
                 } else if ($type == 'Email' or $type == 'EmailEN') {
                     
                     $emailFields = array();
