@@ -976,11 +976,11 @@ class patForms_Element_Date extends patForms_Element
 			}
 		}
 			
-		if( !is_null( $this->minDate ) && $this->date->before( $this->minDate ) ) {
+		if( !is_null( $this->minDate ) && $required && $this->date->before( $this->minDate ) ) {
 			$this->addValidationError( 2, array( 'mindate' => $this->minDate->getDate() ) );
 		}
 		
-		if( !is_null( $this->maxDate ) && $this->date->after( $this->maxDate ) ) {
+		if( !is_null( $this->maxDate ) && $required && $this->date->after( $this->maxDate ) ) {
 			$this->addValidationError( 3, array( 'maxdate' => $this->maxDate->getDate() ) );
 		}
 
