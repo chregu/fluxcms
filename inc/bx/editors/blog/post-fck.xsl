@@ -518,10 +518,10 @@
        <input type="button" class="button" i18n:attr="value" value="Preview">
     <xsl:choose>
                <xsl:when test="$doFck">
-               <xsl:attribute name="onclick">if(updateTextAreas()) { startPreview(this.form);}</xsl:attribute>
+               <xsl:attribute name="onclick">if(updateTextAreas(this.form,'1')) { startPreview(this.form);}</xsl:attribute>
                </xsl:when>
                <xsl:otherwise>
-               <xsl:attribute name="onclick">if(formCheck()) { startPreview(this.form);}</xsl:attribute>
+               <xsl:attribute name="onclick">if(formCheck(this.form,'1')) { startPreview(this.form);}</xsl:attribute>
                
                </xsl:otherwise>
                </xsl:choose>
