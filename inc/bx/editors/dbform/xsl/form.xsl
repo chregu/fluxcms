@@ -824,13 +824,14 @@ this.edited = true;
 <input name="{$tag}[]" TYPE="file" size="35" />
     
         
-    <input type="hidden" name="MAX_FILE_SIZE" value="" />
-
     
     <br/>
     
     <xsl:if test="string-length(normalize-space(/bx/master/master/*[name() = $tag]/text()))>0">
 	<a class="blackH5" target="file" href="{/bx/bxco:config/bxco:fields/@downloaddir}{/bx/master/master/id}.{/bx/master/master/*[name() = $tag]}"><xsl:value-of select="/bx/master/master/*[name() = $tag]" /></a>
+	<input name="{$tag}_delete" TYPE="checkbox" /> löschen<br/>
+
+	
     </xsl:if>
 	<input name="{$tag}_old" id="{$tag}" type="hidden" value="{/bx/master/master/*[name() = $tag]}" />
 </xsl:template>

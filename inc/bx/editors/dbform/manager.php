@@ -303,7 +303,6 @@ class bx_editors_dbform_manager {
                 //left joins we need in the master sql
                 $fields["n2mLeftJoins"][$child] = " left join ".$this->tablePrefix."$child as $child on $child.".$N2MValues['thisfield']." = Master.".$thisidfield."  ";
                 // add the n2m-id to the list of fields which go into the master sql, type = none means, no equivalent field in the db
-                
                 $fields["fields"][$child.".".$thatidfield]["type"]="none";
                 if (isset($N2MValues['objectfield']))
                 {
@@ -395,6 +394,7 @@ class bx_editors_dbform_manager {
             /**
             * here comes the before update/insert stuff.
             */
+            
             foreach ($this->fields["fields"] as $name => $fieldarray)
             {
                 //rename uploaded filenames to avoid umlaut troubles
@@ -559,23 +559,24 @@ class bx_editors_dbform_manager {
                 if ("file" == $fieldarray["type"])
                 {
                     
+                    $_delete = $name."_delete";
                     
-                    if ((isset($this->files_vars[$name]) && $this->files_vars[$name]["name"][0] == "none")  ||  (isset($this->http_vars[$name]) &&  $this->http_vars[$name][0] == "none") || (isset($this->files_vars[$name]) && $this->files_vars[$name]["tmp_name"][0] && $this->files_vars[$name]["tmp_name"][0] != 'none'))
+                    if ((isset($this->files_vars[$name]) && $this->http_vars[$_delete] == 'on')  ||  (isset($this->http_vars[$name]) &&  $this->http_vars[$name][0] == "none") || (isset($this->files_vars[$name]) && $this->files_vars[$name]["tmp_name"][0] && $this->files_vars[$name]["tmp_name"][0] != 'none'))
                     {
                         //if old file was there, delete that first
                         $_old = $name."_old";
                         if ($this->http_vars[$_old]) {
                             @unlink($this->masterValues["uploaddir"].  $this->http_vars[$this->idField].".".$this->http_vars[$_old]);
                         }
-                        if ($this->files_vars[$name]["name"][0] != "none")
+                        if ($this->http_vars[$_delete] != 'on')
                         {
                             if (! @move_uploaded_file($this->files_vars[$name]["tmp_name"][0],$this->masterValues["uploaddir"].  $this->http_vars[$this->idField].".".$this->files_vars[$name]["name"][0]))
                             {
                                 print "<br /> File ". $this->files_vars[$name]["name"][0]. " couldn't be moved to ". $this->masterValues["uploaddir"]. ". Please check your permissions. <p />";
                             } else {
-				chmod($this->masterValues["uploaddir"].  $this->http_vars[$this->idField].".".$this->files_vars[$name]["name"][0],0644);
-				}
-                        }
+                                chmod($this->masterValues["uploaddir"].  $this->http_vars[$this->idField].".".$this->files_vars[$name]["name"][0],0644);
+                            }
+                        } 
                         
                     }
                 }
@@ -1056,28 +1057,23 @@ class bx_editors_dbform_manager {
             //if fieldtype is file, we have to do some checks...
             elseif ("file" == $fieldarray["type"])
             {
+                $_old = $name."_old";
+                if ($this->http_vars[$name."_delete"] == "on") {
+                    XML_db2xml::newChild($root,"$name",bx_helpers_string::utf2entities(""));
+                }
+                elseif (isset($this->files_vars[$name]['name'][0]) && $this->files_vars[$name]['name'][0]) {
+                    XML_db2xml::newChild($root,"$name",bx_helpers_string::utf2entities($this->files_vars[$name]['name'][0]));
+                }
                 
-                // if $this->files_vars is not set, and the value is not none, nothing has
-                // changed (no new file upload and no deletion)
-                if (isset($this->files_vars[$name]) && $this->files_vars[$name]["name"][0] === "")
+                else if (isset($this->files_vars[$name]) && $this->files_vars[$name]["name"][0] === "" && $this->http_vars[$_old])
                 {
-                    $_old = $name."_old";
                     XML_db2xml::newChild($root,"$name",bx_helpers_string::utf2entities($this->http_vars[$_old]));
-                }
-                // if the uploaded file name (on the server side) has not the name "none", a new file was uploaded
-                //  (in php 4.1 it seems, that if we don't upload a file, then it's not in _FILES
-                //   not sure if this is intended behaviour or not. but php 4.2 behaves the same... check with the php docs..)
-                elseif (isset($this->files_vars[$name]) &&  $this->files_vars[$name]["name"][0]!= "none") {
-                    XML_db2xml::newChild($root,"$name",bx_helpers_string::utf2entities($this->files_vars[$name]["name"][0]));
-                }
+                } 
                 // if the name of the uploaded file is not "none", nothing happend. use the old name
-                elseif (isset($this->files_vars[$name]) && $this->files_vars[$name]["name"][0] != "none") {
-                    $_old = $name."_old";
-                    XML_db2xml::newChild($root,"$name",bx_helpers_string::utf2entities($this->http_vars[$_old]));
-                }
                 // otherwises delete the entry in the db
                 else {
-                    XML_db2xml::newChild($root,"$name",bx_helpers_string::utf2entities(""));
+                    XML_db2xml::newChild($root,"$name",bx_helpers_string::utf2entities($this->http_vars[$_old]));
+                    
                 }
             }
             
