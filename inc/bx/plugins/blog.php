@@ -1052,7 +1052,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                }
                $xml .= '<tr>
                <td valign="top"><i18n:text i18n:key="blogCommentComment">Comment</i18n:text>*</td>
-               <td><textarea rows="10" cols="40" name="comments" id="comments">'.$data['comments'].'</textarea></td>
+               <td><textarea rows="10" cols="40" name="comments" id="commentsarea">'.$data['comments'].'</textarea></td>
                </tr><tr>
                <td colspan="2" valign="top"><input type="checkbox" name="comment_notification" />
                <i18n:text i18n:key="blogCommentNotify">Notify me via E-Mail when new comments are made to this entry</i18n:text></td>
@@ -1082,7 +1082,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 
                 $xml .= '<tr>
                 <td></td>
-                <td><br /><input type="submit" i18n:attr="value" id="bx[plugins][blog][_all]" name="bx[plugins][blog][_all]" value="Send" class="formbutton" />
+                <td><br /><input type="submit" i18n:attr="value" id="bx_plugins_blog_all" name="bx[plugins][blog][_all]" value="Send" class="formbutton" />
                 <input onclick="javascript:previewSubmit(this.parentNode);" type="button" i18n:attr="value"  value="Preview" class="formbutton" />
                 
                 </td>

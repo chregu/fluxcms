@@ -537,8 +537,8 @@ var commentAuthorFieldName = "name";
 var commentAuthorLoggedIn  = false;
 
 var commentFormID          = "bx_foo";
-var commentTextFieldName   = "comments";
-var commentButtonName      = "bx[plugins][blog][_all]";
+var commentTextFieldName   = "commentsarea";
+var commentButtonName      = "bx_plugins_blog_all";
 
 </xsl:if>
 </xsl:if>
