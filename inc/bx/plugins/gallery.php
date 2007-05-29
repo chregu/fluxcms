@@ -523,19 +523,19 @@ class bx_plugins_gallery_file {
                     $node->setAttribute('name', $name);
                     $node->setAttribute('href', $name.'/');
                     $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-					$subgallery = "/".$options['path'].$name."/";
-					
-					$query = "select path from ".$prefix."properties where path like '".$subgallery."%' and name = 'preview' and value = '1'";
-					foreach ( $GLOBALS['POOL']->db->queryCol($query) as $pic) {
-						$pic = str_replace($subgallery,"",$pic);
-						
-						if (strpos($pic,"/") === false) {
-							$node->setAttribute("preview",$pic);
-						}
-					}
-					$options['albums']->appendChild($node);
-					
-					
+                    $subgallery = "/".$options['path'].$name."/";
+                    
+                    $query = "select path from ".$prefix."properties where path like '".$subgallery."%' and name = 'preview' and value = '1'";
+                    foreach ( $GLOBALS['POOL']->db->queryCol($query) as $pic) {
+                        $pic = str_replace($subgallery,"",$pic);
+                        
+                        if (strpos($pic,"/") === false) {
+                            $node->setAttribute("preview",$pic);
+                        }
+                    }
+                    $options['albums']->appendChild($node);
+                    
+                    
                     $options['numberOfAlbums']++;
                 } else if ($file->isImage) {
                     if(($options['mode']=='image' ) || ($options['numberOfImages'] + 1 > ($options['currentPage'] - 1) * $options['imagesPerPage']) && ($options['numberOfImages'] + 1<= ($options['currentPage']) * $options['imagesPerPage'])) {
@@ -546,14 +546,14 @@ class bx_plugins_gallery_file {
                         //bx_helpers_debug::webdump($options['path'].$name);
                         /* this code would allow captions and title in overviews as well... */
                         $preview = bx_resourcemanager::getProperty("/".$options['path'].$name,"preview",'bx:'.$lang);
-						//bx_helpers_debug::webdump($preview);
-						if ($preview) {
-							$node->appendChild($this->dom->createTextNode(html_entity_decode($preview,ENT_COMPAT,"UTF-8")));
-						}
-							
+                        //bx_helpers_debug::webdump($preview);
+                        if ($preview) {
+                            $node->appendChild($this->dom->createTextNode(html_entity_decode($preview,ENT_COMPAT,"UTF-8")));
+                        }
+                            
                         if ($options['mode'] != 'image' && $options['descriptionInOverview']) {
-							
-							$description = bx_resourcemanager::getProperty("/".$options['path']."subgallery","description",'bx:'.$lang);
+                            
+                            $description = bx_resourcemanager::getProperty("/".$options['path']."subgallery","description",'bx:'.$lang);
                             if ($description) {
                                 $node->appendChild($this->dom->createTextNode(html_entity_decode($description,ENT_COMPAT,"UTF-8")));
                             }
