@@ -54,7 +54,7 @@
             }
             
         ]]></script>
-		<script type="text/javascript" src="{$webroot}admin/webinc/js/showhidelayers.js"/>
+        <script type="text/javascript" src="{$webroot}admin/webinc/js/showhidelayers.js"/>
     </xsl:template>
     
     <xsl:template name="editorContent">
@@ -124,19 +124,20 @@
                                     <tr><td><i18n:text>Description</i18n:text><xsl:value-of select="$langCode"/></td><td><input id="description-{.}" type="text" name="{$formName}[description][{.}]" value="{$imageNode/description/*[local-name() = current()/@language]/text()}"/></td></tr>
                                     <tr><td colspan="2">&#160;</td></tr>
                                 </xsl:for-each>
-								
-								<xsl:variable name="preview_name" select="/bx/plugin/images/image[@preview = 'true']"/>
-								<tr>
-									<td>Preview</td>
-									<td><input type="checkbox" style="width:15px;" name="{$formName}[preview]">
-									<xsl:if test="$preview_name = $imageNode">
-										<xsl:attribute name="checked">checked</xsl:attribute>
-									</xsl:if>
-									</input>
-									</td>
-								</tr>
-								
-								<tr><td width="120"></td><td><input name="{$formName}[submit]" type="submit" class="button" value="Submit" i18n:attr="value"/></td></tr>
+                                
+                                <xsl:variable name="preview_name" select="/bx/plugin/images/image[@preview = 'true']/@href"/>
+                                <tr>
+                                    <td>Preview / 
+                                    </td>
+                                    <td><input type="checkbox" style="width:15px;" name="{$formName}[preview]">
+                                    <xsl:if test="$imageNode/@href = $preview_name">
+                                        <xsl:attribute name="checked">checked</xsl:attribute>
+                                    </xsl:if>
+                                    </input>
+                                    </td>
+                                </tr>
+                                
+                                <tr><td width="120"></td><td><input name="{$formName}[submit]" type="submit" class="button" value="Submit" i18n:attr="value"/></td></tr>
                                 <tr><td colspan="2">&#160;</td></tr>
                             </table>
                             <input id="id" type="hidden" name="{$formName}[id]" value="{$imageNode/@id}"/><br/>
@@ -152,12 +153,12 @@
                         </table>
                         <p><input name="{$formName}[addImage]" type="submit" class="button" value="Add" onclick="this.disabled;this.value='wait...';" i18n:attr="value"/></p>
                     </form>
-					<div id="wait_layer" style="background-color: #ffffff; text-align:center; border:#000000 solid 1px; position:absolute; width:300px; height:115px; z-index:1; left: 200px; top: 200px; visibility: hidden">
-						<h3>Upload in progress</h3>
-						<p><img src="{$webroot}themes/standard/admin/images/wait_bar.gif" /><br />
-						Image is uploading, please wait. This window will be closed after upload.<br />
-						</p>
-					</div>
+                    <div id="wait_layer" style="background-color: #ffffff; text-align:center; border:#000000 solid 1px; position:absolute; width:300px; height:115px; z-index:1; left: 200px; top: 200px; visibility: hidden">
+                        <h3>Upload in progress</h3>
+                        <p><img src="{$webroot}themes/standard/admin/images/wait_bar.gif" /><br />
+                        Image is uploading, please wait. This window will be closed after upload.<br />
+                        </p>
+                    </div>
                 </div>
                 
                 <div id="tab_creategallery" class="tabcontentHidden"><xsl:if test="$openTabType/text() = 'creategallery'"><xsl:attribute name="class">tabcontent</xsl:attribute></xsl:if>
