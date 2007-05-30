@@ -75,15 +75,14 @@ class bx_editors_blog_sub_gallery {
     }
 
     public function handlePOST($path, $id, $data) {
-        
         if(isset($data['preview'])) {
             $prefix = $GLOBALS['POOL']->config->getTablePrefix();
             
             preg_match("#/(.*)/#", $data['id'], $matches);
-            
             $query = "select path from ".$prefix."properties where path like '".$matches['0']."%' and name = 'preview' and value = '1'";
                 
             foreach ( $GLOBALS['POOL']->db->queryCol($query) as $pic) {
+                
                 $pic = str_replace($subgallery,"",$pic);
                 if (strpos($pic,"/") === false) {
                     
@@ -93,6 +92,9 @@ class bx_editors_blog_sub_gallery {
                 }
             }
             bx_resourcemanager::setProperty($data['id'], 'preview', '1', 'bx:');
+            
+        } else {
+            bx_resourcemanager::removeProperty($data['id'], 'preview', 'bx:');
         }
         
         if(isset($data['id'])) {
@@ -178,6 +180,8 @@ class bx_editors_blog_sub_gallery {
                     $preview = bx_resourcemanager::getProperty($this->virtualRoot.$galleryId.$name, 'preview', 'bx:');
                     if($preview == 1) {
                         $image->setAttribute('preview', 'true');
+                    } else {
+                        $image->setAttribute('preview', 'false');
                     }
                     
                     $titleNode = $dom->createElement('title');
