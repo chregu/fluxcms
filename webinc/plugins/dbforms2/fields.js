@@ -228,6 +228,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
     var lastValue = null;
     var editorInstance = null;
     var valueSet = false;
+    var height = 0;
 
     this.init = function(DOMNode) {
 		this.initField(DOMNode);
@@ -240,6 +241,14 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
         
         var oFCKeditor = new FCKeditor(this.id);
         oFCKeditor.BasePath	= fckBasePath;
+
+        if(DOMNode.hasAttribute('height') && DOMNode.getAttribute('height') !== '' && DOMNode.getAttribute('height') !== '0') {
+            this.height = DOMNode.getAttribute('height');
+        }
+        
+        if(this.height !== 0) {
+            oFCKeditor.Height = this.height;
+        }
         
         oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'webinc/plugins/dbforms2/fckconfig.js';
         oFCKeditor.ToolbarSet = 'BxCMS';
@@ -778,6 +787,7 @@ function dbforms2_field_listview_12n(DOMNode) {
     }
     
     this.reloadEntries = function() {
+        dbforms2_log.log('reloadEntries() for ' + this.id);
         if(this.form.parentForm.currentID == 0 && this.form.parentForm.insertID != 0) {
             this.listview.loadEntries({thatid:this.form.parentForm.insertID});
         } else if(this.form.parentForm.currentID != 0) {

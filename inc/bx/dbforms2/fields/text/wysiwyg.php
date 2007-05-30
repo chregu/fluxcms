@@ -24,29 +24,26 @@
  */
 class bx_dbforms2_fields_text_wysiwyg extends bx_dbforms2_fields_text {
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function __construct($name) {
         parent::__construct($name);
 
         $this->type = 'text_wysiwyg';
         $this->XMLName = 'textarea';
+        $this->attributes['height'] = 0;
     }
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
+    protected function getXMLAttributes() {
+        return array('height' => $this->attributes['height']);
+    }
+    
     public function getSQLValue() {
         return html_entity_decode($this->value, ENT_NOQUOTES,'UTF-8');
+    }
+
+    public function getConfigAttributes() {
+        $ret =  parent::getConfigAttributes();
+        $ret['height'] = 'int';
+        return $ret;
     }
   
 }
