@@ -20,7 +20,7 @@
          <xsl:choose>
             <xsl:when test="$gallery/@mode= 'page'">
             <div id="gallerie">
-			        
+                    
                 <xsl:for-each select="$images/image">
                 
                 <xsl:call-template name="gallery_displayImageSmall">
@@ -35,13 +35,12 @@
                 <br class="antileft" />
 </xsl:if>
         </div>
-		
+        
 
-		<br class="antifloat"/>
+        <br class="antifloat"/>
 &#160;
-			<!-- preview -->
-			<hr/>
-			<xsl:call-template name="gallerie_preview"/>
+            <!-- preview -->
+            <xsl:call-template name="gallerie_preview"/>
 
 
             </xsl:when>
@@ -52,15 +51,15 @@
                     <div id="gallerie_preview_title">
                         <i18n:text>Latest updated Gallery</i18n:text>: <xsl:value-of select="$gallery/@name" />
                     </div>
-					    
+                        
                     <xsl:for-each select="$images/image">
                         
-						<xsl:call-template name="gallery_displayImageSmall">
-						
-						
+                        <xsl:call-template name="gallery_displayImageSmall">
+                        
+                        
                         </xsl:call-template>
-						
-						<xsl:if test="position() mod $numCols = 0">
+                        
+                        <xsl:if test="position() mod $numCols = 0">
                         <br class="antileft"/>
                         </xsl:if>
 
@@ -330,6 +329,7 @@
    
    <xsl:template name="gallerie_preview">
         <xsl:if test="/bx/plugin[@name='gallery']/gallery/albums/album/@preview">
+        <hr/>
         <h1>Subgalleries</h1>
         <div class="subgallery_preview" style="margin:20px 0px 0px 25px;">
         
