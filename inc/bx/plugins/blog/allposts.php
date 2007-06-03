@@ -5,6 +5,7 @@
 <bxcms xmlns="http://bitflux.org/config">
 
     <plugins>
+        <plugin type="navitree"></plugin>
         <parameter name="xslt" type="pipeline" value="allposts.xsl"/>
         <plugin type="blog_allposts">
             <!-- add blogpath here please if not set xml will not output the uri-->
