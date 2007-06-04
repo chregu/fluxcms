@@ -48,6 +48,18 @@
         </script>
         </xsl:when>
         <xsl:otherwise>
+        <script type="text/javascript" >
+            function updateTextAreas(form, preview) {
+               return formCheck(form, preview);
+            }
+        </script>
+        
+        <script type="text/javascript" >
+            function updateTextAreasOnly() {
+                /*does nothing because this function is only needed by FCK editor but it throws a error message if no availble in text editor*/
+            }
+        </script>
+        
         <script type="text/javascript" src="{$webroot}webinc/plugins/blog/quicktags.js">
                 </script>
         <script type="text/javascript" src="{$webroot}webinc/js/sarissa_dbform.js">
