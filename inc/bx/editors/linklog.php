@@ -175,6 +175,11 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
 
 		// check description
 	 	$this->description 	= bx_helpers_string::utf2entities(htmlspecialchars(trim($data['description'])));
+	 	
+	    if(array_key_exists('via', $data)){
+	        $this->description .= ' via ' . $data['via'];
+//	        $this->description = mysql_escape_string($this->description);
+	    }
 	
 		if($this->description == ''){
 			$this->description = 'no description';
@@ -273,18 +278,27 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
      * @return id of inserted link  
      * 
      * */
-    private function insertLink () {
+    public function insertLink ($data = false) {
+        
+        if($data){
+            $this->setPostData($data);
+            $time = '"'.$data['time'].'"';
+        }else{
+            $time = 'now()';
+        }
 
         /*
          * add  link to db, get back id
          * @todo make own private method
          */
+         
         $query = 'insert into '.$this->tablePrefix.$this->linksTable.' (title, description, url, status, time)' .
-                 'VALUES ("'.$this->title.'", "'.$this->description.'", "'.$this->url.'", 1, now())';
+                 'VALUES ("'.$this->title.'", "'.$this->description.'", "'.$this->url.'", 1, '.$time.')';
 
         $res = $this->db->query($query);    
         if (MDB2::isError($res)) {
-            throw new PopoonDBException($res);
+            return false;
+            // throw new PopoonDBException($res);
         }
 
         // get back id:
@@ -373,8 +387,10 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
                  'title="'.$this->title.'", ' .
                  'description="'.$this->description.'", ' .
                  'url="'.$this->url.'"' .
-                  'WHERE id='.$linkid; 
+                 'WHERE id='.$linkid;
+                  
         $res = $this->db->query($query);
+
         if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
         }  
