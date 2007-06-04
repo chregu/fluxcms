@@ -55,8 +55,9 @@ xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://purl.org/atom/ns#
                     <xsl:if test="$openTabType/text() = 'comments'">
                         <xsl:attribute name="class">tabcontent</xsl:attribute>
                     </xsl:if>
-                    <xsl:apply-templates select="bx/plugin[@name='admin_edit']"/>	
                 </div>
+                
+                    <xsl:apply-templates select="bx/plugin[@name='admin_edit']"/>
             </body>
         </html>
     </xsl:template>
