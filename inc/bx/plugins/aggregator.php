@@ -90,7 +90,6 @@ class bx_plugins_aggregator extends bx_plugin implements bxIplugin{
     public function getContentById($path,$id) {
         
         define('MAGPIE_CACHE_DIR',BX_TEMP_DIR.'magpie/');
-        
         include_once('magpie/rss_fetch.inc');
         
         $query = "select rss_link from ".$GLOBALS['POOL']->config->getTablePrefix()."bloglinks where rss_link != ''";
@@ -154,26 +153,26 @@ class bx_plugins_aggregator extends bx_plugin implements bxIplugin{
         return $dom;
     }
     
-    function sortByDate($a, $b){
+    public static function sortByDate($a, $b){
         if ($a['date'] < $b['date']) {
             return 1;
         }
         return -1;
     }
     
-    function getDcDate($item, $nowOffset = 0, $returnNull = false) {
+    public static function getDcDate($item, $nowOffset = 0, $returnNull = false) {
         //we want the dates in UTC... Looks like MySQL can't handle timezones...
         //putenv("TZ=UTC");
         if (isset($item['dc']['date'])) {
-            $dcdate = $this->fixdate($item['dc']['date']);
+            $dcdate = self::fixdate($item['dc']['date']);
         } elseif (isset($item['pubdate'])) {
-            $dcdate = $this->fixdate($item['pubdate']);
+            $dcdate = self::fixdate($item['pubdate']);
         } elseif (isset($item['issued'])) {
-            $dcdate = $this->fixdate($item['issued']);
+            $dcdate = self::fixdate($item['issued']);
         } elseif (isset($item['created'])) {
-            $dcdate = $this->fixdate($item['created']);
+            $dcdate = self::fixdate($item['created']);
         } elseif (isset($item['modified'])) {
-            $dcdate = $this->fixdate($item['modified']);
+            $dcdate = self::fixdate($item['modified']);
         } elseif ($returnNull) {
             return NULL;
         } else {
@@ -184,7 +183,7 @@ class bx_plugins_aggregator extends bx_plugin implements bxIplugin{
         
     }
     
-    function fixdate($date) {
+    public static function fixdate($date) {
         $date =  preg_replace("/([0-9])T([0-9])/","$1 $2",$date);
         $date =  preg_replace("/([\+\-][0-9]{2}):([0-9]{2})/","$1$2",$date);
         $date =  gmdate("Y-m-d H:i:s O",strtotime($date));
