@@ -234,6 +234,11 @@ class patForms_Element_File extends patForms_Element
 										"default"		=>	"no",
 										"outputFormats"	=>	array( "html" ),
 									),
+            'maxsize' => array(
+                'required'		=>	false,
+                'format'		=>	'int',
+                'outputFormats'	=>	array(),
+            ),
 		);
 
     /**
@@ -246,24 +251,24 @@ class patForms_Element_File extends patForms_Element
 		"C"	=>	array(
 			1	=>	"This field is required, please complete it.",
 			2	=>	"Filename already exists - cannot overwrite file.",
-			3	=>	"The uploaded file exceeds the maximum size of [MAXSIZE].",
+			3	=>	"The uploaded file exceeds the maximum size.",
 			4	=>	"The uploaded file was only partially uploaded.",
 			5	=>	"Wrong Filetype (mime: '[MIMETYPE]')",
 			6	=>	"The uploaded file is empty."
 		),
 		"de" =>	array(
-			1	=>	"Pflichtfeld. Bitte vervollständigen Sie Ihre Angabe.",
-			2	=>	"Dateiname existiert bereits - die Datei kann nicht überschrieben werden",
-			3	=>	"Die Datei ist größer als die zugelassene Maximalgröße von [MAXSIZE].",
+			1	=>	"Pflichtfeld. Bitte vervollstï¿½ndigen Sie Ihre Angabe.",
+			2	=>	"Dateiname existiert bereits - die Datei kann nicht ï¿½berschrieben werden",
+			3	=>	"Die Datei ist grï¿½ï¿½er als die zugelassene Maximalgrï¿½ï¿½e von [MAXSIZE].",
 			4	=>	"Die Datei wurde nur teilweise hochgeladen",
 			5	=>	"Falscher Dateityp (Mime-Typ: '[MIMETYPE]')",
 			6	=>	"Die Datei ist leer."
 		),
 		"fr" =>	array(
 			1	=>	"Ce champ est obligatoire.",
-			2	=>	"Ce fichier existe déjà - il ne peut pas être remplacé.",
-			3	=>	"La taille du fichier est plus grande que la maximum autorisé de [MAXSIZE]",
-			4	=>	"Le fichier n'a été téléchargé que partiellement",
+			2	=>	"Ce fichier existe dï¿½jï¿½ - il ne peut pas ï¿½tre remplacï¿½.",
+			3	=>	"La taille du fichier est plus grande que la maximum autorisï¿½ de [MAXSIZE]",
+			4	=>	"Le fichier n'a ï¿½tï¿½ tï¿½lï¿½chargï¿½ que partiellement",
 			5	=>	"Type de fichier incorrect (Type: '[MIMETYPE]')",
 			6	=>	"Le fichier est vide"
 		)
@@ -406,6 +411,13 @@ class patForms_Element_File extends patForms_Element
 			if( !$error && !$_FILES[$nameUpload]['size'] )
 			{
 				$this->addValidationError( 6 );
+				return false;
+			}
+
+            // check for maximum size
+            if(isset($this->attributes['maxsize']) && $this->attributes['maxsize'] > 0 
+                && !$error && !$_FILES[$nameUpload]['size'] <= $this->attributes['maxsize']) {
+				$this->addValidationError( 3 );
 				return false;
 			}
             
