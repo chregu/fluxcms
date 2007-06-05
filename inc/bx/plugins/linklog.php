@@ -5,6 +5,8 @@
  * Enables to keep links in place comparable to del.icio.us
  * 
  * @author Alain Petignat
+ * @todo Pager
+ * @todo display related issues from del.icio.us
  * 
  * */
 /*
@@ -47,8 +49,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
     /*
     * The table names
     */
-    private $linksTable 	= "linklog_links";
-    private $tagsTable		= "linklog_tags";
+    private $linksTable 	    = "linklog_links";
+    private $tagsTable		    = "linklog_tags";
     private $links2tagsTable 	= "linklog_links2tags";   
     
     /*
@@ -105,8 +107,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
         $this->path=$path;
 
-//	bx_helpers_debug::webdump($path);
-
         // when a plugin is called:
         if (strpos($id,"plugin=") === 0) {
             return $this->callInternalPlugin($id, $path);
@@ -129,7 +129,9 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
             case "detail":
                 return $this->getDetail($id);
             */
-            
+
+            case "_fetch":
+                return $this->fetchDeliciousFeeds();
             case ".":
                 return $this->getSplash();
             default:
@@ -180,6 +182,72 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
         $res = $this->db->query($query);
         return $this->processLinks($res);
     }       
+    
+    private function fetchDeliciousFeeds(){
+
+        $deliciousName = $this->getParameter($this->path, 'deliciousname');
+        if($deliciousName == "" || !$deliciousName){
+            return;
+        }
+        
+        define('MAGPIE_CACHE_DIR',BX_TEMP_DIR.'magpie/');
+        include_once('magpie/rss_fetch.inc');
+
+        // @todo pass them via configxml, for now, i am only testing :)
+//        $name = ;
+        $feeduris[] = $myuri = 'http://del.icio.us/rss/'. $deliciousName;
+
+        /*
+        * Add more feeds like this:
+        *
+        * $feeduris[] = 'http://del.icio.us/rss/foo';
+        * $feeduris[] = 'http://del.icio.us/rss/bar';
+        */
+        $links = array();
+
+        foreach($feeduris as $feeduri){
+            
+            $rss = fetch_rss($feeduri);
+            
+            foreach($rss->items as $feed)
+            {           
+                /*                 */
+                $feed['date']    = bx_plugins_aggregator::getDcDate($feed);
+                $feed['dateiso'] = gmdate("Y-m-d\TH:i:s\Z",strtotime($feed['date']));
+
+                $feed['name']    = $rss->channel['title'];
+                $links[]    = $feed;
+            }
+        }
+
+        usort($links,  array(bx_plugins_aggregator,"sortByDate"));
+
+        $editor = new bx_editors_linklog();
+
+        $mycleaneduri = $this->simpleCleanUri($myuri);
+
+        foreach($links as $link){
+
+            $data = array(
+                'title' => $link['title'],
+                'url'   => $link['link'],
+                'description' => $link['description'],        
+                'tags' => $link['dc']['subject'],
+                'time' => $link['date'],
+            );
+
+            if( ! strpos($link['name'], $mycleaneduri) ){
+                $data['via'] .= '' . end( explode ("/", $this->simpleCleanUri($link['name']) ) ) . '';
+            }
+
+            $res = $editor->insertLink($data);
+
+        }        
+    }
+    
+    private function simpleCleanUri($myuri){
+        return str_replace(array('http://', 'rss'), array('',''), $myuri);
+    }
     
     /**
      * getLinksByTag
