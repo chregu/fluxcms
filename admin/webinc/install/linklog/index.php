@@ -71,6 +71,8 @@ $queries[] = "CREATE TABLE `".$tablePrefix."linklog_links2tags` (
   KEY `lid` (`linkid`,`tagid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
+$queries[] = 'ALTER TABLE trunk_linklog_links ADD UNIQUE (url)';
+
 
 foreach($queries as $query){
     $res = $db->query($query);
@@ -104,6 +106,8 @@ $configxml = '<bxcms xmlns="http://bitflux.org/config">
         <parameter name="xslt" type="pipeline" value="linklog.xsl"/>
          <extension type="html"/>
          <plugin type="linklog">
+            <!-- provide your del.icio.us-username here -->
+            <parameter name="deliciousname" value="" />
          </plugin>
          <plugin type="navitree"></plugin>
     </plugins>
