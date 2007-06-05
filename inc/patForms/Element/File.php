@@ -399,8 +399,11 @@ class patForms_Element_File extends patForms_Element
             }
 
             // check for maximum size
-            if(isset($this->attributes['maxsize']) && $this->attributes['maxsize'] > 0 
-                && !$error && ($_FILES[$nameUpload]['size'] > $this->attributes['maxsize'])) {
+            if( isset($_FILES[$nameUpload]['size'])
+                && isset($this->attributes['maxsize']) 
+                && $this->attributes['maxsize'] > 0 
+                && !$error && ($_FILES[$nameUpload]['size'] > $this->attributes['maxsize'])) 
+            {
                 $this->addValidationError( 3 );
                 return false;
             }
@@ -422,8 +425,9 @@ class patForms_Element_File extends patForms_Element
                 return false;
             }
             
-            // validate file-type
-            if( !$this->_checkMimeType( $mime ) )
+            // validate file-type (only if a file has been uploaded)
+            if(!empty($value) 
+                && !$this->_checkMimeType( $mime ) )
             {
                 return false;
             }
