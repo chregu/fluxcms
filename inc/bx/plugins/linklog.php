@@ -242,7 +242,11 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
             $res = $editor->insertLink($data);
 
-        }        
+        }
+
+	@unlink($this->cache4tags);
+	$this->mapTags2Links();
+        
     }
     
     private function simpleCleanUri($myuri){
