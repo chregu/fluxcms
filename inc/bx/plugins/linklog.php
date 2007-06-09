@@ -85,10 +85,9 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
         $this->db 		 	= $GLOBALS['POOL']->db;
         $this->mode 			= $mode;
 		
-        $this->cache4tags	= BX_TEMP_DIR."/". $this->tablePrefix."linklogtags.arr";
-        /*
-        * check if logged in:
-        */
+        $this->cache4tags	= BX_TEMP_DIR."/". $this->tablePrefix."linklog_tags.cache";
+        
+        // check if logged in:
         $perm = bx_permm::getInstance();
         if($perm->isLoggedIn()){
             $this->isLoggedIn = true;
@@ -106,7 +105,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
         $dirname = dirname($id);
 
         $this->path=$path;
-
         // when a plugin is called:
         if (strpos($id,"plugin=") === 0) {
             return $this->callInternalPlugin($id, $path);
@@ -120,22 +118,16 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
          * all        (all links, mainly for testing)
          * 
          *  */
-        switch ($dirname) {
-            case "all":
-                return $this->getAll();
-            /*
-            case "archive":
-                return $this->getArchive($id);
-            case "detail":
-                return $this->getDetail($id);
-            */
-
-            case "_fetch":
-                return $this->fetchDeliciousFeeds();
-            case ".":
-                return $this->getSplash();
-            default:
-                return $this->getLinksByTag($id);
+        if(strpos($dirname, 'all') === 0){
+        	return $this->getAll();
+        }elseif(strpos($dirname, 'archive') === 0){
+        	return $this->getArchive($dirname);
+        }elseif(strpos($dirname, '_fetch') === 0){
+        	return $this->fetchDeliciousFeeds();
+        }elseif(strpos($dirname, '.') === 0){
+        	return $this->getSplash();
+        }else{
+        	return $this->getLinksByTag($id);
         }
 
     } 
@@ -163,6 +155,56 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
     }      
     
     /**
+    * getArchive
+    * 
+    * @param string like 2007-06-05 or 2007-06 or 2007
+    * @return preprocessed linklist
+    */
+    private function getArchive($path){
+        
+        $where = str_replace('archive/', '', mysql_escape_string($path));
+            $q = 'SELECT
+                  '.$this->tablePrefix.$this->linksTable.'.id,
+                  '.$this->tablePrefix.$this->linksTable.'.title,
+                  '.$this->tablePrefix.$this->linksTable.'.url,
+                  '.$this->tablePrefix.$this->linksTable.'.description,
+                  '.$this->tablePrefix.$this->linksTable.'.time, ' .
+                  'DATE_FORMAT('.$this->tablePrefix.$this->linksTable.'.time, ' .
+                  '"%Y-%m-%dT%H:%i:%SZ") as isotime '.
+                  'FROM '.$this->tablePrefix.$this->linksTable.' '.
+                  'RIGHT JOIN '.$this->tablePrefix.$this->links2tagsTable.' ' .
+                  'ON '.$this->tablePrefix.$this->linksTable.'.id='.$this->tablePrefix.$this->links2tagsTable.'.linkid
+                   LEFT JOIN '.$this->tablePrefix.$this->tagsTable.' ON ' .
+                  ''.$this->tablePrefix.$this->links2tagsTable.'.tagid='.$this->tablePrefix.$this->tagsTable.'.id
+                   WHERE '.$this->tablePrefix.$this->linksTable.'.time LIKE "'.$where.'%" ' .
+                  'ORDER BY '.$this->tablePrefix.$this->linksTable.'.time DESC';
+                $links = $this->db->query($q);
+                //var_dump( $q );
+                 if (MDB2::isError($links)) {
+                    throw new PopoonDBException($links);
+                }
+                return $this->processLinks($links, $meta);        
+        
+        
+        switch (count($timeparts)){
+            case 1: // get yearview
+                echo "year";
+                break;
+            case 2: // get month view
+                echo "month";
+                break;
+            case 3:  // get day view
+                echo "day";
+                break;            
+            default:
+                return $this->getSplash();
+        }
+        return;
+        
+    }
+    
+    
+    /**
      * getAll
      * 
      * fetching all links, ordered chronologically
@@ -183,6 +225,14 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
         return $this->processLinks($res);
     }       
     
+    
+    /*
+    *
+    * fetch the <deliciousName>-RSS passed via .configxml and locally inserts
+    * links from del.iciou.us/<deliciousName>
+    *
+    * FIXME: function way too long
+    */
     private function fetchDeliciousFeeds(){
 
         $deliciousName = $this->getParameter($this->path, 'deliciousname');
@@ -243,8 +293,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
         }
 
-	@unlink($this->cache4tags);
-	$this->mapTags2Links();
+	    @unlink($this->cache4tags);
+	    $this->mapTags2Links();
         
     }
     
@@ -266,7 +316,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
         } else {
             $cat = "";
         }
-
+		// var_dump($cat);
+        
         if (isset($cat) && $cat && $cat != '_all') {
                 
                 /**
@@ -285,7 +336,14 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
                 
                 $meta = "<meta><title>".$c['name']."</title></meta>";
                  
-            if (isset($c)) {     
+            if(strpos($cat, ' ')){
+            	
+            	$where = ' IN (select id from  '.$this->tablePrefix.$this->tagsTable.' where name in ("'.implode('", "', explode(" ", $cat) ) .'"))';
+
+            }else{
+            	$where = '='.$c['id'];
+            }
+            if (isset($c) || isset($where)) {     
             $q = 'SELECT
                   '.$this->tablePrefix.$this->linksTable.'.id,
                   '.$this->tablePrefix.$this->linksTable.'.title,
@@ -299,9 +357,11 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
                   'ON '.$this->tablePrefix.$this->linksTable.'.id='.$this->tablePrefix.$this->links2tagsTable.'.linkid
                    LEFT JOIN '.$this->tablePrefix.$this->tagsTable.' ON ' .
                   ''.$this->tablePrefix.$this->links2tagsTable.'.tagid='.$this->tablePrefix.$this->tagsTable.'.id
-                   WHERE '.$this->tablePrefix.$this->links2tagsTable.'.tagid='.$c['id'].' ' .
+                   
+				  WHERE '.$this->tablePrefix.$this->links2tagsTable.'.tagid'.$where.' ' .
                   'ORDER BY '.$this->tablePrefix.$this->linksTable.'.time DESC';
                 $links = $this->db->query($q);
+                // print $q;
                 
                  if (MDB2::isError($links)) {
                     throw new PopoonDBException($links);
@@ -333,6 +393,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
             $xml .= "<id>".$row['id']."</id>";
             $xml .= "<title>".$row['title']."</title>";
             $xml .= "<description>".$row['description'] ."</description>";
+
+            $xml .= '<archive>'.$this->getArchiveLinkFromTime($row['time']).'</archive>';
             $xml .= "<time>".$row['time']."</time>";
             
             $xml .= "<isotime>".$row['isotime']."</isotime>";           
@@ -470,6 +532,37 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
             return $map;
             }
     }
+    
+    /* ** */
+    private function getArchiveLinkFromTime($datetime){
+
+        $date = substr($datetime, 0, 10);
+        $base = $this->path . 'archive';
+        $dateparts = explode('-', $date);
+        
+        $i = 1;
+        foreach($dateparts as $time){
+            if($i > 1){
+                $links[$i]['href'] =  $links[($i-1)]['href'] . '-'.$time;
+            }else{
+                $links[1]['href'] = $base . '/'.$time;
+            }
+            
+            $links[$i]['text'] =  $time;                      
+            
+            $full[] =   '<a href="'.$links[$i]['href'].'" title="'.$time.'">' . $time .'</a>';                      
+            
+            $i++;
+        }
+        
+        $full = array_reverse($full);
+
+        $link = '<![CDATA[' . "\n" . implode('.', $full) . "\n" . ']]>';
+
+       return $link;
+    }
+    
+    /* from here on reserved bx_plugin_* functions */
     
     /*
      * 
