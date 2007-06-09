@@ -71,7 +71,7 @@ $queries[] = "CREATE TABLE `".$tablePrefix."linklog_links2tags` (
   KEY `lid` (`linkid`,`tagid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
-$queries[] = 'ALTER TABLE trunk_linklog_links ADD UNIQUE (url)';
+$queries[] = 'ALTER TABLE '.$tablePrefix.'linklog_links ADD UNIQUE (url)';
 
 
 foreach($queries as $query){
