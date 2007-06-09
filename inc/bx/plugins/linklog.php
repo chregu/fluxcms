@@ -235,8 +235,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
                 'tags' => $link['dc']['subject'],
                 'time' => $link['date'],
             );
-
-            if( ! strpos($link['name'], $mycleaneduri) ){
+           if( ! strpos($link['name'], $deliciousName) ){
                 $data['via'] .= '' . end( explode ("/", $this->simpleCleanUri($link['name']) ) ) . '';
             }
 
