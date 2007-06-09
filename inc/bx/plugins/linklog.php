@@ -163,7 +163,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
     private function getArchive($path){
         
         $where = str_replace('archive/', '', mysql_escape_string($path));
-            $q = 'SELECT
+            $q = 'SELECT DISTINCT
                   '.$this->tablePrefix.$this->linksTable.'.id,
                   '.$this->tablePrefix.$this->linksTable.'.title,
                   '.$this->tablePrefix.$this->linksTable.'.url,
@@ -550,7 +550,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
             
             $links[$i]['text'] =  $time;                      
             
-            $full[] =   '<a href="'.$links[$i]['href'].'" title="'.$time.'">' . $time .'</a>';                      
+            $full[] =   '<a href="'.$links[$i]['href'].'/" title="'.$time.'">' . $time .'</a>';                      
             
             $i++;
         }
