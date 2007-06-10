@@ -7,6 +7,7 @@
  * @author Alain Petignat
  * @todo Pager
  * @todo display related issues from del.icio.us
+ * @todo: shorten class, its a bit long :)
  *
  * */
 /*
@@ -49,17 +50,17 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	/*
 	 * The table names
 	 */
-	private $linksTable 	    = "linklog_links";
-	private $tagsTable		    = "linklog_tags";
-	private $links2tagsTable 	= "linklog_links2tags";
+	protected $linksTable 	    = "linklog_links";
+	protected $tagsTable		    = "linklog_tags";
+	protected $links2tagsTable 	= "linklog_links2tags";
 
 	/*
 	 * database
 	 */
-	private $db = null;
-	private $tablePrefix = NULL;
-	private $cache4tags;
-	private $isLoggedIn = false;
+	protected $db = null;
+	protected $tablePrefix = NULL;
+	protected $cache4tags;
+	protected $isLoggedIn = false;
 
 	// Variable for the CMS:
 	static public $instance = array();
@@ -129,6 +130,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
 		$this->path=$path;
 
+		// FIXME: implement strategy
 		if (strpos($id,"plugin=") === 0) {
 			return $this->callInternalPlugin($id, $path);
 		}
@@ -151,17 +153,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * By default returning newest links
 	 * */
 	private function getSplash(){
-
-		$sql = 'SELECT links.*,' .
-		'DATE_FORMAT(links.time, "%Y-%m-%dT%H:%i:%SZ") as isotime '.
-		'FROM '.$this->tablePrefix.$this->linksTable.' links ' .
-		'ORDER BY links.time desc limit 0,30';
-
-		$res = $this->db->query($sql);
-		if (MDB2::isError($res)) {
-			throw new PopoonDBException($res);
-		}
-
+		$sql = bx_plugins_linklog_queries::splash($this->tablePrefix);
+		$res = $this->getResultSet($sql);
 		return $this->processLinks($res);
 	}
 
@@ -172,30 +165,10 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * @return preprocessed linklist
 	 */
 	private function getArchive($path){
-
-		$where = str_replace('archive/', '', mysql_escape_string($path));
-
-		$sql = 'SELECT DISTINCT links.*, ' .
-		'DATE_FORMAT(links.time, "%Y-%m-%dT%H:%i:%SZ") as isotime '.
-		'FROM '.$this->tablePrefix.$this->linksTable.' links '.
-		'RIGHT JOIN '.$this->tablePrefix.$this->links2tagsTable.' map ' .
-		'ON links.id=map.linkid
-                   LEFT JOIN '.$this->tablePrefix.$this->tagsTable.' tags ON ' .
-		'map.tagid=tags.id WHERE links.time LIKE "'.$where.'%" ' .
-		'ORDER BY links.time DESC';
-
-		$res = $this->db->query($sql);
-
-		if (MDB2::isError($res)) {
-			throw new PopoonDBException($res);
-		}
-
+		$sql = bx_plugins_linklog_queries::archive($path, $this->tablePrefix);
+		$res = $this->getResultSet($sql);
 		return $this->processLinks($res, $meta);
-
-
 	}
-
-
 
 	/*
 	 *
@@ -273,40 +246,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		return str_replace(array('http://', 'rss'), array('',''), $myuri);
 	}
 
-	/**
-	 * @param string something like "music bla-music"/index.html.linklog
-	 * @return string "music bla-music"
-	 */
-	private function getQuerystringFromId($id){
-		if (($pos = strrpos($id,"/")) > 0) {
-			return substr($id,0,$pos);
-		}
-	}
-	/*
-	 * @param string e.g. "include+include2-exclude-exclude2"
-	 * @return array array('includes' => $includes, 'excludes' => $excludes);
-	 */
-	private function splitQuerystringToParams($query){
-		$includes = explode(" ", $query);
-		$excludes = false;
-
-		for($i = 0; $i < count($includes); $i++){
-
-			if(strpos($includes[$i], '-')){
-
-				$currentInclude = $includes[$i]; // save temporarly
-				$includes[$i]   = substr($includes[$i], 0, strpos($includes[$i], '-')); // remove the --tags from +tag
-				$currentExclude = str_replace($includes[$i] . '-', '', $currentInclude);
-
-				foreach(explode("-", $currentExclude) as $tag){
-					$excludes[] = $tag;
-				}
-
-			}
-		}
-
-		return array('includes' => $includes, 'excludes' => $excludes);
-	}
 
 	/**
 	 * getLinksByTag
@@ -315,67 +254,19 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 *
 	 */
 	private function getLinksByTag($id){
-
-
-		$sql = $this->getLinksByTagQuery($id);
-
-		$links = $this->db->query($sql);
-
-		if (MDB2::isError($links)) {
-			throw new PopoonDBException($links);
-		}
-
+		$sql = bx_plugins_linklog_queries::linksByTag($id, $this->tablePrefix);
+		$res = $this->getResultSet($sql);
 		$meta = $this->getMetaData($vars);
-		return $this->processLinks($links, $meta);
-
-	}
-
-	private function getLinksByTagQuery($id){
-		$querystring = $this->getQuerystringFromId($id);
-		$vars        = $this->splitQuerystringToParams($querystring);
-
-		$sql  		 = $this->getBasicLinkQuery();
-		$sql 		.= $this->getWhereIncludesTags($vars['includes']);
-
-		if($vars['excludes']){
-			$sql .= $this->getWhereExcludesTags($vars['excludes']);
-		}
-
-		$sql .= $this->getHavingCount($vars['includes']);
-		$sql .= $this->getBasicLinkQueryOrderBy();
-
-		return $sql;
+		return $this->processLinks($res, $meta);
 	}
 
 
-	private function getHavingCount($includes){
-		return ' GROUP BY links.id HAVING COUNT( linkid ) = ' . count($includes) . ' ';
-	}
-
-	/*
-	 * @param Array Tags to be included
-	 */
-	private function getWhereIncludesTags($includes){
-		return "\n" .'AND tags.fulluri '. "\n" .'IN ("'.implode('", "', $includes) .'")'. "\n" ;
-	}
-
-	/*
-	 *
-	 * */
-	private function getWhereExcludesTags($excludes){
-		return  "\n" .'AND links.id NOT IN (SELECT links.id FROM '.$this->tablePrefix.$this->linksTable.' links, '.$this->tablePrefix.$this->links2tagsTable.' map, '.$this->tablePrefix.$this->tagsTable.' tags WHERE links.id = map.linkid AND map.tagid = tags.id AND tags.fulluri  in  ("'.implode('", "', $excludes) .'"))';
-	}
-
-	private function getBasicLinkQueryOrderBy(){
-		return "\n" . 'ORDER BY links.time DESC';
-	}
 
 	/*
 	 * @param array $vars(excludes => array(), 'exludes' => false || array)
 	 * @todo: implement ;)
 	 * */
 	private function getMetaData($vars){
-
 		 
 		return;
 		$q = "select * from ".$this->tablePrefix.$this->tagsTable." " .
@@ -393,15 +284,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	}
 
 
-	private function getBasicLinkQuery(){
-		$sql = 'SELECT links.*,  ' . "\n" .
-		'DATE_FORMAT(links.time, ' . '"%Y-%m-%dT%H:%i:%SZ") as isotime '. "\n" .
-		'FROM '.$this->tablePrefix.$this->linksTable . ' links,  '.
-		$this->tablePrefix.$this->links2tagsTable . ' map,  '.
-		$this->tablePrefix.$this->tagsTable . ' tags '. "\n" .
-		'WHERE links.id=map.linkid AND map.tagid = tags.id ';
-		return $sql;
-	}
+
 
 	/**
 	 * processLinks
@@ -413,11 +296,9 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	private function processLinks($links, $meta = false){
 
 		$map2tags = $this->mapTags2Links();
-
 		$xml   = "<links>";
-
-		$xml .= $this->addMetaData();
-
+		
+		$xml .= $this->addMetaData($meta);
 
 		while($row = $links->fetchRow(MDB2_FETCHMODE_ASSOC)){
 			$tags = $map2tags[$row['id']];
@@ -439,25 +320,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		return '';
 	}
 
-	/**
-	 * get a Dom Object from a wellformed XML-String
-	 *
-	 * @param string XML to be transformed to DOMObject
-	 * @return DomDocument
-	 * */
-	private function getDomObjectFromString($xml){
-		$dom = new DomDocument();
-		if (is_string($xml)) {
-			$dom = new DomDocument();
-			if (function_exists('iconv')) {
-				$xml =  @iconv("UTF-8","UTF-8//IGNORE",$xml);
-			}
-			$dom->loadXML($xml);
-			return $dom;
-		} else {
-			return $xml;
-		}
-	}
 
 	/**
 	 *
@@ -500,9 +362,10 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	}
 
 	/**
+	 * create a simple xml string for a single tag
+	 * 
 	 * @param array tag = array('name' => ..., 'fulluri' => ..., 'id' => ...)
 	 * @return string
-	 *
 	 */
 	private function getXmlForTag($t = array()){
 		$xml .= "<tag>";
@@ -519,9 +382,9 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * currently, only tags exists
 	 */
 	private function callInternalPlugin($id, $path){
-		// print $id;
-		$plugin = substr($id,7);
 
+		$plugin = substr($id,7);
+		// this is a bit messy :)
 		if ($pos = strpos($plugin,"(")) {
 			$pos2 = strpos($plugin,")");
 			$params = substr($plugin,$pos+1, $pos2 - $pos - 1);
@@ -563,36 +426,33 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * )
 	 */
 	private function mapTags2Links(){
-		 
-		if(file_exists($this->cache4tags)){
-			return unserialize(file_get_contents($this->cache4tags));
+		if($this->checkMapCache()){
+			return $this->getMapCache();
 		}
 
+		$sql = bx_plugins_linklog_queries::tags($this->tablePrefix);
+		$res = $this->getResultSet($sql);
+		$tags = $this->prepareTagsArray($res);
 
-		$query = "SELECT * FROM ".$this->tablePrefix.$this->tagsTable . ' ORDER BY name asc';
-		$res = $this->db->query($query);
-		if (MDB2::isError($res)) {
-			throw new PopoonDBException($res);
-		}
+		$sql = bx_plugins_linklog_queries::mapper($this->tablePrefix);
+		$res = $this->getResultSet($sql);
+		$map = $this->doMap($tags, $res);
 
-		/*
-		 * loop through all tags to create an array with its id as index
-		 */
-		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-			$tags[$row['id']] = $row;
-		}
+		$this->writeMapCache($map);
 
-		$query = 'SELECT map.id, map.linkid, map.tagid FROM '. $this->tablePrefix.$this->links2tagsTable . ' map left join '.$this->tablePrefix.$this->tagsTable.' tags on map.tagid=tags.id order by tags.fulluri';
+		return $map;
 
-		$res = $this->db->query($query);
-		if (MDB2::isError($res)) {
-			throw new PopoonDBException($res);
-		}
+	}
 
-		/*
-		 * loop through all merges, to be able to fetch a category of the
-		 * link in one catch
-		 */
+	/*
+	 * loop through all merges, to be able to fetch a category of the
+	 * link in one catch
+	 * 
+	 * @param array all tags with its key as index
+	 * @param mysql_result_set with all linkids and corresponding tagid
+	 * @return array index is linkid, values are arrays with the tags
+	 */
+	private function doMap($tags, $res){
 		$map = array();
 		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
 			if(!array_key_exists($row['linkid'], $map)){
@@ -601,14 +461,48 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 				array_push($map[$row['linkid']], $tags[$row['tagid']]);
 			}
 		}
-
-		// caching it, must be deleted when new link is added...
-		file_put_contents($this->cache4tags, serialize($map));
-
 		return $map;
-
 	}
 
+	/*
+	 * loop through all tags to create an array with its id as index
+	 * 
+	 * @param mysql_result_set with all the tags and id's
+	 * @return array containing all tags with the id as their key
+	 */
+	private function prepareTagsArray($res){
+		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+			$tags[$row['id']] = $row;
+		}
+		return $tags;
+	}
+	
+	/**
+	* checks if the cache-file exists
+	* 
+	* @return boolean true if it exists
+	* */
+	private function checkMapCache(){
+		return file_exists($this->cache4tags);
+	}
+	
+	/**
+	* gets the cache
+	* 
+	* @return array
+	*/
+	private function getMapCache(){
+		return unserialize(file_get_contents($this->cache4tags));
+	}
+	
+	/**
+	* writes the cache
+	* @return boolean true on success
+	*/
+	private function writeMapCache($map){
+		return file_put_contents($this->cache4tags, serialize($map));		
+	}
+	
 	/**
 	 * Creates a fully linked date-view
 	 *
@@ -643,7 +537,38 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		return $link;
 	}
 
+	
+	/**
+	* @param string SQL-Query
+	* @return mysql_resultset
+	* */
+	private function getResultSet($sql){
+		$res = $this->db->query($sql);
+		if (MDB2::isError($res)) {
+			throw new PopoonDBException($res);
+		}
+		return $res;
+	}
 
+	/**
+	 * get a Dom Object from a wellformed XML-String
+	 *
+	 * @param string XML to be transformed to DOMObject
+	 * @return DomDocument
+	 * */
+	private function getDomObjectFromString($xml){
+		$dom = new DomDocument();
+		if (is_string($xml)) {
+			$dom = new DomDocument();
+			if (function_exists('iconv')) {
+				$xml =  @iconv("UTF-8","UTF-8//IGNORE",$xml);
+			}
+			$dom->loadXML($xml);
+			return $dom;
+		} else {
+			return $xml;
+		}
+	}
 
 }
-?>
+
