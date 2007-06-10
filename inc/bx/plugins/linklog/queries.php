@@ -32,11 +32,9 @@ class bx_plugins_linklog_queries {
 	} 
 
 
-	public static function linksByTag($id, $prefix){
+	public static function linksByTag($querystring, $prefix){
 		
-		$querystring = self::getQuerystringFromId($id);
 		$vars        = self::splitQuerystringToParams($querystring);
-
 		$sql  		 = self::getBasicLinkQuery($prefix);
 		$sql 		.= self::getWhereIncludesTags($vars['includes'], $prefix);
 
@@ -83,12 +81,12 @@ class bx_plugins_linklog_queries {
 	}
 
 	private static function getBasicLinkQuery($prefix){
-		$sql = 'SELECT links.*,  ' . "\n" .
-		'DATE_FORMAT(links.time, ' . '"%Y-%m-%dT%H:%i:%SZ") as isotime '. "\n" .
-		'FROM '.$prefix.self::linksTable . ' links,  '.
-		$prefix.self::mapTable . ' map,  '.
-		$prefix.self::tagsTable . ' tags '. "\n" .
-		'WHERE links.id=map.linkid AND map.tagid = tags.id ';
+		$sql = 	'SELECT links.*,  ' . "\n" .
+				'DATE_FORMAT(links.time, ' . '"%Y-%m-%dT%H:%i:%SZ") as isotime '. "\n" .
+				'FROM '.$prefix.self::linksTable . ' links,  '.
+				$prefix.self::mapTable . ' map,  '.
+				$prefix.self::tagsTable . ' tags '. "\n" .
+				'WHERE links.id=map.linkid AND map.tagid = tags.id ';
 		return $sql;
 	}	
 	
@@ -118,13 +116,10 @@ class bx_plugins_linklog_queries {
 	 * @param string something like "music bla-music"/index.html.linklog
 	 * @return string "music bla-music"
 	 */
-	private static function getQuerystringFromId($id){
+	public static function getQuerystringFromId($id){
 		if (($pos = strrpos($id,"/")) > 0) {
 			return substr($id,0,$pos);
 		}
 	}
 	
-	
 }
-
-?>

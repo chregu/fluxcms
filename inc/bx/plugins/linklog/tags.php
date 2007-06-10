@@ -25,7 +25,7 @@ class bx_plugins_linklog_tags {
     * 
     * */
     static function getContentById($path,$id,$params,$tablePrefix = "") {
-        
+
         if (isset($params[0])) {
             $lastslash = strrpos($params[0],"/");
             $tag = substr($params[0],0,$lastslash);
@@ -89,8 +89,6 @@ class bx_plugins_linklog_tags {
         $xml2  .= $xml;
         $xml2  .= '</collection>'; 
         
-        // print $xml2;
-        
         $dom = new DomDocument();
         
         if (function_exists('iconv')) {
@@ -98,9 +96,6 @@ class bx_plugins_linklog_tags {
         }
         
         $dom->loadXML($xml2);
-        
-       // this could be used to "easily" debug ;)
-       // file_put_contents("/Library/WebServer/Documents/info/coll.xml",$xml2);
         
         return $dom;
                     

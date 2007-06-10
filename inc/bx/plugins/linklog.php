@@ -47,24 +47,15 @@
  * See also the linklog.xsl for the output
  */
 class bx_plugins_linklog extends bx_plugin implements bxIplugin {
-	/*
-	 * The table names
-	 */
-	protected $linksTable 	    = "linklog_links";
-	protected $tagsTable		    = "linklog_tags";
-	protected $links2tagsTable 	= "linklog_links2tags";
 
-	/*
-	 * database
-	 */
-	protected $db = null;
-	protected $tablePrefix = NULL;
-	protected $cache4tags;
-	protected $isLoggedIn = false;
-
-	// Variable for the CMS:
+	protected $db 			= null;
+	protected $tablePrefix  = '';
+	
+	protected $isLoggedIn 	= false;
 	static public $instance = array();
 
+	protected $cache4tags	= '';
+	
 	/**
 	 * getInstance
 	 *
@@ -82,17 +73,13 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
 	// this gets called on every instance of the class
 	protected function __construct($mode) {
+		$this->db 		 		= $GLOBALS['POOL']->db;
 		$this->tablePrefix 		= $GLOBALS['POOL']->config->getTablePrefix();
-		$this->db 		 	= $GLOBALS['POOL']->db;
-		$this->mode 			= $mode;
+		$this->mode 			= $mode; // ??
+		$this->cache4tags		= BX_TEMP_DIR."/". $this->tablePrefix."linklog_tags.cache";
 
-		$this->cache4tags	= BX_TEMP_DIR."/". $this->tablePrefix."linklog_tags.cache";
-
-		// check if logged in:
-		$perm = bx_permm::getInstance();
-		if($perm->isLoggedIn()){
-			$this->isLoggedIn = true;
-		}
+		$this->setLoginStatus();
+		
 	}
 
 	/*
@@ -130,7 +117,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
 		$this->path=$path;
 
-		// FIXME: implement strategy
+		// FIXME: implement strategy with view-caching
 		if (strpos($id,"plugin=") === 0) {
 			return $this->callInternalPlugin($id, $path);
 		}
@@ -188,7 +175,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		include_once('magpie/rss_fetch.inc');
 
 		// @todo pass them via configxml, for now, i am only testing :)
-		//        $name = ;
 		$feeduris[] = $myuri = 'http://del.icio.us/rss/'. $deliciousName;
 
 		/*
@@ -233,7 +219,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 				$data['via'] .= '' . end( explode ("/", $this->simpleCleanUri($link['name']) ) ) . '';
 			}
 
-			$res = $editor->insertLink($data);
+			$res = $editor->insertLink($data); // somehow previoisly check if the link already exists.
 
 		}
 
@@ -254,13 +240,18 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 *
 	 */
 	private function getLinksByTag($id){
-		$sql = bx_plugins_linklog_queries::linksByTag($id, $this->tablePrefix);
+		$querystring = bx_plugins_linklog_queries::getQuerystringFromId($id);
+		
+		// may be used for more caching: 
+		$identifier = str_replace(" ", "+", $querystring);
+
+		$sql = bx_plugins_linklog_queries::linksByTag($querystring, $this->tablePrefix);
 		$res = $this->getResultSet($sql);
-		$meta = $this->getMetaData($vars);
-		return $this->processLinks($res, $meta);
+
+		return $this->processLinks($res, $identifier);
 	}
 
-
+ 
 
 	/*
 	 * @param array $vars(excludes => array(), 'exludes' => false || array)
@@ -269,9 +260,10 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	private function getMetaData($vars){
 		 
 		return;
-		$q = "select * from ".$this->tablePrefix.$this->tagsTable." " .
+		// FIXME:
+		$sql = "select * from ".$this->tablePrefix.$this->tagsTable." " .
 		"where ".$this->tablePrefix.$this->tagsTable.".fulluri = '$cat' ";
-		$res = $GLOBALS['POOL']->db->query($q);
+		$res = $this->getResultSet($sql);
 
 		if (MDB2::isError($res)) {
 			throw new PopoonDBException($res);
@@ -291,14 +283,17 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 *
 	 * @param $links db-object containing link-data
 	 * @param $meta xml-string with metadata being displayed in title
+	 * @param string identifier for the given view (for caching (not yet implemented))
 	 *
 	 * */
-	private function processLinks($links, $meta = false){
+	private function processLinks($links, $identifier = false){
 
 		$map2tags = $this->mapTags2Links();
+		
 		$xml   = "<links>";
 		
-		$xml .= $this->addMetaData($meta);
+		// we should add some meta-data here ;)
+		// $xml .= $this->addMetaData($meta);
 
 		while($row = $links->fetchRow(MDB2_FETCHMODE_ASSOC)){
 			$tags = $map2tags[$row['id']];
@@ -368,7 +363,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * @return string
 	 */
 	private function getXmlForTag($t = array()){
-		$xml .= "<tag>";
+		$xml  = "<tag>";
 		$xml .= "<id>".$t['id']."</id>";
 		$xml .= "<fulluri>".BX_WEBROOT_W.$this->path.$t['fulluri']."</fulluri>";
 		$xml .= "<name>".str_replace('&','&amp;',$t['name'])."</name>";
@@ -568,6 +563,19 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		} else {
 			return $xml;
 		}
+	}
+
+	/**
+	* Sets class variable isLoggedIn to true if user is currently logged in.
+	* 
+	* @return void 
+	* */
+	private function setLoginStatus(){
+		$perm = bx_permm::getInstance();
+		if($perm->isLoggedIn()){
+			$this->isLoggedIn = true;
+		}
+		return;
 	}
 
 }
