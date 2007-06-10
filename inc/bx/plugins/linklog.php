@@ -416,7 +416,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
             
             $xml .= "<isotime>".$row['isotime']."</isotime>";           
 
-			$xml .= "<url>".$row['url']."</url>";
+			$xml .= "<url>" . '<![CDATA[' .$row['url']."]]></url>";
+			
             if($this->isLoggedIn){
                     $xml .= "<edituri>".BX_WEBROOT_W."/admin/edit".$this->path."edit/".$row['id']."</edituri>";   
                     $xml .= "<deleteuri>".BX_WEBROOT_W."/admin/edit".$this->path."delete/".$row['id']."</deleteuri>";                    
