@@ -24,34 +24,29 @@
  */
 class bx_dbforms2_fields_text_area extends bx_dbforms2_fields_text {
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     public function __construct($name) {
         parent::__construct($name);
 
         $this->type = 'text_area';
         $this->XMLName = 'textarea';
+        
+        $this->attributes['rows'] = 12;
+        $this->attributes['cols'] = 80;
     }
     
-    /**
-     *  DOCUMENT_ME
-     *
-     *  @param  type  $var descr
-     *  @access public
-     *  @return type descr
-     */
     protected function getXMLAttributes() {
         return array(
-            'cols' => 80,
-            'rows' => 12
+            'rows' => $this->attributes['rows'],
+            'cols' => $this->attributes['cols'],
         );
+    }
+
+    public function getConfigAttributes() {
+        $ret =  parent::getConfigAttributes();
+        $ret['rows'] = 'int';
+        $ret['cols'] = 'int';
+        return $ret;
     }
     
 }
 
-?>

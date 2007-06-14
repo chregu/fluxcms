@@ -58,7 +58,9 @@ class bx_dbforms2_field {
      *  Field attributes
      *  @var var
      */
-    protected $attributes = array();
+    protected $attributes = array(
+        'descr' => '',
+    );
     
     /**
      *  Name of the tag which is used for serialization to XML.
@@ -168,8 +170,9 @@ class bx_dbforms2_field {
      */
     public function setAttributes($attributes) {
         foreach($attributes as $name => $value) {
-            //if(!isset($this->attributes[$name]))
-            $this->attributes[$name] = $value;
+            if(isset($this->attributes[$name]) && $value !== NULL) {
+                $this->attributes[$name] = $value;
+            }
         }
     }
     
