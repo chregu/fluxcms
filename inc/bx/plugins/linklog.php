@@ -331,17 +331,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		
 		return  "<meta><title>".$this->pageTitle."</title></meta>"; 
 		// FIXME:
-/*
-		$sql = "select * from ".$this->tablePrefix.$this->tagsTable." " .
-		"where ".$this->tablePrefix.$this->tagsTable.".fulluri = '$cat' ";
-		$res = $this->getResultSet($sql);
-
-		if (MDB2::isError($res)) {
-			throw new PopoonDBException($res);
-		}
-
-		$c = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
-*/
 
 
 	}
@@ -427,7 +416,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	}
 
 	private function getTagXmlForLink($tags){
-
 		$xml = "<tags>";
 		if(is_array($tags)){
 			foreach($tags as $t){
@@ -510,16 +498,19 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * )
 	 */
 	private function mapTags2Links(){
+		/*
 		if($this->checkMapCache()){
 			return $this->getMapCache();
 		}
-
+		*/
 		$sql = bx_plugins_linklog_queries::tags($this->tablePrefix);
-		$res = $this->getResultSet($sql);
+		// print $sql;
+		$res = $this->getResultSet($sql, false);
 		$tags = $this->prepareTagsArray($res);
 
 		$sql = bx_plugins_linklog_queries::mapper($this->tablePrefix);
-		$res = $this->getResultSet($sql);
+		$res = $this->getResultSet($sql, false);
+		//var_dump($sql);
 		$map = $this->doMap($tags, $res);
 
 		$this->writeMapCache($map);
@@ -537,7 +528,9 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * @return array index is linkid, values are arrays with the tags
 	 */
 	private function doMap($tags, $res){
+		
 		$map = array();
+		
 		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
 			if(!array_key_exists($row['linkid'], $map)){
 				$map[$row['linkid']] = array($tags[$row['tagid']]);
@@ -545,6 +538,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 				array_push($map[$row['linkid']], $tags[$row['tagid']]);
 			}
 		}
+		
 		return $map;
 	}
 
@@ -663,11 +657,13 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	* @param string SQL-Query
 	* @return mysql_resultset
 	* */
-	private function getResultSet($sql){
+	private function getResultSet($sql, $addLimit = true){
 		$start = ( $this->currentPage - 1 ) * $this->itemsPerPage ;
 		
 		// set the limit of the mysql result set
-		$sql .=  ' LIMIT '.$start . ', ' . $this->itemsPerPage;
+		if($addLimit){
+			$sql .=  ' LIMIT '.$start . ', ' . $this->itemsPerPage;
+		}
 		
 		$res = $this->db->query($sql);
 		
