@@ -36,7 +36,7 @@
     <xsl:template match="xhtml:div[@class='entry']">
     <entry>
         <xsl:value-of select="$break"/>
-        <created localtime="{xhtml:div[@class='post_meta_data']/xhtml:span[@class='post_date']/text()}">
+        <created localtime="{xhtml:div[@class='post_meta_data']/xhtml:span[@class='post_date']}">
             <xsl:value-of select="@blog:post_date_iso"/>
         </created><xsl:value-of select="$break"/>
         <id>
