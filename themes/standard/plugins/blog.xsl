@@ -7,7 +7,8 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml" 
         xmlns="http://www.w3.org/1999/xhtml" 
         xmlns:php="http://php.net/xsl" 
-        exclude-result-prefixes="php blog bxf xhtml i18n">
+        xmlns:atom="http://www.w3.org/2005/Atom" 
+        exclude-result-prefixes="php blog bxf xhtml atom i18n">
 
 
     <xsl:param name="ICBM" select="php:functionString('bx_helpers_config::getOption','ICBM')"/>
@@ -216,12 +217,23 @@
     <xsl:param name="title" select="@title"/>
     <xsl:param name="url" select="@url"/>
     <xsl:param name="rss" select="@rss"/>
-   <h3 class="blog"><a href="{$url}"><xsl:value-of select="$title"/></a></h3>
-    <ul>
-    <xsl:for-each select="php:functionString('bx_helpers_simplecache::staticHttpReadAsDom',$rss)/rss/channel/item[position() &lt; 10]"> 
-           <li><a title="{title}" href="{link}"><xsl:value-of select="title"/></a></li>
-    </xsl:for-each>
+     <h3 class="blog"><a href="{$url}"><xsl:value-of select="$title"/></a></h3>
+         <ul>
+    <xsl:variable name="feed" select="php:functionString('bx_helpers_simplecache::staticHttpReadAsDom',$rss)"/>
+    <xsl:choose>
+      <xsl:when test="$feed/rss">
+        <xsl:for-each select="$feed/rss/channel/item[position() &lt; 10]"> 
+          <li><a title="{title}" href="{link}"><xsl:value-of select="title"/></a></li>
+        </xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:for-each select="$feed/atom:feed/atom:entry[position() &lt; 10]"> 
+          <li><a title="{atom:title}" href="{atom:link[@rel='alternate']/@href}"><xsl:value-of select="atom:title"/></a></li>
+        </xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
 
+     
     </ul>
 
 </xsl:template>
