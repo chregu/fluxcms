@@ -25,44 +25,51 @@ class bx_plugins_linklog_tags {
     * 
     * */
     static function getContentById($path,$id,$params,$tablePrefix = "") {
-
-        if (isset($params[0])) {
-            $lastslash = strrpos($params[0],"/");
-            $tag = substr($params[0],0,$lastslash);
-        } else {
-            $tag = "";
-        }
-        
+    	
+    	
         /*
          * This query gets tags as well as number of links marked with that tag
          * */
- 		$query = 'SELECT '.$tablePrefix.'linklog_tags.name, ' 
- 				.$tablePrefix.'linklog_tags.id, '
- 				.$tablePrefix.'linklog_tags.fulluri, ' .
-				'count( DISTINCT '.$tablePrefix.'linklog_links.id ) AS c
-			 	FROM '.$tablePrefix.'linklog_tags
-				LEFT JOIN '.$tablePrefix.'linklog_links2tags ON '
-				.$tablePrefix.'linklog_tags.id = '.$tablePrefix.'linklog_links2tags.tagid
-				LEFT JOIN '.$tablePrefix.'linklog_links ON '
-				.$tablePrefix.'linklog_links2tags.linkid = '.$tablePrefix.'linklog_links.id
-				GROUP BY id
-				ORDER BY c DESC';        
+ 		$sql = 'SELECT '.$tablePrefix.'linklog_tags.name, '. 
+ 				$tablePrefix.'linklog_tags.id, '.
+ 				$tablePrefix.'linklog_tags.fulluri, ' .
+				'count( DISTINCT '.$tablePrefix.'linklog_links.id ) AS count '.
+			 	'FROM '.$tablePrefix.'linklog_tags '.
+				'LEFT JOIN '.$tablePrefix.'linklog_links2tags ON ' . 
+				$tablePrefix.'linklog_tags.id = '.$tablePrefix.'linklog_links2tags.tagid ' .
+				'LEFT JOIN '.$tablePrefix.'linklog_links ON ' .
+				$tablePrefix.'linklog_links2tags.linkid = '.$tablePrefix.'linklog_links.id '.
+				'GROUP BY id '.
+				'ORDER BY count DESC';        
         
-        $res = $GLOBALS['POOL']->db->query($query);
+        $res = $GLOBALS['POOL']->db->query($sql);
         if (MDB2::isError($res)) {
             // throw error
             throw new PopoonDBException($res);
             // echo "error";
             exit;
          }
-            
-        // this could be done by DOM-functions as well. Important is just the output ;)
-        $i = 1;	// for the order...
+
+        $tags = array();
         
-        $xml = "<items>";
+        if (isset($params[0])) {
+        	// the + in the url is interpreted as a " " from the browser, so we fix it here
+        	$params[0] = str_replace(' ', '+', $params[0]); 
+
+        	// something like foo+bar/index.html - we want foo+bar
+            $tags = explode( '+', substr( $params[0], 0, strrpos($params[0],"/") ) );
+        }
+         
+
+        $i = 1;	// for the order...
+
+		$xml = "<items>";
+        
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-            if($row['c'] > 0){    // dont display tags without a link
-                if ($tag === $row['fulluri']) {
+        	$title = $uri = '';
+            if($row['count'] > 0){    // dont display tags without a link NOTE: may be done in db?
+
+                if (in_array($row['fulluri'], $tags) ) {
                     $xml .= '<collection selected="selected">';
                     $title = $row['title'];
                     $uri = BX_WEBROOT_W.$path.$row['fulluri']."/";
@@ -70,23 +77,26 @@ class bx_plugins_linklog_tags {
                     $xml .= '<collection selected="all">';
                 }            
                 
-                $xml .= '<title>'.$row['name'].' ('.$row['c'].') </title>';            
-                $xml .= '<uri>'.BX_WEBROOT_W.$path.$row['fulluri'].'</uri>';                 
+                $xml .= '<title>'.$row['name'].' ('.$row['count'].') </title>';            
+                $xml .= '<uri>'.BX_WEBROOT_W.$path.$row['fulluri'] . '/'.'</uri>';                 
                 $xml .= '<display-order>'.$i.'</display-order>';            
                 $xml .= '</collection>';            
                  
                 $i++;
-                }
+            }
             
         }
         
         $xml .= "</items>";
 
-
+		$title = 'foobar';
+		
         $xml2   = '<collection selected="all">';
         $xml2  .= '<title>'.$title.'</title>';
+        $xml2  .= '<title>Foobar</title>';
         $xml2  .= '<uri>'.$uri.'</uri>';      
         $xml2  .= $xml;
+
         $xml2  .= '</collection>'; 
         
         $dom = new DomDocument();
