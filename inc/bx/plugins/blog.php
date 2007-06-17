@@ -227,66 +227,65 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $query .= " order by post_date desc limit ".$startEntry . "," . $maxPosts;
         } else if ($id == "index" ) {
             // category...
-             if (strpos($cat,"archive") === 0) {                           
-                  $archivepath = $cat;
-                 $cat = substr($cat,8);
-               if (preg_match("#^([0-9]{4})#",$cat,$matches)) {
-
-                   $archivewhere = " and YEAR(post_date) = " . $matches[1];
-                   $cat = substr($cat,5);
-
-                   if (preg_match("#^([0-9]{2})#",$cat,$matches)) {
-
-                       $archivewhere .= " and MONTH(post_date) = ". $matches[1];
-                       $cat = substr($cat,3);
-
-                       if (preg_match("#^([0-9]{2})#",$cat,$matches)) {
-                           $archivewhere .= " and DAYOFMONTH(post_date) = ". $matches[1];
-                           $cat = substr($cat,3);
-                       }
-                   }
-                   $archivewhere .= " and ".$tablePrefix."blogposts.blog_id = ". $blogid;
-                   
-                   //remove real cat, if exists
-                  $archivepath = preg_replace('#'.$cat.'$#','',$archivepath);
-               }
-               else if (strpos($cat,"author") === 0) {
-                   $author = substr($cat,7);
-                   $archivewhere .= " and post_author= ". $GLOBALS['POOL']->db->quote($author);
-                   $cat = false;   
-               } else if (strpos($cat,"id") === 0) {
-                   $id = (int) substr($cat,3);
-                   
-                   $newuri = $this->getNewPermaLink($id,$path,true);
-                   if ($newuri) {
+            if (strpos($cat,"archive") === 0) {                           
+                $archivepath = $cat;
+                $cat = substr($cat,8);
+                if (preg_match("#^([0-9]{4})#",$cat,$matches)) {
+                    
+                    $archivewhere = " and YEAR(post_date) = " . $matches[1];
+                    $cat = substr($cat,5);
+                    
+                    if (preg_match("#^([0-9]{2})#",$cat,$matches)) {
+                        
+                        $archivewhere .= " and MONTH(post_date) = ". $matches[1];
+                        $cat = substr($cat,3);
+                        
+                        if (preg_match("#^([0-9]{2})#",$cat,$matches)) {
+                            $archivewhere .= " and DAYOFMONTH(post_date) = ". $matches[1];
+                            $cat = substr($cat,3);
+                        }
+                    }
+                    $archivewhere .= " and ".$tablePrefix."blogposts.blog_id = ". $blogid;
+                    
+                    //remove real cat, if exists
+                    $archivepath = preg_replace('#'.$cat.'$#','',$archivepath);
+                }
+                else if (strpos($cat,"author") === 0) {
+                    $author = substr($cat,7);
+                    $archivewhere .= " and post_author= ". $GLOBALS['POOL']->db->quote($author);
+                    $cat = false;   
+                } else if (strpos($cat,"id") === 0) {
+                    $id = (int) substr($cat,3);
+                    
+                    $newuri = $this->getNewPermaLink($id,$path,true);
+                    if ($newuri) {
                         header("Location: ". BX_WEBROOT_W.$path.$newuri,true,301 );
                         die();
                     }
-               } else if (strpos($cat,"tag") === 0) {
-                   $tag = substr($cat,4);
-                   $tquery="select path from ".$tablePrefix."tags as tags left join ".$tablePrefix."properties2tags as properties2tags
-             on tags.id = properties2tags.tag_id where tags.tag = '".$tag."'";
-                   $tres = $GLOBALS['POOL']->db->query($tquery);
-                   $uris = array();
-                   while ($trow = $tres->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-                       $uri = preg_replace("#^".$path."#","",$trow['path']);
-                       $uris[] = $GLOBALS['POOL']->db->quote(substr($uri,0,-5));
-                   }
-           if (count ($uris) > 0) {
-                       $archivewhere .= " and post_uri in (".implode(",",$uris).")";
-           } else {
-              $archivewhere .= " and 1 = 2";
-           }
-                   $cat = false;
-               }
-               
-               else {
-                   //FIXME that's somehow ugly, but prevents same content on different urls...
+                } else if (strpos($cat,"tag") === 0) {
+                    $tag = substr($cat,4);
+                    $tquery="select path from ".$tablePrefix."tags as tags left join ".$tablePrefix."properties2tags as properties2tags
+                    on tags.id = properties2tags.tag_id where tags.tag = '".$tag."'";
+                    $tres = $GLOBALS['POOL']->db->query($tquery);
+                    
+                    $uris = array();
+                    while ($trow = $tres->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+                        $uri = preg_replace("#^".$path."#","",$trow['path']);
+                        $uris[] = $GLOBALS['POOL']->db->quote(substr($uri,0,-5));
+                    }
+                    if (count ($uris) > 0) {
+                        $archivewhere .= " and post_uri in (".implode(",",$uris).")";
+                    } else {
+                        $archivewhere .= " and 1 = 2";
+                    }
+                    
+                    $cat = false;
+                } else {
+                    //FIXME that's somehow ugly, but prevents same content on different urls...
                     header("Location: ".BX_WEBROOT_W.$path.$cat);
                     die();
-               }
-            }
-            else if ($cat == "root") {
+                }
+            } else if ($cat == "root") {
                 throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
             if (isset($cat)  && $cat && $cat != '_all') {
@@ -301,7 +300,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where ".$tablePrefix."blogcategories.status = 1  and ".$tablePrefix."blogcategories.l >=
                 ".$lrow['l'] . " and  ".$tablePrefix."blogcategories.r <= ".$lrow['r'];
             } else if (!$cat ) {
-                $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where (".$tablePrefix."blogcategories.l >= 1 and ".$tablePrefix."blogcategories.status=1) or ".$tablePrefix."blogcategories.status is null 
+                $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where ((".$tablePrefix."blogcategories.l >= 1 and ".$tablePrefix."blogcategories.status=1) or ".$tablePrefix."blogcategories.status is null) 
                 ";
             } else if ($cat == '_all') {
                 $leftjoin = "";
@@ -311,14 +310,15 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             } else {
                 throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
+            
             if ($archivewhere || $leftjoin) {
-              $archivewhere .= ' and ';  
+                $archivewhere .= ' and ';  
             } else {
                 $archivewhere = ' where ';
             }
             $archivewhere .= $tablePrefix.'blogposts.id > 0 and ' . $tablePrefix.'blogposts.post_status & ' . $this->overviewPerm ;
             $archivewhere .= ' and '.$tablePrefix.'blogposts.blog_id = '.$blogid;
-                
+            
             if ($this->overviewPerm != 7) {
                 if ($bloglanguage == 'true') {
                     $archivewhere .= ' and ('.$tablePrefix.'blogposts.post_lang = "'.$lang.'" or '.$tablePrefix.'blogposts.post_lang = "")';
@@ -338,13 +338,12 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
             }
-
+            
             $total = $res->numRows();
             $query .= $leftjoin . $archivewhere ;
             $query .= ' group by '.$tablePrefix.'blogposts.id ';
-
-            $query .= 'order by post_date DESC limit '.$startEntry . ','.$maxPosts;
             
+            $query .= 'order by post_date DESC limit '.$startEntry . ','.$maxPosts;
         } else {
 
             if (strpos($id,"_id") === 0 ) {
