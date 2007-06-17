@@ -383,7 +383,7 @@ if ($lastVersion < 8633) {
 
 if ($lastVersion < 8823) {
     
-    doQuery("UPDATE {$tablePrefix}blogposts  LEFT JOIN {$tablePrefix}blogposts2categories ON {$tablePrefix}blogposts.id= {$tablePrefix}blogposts2categories.blogposts_id SET {$tablePrefix}blogposts.post_status = 2 WHERE {$tablePrefix}blogposts2categories.blogposts_id IS NULL",false);
+    doQuery("UPDATE {$tablePrefix}blogposts  LEFT JOIN {$tablePrefix}blogposts2categories ON {$tablePrefix}blogposts.id= {$tablePrefix}blogposts2categories.blogposts_id SET {$tablePrefix}blogposts.post_status = 4 WHERE {$tablePrefix}blogposts2categories.blogposts_id IS NULL",false);
      updateLastVersion(8823);
 
 }
