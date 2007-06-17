@@ -174,7 +174,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 				return $this->getArchive();
 				break;
 			case 'delicious':
-				return $this->fetchDeliciousgetFeeds();
+				return $this->fetchDeliciousFeeds();
 				break;
 			case 'splash':
 				return $this->getSplash();
