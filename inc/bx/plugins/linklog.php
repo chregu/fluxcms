@@ -498,19 +498,17 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * )
 	 */
 	private function mapTags2Links(){
-		/*
+		
 		if($this->checkMapCache()){
 			return $this->getMapCache();
 		}
-		*/
+		
 		$sql = bx_plugins_linklog_queries::tags($this->tablePrefix);
-		// print $sql;
 		$res = $this->getResultSet($sql, false);
 		$tags = $this->prepareTagsArray($res);
 
 		$sql = bx_plugins_linklog_queries::mapper($this->tablePrefix);
 		$res = $this->getResultSet($sql, false);
-		//var_dump($sql);
 		$map = $this->doMap($tags, $res);
 
 		$this->writeMapCache($map);
@@ -637,15 +635,6 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		$xml .= '<total>'.$totalPages.'</total>';
 		$xml .= '<current>'.$this->currentPage.'</current>';
 		
-		/*
-		$xml .= '<div class="blog_pager">';
-		$xml .= '<span class="right">';
-		$xml .= $prev;
-		$xml .= $next;
-		$xml .= '</span>';
-		$xml .= $this->currentPage . '/' . $totalPages;		
-		$xml .= '</div>';
-		*/
 		
 		$xml .= '</pager>';
 		
