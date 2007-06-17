@@ -387,7 +387,6 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         
         
         $default_profile_res = $GLOBALS['POOL']->db->query($default_profile_query);
-        
         $default_profile_row = $default_profile_res->fetchRow(MDB2_FETCHMODE_ASSOC);
         //Profile Edit/New Formular
         $xml .= '<h3>Personas</h3>';
@@ -726,9 +725,6 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         }
         
         $insert_query .= ', "'.$userid.'")';
-        
-        $GLOBALS['POOL']->db->query($insert_query);
-        
         if(isset($data_clean['UserProfileIdNext'])) {
             return $data_clean['UserProfileIdNext'];
         }
@@ -762,7 +758,6 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         
         $update_query .= ' where userid = "'.$userid.'" and id = "'.$data_clean['UserProfileId'].'"';
         $GLOBALS['POOL']->db->query($update_query);
-        
         return $data_clean['UserProfileId'];
     }
     

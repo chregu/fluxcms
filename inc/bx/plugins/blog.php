@@ -301,7 +301,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where ".$tablePrefix."blogcategories.status = 1  and ".$tablePrefix."blogcategories.l >=
                 ".$lrow['l'] . " and  ".$tablePrefix."blogcategories.r <= ".$lrow['r'];
             } else if (!$cat ) {
-                $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where ".$tablePrefix."blogcategories.l >= 1 and ".$tablePrefix."blogcategories.status=1
+                $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where (".$tablePrefix."blogcategories.l >= 1 and ".$tablePrefix."blogcategories.status=1) or ".$tablePrefix."blogcategories.status is null 
                 ";
             } else if ($cat == '_all') {
                 $leftjoin = "";
@@ -364,6 +364,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
             $doComments = true;
         }
+        
         $res = $GLOBALS['POOL']->db->query($query);
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
