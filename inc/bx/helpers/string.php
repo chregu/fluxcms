@@ -372,6 +372,13 @@ class bx_helpers_string {
         return preg_replace("#\/{2,}#","/",$str);
     }
     
+     static function spacesToPlus($str) {
+        return str_replace(' ', '+', $str);
+    }
+    
+    
+    
+    
 }
 
 ?>
