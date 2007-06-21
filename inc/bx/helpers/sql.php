@@ -114,7 +114,10 @@ class bx_helpers_sql {
     public static function getOneRowById($table, $id, $idField = 'id') {
         $tp = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
-
+        
+        $idField = $db->quoteIdentifier($idField);
+        $id = $db->quote($id);
+        
         $query = "select * from {$tp}{$table} where {$idField} = $id";
         $res = $db->query($query);
         if(!MDB2::isError($res) && $res->numRows() > 0) {
