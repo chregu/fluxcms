@@ -724,7 +724,19 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
                     // First ID of a newly created sequence is 1
                     return 1;
                 }
+            // NULL value error    
+            } else if ($ondemand && $result->getCode(-29)) {
+               $query="SELECT $seqcol_name from $sequence_name";
+               $res = $this->query($query);
+               $r = $res->fetchRow();
+               $query="DROP TABLE $sequence_name";
+               $this->_doQuery($query,true);
+               $this->loadModule('Manager', null, true);
+                
+               $result = $this->manager->createSequence($seq_name, $r[0] + 10 );
+               return $this->nextID($seq_name,  false);
             }
+            
             return $result;
         }
         $value = $this->lastInsertID();
