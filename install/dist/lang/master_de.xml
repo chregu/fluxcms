@@ -51,5 +51,15 @@
     <message key="SUB_NOT_FOUND">Für die angegebene E-Mail Adresse existiert kein Abonnement.</message>
     <message key="SUB_UNSUB_CONFIRM">Bitte bestätigen Sie die Abmeldung vom Newsletter</message>
 <message key="SUB_UNSUB_CONFIRM_LINK">Ja, ich will mich abmelden vom Newsletter</message>     
+
+<message key="January">Januar</message>
+	<message key="February">Februar</message>
+	<message key="March">März</message>
+	<message key="May">Mai</message>
+	<message key="June">Juni</message> 
+	<message key="July">Juli</message>
+	<message key="October">Oktober</message>
+	<message key="December">Dezember</message>
+	
 </catalogue>
 
