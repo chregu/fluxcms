@@ -53,13 +53,17 @@
 			</pre> */
 			$imgurl = $matches[1];
 			if(!strpos($imgurl, 'dynimages')){
- 				$imgurlmod = str_replace("/files/", "/dynimages/$width/files/", $imgurl);
+ 				return str_replace("/files/", "/dynimages/$width/files/", $imgurl);
 			}else{
 				$tmp = explode('/', $imgurl);
-				$tmp[5] = $width;
-				$imgurlmod = implode('/', $tmp);
+				$nr = count($tmp);
+				for($i = 0; $i < $nr; $i++){
+					if($tmp[$i] === 'dynimages'){
+						$tmp[($i + 1)] = $width;		
+						return implode('/', $tmp);	
+					}
+				}
 			}
- 			return $imgurlmod;			
  	}
  }
 ?>
