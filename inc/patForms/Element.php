@@ -1542,6 +1542,11 @@ class patForms_Element
 		{
 			return $attributes;
 		}
+        
+		// escape xml entities 
+		foreach( $attributes as $key => $value ) {
+			$attributes[$key] = htmlspecialchars($value);
+		}
 		
 		return $this->createTag( $this->elementType[$this->getFormat()], "full", $attributes );
 	}
