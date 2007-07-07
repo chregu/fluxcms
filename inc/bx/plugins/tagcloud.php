@@ -66,7 +66,7 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
         } else {
             $this->minFontSize = 8;
         }
-        $query="select count(".$tablePrefix."tags.tag) as tagcount, tag from ".$tablePrefix."tags left join ".$tablePrefix."properties2tags on ".$tablePrefix."properties2tags.tag_id = ".$tablePrefix."tags.id where ".$tablePrefix."tags.id <> '11' and ".$tablePrefix."properties2tags.path like '".$locations."%' group by ".$tablePrefix."tags.tag";
+        $query="select count(".$tablePrefix."tags.tag) as tagcount, tag from ".$tablePrefix."tags left join ".$tablePrefix."properties2tags on ".$tablePrefix."properties2tags.tag_id = ".$tablePrefix."tags.id where ".$tablePrefix."tags.id <> '11' and ".$tablePrefix."properties2tags.path like '".$locations."%' and tag <> '' group by ".$tablePrefix."tags.tag";
         $res = $GLOBALS['POOL']->db->query($query);
         
         while($row = $res->fetchAll(MDB2_FETCHMODE_ASSOC)) {
