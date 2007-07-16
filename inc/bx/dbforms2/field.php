@@ -170,7 +170,7 @@ class bx_dbforms2_field {
      */
     public function setAttributes($attributes) {
         foreach($attributes as $name => $value) {
-            if(!isset($this->attributes[$name]) && $value !== NULL) {
+            if($value !== NULL) {
                 $this->attributes[$name] = $value;
             }
         }
