@@ -60,6 +60,7 @@ class bx_dbforms2_field {
      */
     protected $attributes = array(
         'descr' => '',
+        'disabled' => FALSE,
     );
     
     /**
@@ -189,7 +190,8 @@ class bx_dbforms2_field {
             'descr' => 'string', 
             'isxml' => 'bool',
             'onkeyup' => 'string',
-            'nosql' => 'bool'
+            'nosql' => 'bool',
+            'disabled' => 'bool',
         );
     }
     
@@ -256,8 +258,12 @@ class bx_dbforms2_field {
             'id' => $this->parentForm->name.'_'.$this->name,
         );
         
-        if (isset($this->attributes['onkeyup'])) {
+        if(isset($this->attributes['onkeyup'])) {
             $ret['onkeyup'] = $this->attributes['onkeyup'];    
+        }
+
+        if($this->attributes['disabled'] === TRUE) {
+            $ret['disabled'] = 'disabled';    
         }
         
         return $ret;

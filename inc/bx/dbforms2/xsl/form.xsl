@@ -145,8 +145,9 @@
                     field['type'] ='<xsl:value-of select="@type"/>';
                     field['default'] ='<xsl:value-of select="php:functionString('addslashes', default)"/>';
                     <xsl:if test="@linktothat">
-                    field['linktothat'] ='<xsl:value-of select="php:functionString('addslashes', @linktothat)"/>';
+                        field['linktothat'] ='<xsl:value-of select="php:functionString('addslashes', @linktothat)"/>';
                     </xsl:if>
+                    field['disabled'] = '<xsl:value-of select="@disabled"/>';
                     formConfig['fields']['<xsl:value-of select="@name"/>'] = field;
                     
                 </xsl:otherwise>
