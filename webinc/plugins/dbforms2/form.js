@@ -89,6 +89,8 @@ function dbforms2_form() {
 		if (fieldConfig['linktothat']) {
 			field.linktothat = fieldConfig['linktothat'];
 		}
+        field.disabled = fieldConfig['disabled'] ? true : false;
+        
         _registerObj(fieldNode.id, field);
         return field;
     }

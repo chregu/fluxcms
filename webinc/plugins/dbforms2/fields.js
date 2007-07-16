@@ -9,6 +9,7 @@ function dbforms2_field(DOMNode) {
     var id = '';
     var form = null;
     var changed = false;
+    var disabled = false;
     
     this.initField = function(DOMNode) {
         this.hasFocus = false;
@@ -44,7 +45,9 @@ function dbforms2_field(DOMNode) {
     }
     
     this.enable = function() {
-        this.DOMNode.disabled = false;
+        if(this.disabled == false) {
+            this.DOMNode.disabled = false;
+        }
     }
     
     this.disable = function() {
