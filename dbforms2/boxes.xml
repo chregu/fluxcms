@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+  <dbform:fields table="boxes">
+    <dbform:field name="title" type="text" descr="title"/>
+    <dbform:field name="content" type="text" descr="content"/>
+    <dbform:field name="link" type="text" descr="link"/>
+  </dbform:fields>
+  <dbform:chooser namefield="concat(title,' (',id,')')" wherefields="title, link" orderby="title" limit="20"/>
+</dbform:form>
