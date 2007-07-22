@@ -2,40 +2,40 @@
 
 
 
-class bx_editors_boxes extends bx_editor implements bxIeditor {    
-    
-	private $tablePrefix;
-	private $db;	
-    private $boxesTable = 'boxes';
-    private $boxes2pageTable = 'boxes2page';
-    private $boxesTableScope = 'boxes_scope';
-    private $lang;
-    private $defaultLang;
-    private $langsAvail;
-    private $allScopes;
-    private $scope;
-    
-    private $propertyname = 'set-id';
-    private $namespace = 'box:';
-    
-    private $setId;
-    
-    private $usedBoxes = array();
-    
+class bx_editors_boxes extends bx_editor implements bxIeditor {
+
+	protected $tablePrefix;
+	protected $db;
+    protected $boxesTable = 'boxes';
+    protected $boxes2pageTable = 'boxes2page';
+    protected $boxesTableScope = 'boxes_scope';
+    protected $lang;
+    protected $defaultLang;
+    protected $langsAvail;
+    protected $allScopes;
+    protected $scope;
+
+    protected $propertyname = 'set-id';
+    protected $namespace = 'box:';
+
+    protected $setId;
+
+    protected $usedBoxes = array();
+
     public function __construct(){
         $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $this->db = $GLOBALS['POOL']->db; 
-        
+        $this->db = $GLOBALS['POOL']->db;
+
         //some lang stuff
-        $this->defaultLang = $GLOBALS['POOL']->config['defaultLanguage']; 
-        $this->langsAvail = $GLOBALS['POOL']->config['outputLanguages']; 
+        $this->defaultLang = $GLOBALS['POOL']->config['defaultLanguage'];
+        $this->langsAvail = $GLOBALS['POOL']->config['outputLanguages'];
         if(isset($_GET['lang']) && in_array($_GET['lang'], $this->langsAvail)){
             $this->lang = $_GET['lang'];
         }
         else{
             $this->lang = $this->defaultLang;
         }
-        
+
         //and the scope
         $this->allScopes = $this->getScopes();
         //print_r($this->allScopes);
@@ -49,13 +49,13 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
     }
     public function getDisplayName() {
         return 'Boxes Editor';
-    }	
+    }
 
-    public function getPipelineParametersById($path, $id) { 
+    public function getPipelineParametersById($path, $id) {
         return array('pipelineName'=>'boxes');
     }
 
-    
+
     public function handlePOST($path, $id, $data) {
        if(isset($data['boxes']['list'])){
             foreach($data['boxes']['list'] as $key => $list){
@@ -67,24 +67,24 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
                 $this->saveCol($key,$list,$data['boxes']);
                 return;
             }
-       } 
+       }
     }
-     
+
     public function getEditContentById($id) {
         //check for the boxes set id in the properties table
         //echo $id;
 
-       
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $dom = new DomDocument();
             if (strpos($id,"/box-list-update/") !== false) {
                 $dom->appendChild($dom->createElement("ajaxpost"));
                 return $dom;
             }
-        } 
+        }
 
         $this->setId = $this->checkPropertiesId($id);
-        //echo $id;   
+        //echo $id;
         $xml  = '<boxes>';
         $xml .= '<setId>'.$this->setId.'</setId>';
         $xml .= '<path>'.$id.'</path>';
@@ -103,22 +103,22 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
 
 
     public function getMimeType(){
-    
+
     }
-    
+
     //internal functions -----------------------------------------------------------------------
     //------------------------------------------------------------------------------------------
-    
+
     private function saveCol($col, $list, $data) {
         print_r($data);
         print_r($list);
-        
+
         $nm = $this->tablePrefix.$this->boxes2pageTable;
-        
+
         $lang = $data['lang'];
         $scope = $data['scope'];
         $setid = $data['setid'];
-        
+
         $query  = " DELETE FROM $nm ";
         $query .= " WHERE lang = '$lang' AND scope = '$scope' AND col = '$col' AND setid = '$setid'  ";
 
@@ -126,7 +126,7 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
         if (MDB2::isError($res)) {
              throw new PopoonDBException($res);
         }
-        
+
         foreach($list as $boxid){
             $query  = " INSERT INTO  $nm ";
             $query .= " (lang,scope,col,setid,boxid)  ";
@@ -135,11 +135,11 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
             $res = $this->db->query($query);
             if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
-            }   
+            }
         }
 
     }
-    
+
     /**
     * searches the id from the properties table
     * or creates one, if not found
@@ -147,13 +147,13 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
     private function checkPropertiesId($path) {
         $id = bx_resourcemanager::getProperty($path, $this->propertyname, $this->namespace);
         if(!$id){
-            $id = $this->db->nextID("_sequences"); 
+            $id = $this->db->nextID("_sequences");
             bx_resourcemanager::setProperty($path, $this->propertyname, $id, $this->namespace);
         }
         return $id;
     }
-    
-    
+
+
     /**
     * return language informations
     */
@@ -171,7 +171,7 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
         }
         return $xml;
     }
-    
+
     /**
     * return language informations
     */
@@ -188,9 +188,9 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
         }
         return $xml;
     }
-    
+
     /**
-    * returns scope 
+    * returns scope
     */
     private function getScopes() {
         $query = 'SELECT * from '.$this->tablePrefix.$this->boxesTableScope;
@@ -198,14 +198,14 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
         $res = $this->db->query($query);
         if (MDB2::isError($res)) {
              throw new PopoonDBException($res);
-        } 
-        $arr = array('all' => 'all');
+        }
+        $arr = array('0' => 'all');
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             $arr[$row['id']] = $row['name'];
-        } 
+        }
         return $arr;
-    }    
-    
+    }
+
     /**
     * returns all boxes from the boxes table
     */
@@ -215,8 +215,8 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
         $res = $this->db->query($query);
         if (MDB2::isError($res)) {
              throw new PopoonDBException($res);
-        } 
-        $xml = '<allboxes>';  
+        }
+        $xml = '<allboxes>';
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             if(in_array($row['id'],$this->usedBoxes)){
                 continue;
@@ -225,11 +225,11 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
             $xml .= '<title>'.$row['title'].'</title>';
             $xml .= '<id>'.$row['id'].'</id>';
             $xml .= '</box>';
-        } 
+        }
         $xml .= '</allboxes>';
         return $xml;
     }
-    
+
     /**
     * returns all used  boxes in this page
     */
@@ -246,22 +246,22 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
         $res = $this->db->query($query);
         if (MDB2::isError($res)) {
              throw new PopoonDBException($res);
-        } 
-        $xml = "<box_$col>";  
+        }
+        $xml = "<box_$col>";
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             $this->usedBoxes[] = $row['id'];
             $xml .= '<box id="box_'.$row['id'].'">';
             $xml .= '<title>'.$row['title'].'</title>';
             $xml .= '<id>'.$row['id'].'</id>';
             $xml .= '</box>';
-        } 
+        }
         $xml .= "</box_$col>";
         return $xml;
     }
-    
-    
-   
-    
+
+
+
+
 }
 
 ?>
