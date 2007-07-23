@@ -127,12 +127,14 @@ class bx_editors_boxes extends bx_editor implements bxIeditor {
              throw new PopoonDBException($res);
         }
 
+        $rang = 0;
         foreach($list as $boxid){
             $query  = " INSERT INTO  $nm ";
-            $query .= " (lang,scope,col,setid,boxid)  ";
-            $query .= " VALUES ('$lang','$scope','$col','$setid','$boxid')  ";
+            $query .= " (lang,scope,col,setid,boxid,rang)  ";
+            $query .= " VALUES ('$lang','$scope','$col','$setid','$boxid','$rang')  ";
 
             $res = $this->db->query($query);
+            $rang++;
             if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
             }
