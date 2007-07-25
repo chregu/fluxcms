@@ -15,6 +15,12 @@ class bx_helpers_string {
         } else
         return $inStr;
     }
+ 
+    static function truncate_strip($inStr, $length = 100, $breakWords = false, $etc = '...') {
+        $inStr = strip_tags($inStr);
+        $inStr = bx_helpers_string::truncate($inStr, $length, $breakWords , $etc);
+        return $inStr;
+    }
     
     static function nl2property_hegu($text) {
         $text = $text[0]->ownerDocument->saveXML($text[0]);
