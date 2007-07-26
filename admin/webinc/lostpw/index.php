@@ -40,8 +40,7 @@ $permm = bx_permm::getInstance($confvars);
 $db = $GLOBALS['POOL']->db;
 $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
 
-
-if (isset($_POST['username'])) {
+if (isset($_POST['username']) && !isset($_POST['password'])) {
     $name = $_POST['username'];
     
     $p = bx_permm::getInstance();
