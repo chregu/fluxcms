@@ -81,15 +81,15 @@ Have fun';
     }
     
     
-} else if (!isset($_GET['hash']) || empty($_GET['hash'])) {
+} else if (!isset($_REQUEST['hash']) || empty($_REQUEST['hash'])) {
     getUsername();
     
-} else if (!empty($_GET['hash']) ) {
+} else if (!empty($_REQUEST['hash']) ) {
     
-    if (strlen($_GET['hash']) != 32) {
+    if (strlen($_REQUEST['hash']) != 32) {
        print "invalid hash";  
     } else {
-    $query = "select  id from ".$tablePrefix."users where user_tmphash = ". $db->quote($_GET['hash']);
+    $query = "select  id from ".$tablePrefix."users where user_tmphash = ". $db->quote($_REQUEST['hash']);
     $row = $db->queryRow($query,null,MDB2_FETCHMODE_ASSOC);
     if (!$row) {
         print "No user with that hash found...\n";
@@ -116,7 +116,7 @@ Have fun';
                 print 'Please type in your new Password';
             }
             print "</td></tr>";
-            print '<input type="hidden" name="hash" value="'.$_POST['hash'].'"/>';
+            print '<input type="hidden" name="hash" value="'.$_REQUEST['hash'].'"/>';
             print '<tr><td>New password: </td><td><input type="password" name="newpassword" value=""/></td></tr>';
             print '<tr><td>Retype new passwort:</td><td><input type="password" name="newpassword2" value=""/></td></tr>';
             print '</table>';
