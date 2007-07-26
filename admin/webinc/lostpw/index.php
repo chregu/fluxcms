@@ -41,8 +41,8 @@ $db = $GLOBALS['POOL']->db;
 $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
 
 
-if (isset($_REQUEST['username'])) {
-    $name = $_REQUEST['username'];
+if (isset($_POST['username'])) {
+    $name = $_POST['username'];
     
     $p = bx_permm::getInstance();
     
@@ -82,20 +82,23 @@ Have fun';
     }
     
     
-} else if (!isset($_REQUEST['hash'])) {
-    
+} else if (!isset($_GET['hash']) || empty($_GET['hash'])) {
     getUsername();
     
-} else if (isset($_REQUEST['hash'])) {
-    $query = "select  id from ".$tablePrefix."users where user_tmphash = ". $db->quote($_REQUEST['hash']);
+} else if (!empty($_GET['hash']) ) {
+    
+    if (strlen($_GET['hash']) != 32) {
+       print "invalid hash";  
+    } else {
+    $query = "select  id from ".$tablePrefix."users where user_tmphash = ". $db->quote($_GET['hash']);
     $row = $db->queryRow($query,null,MDB2_FETCHMODE_ASSOC);
     if (!$row) {
         print "No user with that hash found...\n";
     } else {
         $id = $row['id'];
-        if (isset($_REQUEST['newpassword']) && strlen($_REQUEST['newpassword']) >= 6 && $_REQUEST['newpassword'] == $_REQUEST['newpassword2']) {
+        if (isset($_POST['newpassword']) && strlen($_POST['newpassword']) >= 6 && $_POST['newpassword'] == $_POST['newpassword2']) {
             
-            $query = "update  ".$tablePrefix."users set user_tmphash = '', user_pass= '". md5($_REQUEST['newpassword'])."' where id = $id";
+            $query = "update  ".$tablePrefix."users set user_tmphash = '', user_pass= '". md5($_POST['newpassword'])."' where id = $id";
             $db->query($query);
              print '<tr><td>';
             print "Password updated, please login now with your new password: <br/><br/>";
@@ -105,16 +108,16 @@ Have fun';
             
         } else {
             print '<tr><td colspan="2">';
-             if (isset($_REQUEST['newpassword']) && strlen($_REQUEST['newpassword']) < 6) {
+             if (isset($_POST['newpassword']) && strlen($_POST['newpassword']) < 6) {
                 print "<font color='red'>Passwords has to be at least 6 characters long, please retype</font><br/>";
             } 
-             else if ($_REQUEST['newpassword'] != $_REQUEST['newpassword2']) {
+             else if ($_POST['newpassword'] != $_POST['newpassword2']) {
                 print "<font color='red'>Passwords do not match, please retype</font><br/>";
             } else {
                 print 'Please type in your new Password';
             }
             print "</td></tr>";
-            print '<input type="hidden" name="hash" value="'.$_REQUEST['hash'].'"/>';
+            print '<input type="hidden" name="hash" value="'.$_POST['hash'].'"/>';
             print '<tr><td>New password: </td><td><input type="password" name="newpassword" value=""/></td></tr>';
             print '<tr><td>Retype new passwort:</td><td><input type="password" name="newpassword2" value=""/></td></tr>';
             print '</table>';
@@ -124,7 +127,7 @@ Have fun';
         
     }
     
-    
+    }
 }
 
 
