@@ -23,6 +23,12 @@ class bx_plugins_boxes extends bx_plugin implements bxIplugin {
     protected $propertyname = 'set-id';
     protected $namespace = 'box:';
 
+    /**
+    * flag to indicate, that there is no content on selected scope
+    * , but on default scope (o)
+    */
+    private $defaultScope = false;
+    
     protected $setId;
 
     public static function getInstance($mode) {
@@ -40,11 +46,10 @@ class bx_plugins_boxes extends bx_plugin implements bxIplugin {
         $this->mode = $mode;
         //parameters for boxes
         $this->lang = $GLOBALS['POOL']->config->getOutputLanguage();
-        $this->scope = $this->getScope();
     }
 
     public function isRealResource($path , $id) {
-        return true;
+        return false;
     }
 
     public function getIdByRequest($path, $name = NULL, $ext = NULL) {
@@ -52,6 +57,8 @@ class bx_plugins_boxes extends bx_plugin implements bxIplugin {
     }
 
     public function getContentById($path, $id) {
+        $this->defaultScope = false;
+        $this->scope = $this->getScope();
 		$this->setId = $this->findProperties($path);
 		if(!$this->setId){
 		    return;
@@ -84,40 +91,49 @@ class bx_plugins_boxes extends bx_plugin implements bxIplugin {
 		return $id;
 	}
 
-	private function hasBoxes($path){
+	private function hasBoxes($path, $scope = false){
 		if(!$id = bx_resourcemanager::getProperty($path, $this->propertyname, $this->namespace)) {
 		    return false;
 		}
         $nm = $this->tablePrefix.$this->boxes2pageTable;
         $lang = $this->lang;
-        $scope = $this->scope;
+        $scope = ($scope !== false)?$scope:$this->scope;
         $setid = $id;
         $query  = " SELECT COUNT(*) AS total FROM $nm ";
         $query .= " WHERE lang = '$lang' AND scope = '$scope' AND setid = '$setid'  ";
+
         $res = $this->db->queryone($query);
         if (MDB2::isError($res)) {
              throw new PopoonDBException($res);
         }
         if($res == 0){
+            if($scope !== 0){
+               if($id = $this->hasBoxes($path,0) ){
+                    $this->defaultScope = true;
+                    return $id;
+               }
+            }
             return false;
         }
         return $id;
 	}
 
 	/**
-	 * not  implemented yet
+	 * must be extended if used
 	 */
-	private function getScope(){
+	protected function getScope(){
 	    return 0;
 	}
 
     private function getBoxes($col = 0){
         $nm = $this->tablePrefix.$this->boxes2pageTable;
         $box = $this->tablePrefix.$this->boxesTable;
-
+        
+           $scope = ($this->defaultScope) ? 0 : $this->scope ;
+        
         $query  = " SELECT $box.* FROM $nm ";
         $query .= " JOIN $box ON ( $nm.boxid  = $box.id) ";
-        $query .= ' WHERE '.$nm.'.lang = "'.$this->lang.'" AND '.$nm.'.scope = "'.$this->scope.'" AND '.$nm.'.col = "'.$col.'" ';
+        $query .= ' WHERE '.$nm.'.lang = "'.$this->lang.'" AND '.$nm.'.scope = "'.$scope.'" AND '.$nm.'.col = "'.$col.'" ';
         $query .= " AND $nm.setid = ".$this->setId." ";
         $query .= " ORDER BY $nm.rang ";
 
@@ -163,5 +179,17 @@ class bx_plugins_boxes extends bx_plugin implements bxIplugin {
 
     }
 
-
+    protected function getScopes() {
+        $query = 'SELECT * from '.$this->tablePrefix.$this->boxesTableScope;
+        //echo $query;
+        $res = $this->db->query($query);
+        if (MDB2::isError($res)) {
+             throw new PopoonDBException($res);
+        }
+        $arr = array('0' => 'all');
+        while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $arr[$row['name']] = $row['id'];
+        }
+        return $arr;
+    }
 }
