@@ -97,7 +97,6 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     $form->queryMode = bx_dbforms2::QUERYMODE_DELETE;
                     $query = bx_dbforms2_sql::getDeleteQueryByForm($form);  
                     $form->callEventHandlers(bx_dbforms2::EVENT_DELETE_PRE);
-                    $form->callEventHandlers(bx_dbforms2::EVENT_DELETE_PRE);
                 
                 } else if($form->currentID == 0) {
                     // create a new entry
