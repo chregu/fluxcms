@@ -36,6 +36,7 @@ class bx_plugins_blog_geoloc {
             if ($name) {
                 switch ($name) {
                     case "geo:long":
+                    case "geo:lon":
                     case "lo":
                     case "long":
                         $long = $value;
