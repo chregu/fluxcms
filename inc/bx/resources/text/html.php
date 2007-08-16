@@ -23,13 +23,11 @@ class bx_resources_text_html extends bx_resource {
     }
         
     public function getContentUri() {
-        
         return BX_DATA_DIR.$this->fulluri;
       
     }
     
     public function getContentUriSample() {
-        
         if (isset($_REQUEST['template'])) {
             
             $theme = $GLOBALS['POOL']->config->getConfProperty('theme');
@@ -184,6 +182,15 @@ class bx_resources_text_html extends bx_resource {
         
 
     public function onSave() {
+        //filter tbody
+        if (!empty($_GET['editor']) && $_GET['editor'] == 'fck') {
+            $html = file_get_contents($this->props['fileuri']);
+            if (strpos($html,'<tbody>') !== false) {
+                $html = str_replace(array('<tbody>','</tbody>'),'',$html);
+                file_put_contents($this->props['fileuri'],$html);
+            }
+        }
+        //versioning
         $vconfig = $GLOBALS['POOL']->config->getConfProperty('versioning');
 
         if ($vconfig && !empty($vconfig)) {
@@ -193,9 +200,11 @@ class bx_resources_text_html extends bx_resource {
                 $vers->commit($this->props['fileuri'], '');
             }
         }
-
+        
+        
         bx_metaindex::callIndexerFromFilename($this->props['fileuri'],$this->id);
     }
+    
     
      public function getOutputUri() {
          

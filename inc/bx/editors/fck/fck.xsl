@@ -72,7 +72,7 @@
             <xsl:for-each select="@*">
                 <xsl:copy/>
             </xsl:for-each>
-            <xsl:attribute name="onload">contentURI = '<xsl:value-of select="$contentUri"/>'; </xsl:attribute>
+            <xsl:attribute name="onload">contentURI = '<xsl:value-of select="$contentUri"/>?editor=fck'; </xsl:attribute>
             <xsl:apply-templates/>
         </xsl:copy>
         <form>
