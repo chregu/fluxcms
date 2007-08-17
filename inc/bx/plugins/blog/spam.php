@@ -12,19 +12,26 @@ class bx_plugins_blog_spam {
         
         $commentRejected = "";
         $spammerDat = $simplecache->simpleCacheRemoteImplodeRead('http://www.bitflux.org/download/antispam/refererspammer.dat','|',10800);
-        if (strlen ($spammerDat) > 0) { 
-            $spammerDat = '#'.$spammerDat .'#';
-        } else { 
-            $spammerDat = false;
-        }
         
         $surblUrls = array();
+        if ($spammerDat) {
+            $spammerDatLines = explode("|",$spammerDat);
+            
+        }
         foreach ($urls as $check) {
             //bitflux.org spam check          
             // * Listed in Bitflux Spam Check      
-            if ($spammerDat && preg_match($spammerDat,$check)) {
+            if ($spammerDat) {
+                while ($_lines = array_splice($spammerDatLines,0,500)) {
+                    if (preg_match("#".implode("|",$_lines). "#",$check)) {
+                        $commentRejected .= "* bitflux blacklisted: $check\n";
+                    }
+                }
+                
+            }  
+            /*preg_match($spammerDat,$check)) {
                 $commentRejected .= "* bitflux blacklisted: $check\n";
-            }
+            }*/
             if (preg_match("#(http://[\w\.\-^\"]+)#", $check,$matches)) {
                 $surblUrls[] = $matches[0].'/';
             }
