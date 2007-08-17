@@ -286,7 +286,7 @@ class bx_plugins_blog_handlecomment {
             $emailFrom .= ' <unknown@example.org>';
         }
         // check if emailFrom is a valid input. if not -> reject!!!
-        if(strpos($emailFrom, "\n") !== FALSE or strpos($emailFrom, "\r") !== FALSE) { 
+        if(strpos($emailFrom, "\n") !== FALSE or strpos($emailFrom, "\r") !== FALSE) {
             print ("Comment rejected. Looks like you're trying to spam the world....");
             die();
         }
@@ -296,6 +296,8 @@ class bx_plugins_blog_handlecomment {
         } else if (strlen($data['comment_notification'] > 2)) {
             $deleteIt= true;
             $commentRejected .= "* Notification value too long\n";
+        } else {
+            $data['comment_notification'] = 1;
         }
             
        
@@ -312,8 +314,8 @@ class bx_plugins_blog_handlecomment {
             '.$db->quote($username).')';
         
         if (!trim($data['name'])) {
-		 $commentRejected .= "* Name was empty: '".$data['name']."'\n";
-	}
+            $commentRejected .= "* Name was empty: '".$data['name']."'\n";
+        }
         $res = $GLOBALS['POOL']->dbwrite->query($query);
         $GLOBALS['POOL']->dbwrite->loadModule('Extended',null,false); 
         $lastID = $GLOBALS['POOL']->dbwrite->getAfterID(null,$blogTablePrefix.'blogcomments');
