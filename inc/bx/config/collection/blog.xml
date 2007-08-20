@@ -5,6 +5,7 @@
  <variable name="blogid" value="1"/>
  <variable name="postsperpage" value="10"/>
  
+ 
  <plugins inGetChildren="false">
         <extension type="xml"/>
         <file preg="#plugin=trackback#"/>
@@ -36,8 +37,16 @@
 
     </plugins>
     
+<plugins>
+        <extension type="html"/>
+        <file preg="#^map/#"/>
+        <parameter name="xslt" type="pipeline" value="map.xsl"/>
+        <parameter type="pipeline" name="output-mimetype" value="text/xml"/>
+        <plugin type="blog_map"/>
+    </plugins>
     
-
+    
+    
     
     <plugins>
         <extension type="html"/>
@@ -72,6 +81,7 @@
             <parameter name="blogid" value="$blogid"/>
         </plugin>
     </plugins>
+
 
     <plugins>
         <extension type="xml"/>
