@@ -38,6 +38,7 @@ class bx_plugins_blog_geoloc {
                     case "geo:long":
                     case "geo:lon":
                     case "lo":
+                    case "lon":
                     case "long":
                         $long = $value;
                         unset($post->tags[$key]);
