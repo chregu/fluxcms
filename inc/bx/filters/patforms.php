@@ -362,7 +362,7 @@ class bx_filters_patforms extends bx_filter {
         if(!empty($_GET)) {
             foreach($_GET as $name => $value) {
                 // TODO: apply field filter here
-                $fields[$name] = $value;
+                $fields[$name] = htmlspecialchars(bx_helpers_globals::stripMagicQuotes( $value));
             }
         }
         return $fields;
