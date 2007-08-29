@@ -13,7 +13,20 @@
 // +----------------------------------------------------------------------+
 // | Author: Liip AG      <devel@liip.ch>                              |
 // +----------------------------------------------------------------------+
-        
+/*
+
+Add this to you blog.xml
+blog.xml is located /inc/bx/config/collection/blog.xml
+
+<plugins>
+        <extension type="html"/>
+        <file preg="#^map/#"/>
+        <parameter name="xslt" type="pipeline" value="map.xsl"/>
+        <plugin type="blog_map"/>
+        <plugin type="navitree"></plugin>
+    </plugins>
+
+*/
 class bx_plugins_blog_map extends bx_plugin {
     
     static public $instance = array();
@@ -50,26 +63,44 @@ class bx_plugins_blog_map extends bx_plugin {
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
         
-        $query = "select id, post_info from ".$tablePrefix."blogposts where post_info != ''";
-        
+        $query = "select id, post_content, post_info, post_title, unix_timestamp(post_date) as unixtime, post_uri as post_uri from ".$tablePrefix."blogposts where post_info != '' and post_content like '%<img%' order by post_date limit 10";
         $res = $db->query($query);
         
-        $xml = "";
+        /*$query_images = "select post_content, id 
+        from ".$tablePrefix."blogposts where post_content like '%<img%' order by post_date limit 15";
+        $res_images = $db->query($query_images);*/
         
+        $xml = "";
         if(!MDB2::isError($res)) {
             $xml .= "<locations>";
             while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                 $row_replaced = preg_replace('# #', '', $row['post_info']);
                 $row_splited = preg_split('#\n#', $row_replaced);
-                //bx_helpers_debug::webdump($row_splited);
                 $xml .= "<location>";
+                $xml .= preg_replace("#plazelat#", "lat", $row_splited[1]);
+                $xml .= preg_replace("#plazelon#", "lon", $row_splited[2]);
                 $xml .= preg_replace("#plazename#", "name", $row_splited[3]);
-                $xml .= preg_replace("#plazelon#", "name", $row_splited[2]);
-                $xml .= $row_splited[1];
+                
+                $xml .= "<id>".$row['id']."</id>";
+                $xml .= "<title>".$row['post_title']."</title>";
+                //link to the post
+                $link = 'archive/'. date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).'/'.$row['post_uri'].'.html';
+                $xml .= "<link>".$link."</link>";
+                
+                //images
+                preg_match("#<img.*>#", $row['post_content'], $matches);
+                preg_match('#\"(.+?)\"#', $matches['0'], $matches2);
+                $image = str_replace('"', "", $matches2['0']);
+                
+                if(isset($image)) {
+                    $xml .= "<image>".$image."</image>";
+                }
+                
                 $xml .= "</location>";
             }
             $xml .= "</locations>";
         }
+        
         $dom = new DomDocument();
         $dom->loadXML($xml);
         return $dom;
