@@ -21,7 +21,7 @@ blog.xml is located /inc/bx/config/collection/blog.xml
 <plugins>
         <extension type="html"/>
         <file preg="#^map/#"/>
-        <parameter name="xslt" type="pipeline" value="map.xsl"/>
+        <parameter name="xslt" type="pipeline" value="blog_map.xsl"/>
         <plugin type="blog_map"/>
         <plugin type="navitree"></plugin>
     </plugins>
