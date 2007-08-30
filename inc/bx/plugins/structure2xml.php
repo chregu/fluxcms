@@ -21,6 +21,7 @@ class bx_plugins_structure2xml extends bx_plugin implements bxIplugin {
     protected static $childrenSections = array();
     protected static $tableInfo = array();
     private static $resources = array();
+    private $maxLastChanged = array();
     
     /*** magic methods and functions ***/
     
@@ -57,6 +58,8 @@ class bx_plugins_structure2xml extends bx_plugin implements bxIplugin {
             $uri = "structure2xml://$file/?$query";
             $dom->load($uri);
         }
+        $this->maxLastChanged[$path.$id] = $dom->documentElement->getAttribute("maxLastChanged");
+        
         return $dom;
     }
     
@@ -205,7 +208,7 @@ class bx_plugins_structure2xml extends bx_plugin implements bxIplugin {
     * see getChildren for the new way...
     */
     public function getResourceById($path, $id, $mock = false) {
-       if (! isset (self::$resources[$id])) {
+        if (! isset (self::$resources[$id])) {
             $file = $this->getParameter($path,'src');
             $res = new bx_resources_application_dbform($id);
             /*$tables = array_keys($this->getTableNames($file));	
@@ -238,6 +241,14 @@ class bx_plugins_structure2xml extends bx_plugin implements bxIplugin {
             }
         } else {
             
+            return null;
+        }
+    }
+    
+    public function getLastModifiedById($path, $id) {
+        if (isset($this->maxLastChanged[$path.$id] )) {
+            return $this->maxLastChanged[$path.$id] ;
+        } else {
             return null;
         }
     }
