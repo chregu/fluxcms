@@ -109,16 +109,16 @@
                         <xsl:call-template name="topnavi"/>
                     </div>
 
-                    <div id="left">
+                    <!--div id="left">
                         <xsl:call-template name="leftnavi"/>
                     </div>
                     <div id="right">
                         <xsl:call-template name="contentRight"/>
-                    </div>
+                    </div-->
 
 
                     <div id="content">
-                            <div id="map" style="width: 500px; height: 300px"></div>
+                            <div id="map" style="width: 700px; height: 500px"></div>
                     </div>
 
                 </div>
@@ -277,6 +277,10 @@
                 locations[<xsl:value-of select="$locationId"/>]['lat'] = '<xsl:value-of select="lat"/>';
                 locations[<xsl:value-of select="$locationId"/>]['title'] = '<xsl:value-of select="title"/>';
                 locations[<xsl:value-of select="$locationId"/>]['link'] = '<xsl:value-of select="concat($webrootW,$collectionUri,link)"/>';
+                locations[<xsl:value-of select="$locationId"/>]['content'] = '<xsl:value-of select="php:functionString('bx_helpers_string::escapeJSValue',content)" disable-output-escaping="yes"/>';
+                locations[<xsl:value-of select="$locationId"/>]['author'] = '<xsl:value-of select="author"/>';
+                locations[<xsl:value-of select="$locationId"/>]['date'] = '<xsl:value-of select="date"/>';
+                
                 
                 <xsl:if test="image/text()">
                 locations[<xsl:value-of select="$locationId"/>]['image'] = '<xsl:value-of select="image"/>';
