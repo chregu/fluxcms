@@ -63,7 +63,7 @@ class bx_plugins_blog_map extends bx_plugin {
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
         
-        $query = "select id, post_content, post_info, post_title, unix_timestamp(post_date) as unixtime, post_uri as post_uri from ".$tablePrefix."blogposts where post_info != '' and post_content like '%<img%' order by post_date limit 10";
+        $query = "select id, post_author, post_content, post_info, post_title, unix_timestamp(post_date) as unixtime, post_uri as post_uri from ".$tablePrefix."blogposts where post_info != '' and post_content like '%<img%' order by post_date limit 10";
         $res = $db->query($query);
         
         /*$query_images = "select post_content, id 
@@ -87,6 +87,12 @@ class bx_plugins_blog_map extends bx_plugin {
                 $link = 'archive/'. date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).'/'.$row['post_uri'].'.html';
                 $xml .= "<link>".$link."</link>";
                 
+                $xml .= "<author>".$row['post_author']."</author>";
+                
+                $date = date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).' '.date('H:i',$row['unixtime']);
+                //date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']
+                $xml .= "<date>".$date."</date>";
+                
                 //images
                 preg_match("#<img.*>#", $row['post_content'], $matches);
                 preg_match('#\"(.+?)\"#', $matches['0'], $matches2);
@@ -95,6 +101,10 @@ class bx_plugins_blog_map extends bx_plugin {
                 if(isset($image)) {
                     $xml .= "<image>".$image."</image>";
                 }
+                if(isset($row['post_content'])) {
+                    $xml .= "<content>".$row['post_content']."</content>";
+                }
+                
                 
                 $xml .= "</location>";
             }
