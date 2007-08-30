@@ -1,5 +1,4 @@
 function createMarker(point, number, title, link, image, content, author, date) {
-    console.log(title);
   var marker = new GMarker(point);
   GEvent.addListener(marker, "click", function() {
     marker.openInfoWindowHtml(
