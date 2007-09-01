@@ -265,8 +265,9 @@ class bx_dbforms2_config {
     protected function getDefaultFieldValue($fieldNode) {
         $fieldName = $fieldNode->getAttribute('name');
         
-        if($fieldNode->hasAttribute('default'))
+        if($fieldNode->hasAttribute('default')) {
             return $this->replaceByRequestVar($fieldName, $fieldNode->getAttribute('default'));
+        }
             
         $valueNS = $fieldNode->getElementsByTagName('value');
         
@@ -288,6 +289,10 @@ class bx_dbforms2_config {
     protected function replaceByRequestVar($name, $value) {
         if(isset($_REQUEST[$name])) {
             return $_REQUEST[$name];
+        }
+        
+        if ($value == '${userid}') {
+            return bx_helpers_perm::getUserId();
         }
         return $value;
     }
