@@ -57,7 +57,7 @@ dbforms2_common.openCalendarPopup = function(field, id) {
     dbforms2_calendarCallback = setDate;
     dbforms2_calendarField = field;
     cal.setReturnFunction('_calendarReturnFunction');
-    cal.select(document.getElementById(id), 'anchor_' + id, 'dd.MM.yyyy 00:00:00');
+    cal.select(document.getElementById(id), 'anchor_' + id, 'dd.MM.yyyy');
 }
 
 function _calendarReturnFunction(y, m, d) {
