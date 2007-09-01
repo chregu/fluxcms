@@ -153,16 +153,32 @@
     </xsl:template>
     
     <xsl:template match="nofield" mode="fields">
-        <tr class="formRow">
+ 
+    
+    <tr class="formRow">
             <td class="formHeader">
                 &#160;
             </td>
             <td class="formInput">
-                <strong><xsl:value-of select="@descr"/></strong>
+               <strong><xsl:value-of select="@descr"/></strong>
             </td>
         </tr>
     </xsl:template>
 
+       <xsl:template match="nofield[@type='html']" mode="fields">
+ 
+    
+    <tr class="formRow">
+             <td class="formHeader">
+                &#160;
+            </td>
+            <td class="formInput">
+                <xsl:value-of select="default/text()" disable-output-escaping="yes"/>
+                
+            </td>
+        </tr>
+    </xsl:template>
+    
     <xsl:template match="default|script" mode="xhtml"></xsl:template>
 
     <xsl:template match="*" mode="xhtml">
