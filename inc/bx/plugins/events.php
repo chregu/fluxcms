@@ -87,7 +87,8 @@ class bx_plugins_events extends bx_plugin implements bxIplugin {
         
         $sqlWhere = $this->getParameter($path, "sqlwhere", BX_PARAMETER_TYPE_DEFAULT); 
         $sqlOrder = $this->getParameter($path, "sqlorder", BX_PARAMETER_TYPE_DEFAULT);
-        if($filename == "index"){
+        
+        if($filename == "index" || $filename == 'rss'){
             
             $query="select * from ".$prefix."events"; 
             if ($sqlWhere && !empty($sqlWhere)) {
