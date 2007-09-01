@@ -14,13 +14,13 @@
 
 <xsl:param name="webroot"/>
 <xsl:variable name="assetpath" select="/bx/plugin/assets/@path"/>
-
+<xsl:variable name="ap" select="/bx/plugin/assets"/>
 <xsl:template match="/">
     <html>
     	<head>
     	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    	<link rel="stylesheet" type="text/css" href="http://berggebiete/themes/standard/admin/css/formedit.css" />
-    	<link rel="stylesheet" type="text/css" href="http://berggebiete/themes/standard/admin/css/admin.css" />
+    	<link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/formedit.css" />
+    	<link rel="stylesheet" type="text/css" href="{$webroot}/themes/standard/admin/css/admin.css" />
     	<link rel="stylesheet" type="text/css" media="screen" href="{$webroot}/themes/standard/admin/css/assets.css"/>
     	<script type="text/javascript" language="javascript">
     		var bx_webroot = '<xsl:value-of select="$webroot"/>';
@@ -97,7 +97,11 @@
     		select.setAttribute('name','bx[plugins][admin_edit][type]['+id+']');
     		select.appendChild(getOption('Link','link'));
     		select.appendChild(getOption('Download','download'));
-    		p.appendChild(select);
+    		select.appendChild(getOption('Forum','forum'));
+            
+    		select.appendChild(getOption('Projekt','project'));
+    		select.appendChild(getOption('Person','people'));
+            p.appendChild(select);
     		p.appendChild(document.createTextNode('  '));
     		
     		lang = document.createElement('select');
@@ -130,13 +134,49 @@
     	</head>
     	<body>
     		<div id="admincontent">
-    		<h2><i18n:text>Edit Assets for</i18n:text> <xsl:value-of select="$assetpath"/></h2>
+    		<h2><i18n:text>Edit Assets for:</i18n:text><br/><xsl:value-of select="$assetpath"/></h2>
     		
     		 <div id="form">
     			
     			<form name="assetsform" action="" method="post" id="assetsform">
-    				<xsl:call-template name="buttons"/>
-    				<xsl:apply-templates select="/bx/plugin/assets/entry"/>
+                    
+                    <xsl:if test="$ap/parentres/entry">
+                        <h4>Adopt assets from parent</h4>
+                        <select name="bx[plugins][admin_edit][parent]">
+                            <option value="">---------------------------------------</option>
+                            <xsl:for-each select="$ap/parentres/entry">
+                                <option value="{uri}"><xsl:value-of select="concat(display-name, ' (',basename,')')"/></option>
+                            </xsl:for-each>
+                        </select>
+                        
+                        <br/><br/>
+                        <input type="submit" name="submitparent" value="From Parent"/>
+    				    <p class="uline">&#160;</p>
+                        <br/>
+
+                    </xsl:if>                    
+                    <xsl:if test="$ap/childres/entry">
+                        
+                        <h4>Propagate assets to children</h4>
+                        <input type="checkbox" name="bx[plugins][admin_edit][allchilds]" value="1"/>&#160; All children<br/><br/>
+                        <select name="bx[plugins][admin_edit][child]">
+                            <option value="">---------------------------------------</option>
+                            <xsl:for-each select="$ap/childres/entry">
+                                <option value="{uri}"><xsl:value-of select="shorturi"/></option>
+                            </xsl:for-each>
+                        </select>
+                        
+                        <br/><br/>
+                        <input type="submit" name="submitchildren" value="To Children"/>
+                        <p class="uline">&#160;</p>
+                        <br/>
+        
+
+                         
+                    </xsl:if>
+                    
+                   <xsl:call-template name="buttons"/>
+                   <xsl:apply-templates select="/bx/plugin/assets/entry"/>
     			</form>
     		
     			
@@ -155,7 +195,7 @@
     <input type="submit" name="submit" value="Save"></input>&#160;
     <input type="button" name="add" value="Add New" onclick="newAsset()"/>&#160;
     
-	<p class="uline">&#160;</p>
+	<p>&#160;</p>
 </xsl:template>
 
 <xsl:template match="entry">
@@ -173,7 +213,19 @@
 			<xsl:if test="type='download'"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
 		Download
 		</option>
-	</select><xsl:text> </xsl:text>
+	    <option value="forum">
+			<xsl:if test="type='forum'"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+		Forum
+        </option>
+        <option value="project">
+			<xsl:if test="type='project'"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+        Projekt
+        </option>
+        <option value="people">
+			<xsl:if test="type='people'"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+		Person
+        </option>
+    </select><xsl:text> </xsl:text>
 	<xsl:variable name="l" select="lang"/>
 	<select name="bx[plugins][admin_edit][lang][{id}]">
 		<xsl:for-each select="/bx/plugin/assets/langs/entry">
