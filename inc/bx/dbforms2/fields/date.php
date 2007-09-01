@@ -28,6 +28,7 @@ class bx_dbforms2_fields_date extends bx_dbforms2_field {
         parent::__construct($name);
         $this->type = 'date';
         $this->XMLName = 'input';
+        $this->attributes['style']='z-index:100000;';
     }
     
     public function getSQLValue() {
