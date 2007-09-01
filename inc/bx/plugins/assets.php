@@ -31,7 +31,7 @@ class bx_plugins_assets extends bx_plugin implements bxIplugin {
         $idparts = explode(".", $id);
         $resourceId = $idparts[0].".".$this->lang.".xhtml";    
         $resourcep = $path.$resourceId;
-        $query = 'SELECT * FROM '.$this->assetTable.' WHERE path="'.$resourcep.'"';
+        $query = 'SELECT * FROM '.$this->assetTable.' WHERE path="'.$resourcep.'" ORDER BY id desc';
         
         $dom = new DOMDocument();
        
@@ -43,11 +43,16 @@ class bx_plugins_assets extends bx_plugin implements bxIplugin {
                 if ($assets && is_array($assets)) {
                       
                     $dom->loadXML('<assets/>');
+                    
+                    foreach($assets as $i=>$asset) {
+                        $assets[$i]['value'] = str_replace("&", "&amp;", $asset['value']);
+                    }
+                    
                     bx_helpers_xml::array2Dom($assets, $dom, $dom->documentElement);
                 }
                 
             } else {
-                var_dump($res->getUserinfo());
+                //var_dump($res->getUserinfo());
             }
         }
 
