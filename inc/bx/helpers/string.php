@@ -1,4 +1,4 @@
-    <?php
+<?php
 class bx_helpers_string {
     
     static function truncate($inStr, $length = 100, $breakWords = false, $etc = '...') {
