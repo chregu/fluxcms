@@ -26,6 +26,16 @@ blog.xml is located /inc/bx/config/collection/blog.xml
         <plugin type="navitree"></plugin>
     </plugins>
 
+    
+    first you need to create a blog_map.xslor however you want to name it) in your theme section
+    there you need to import /themes/standard/plugins/blog/blog_map.xsl
+    
+    example: <xsl:import href="../standard/plugins/blog/blog_map.xsl"/>
+    
+    this should be everything to make it work :)
+    
+    have fun
+    
 */
 class bx_plugins_blog_map extends bx_plugin {
     
@@ -63,7 +73,7 @@ class bx_plugins_blog_map extends bx_plugin {
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
         
-        $query = "select id, post_author, post_content, post_info, post_title, unix_timestamp(post_date) as unixtime, post_uri as post_uri from ".$tablePrefix."blogposts where post_info != '' and post_content like '%<img%' order by post_date limit 10";
+        $query = "select id, post_author, post_content, post_info, post_title, unix_timestamp(post_date) as unixtime, post_uri as post_uri from ".$tablePrefix."blogposts where post_info != '' and post_content like '%<img%' order by post_date limit 50";
         $res = $db->query($query);
         
         /*$query_images = "select post_content, id 
@@ -76,6 +86,8 @@ class bx_plugins_blog_map extends bx_plugin {
             while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                 $row_replaced = preg_replace('# #', '', $row['post_info']);
                 $row_splited = preg_split('#\n#', $row_replaced);
+                $row2 = $row_splited[2];
+                
                 $xml .= "<location>";
                 $xml .= preg_replace("#plazelat#", "lat", $row_splited[1]);
                 $xml .= preg_replace("#plazelon#", "lon", $row_splited[2]);
