@@ -132,7 +132,7 @@ A:hover {color: red; }
 <div id="map" style="width:512px; height:440px; text-align:center;"><h4>Map coming...</h4></div>
 
 <div id="sidebar" style="width:120px; height:440px;  margin-top:0px; 
-background:white; overflow:auto;">Data coming from Google Spreadsheets...</div>
+background:white; overflow:auto;">No geo posts ∨the data is still loading ...</div>
 
 </div>
 </div>
