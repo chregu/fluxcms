@@ -128,11 +128,10 @@ A:hover {color: red; }
                     </div-->
 
 <div id="content" >
-
 <div id="map" style="width:512px; height:440px; text-align:center;"><h4>Map coming...</h4></div>
 
 <div id="sidebar" style="width:120px; height:440px;  margin-top:0px; 
-background:white; overflow:auto;">No geo posts ∨the data is still loading ...</div>
+background:white; overflow:auto;">No geo posts or the data is still loading ...</div>
 
 </div>
 </div>
@@ -321,13 +320,14 @@ background:white; overflow:auto;">Data coming from Google Spreadsheets...</div>
     
 <script src="{$webroot}webinc/js/blogmap.js" type="text/javascript"></script>
 
-<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAA-iuXXHqJ4EHMP0HEaIyFwhQ4zBPGwAlTAZhv0Zs-gp845UxNeRROP25zfiN9Q2s6PBcngC8UVT0hzg"
+<xsl:for-each select="/bx/plugin[@name='blog_map']/locations/key">
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={key}"
       type="text/javascript"></script>
       
       <script 
-src="http://maps.google.com/maps?file=api&amp;v=2.75&amp;key=ABQIAAAA-iuXXHqJ4EHMP0HEaIyFwhQ4zBPGwAlTAZhv0Zs-gp845UxNeRROP25zfiN9Q2s6PBcngC8UVT0hzg" type="text/javascript">
+src="http://maps.google.com/maps?file=api&amp;v=2.75&amp;key={key}" type="text/javascript">
 </script>
-
+</xsl:for-each>
       <!--
        <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAA-iuXXHqJ4EHMP0HEaIyFwhQ4zBPGwAlTAZhv0Zs-gp845UxNeRROP25zfiN9Q2s6PBcngC8UVT0hzg"></script>
     -->

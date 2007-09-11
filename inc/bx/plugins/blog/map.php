@@ -15,14 +15,20 @@
 // +----------------------------------------------------------------------+
 /*
 
-Add this to you blog.xml
-blog.xml is located /inc/bx/config/collection/blog.xml
+Add this to you blog.xml in your collection tree.
+It will override options from there /inc/bx/config/collection/blog.xml
+
+Here you also have to add you personal google map key for your homepage as parameter
+You can get the key here:
+http://www.google.com/apis/maps/
 
 <plugins>
         <extension type="html"/>
         <file preg="#^map/#"/>
         <parameter name="xslt" type="pipeline" value="blog_map.xsl"/>
-        <plugin type="blog_map"/>
+        <plugin type="blog_map">
+           <parameter name="key" value="YOUR GOOGLE MAPS KEY HERE"/>
+        </plugin>
         <plugin type="navitree"></plugin>
     </plugins>
 
@@ -69,7 +75,7 @@ class bx_plugins_blog_map extends bx_plugin {
     }
     
     
-    public function getContentById() {
+    public function getContentById($path) {
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
         
@@ -83,6 +89,10 @@ class bx_plugins_blog_map extends bx_plugin {
         $xml = "";
         if(!MDB2::isError($res)) {
             $xml .= "<locations>";
+            $key = $this->getParameter($path,"key");
+            $xml .= "<key>";
+            $xml .= "<key>".$key."</key>";
+            $xml .= "</key>";
             while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                 $row_replaced = preg_replace('# #', '', $row['post_info']);
                 $row_splited = preg_split('#\n#', $row_replaced);
