@@ -45,7 +45,7 @@ class bx_plugins_basket extends bx_plugin {
     
     
     public function isRealResource($path, $id) {
-        return false;
+        return true;
     }
 
 
@@ -56,8 +56,8 @@ class bx_plugins_basket extends bx_plugin {
         $this->basketname = $this->getParameter($path, 'basketname');
         $handlerClassName = $this->getParameter($path, 'baskethandlerclass');
         $this->baskethandler = new $handlerClassName();
-
-	//post
+        
+	    //post
         if ($_SERVER["REQUEST_METHOD"] == 'POST' && is_object($this->baskethandler) && method_exists($this->baskethandler, 'postRequest')) {
             $this->baskethandler->postRequest($this->basketname, $this, $this->storage);
         }
@@ -107,12 +107,8 @@ class bx_plugins_basket extends bx_plugin {
                     $domdoc->documentElement->appendChild($c);
                 }
             }
-            
-            
         }
-
         return $domdoc;
-     
     }
     
 
@@ -154,11 +150,9 @@ class bx_plugins_basket extends bx_plugin {
     
     
     private function removeHandler($path, $id) {
-        
         if (isset($_REQUEST[$this->basketname]['remove'])) {
             foreach($_REQUEST[$this->basketname]['remove'] as $idfield=>$value) {
                 if (isset($this->storage[$this->basketname]['basket'][$idfield])) {
-                    
                     unset($this->storage[$this->basketname]['basket'][$idfield]);
                 }
             }
@@ -185,6 +179,12 @@ class bx_plugins_basket extends bx_plugin {
             $this->baskethandler->checkoutHandler($path, $id, $this->getBasket($this->basketname));
         }
     }
+    
+    private function finishHandler($path, $id) {
+           if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'finishHandler')) {
+               $this->baskethandler->finishHandler($path, $id, $this->getBasket($this->basketname));
+           }
+       }
     
     
     private function getCommand($path, $id) {
