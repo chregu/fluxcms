@@ -15,25 +15,38 @@
 // +----------------------------------------------------------------------+
 /*
 
-Add this to you blog.xml in your collection tree.
+Add this to your blog.xml in your collection tree.
 It will override options from there /inc/bx/config/collection/blog.xml
 
 Here you also have to add you personal google map key for your homepage as parameter
 You can get the key here:
 http://www.google.com/apis/maps/
-
-<plugins>
+    <plugins>
         <extension type="html"/>
         <file preg="#^map/#"/>
         <parameter name="xslt" type="pipeline" value="blog_map.xsl"/>
         <plugin type="blog_map">
-           <parameter name="key" value="YOUR GOOGLE MAPS KEY HERE"/>
+        <parameter name="key" value="ABQIAAAA-iuXXHqJ4EHMP0HEaIyFwhQ4zBPGwAlTAZhv0Zs-gp845UxNeRROP25zfiN9Q2s6PBcngC8UVT0hzg"/>
         </plugin>
         <plugin type="navitree"></plugin>
     </plugins>
 
+To activate the map plugin for the blog you need to add the following to your blog.xml in your collection tree.
+
+    <plugins>
+        <extension type="html"/>
+        <parameter type="pipeline" name="xslt" value="blog.xsl"/>
+        <plugin type="blog">
+            <parameter name="blog_map" value="true"/>
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+
+        <plugin type="navitree"></plugin>
+    </plugins>
+    Not needed if you only want to show the map but with this there will be a link under the posts that directly links 
+    you to the map and also opens the selected post if your post has geotags.
     
-    first you need to create a blog_map.xslor however you want to name it) in your theme section
+    first you need to create a blog_map.xsl or however you want to name it) in your theme section
     there you need to import /themes/standard/plugins/blog/blog_map.xsl
     
     example: <xsl:import href="../standard/plugins/blog/blog_map.xsl"/>
@@ -93,6 +106,14 @@ class bx_plugins_blog_map extends bx_plugin {
             $xml .= "<key>";
             $xml .= "<key>".$key."</key>";
             $xml .= "</key>";
+            
+            if(isset($_GET['id'])) {
+                $id = htmlspecialchars($_GET['id']);
+                $xml .= "<post>";
+                $xml .= "<selectedpost>".$id."</selectedpost>";
+                $xml .= "</post>";
+            }
+            
             while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                 $row_replaced = preg_replace('# #', '', $row['post_info']);
                 $row_splited = preg_split('#\n#', $row_replaced);

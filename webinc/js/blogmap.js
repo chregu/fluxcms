@@ -62,8 +62,13 @@ function load() {
                 var label = locations[i]['title'];
                 
                 var point = new GLatLng(locations[i]['lat'], locations[i]['lon']);
-                sideBar(label,i);
-                ZMarker(point,html,1,0,i,null);
+                if(selectedPost == locations[i]['id']) {
+                    sideBar(label,i);
+                    ZMarker(point,html,1,0,i,null,1);
+                } else {
+                    sideBar(label,i);
+                    ZMarker(point,html,1,0,i,null,null);
+                }
                 //marker = createMarker(point, i + 1, locations[i]['title'], locations[i]['link'], locations[i]['image'], locations[i]['content'], locations[i]['author'], locations[i]['date']);
                 
                 bounds.extend(point);
@@ -100,7 +105,7 @@ function count(){
 n++;
 return n;
 }
-function ZMarker(point,label,n,imInd,i,visited) {
+function ZMarker(point,label,n,imInd,i,visited,open) {
 function sendBack(marker,b) {
 return GOverlay.getZIndex(marker.getPoint().lat())-n*10000;
 }
@@ -109,11 +114,17 @@ map.addOverlay(marker[i]);
 marker[i].setImage(markerImage[imInd]);
 marker[i].visited = visited;
 
-GEvent.addListener(marker[i], "click", function() {
-marker[i].openInfoWindowHtml(label);
-marker[i].visited = true;
-GEvent.trigger(marker[i],"mouseout");
-});
+if(open == 1) {
+    marker[i].openInfoWindowHtml(label);
+    marker[i].visited = true;
+    GEvent.trigger(marker[i],"mouseout");
+} else {
+    GEvent.addListener(marker[i], "click", function() {
+    marker[i].openInfoWindowHtml(label);
+    marker[i].visited = true;
+    GEvent.trigger(marker[i],"mouseout");
+    });
+}
 GEvent.addListener(marker[i],'mouseover',function(){
 marker[i].setImage(markerImage[3]);
 document.getElementById("sidebar").getElementsByTagName("span")[i-1].style.background ="yellow";
@@ -124,10 +135,10 @@ marker[i].setImage(markerImage[4]);
 document.getElementById("sidebar").getElementsByTagName("span")[i-1].style.color ="gray";
 
 }else{
-//marker[i].setImage(markerImage[2]);
-//marker[i].setImage(new GIcon(G_DEFAULT_ICON));
-marker[i].setImage(markerImage[0]);
-document.getElementById("sidebar").getElementsByTagName("span")[i-1].style.color ="black";
+    //marker[i].setImage(markerImage[2]);
+    //marker[i].setImage(new GIcon(G_DEFAULT_ICON));
+    marker[i].setImage(markerImage[0]);
+    document.getElementById("sidebar").getElementsByTagName("span")[i-1].style.color ="black";
 }
 document.getElementById("sidebar").getElementsByTagName("span")[i-1].style.background ="white";
 });

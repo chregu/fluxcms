@@ -647,8 +647,21 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
             $xml .= '<span class="post_comments_count"><a href="'.$posturipath.'#comments">'.$row['comment_count'].'</a></span> ';
             $xml .= '<span class="post_uri"><a href="'.$posturipath.'" rel="bookmark">Permalink</a></span>';
-
-
+            
+            
+            //BLOG MAP PLUGIN - is only true if the blog_map subplugin is enabled
+            if($this->getParameter($path,"blog_map") ==  true) {
+                //Show this post on the map
+                $query_map = "select post_info from ".$tablePrefix."blogposts where id = ".$row['id'];
+                $mres = $GLOBALS['POOL']->db->query($query);
+                $mrow = $mres->fetchRow(MDB2_FETCHMODE_ASSOC);
+                
+                if($mrow['post_info'] != "") {
+                    $xml .= '<span class="post_uri"><a href="'.$path.'map/?id='.$row['id'].'">Show this post on the map</a></span>';
+                }
+            }                                                                                                                    
+            
+            
             $xml .= '</div>';
             
             //get comments
