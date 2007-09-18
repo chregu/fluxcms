@@ -657,7 +657,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $mrow = $mres->fetchRow(MDB2_FETCHMODE_ASSOC);
                 
                 if($mrow['post_info'] != "") {
-                    $xml .= '<span class="post_uri"><a href="'.$path.'map/?id='.$row['id'].'">Show this post on the map</a></span>';
+                    $xml .= '<span class="post_uri"><a href="'.BX_WEBROOT_W.$path.'map/?id='.$row['id'].'">Show this post on the map</a></span>';
                 }
             }                                                                                                                    
             
