@@ -699,7 +699,7 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         //säubert data von HTML elementen
         $data_clean = array();
         foreach($data as $k => $v) {
-            $data_clean[$k] = htmlentities($v);
+            $data_clean[$k] = strip_tags($v);
         }
         
         
