@@ -294,11 +294,13 @@ background:white; overflow:auto;">Data coming from Google Spreadsheets...</div>
     
         <script type="text/javascript">
         var locations = new Array();
+        var selectedPost = '<xsl:value-of select="/bx/plugin[@name='blog_map']/locations/post/selectedpost" />'
         
         <xsl:for-each select="/bx/plugin[@name='blog_map']/locations/location">
             <xsl:variable name="locationId" select="position()"/>
             <xsl:if test="name/text() and lon/text() and lat/text()">
                 locations[<xsl:value-of select="$locationId"/>] = new Object();
+                locations[<xsl:value-of select="$locationId"/>]['id'] = '<xsl:value-of select="id"/>';
                 locations[<xsl:value-of select="$locationId"/>]['name'] = '<xsl:value-of select="name"/>';
                 locations[<xsl:value-of select="$locationId"/>]['lon'] = '<xsl:value-of select="lon"/>';
                 locations[<xsl:value-of select="$locationId"/>]['lat'] = '<xsl:value-of select="lat"/>';
