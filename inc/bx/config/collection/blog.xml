@@ -37,16 +37,7 @@
 
     </plugins>
     
-<plugins>
-        <extension type="html"/>
-        <file preg="#^map/#"/>
-        <parameter name="xslt" type="pipeline" value="map.xsl"/>
-        <parameter type="pipeline" name="output-mimetype" value="text/xml"/>
-        <plugin type="blog_map"/>
-    </plugins>
-    
-    
-    
+
     
     <plugins>
         <extension type="html"/>
