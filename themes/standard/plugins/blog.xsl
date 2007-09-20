@@ -360,9 +360,15 @@
     </xsl:template>
 
     <xsl:template match="xhtml:h2[@class='post_title']" mode="xhtml">
+        <xsl:variable name="username" select="php:functionString('bx_helpers_perm::getUsername')"/>
         <xsl:choose>
             <xsl:when test="$singlePost = 'true'">
                 <h2 class="post_title">
+                    <xsl:if test="$username != ''">
+                        <a href="{$webroot}admin/edit{$collectionUri}{../@blog:post_uri}.html">
+                            <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/editbutton.png" alt="editbutton"/>&#160;
+                        </a>
+                    </xsl:if>
                     <xsl:if test="../@blog:post_status != 1">
                         <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/privat.gif"/>
                     </xsl:if>
@@ -371,6 +377,11 @@
             </xsl:when>
             <xsl:otherwise>
                 <h2 class="post_title">
+                    <xsl:if test="$username != ''">
+                        <a href="{$webroot}admin/edit{$collectionUri}{../@blog:post_uri}.html">
+                            <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/editbutton.png" alt="editbutton"/>&#160;
+                        </a>
+                    </xsl:if>
                     <a href="{../xhtml:div[@class='post_links']/xhtml:span[@class='post_uri']/xhtml:a/@href}">
                         <xsl:if test="../@blog:post_status != 1">
                             <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/privat.gif"/>
