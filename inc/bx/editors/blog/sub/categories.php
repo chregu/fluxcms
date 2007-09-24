@@ -71,7 +71,6 @@ class bx_editors_blog_sub_categories extends bx_editors_blog_sub {
         if (!$blogid) {
             $blogid = 1;
         }
-    
         if(isset($data['id'])) {
             $id = (int) $data['id'];
 
@@ -80,7 +79,7 @@ class bx_editors_blog_sub_categories extends bx_editors_blog_sub {
             if($id != 0) {
                 $query = "UPDATE ".$this->tablePrefix."blogcategories ";
                 if($data['parentidold'] == 0) {
-                    $query.= "name=".$quoted['name'];
+                    $query.= "SET name=".$quoted['name'];
                 } else {
                     $query = "UPDATE ".$this->tablePrefix."blogcategories SET name=".$quoted['name'].", uri=".$quoted['uri'].", parentid=".$quoted['parentid'];
                 }
