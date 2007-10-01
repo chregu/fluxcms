@@ -45,5 +45,14 @@ class bx_helpers_globals {
       }
       
     }
+
+    /**
+     * gets $GLOBALS['POOL']
+     *
+     * @return popoon_pool
+     */
+    static function getPool() {
+        return $GLOBALS['POOL'];
+    }
 }
         
