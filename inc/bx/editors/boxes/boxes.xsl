@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <xsl:stylesheet version="1.0"
- xmlns:php="http://php.net/xsl" 
- xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
- xmlns:xhtml="http://www.w3.org/1999/xhtml" 
+ xmlns:php="http://php.net/xsl"
+ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+ xmlns:xhtml="http://www.w3.org/1999/xhtml"
  xmlns="http://www.w3.org/1999/xhtml">
 <xsl:output
  encoding="utf-8"
@@ -15,12 +15,12 @@
 <xsl:param name="id" select="'/'"/>
 <xsl:param name="dataUri" select="'/'"/>
 <xsl:param name="webroot" select="'/'"/>
-<xsl:template match="/"> 
-		
-    
+<xsl:template match="/">
+
+
   <script type="text/javascript">
 
-    
+
     var path = '<xsl:value-of select="/bx/plugin/boxes/path" />';
     var scope = '<xsl:value-of select="/bx/plugin/boxes/scope[@selected = 'true']/@id" />';
     var lang = '<xsl:value-of select="/bx/plugin/boxes/lang[@selected = 'true']/@value" />';
@@ -30,7 +30,7 @@
 	    initList(0);
 	    initList(1);
 	    initList(2);
-	
+
     }
 
     function initList(nr) {
@@ -41,18 +41,18 @@
 	        }
 	    });
     }
-    
+
     function saveList(nr){
         var params = serializeList(nr);
         params += '&amp;bx[plugins][admin_edit][boxes][scope]=' + scope;
         params += '&amp;bx[plugins][admin_edit][boxes][lang]=' + lang;
         params += '&amp;bx[plugins][admin_edit][boxes][setid]=' + setid;
-        
+
         var ajax = new Ajax.Request('./box-list-update/',{
            method:'post',
            parameters: params
-        });        
-        
+        });
+
     }
 
     function serializeList(nr) {
@@ -62,20 +62,20 @@
 	    }
 	    return params;
     }
-    
+
     function changePrefs(){
         var selObj = $('boxLang');
         var lang = selObj.options[selObj.selectedIndex].value;
-        
+
         selObj = $('boxScope');
         var scope = selObj.options[selObj.selectedIndex].value;
-        
-        
+
+
         var loc = '/admin/edit' + path + '?editor=boxes&amp;lang=' + lang + '&amp;scope=' + scope;
         document.location.href = loc;
     }
-    
-  </script>   
+
+  </script>
   <style type="text/css">
     .sortable {
         min-height: 2.6em;
@@ -83,13 +83,13 @@
         margin-left: 0px;
         padding: 2px;
     }
-                    
+
     .sortableContainer {
         float: left;
         margin-right: 20px;
-        min-width: 224px;   
+        min-width: 224px;
      }
-                            
+
      .sortable li {
         border: 1px solid #006486;
         margin-bottom: 2px;
@@ -101,20 +101,20 @@
         padding: opx;
         border: 0px;
         width: 220px;
-    }    
+    }
   </style>
   <html>
 	  <head>
 	       <title>Boxes Editor</title>
            <link rel="stylesheet" href="{$webroot}themes/standard/admin/css/formedit.css" type="text/css"/>
     	   <link rel="stylesheet" href="{$webroot}webinc/plugins/linklog/admin.css" type="text/css"/>
-           
+
             <script src="/webinc/js/prototype.js" type="text/javascript"></script>
             <script src="/webinc/js/scriptaculous/scriptaculous.js?load=effects,dragdrop" type="text/javascript"></script>
             <script src="/webinc/js/scriptaculous/effects.js" type="text/javascript"></script>
             <script src="/webinc/js/scriptaculous/dragdrop.js" type="text/javascript"></script>
        </head>
-       
+
        <body onload="initLists()">
             <table border="1">
                 <tr>
@@ -127,12 +127,12 @@
                                             <xsl:attribute name="selected">selected</xsl:attribute>
                                         </xsl:if>
                                         <xsl:value-of select="@value" />
-                                    </option>   
+                                    </option>
                                 </xsl:for-each>
                             </select>
-                        </form> 
+                        </form>
                    </td>
-                   <td width="180"> 
+                   <td width="180">
                         <form name="jumpScope">
                             Scope: <select id="boxScope" onChange="changePrefs()">
                                 <xsl:for-each select="/bx/plugin/boxes/scope">
@@ -141,14 +141,14 @@
                                             <xsl:attribute name="selected">selected</xsl:attribute>
                                         </xsl:if>
                                          <xsl:attribute name="value"><xsl:value-of select="@id" /></xsl:attribute>
-                                        <xsl:value-of select="@name" />
+                                        (<xsl:value-of select="@id" />) <xsl:value-of select="@name" />
                                     </option>
                                 </xsl:for-each>
                             </select>
-                        </form> 
+                        </form>
                    </td>
                    <td>
-                        <a href="/admin/dbforms2/boxes/">Create new box</a>    
+                        <a href="/admin/dbforms2/boxes/">Create new box</a>
                    </td>
                </tr>
             </table>
@@ -171,7 +171,7 @@
                     <ul id="list2" class="sortable">
                         <xsl:apply-templates select="/bx/plugin/boxes/box_2" />
                     </ul>
-                </div>    
+                </div>
 
 
         </body>
@@ -184,7 +184,7 @@
                 <xsl:attribute name="id">item_<xsl:value-of select="id" /></xsl:attribute>
                 <xsl:value-of select="title" />
             </li>
-        </xsl:for-each>    
+        </xsl:for-each>
     </xsl:template>
 
 </xsl:stylesheet>
