@@ -141,7 +141,7 @@
                                             <xsl:attribute name="selected">selected</xsl:attribute>
                                         </xsl:if>
                                          <xsl:attribute name="value"><xsl:value-of select="@id" /></xsl:attribute>
-                                        (<xsl:value-of select="@id" />) <xsl:value-of select="@name" />
+                                        <xsl:value-of select="@name" />
                                     </option>
                                 </xsl:for-each>
                             </select>
@@ -182,7 +182,7 @@
         <xsl:for-each select=".">
             <li>
                 <xsl:attribute name="id">item_<xsl:value-of select="id" /></xsl:attribute>
-                <xsl:value-of select="title" />
+                (<xsl:value-of select="id" />) <xsl:value-of select="title" />
             </li>
         </xsl:for-each>
     </xsl:template>
