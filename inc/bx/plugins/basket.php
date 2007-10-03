@@ -217,6 +217,11 @@ class bx_plugins_basket extends bx_plugin {
         return (isset($_REQUEST['basketname']) && $_REQUEST['basketname'] == $this->basketname);
     }
     
+    public function getLastModifiedById($path, $id) {
+                return time();       
+    
+    }
+    
 }
 
 
