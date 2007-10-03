@@ -28,7 +28,7 @@ class bx_plugins_boxes extends bx_plugin implements bxIplugin {
     * , but on default scope (o)
     */
     private $defaultScope = false;
-    
+
     protected $setId;
 
     public static function getInstance($mode) {
@@ -128,9 +128,9 @@ class bx_plugins_boxes extends bx_plugin implements bxIplugin {
     private function getBoxes($col = 0){
         $nm = $this->tablePrefix.$this->boxes2pageTable;
         $box = $this->tablePrefix.$this->boxesTable;
-        
+
            $scope = ($this->defaultScope) ? 0 : $this->scope ;
-        
+
         $query  = " SELECT $box.* FROM $nm ";
         $query .= " JOIN $box ON ( $nm.boxid  = $box.id) ";
         $query .= ' WHERE '.$nm.'.lang = "'.$this->lang.'" AND '.$nm.'.scope = "'.$scope.'" AND '.$nm.'.col = "'.$col.'" ';
