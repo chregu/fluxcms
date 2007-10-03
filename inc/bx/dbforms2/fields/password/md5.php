@@ -42,10 +42,12 @@ class bx_dbforms2_fields_password_md5 extends bx_dbforms2_fields_password {
      *  @access public
      *  @return type descr
      */
-    public function getSQLName() {
-        if ($this->parentForm->queryMode == bx_dbforms2::QUERYMODE_SELECT) {
+    public function getSQLName($type) {
+        //bx_helpers_debug::webdump($this->parentForm->queryMode);
+        $type = $this->parentForm->queryMode;
+        if ($type  == bx_dbforms2::QUERYMODE_SELECT) {
             return "'' as " . $this->name;
-        } else if ($type == 'update' && trim($this->value) == '' ) {
+        } else if ($type == bx_dbforms2::QUERYMODE_UPDATE && trim($this->value) == '' ) {
             return false;
         } else {
             return $this->name;
@@ -61,6 +63,7 @@ class bx_dbforms2_fields_password_md5 extends bx_dbforms2_fields_password {
      */
     public function getSQLValue() {
         if (strlen($this->value) != 32) {
+            
             return md5($this->value);
         } else {
             return $this->value;
