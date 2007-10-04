@@ -156,18 +156,15 @@ class bx_plugins_gallery extends bx_plugin {
         
         // get the current pagenumber if we are in "image-mode"
         if ($options['mode'] == 'image') {
-            $pageNumber = $options['numberOfCurrentImage'] / $options['imagesPerPage'];
-                       
-            if (!is_int($pageNumber)) {
-               $pageNumber = (int) $pageNumber;
-               $options['currentPage'] = $pageNumber + 1;
-            }
+            $pageNumber = ($options['numberOfCurrentImage'] -1 )/ $options['imagesPerPage'];
+            $pageNumber = floor( $pageNumber);
+            $options['currentPage'] = $pageNumber + 1;
+            
         }
-        
         // create a new pager
         $pagerID = 'gallery';
         bx_helpers_pager::initPager($pagerID);
-
+        
         // update pager and create pager node
         bx_helpers_pager::setNumberOfEntries($pagerID, $options['numberOfImages']);
         bx_helpers_pager::setEntriesPerPage($pagerID, $options['imagesPerPage']);
@@ -177,7 +174,7 @@ class bx_plugins_gallery extends bx_plugin {
         $pagerNode->setAttribute('numberOfPages', bx_helpers_pager::getNumberOfPages($pagerID));
         $pagerNode->setAttribute('nextPage', bx_helpers_pager::getNextPage($pagerID));
         $pagerNode->setAttribute('prevPage', bx_helpers_pager::getPrevPage($pagerID));
-        $pagerNode->setAttribute('currentPage', $options['currentPage']);        
+        $pagerNode->setAttribute('currentPage', $options['currentPage']);     
         
         
         // get needed parameters from .config.xml file
