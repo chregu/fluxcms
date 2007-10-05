@@ -381,7 +381,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         }
         $xml .= '</title></head>';
         $xml .= '<body';
-        if (!($cat || $tag || $startEntry > 0 ) ) {
+        
+        
+        if (!($cat || $archivepath || $startEntry > 0 ) ) {
                 $xml .= " blog:isStartPage='true'";
         }
         $xml .= '>';
