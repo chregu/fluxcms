@@ -3,6 +3,11 @@
 class bx_plugins_assets extends bx_plugin implements bxIplugin {
     
     protected static $instance = null;
+    /**
+     * DB Read
+     *
+     * @var MDB2_Driver_mysqli
+     */
     protected $db = null;
     protected $assetTable = 'assets';
     protected $prefx = '';
@@ -34,8 +39,6 @@ class bx_plugins_assets extends bx_plugin implements bxIplugin {
         $query = 'SELECT * FROM '.$this->assetTable.' WHERE path="'.$resourcep.'" ORDER BY id desc';
         
         $dom = new DOMDocument();
-       
-        
         if ($this->db) {
             $res = $this->db->query($query);
             if (!MDB2::isError($res)) {

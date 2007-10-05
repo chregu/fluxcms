@@ -22,7 +22,7 @@ class bx_plugins_blog_geoloc {
      }
      static public function onInsertNewPost($post) {
         
-       
+        
         $long = null;
         $lat= null;
         $loc = null;
@@ -59,7 +59,6 @@ class bx_plugins_blog_geoloc {
                 }
             }
         }
-        
         
         if ($long || $loc) {
             $info = $post->getInfo();
