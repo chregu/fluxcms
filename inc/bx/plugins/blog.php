@@ -380,8 +380,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $xml .= " :: " . htmlspecialchars(html_entity_decode($catname,ENT_NOQUOTES,'UTF-8'));
         }
         $xml .= '</title></head>';
-        $xml .= '<body>';
-        
+        $xml .= '<body';
+        if (!($cat || $tag || $startEntry > 0 ) ) {
+                $xml .= " blog:isStartPage='true'";
+        }
+        $xml .= '>';
         if ($res->numRows() > 0 ) {
             $xml .= $this->getBlogPosts($res, $path, $doComments );
             
