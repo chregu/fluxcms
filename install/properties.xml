@@ -19,7 +19,7 @@
     </text>
     <property name="database.name" value="fluxcms">Name of the database for the cms</property>
     <property name="database.user" value="fluxcms">Name of the database user</property>
-    <property name="database.password" value="">Password of the database user </property>
+    <property name="database.password" required="true" value="">Password of the database user </property>
     <property name="database.host" value="localhost">Name of the database host</property>
     <property name="database.prefix" value="fluxcms_" canBeEmpty="true" >prefix for db tables</property>
     
