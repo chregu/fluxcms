@@ -147,7 +147,7 @@ class bx_plugins_blog_trackback {
             $emailSubject .= "(Rej) ";
         }        
         $emailSubject .= "New Trackback on '" . $row['post_title'] . "'";
-        $db = $GLOBALS['POOL']->db;
+        $db = $GLOBALS['POOL']->dbwrite;
         $query = 'insert into '.$tablePrefix.'blogcomments (
         comment_posts_id, 
         comment_author, 
