@@ -11,7 +11,7 @@ bx_init::start('conf/config.xml', "../../..");
 
 
 $conf = bx_config::getInstance();
-$db = $GLOBALS['POOL']->db;
+$db = $GLOBALS['POOL']->dbwrite;
 $tablePrefix = $conf->getTablePrefix();
 
 if (!isset($_GET['hash'])) {
