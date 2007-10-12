@@ -8,7 +8,10 @@
         xmlns="http://www.w3.org/1999/xhtml" 
         xmlns:php="http://php.net/xsl" 
         xmlns:atom="http://www.w3.org/2005/Atom" 
-        exclude-result-prefixes="php blog bxf xhtml atom i18n">
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:rss="http://purl.org/rss/1.0/"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        exclude-result-prefixes="php blog bxf xhtml atom i18n rdf rss dc">
 
 
     <xsl:param name="ICBM" select="php:functionString('bx_helpers_config::getOption','ICBM')"/>
@@ -69,7 +72,7 @@
     </xsl:template>
     
 
-    <xsl:template match="categories" mode="xhtml" disable-output-escaping="yes">
+    <xsl:template match="categories" mode="xhtml" >
         <xsl:apply-templates select="document(concat('portlet://',$collectionUri,'plugin=categories(',$filename,',count).xml'))/bx/plugin/collection"/>
     </xsl:template>
 
