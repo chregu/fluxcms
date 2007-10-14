@@ -5,7 +5,7 @@
 xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:php="http://php.net/xsl"
   xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
- 
+xmlns:georss="http://www.georss.org/georss" 
  >
 
     <xsl:output method="xml" indent="yes" omit-xml-declaration="no"/>
@@ -60,9 +60,11 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
                 </xsl:if>
                 
                 <xsl:if test="string-length($ICBM) &gt; 0">
+               <georss:point><xsl:value-of select="substring-before($ICBM,',')"/> <xsl:value-of select="normalize-space(substring-after($ICBM,','))"/></georss:point>
+
                 <geo:lat><xsl:value-of select="substring-before($ICBM,',')"/></geo:lat>
                 <geo:long><xsl:value-of select="normalize-space(substring-after($ICBM,','))"/></geo:long>
-                </xsl:if>  
+     </xsl:if>  
                 
                 <xsl:for-each select="/bx/plugin[@name='blog']/xhtml:html/xhtml:body/xhtml:div[@class = 'entry']">
                     <item>
