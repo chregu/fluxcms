@@ -60,7 +60,7 @@ xmlns:georss="http://www.georss.org/georss"
                 </xsl:if>
                 
                 <xsl:if test="string-length($ICBM) &gt; 0">
-               <georss:point><xsl:value-of select="substring-before($ICBM,',')"/> <xsl:value-of select="normalize-space(substring-after($ICBM,','))"/></georss:point>
+               <georss:point><xsl:value-of select="substring-before($ICBM,',')"/><xsl:text> </xsl:text><xsl:value-of select="normalize-space(substring-after($ICBM,','))"/></georss:point>
 
                 <geo:lat><xsl:value-of select="substring-before($ICBM,',')"/></geo:lat>
                 <geo:long><xsl:value-of select="normalize-space(substring-after($ICBM,','))"/></geo:long>
