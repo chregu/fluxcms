@@ -38,9 +38,7 @@ class bx_dbforms2_fields_listview_12n extends bx_dbforms2_fields_listview {
      */
     public function getConfigAttributes() {
         $ret = parent::getConfigAttributes();
-        $ret['idfield'] = 'string';
         $ret['thatidfield'] = 'string';
-        $ret['namefield'] = 'string';
         $ret['orderby'] = 'string';
         return $ret;
     }
@@ -55,13 +53,14 @@ class bx_dbforms2_fields_listview_12n extends bx_dbforms2_fields_listview {
     public function getSelectQuery($options) {
         $thatid = $options['thatid'];
         $table = $this->parentForm->tablePrefix.$this->parentForm->tableName;
-        $query = ' SELECT '.$table.'.'.$this->attributes['idfield'].' AS _id, '.$this->attributes['namefield'].' AS _title';
+        $query = ' SELECT '.$table.'.'.$this->attributes['idfield'].' AS _id, '.$this->replaceTablePrefix($this->attributes['namefield']).' AS _title';
         $query.= ' FROM '.$table;
+        if(isset($this->attributes['leftjoin']) && $this->attributes['leftjoin'] !== '') {
+            $query.= ' LEFT JOIN '.$this->replaceTablePrefix($this->attributes['leftjoin']);
+        }
         $query.= ' WHERE '.$table.'.'.$this->attributes['thatidfield'].' = '.$GLOBALS['POOL']->db->quote($thatid);
-        $query.= ' ORDER BY '.$this->attributes['orderby'];
+        $query.= ' ORDER BY '.$this->replaceTablePrefix($this->attributes['orderby']);
         return $query;
     }
    
 }
-
-?>

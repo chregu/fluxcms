@@ -362,7 +362,17 @@ class bx_dbforms2_field {
         return TRUE;
     }
     
+    /**
+    *  Replaces all occurences of {tablePrefix} in the given string with the
+    *  current table prefix.
+    *
+    *  @param  string $strIn Input string
+    *  @access protected
+    *  @return string
+    */
+    protected function replaceTablePrefix($strIn) {
+        return str_replace('{tablePrefix}', $this->parentForm->tablePrefix, $strIn);
+    }
 
 }
 
-?>
