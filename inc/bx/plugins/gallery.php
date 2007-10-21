@@ -245,7 +245,7 @@ class bx_plugins_gallery extends bx_plugin {
     protected function createCollNodeWithChildren($absPath, $dir, $parentDir, $parentPath) {
         $dom = new DomDocument();
         
-        bx_log::log("getting children for $absPath aka $dir (p == $parentPath)");
+        // bx_log::log("getting children for $absPath aka $dir (p == $parentPath)");
         
         $collNode = $dom->createElement('collection');
         $collNode->setAttribute('selected', 'all');
