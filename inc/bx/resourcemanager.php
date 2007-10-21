@@ -67,6 +67,9 @@ class bx_resourcemanager {
         $query = "select p1.path as path, p2.value as mimetype from ".$prefix."properties as p1 left join ".$prefix."properties as p2 on p1.path = p2.path where p1.name = 'parent-uri' and p1.value = ". $GLOBALS['POOL']->db->quote($coll->uri)." and p2.name='mimetype' and p2.value = '$mimetype'";
         
         $res =  $GLOBALS['POOL']->db->query($query);
+	if(MDB2::isError($res)){
+            throw new PopoonDBException($res);
+        }
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $uri =  $row['path'];
             /*check if uri is child of $coll->uri */
@@ -97,6 +100,9 @@ class bx_resourcemanager {
                 self::$getAllPropertiesStm = $GLOBALS['POOL']->db->prepare($query,array('text'));
             }
             $res = self::$getAllPropertiesStm->execute(array('path' => $path));
+            if(MDB2::isError($res)){
+		throw new PopoonDBException($res);
+	    }
         }
         
         if (MDB2::isError($res)) {
