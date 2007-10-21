@@ -267,9 +267,6 @@ class bx_plugins_blog_handlecomment {
             $comment_status = 1;
         } else if ($deleteIt) {
             $comment_status = 3;
-            // we just add this freak to the blacklist ;)
-            error_log("Flux CMS: Adding " . $_SERVER['REMOTE_ADDR'] . " to Blacklist");
-            file_put_contents("/var/log/apache/mod_security.ips.tmp", $_SERVER['REMOTE_ADDR'], FILE_APPEND);
         } else {
             $comment_status = 2;
         }
