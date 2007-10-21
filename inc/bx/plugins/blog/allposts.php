@@ -89,6 +89,9 @@ class bx_plugins_blog_allposts extends bx_plugin implements bxIplugin {
         	          WHERE tag != ""';
 
          	$res = $this->db->query($sql);
+                if(MDB2::isError($res)){
+                     throw new PopoonDBException($res);
+                }
 
         	while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
         		// we cut the leading slash and the ending .html away from array-key:

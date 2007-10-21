@@ -193,6 +193,8 @@ class bx_plugins_links extends bx_plugin implements bxIplugin {
             $res = new bx_resources_simple($pathid);
             $id = (int) $id;
             $res->props['title'] = $this->db->queryOne("select text from ".$this->tablePrefix.$this->linksTable." where id = ".$id); 
+
+		if(MDB2::isError($res->props['title']){throw new PopoonDBException($res);}
             $res->props['outputUri'] = $path.$id.".html"; 
             $res->props['resourceDescription'] = "Link";
             $this->res[$pathid] = $res;
@@ -262,7 +264,10 @@ class bx_plugins_links extends bx_plugin implements bxIplugin {
             $idxpath = "/links/result/row/row/id";
         }
         $res = $this->db->query($query);
-        
+       if(MDB2::isError($res){
+             throw new PopoonDBException($res);
+       }
+ 
         //get ids from the 3rd col for the later tags retrieval
         $_ids = $res->fetchCol(2);
         

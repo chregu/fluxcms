@@ -31,6 +31,10 @@ class bx_plugins_blog_categories {
            $query = "select id,parentid from ".$tablePrefix."blogcategories as blogcategories where status = 1 and blog_id = ".$blogid;
            
            $res = $GLOBALS['POOL']->db->query($query);
+	   if(MDB2::isError($res)){
+               throw new PopoonDBException($res);
+	   }
+
            $allcats = $res->fetchAll($query,true);
            $query =  "select blogcategories.id,count(*), 
            blogcategories.parentid
@@ -45,6 +49,10 @@ class bx_plugins_blog_categories {
            
            $query .= " group by ".$tablePrefix."blogposts2categories.blogcategories_id order by l desc";
            $res = $GLOBALS['POOL']->db->query($query);
+
+           if(MDB2::isError($res)){
+               throw new PopoonDBException($res);
+           }
            $catCount = $res->fetchAll($query,true);
            foreach($catCount as $key => $value) {
                if (!isset($catCount[$value[1]])) {
@@ -64,7 +72,9 @@ class bx_plugins_blog_categories {
            $data = array("name","uri","fulluri", "status","id");
            $query = $tree->children_query_byname(array("blog_id"=>$blogid,"parentid" => 0),$data,True);
            $res = $GLOBALS['POOL']->db->query($query);
-           
+           if(MDB2::isError($res)){
+               throw new PopoonDBException($res);
+           }           
            $rows = $res->fetchAll(MDB2_FETCHMODE_ASSOC);
            $GLOBALS['POOL']->cache->set("plugins_blog_categories_tree_".$blogid,$rows,null,"table_blogcategories");
        } 

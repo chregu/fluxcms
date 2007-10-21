@@ -223,7 +223,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $query .= " and post_date < '".$gmnow."' ";
             $doComments = false; 
             $total = $GLOBALS['POOL']->db->query($query)->fetchOne(0);
-
+                if (MDB2::isError($total)) {
+                    throw new PopoonDBException($total);
+                }
             $query .= " order by post_date desc limit ".$startEntry . "," . $maxPosts;
         } else if ($id == "index" ) {
             // category...
@@ -267,7 +269,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $tquery="select path from ".$tablePrefix."tags as tags left join ".$tablePrefix."properties2tags as properties2tags
                     on tags.id = properties2tags.tag_id where tags.tag = '".$tag."'";
                     $tres = $GLOBALS['POOL']->db->query($tquery);
-                    
+                if (MDB2::isError($tres)) {
+                    throw new PopoonDBException($tres);
+                }                    
                     $uris = array();
                     while ($trow = $tres->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                         $uri = preg_replace("#^".$path."#","",$trow['path']);
@@ -453,8 +457,10 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
        }
        
        $res = $db->query($query);
-
-       if ( !$res || MDB2::isError($res) ) {
+if(MDB2::isError($res)){
+	throw new PopoonDBException($res);
+}
+       if ( !$res ){  
            return false;
        } else {
            $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
@@ -659,6 +665,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 //Show this post on the map
                 $query_map = "select post_info from ".$tablePrefix."blogposts where id = ".$row['id'];
                 $mres = $GLOBALS['POOL']->db->query($query);
+                if (MDB2::isError($mres)) {
+                    throw new PopoonDBException($mres);
+                }
                 $mrow = $mres->fetchRow(MDB2_FETCHMODE_ASSOC);
                 
                 if($mrow['post_info'] != "") {
@@ -743,6 +752,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         // but I decided to do it with a portlet ;)
         $query = "select * from blogcategories order by cat_name";
         $res = $GLOBALS['POOL']->db->query($query);
+                if (MDB2::isError($res)) {
+                    throw new PopoonDBException($res);
+                }
         $ch = array();
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $reso = new bx_resources_simplecollection($row['cat_name']);
@@ -971,6 +983,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if(!empty($_SESSION['flux_openid_url']) || !empty($_COOKIE['openid_enabled'])) {
             $query = "select comment_author, comment_author_email, comment_author_url from ".$tablePrefix."blogcomments where comment_author_url = ".$GLOBALS['POOL']->db->quote($_SESSION['flux_openid_url'])." or  comment_author_url = ".$GLOBALS['POOL']->db->quote($_COOKIE['openid_enabled'])." order by id DESC LIMIT 1";
             $res = $GLOBALS['POOL']->db->query($query);
+                if (MDB2::isError($res)) {
+                    throw new PopoonDBException($res);
+                }
             $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
             $data['name'] = $row['comment_author'];
             $data['openid_url'] = $row['comment_author_url'];
@@ -1141,9 +1156,9 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     protected function getSidebarData($root) {
         $query = "SELECT sidebar, name, content, isxml FROM ".$this->tablePrefix."sidebar AS sidebar WHERE sidebar != '0' order by sidebar,position";
         $res = $GLOBALS['POOL']->db->query($query);
-    if ($GLOBALS['POOL']->db->isError($res)) {
-        return;
-    }
+    if(MDB2::isError($res)){ 
+    throw new PopoonDBException($res);
+}
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $s = $root->appendChild($root->ownerDocument->createElement("sidebar"));
             $s->setAttribute("sidebar",$row['sidebar']);
