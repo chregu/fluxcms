@@ -76,6 +76,9 @@ class bx_plugins_blogauthors extends bx_plugin implements bxIplugin {
         $query = "select post_author from ".$tablePrefix."blogposts where blog_id = $blogid group by post_author";
         
         $res = $db->query($query);
+	if(MDB2::isError($res)){
+            throw new PopoonDBException($res);
+        }
         
         $xml = '<authors>';
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
@@ -84,6 +87,9 @@ class bx_plugins_blogauthors extends bx_plugin implements bxIplugin {
             foreach($row as $author) {
                 $queryPost = "select post_title, post_uri, date_format(post_date, '%Y/%m/%d') as date from ".$tablePrefix."blogposts where blog_id = 1 and post_author = '".$author."'";
                 $resPost = $db->query($queryPost);
+	        if(MDB2::isError($resPost)){
+                    throw new PopoonDBException($resPost);
+                }
                 while($rowPost = $resPost->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                     $xml .= '<entry>';
                     $xml .= '<title>'.$rowPost['post_title'].'</title>';
