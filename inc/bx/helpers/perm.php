@@ -30,11 +30,18 @@ class bx_helpers_perm {
             $px = $GLOBALS['POOL']->config->getTablePrefix();
         
             $query = "select value from ".$px."options where name='accesshash'";
-            self::$accessHash = $db->queryOne($query);
+            $res = $db->queryOne($query);
+	    if(MDB2::isError($res)){
+                 throw new PopoonDBException($res);
+            }  
+            self::$accessHash = $res; 
             
             if (!self::$accessHash) {
                 $query = "delete from ".$px."options where name = 'accesshash'";
-                $GLOBALS['POOL']->dbwrite->query($query);
+                $res = $GLOBALS['POOL']->dbwrite->query($query);
+		if(MDB2::isError($res)){
+                     throw new PopoonDBException($res);
+                }
                 
                 $id = $db->nextId($px."_sequences");
                 
@@ -43,7 +50,10 @@ class bx_helpers_perm {
                 
                 $query = "insert into ".$px."options (id,name,value) values($id,'accesshash','$h')";
                 self::$accessHash = $h;
-                $GLOBALS['POOL']->dbwrite->query($query);
+                $res =  $GLOBALS['POOL']->dbwrite->query($query);
+                if(MDB2::isError($res)){
+                     throw new PopoonDBException($res);
+                }
             }
         }
         return self::$accessHash;
@@ -58,7 +68,10 @@ class bx_helpers_perm {
             $h = md5(time() . rand(0,1000000000) . $GLOBALS['POOL']->config->magicKey.$id);
                 
             $query = "update ".$px."options set value ='$h' where name = 'accesshash'";
-            $GLOBALS['POOL']->dbwrite->query($query);
+            $res = $GLOBALS['POOL']->dbwrite->query($query);
+            if(MDB2::isError($res)){
+                 throw new PopoonDBException($res);
+            }
             
         return $h;
         
@@ -78,7 +91,9 @@ class bx_helpers_perm {
 		$query = "select * from ".$px."groups";
 		
 		$res = $GLOBALS['POOL']->db->query($query);
-		
+                if(MDB2::isError($res)){
+                    throw new PopoonDBException($res);
+                }	
 		$group = array();
 		$x = 0;
 		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {

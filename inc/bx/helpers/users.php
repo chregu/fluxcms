@@ -15,6 +15,9 @@ class bx_helpers_users {
             $db = $GLOBALS['POOL']->db;    
             $query = "select user_fullname from ".$GLOBALS['POOL']->config->getTablePrefix()."users where user_login = ".$db->quote($username);
             $row = $db->queryOne($query);
+	    if(MDB2::isError($row)){
+                throw new PopoonDBException($row);
+            }
             if ($row) {
                 self::$fullnames[$username] = $row;
             } else {

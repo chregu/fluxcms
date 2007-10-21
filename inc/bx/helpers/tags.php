@@ -17,6 +17,9 @@ class bx_helpers_tags {
         $tableprefix = $GLOBALS['POOL']->config->getTableprefix();
         $query = "select DISTINCT count(tag) as c, tag from ".$tableprefix."tags left join ".$tableprefix."properties2tags on ".$tableprefix."tags.id = ".$tableprefix."properties2tags.tag_id left join ".$tableprefix."blogposts on ".$tableprefix."properties2tags.path = concat('".$blogpath."',".$tableprefix."blogposts.post_uri,'.html') group by tag order by c Desc LIMIT ".$entries;
         $res = $GLOBALS['POOL']->db->query($query);
+	if(MDB2::isError($res)){
+            throw new PopoonDBException($res);
+	}
         $text = "<ul>";
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                 $text .= "<li><a rel='tag' href='".BX_WEBROOT_W.$path."archive/tag/".$row['tag']."/'>".$row['tag']." (".$row['c'].")</a></li>\n";

@@ -51,6 +51,9 @@ function bx_openIdIsTrusted($identity_url, $trust_root) {
     
     $query = "select uri from ".$GLOBALS['POOL']->config->getTablePrefix()."openid_uri where uri = ".$GLOBALS['POOL']->db->quote($trust_root)." limit 1";
     $res = $GLOBALS['POOL']->db->query($query);
+    if(MDB2::isError($res)){
+	throw new PopoonDBException($res);
+     }
     if ($res->numRows() > 0) {
         return true;
     }
