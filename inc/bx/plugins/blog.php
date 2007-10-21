@@ -120,7 +120,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         }
         
         $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
-        $perm = bx_permm::getInstance();
         if ($perm->isAllowed($path.$id,array('ishashed','isuser'))) {
             $this->singlePostPerm = 7;
             if ($id == "_all/index") {
