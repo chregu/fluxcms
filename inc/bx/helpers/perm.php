@@ -43,8 +43,7 @@ class bx_helpers_perm {
                      throw new PopoonDBException($res);
                 }
                 
-                $id = $db->nextId($px."_sequences");
-                
+                $id = $GLOBALS['POOL']->dbwrite->nextId($px."_sequences");
                 
                 $h = md5(time() . rand(0,1000000000) . $GLOBALS['POOL']->config->magicKey.$id);
                 
