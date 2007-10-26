@@ -37,7 +37,7 @@ $permm = bx_permm::getInstance($confvars);
 
 <form action="." method="POST">
 <?php
-$db = $GLOBALS['POOL']->db;
+$db = $GLOBALS['POOL']->dbwrite;
 $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
 
 if (isset($_POST['username']) && !isset($_POST['password'])) {
