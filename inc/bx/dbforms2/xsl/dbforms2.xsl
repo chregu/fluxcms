@@ -47,6 +47,7 @@
                         document.write(getCalendarStyles());
                         var cal = new CalendarPopup('caldiv');
                         cal.showYearNavigation();
+                        cal.setWeekStartDay(1);
                     </script>
                 </xsl:if>
                 
@@ -191,5 +192,5 @@
     <xsl:template match="@*" mode="xhtml">
         <xsl:copy-of select="."/>
     </xsl:template>
-
+    
 </xsl:stylesheet>
