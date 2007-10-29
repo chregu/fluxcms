@@ -12,6 +12,9 @@ saveContent = function() {
 
 
 function initFck() {
+        if(typeof i18n == 'undefined') {
+            i18n = parent.i18n;
+        }
 		var oFCKeditor = new FCKeditor("bx[plugins][admin_edit][content]");
 		oFCKeditor.BasePath	= fckBasePath;
 		oFCKeditor.Config['CustomConfigurationsPath'] = bx_webroot + 'admin/fck/fckconfig.js';

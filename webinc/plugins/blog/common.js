@@ -77,10 +77,10 @@ function blogPost(draft) {
     var saveButton = document.getElementById("Save");
     var saveButtonBottom = document.getElementById("SaveBottom");
     
-    saveButton.value = "Saving...";
+    saveButton.value = parent.i18n.translate("Saving...");
     saveButton.style.backgroundColor = "green";
     
-    saveButtonBottom.value = "Saving...";
+    saveButtonBottom.value = parent.i18n.translate("Saving...");
     saveButtonBottom.style.backgroundColor = "green";
     
     var form = document.getElementById('entry');
@@ -135,8 +135,8 @@ function ajaxPostComplete(req)  {
     id.value = values.id;
     uri.value = values.uri;
     
-    saveButton.value = "Saved";
-    saveButtonBottom.value = "Saved";
+    saveButton.value = parent.i18n.translate("Saved");
+    saveButtonBottom.value = parent.i18n.translate("Saved");
     
     setTimeout("savedToSave()",3000);
 }
@@ -145,9 +145,9 @@ function savedToSave() {
     var saveButton = document.getElementById("Save");
     var saveButtonBottom = document.getElementById("SaveBottom");
     
-    saveButton.value = "Save";
+    saveButton.value = parent.i18n.translate("Save");
     saveButton.style.backgroundColor = "#006486";
-    saveButtonBottom.value = "Save";
+    saveButtonBottom.value = parent.i18n.translate("Save");
     saveButtonBottom.style.backgroundColor = "#006486";
     
     return false;
