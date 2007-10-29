@@ -39,4 +39,8 @@
     <message key="Copy {0} to:">Copier de {0} à:</message>
     <message key="Do you really want to delete {0} ?">Définitivement effacer {0}?</message>
     
+    <message key="Saving...">Enregistrer...</message>
+    <message key="Saved">Enregistré</message>
+    <message key="Save">Enregistrer</message>
+    
 </catalogue>
