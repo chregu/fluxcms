@@ -21,15 +21,11 @@
     
     <xsl:template name="head">
         
-        <script type="text/javascript" language="JavaScript" src="{$webroot}webinc/js/bx/i18n.js">
-        </script>
-        
         <script type="text/javascript" language="JavaScript">
         var id = '<xsl:value-of select="$id"/>';
         var rootCategory = '<xsl:value-of select="//blogcategories/blogcategories[parentid=0]/id"/>';
         <![CDATA[
             function onLoad() {
-                i18n = new bx_i18n(null);
                 if(typeof i18n == 'undefined')
                     i18n = parent.i18n;
                     
