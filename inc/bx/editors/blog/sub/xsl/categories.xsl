@@ -20,11 +20,16 @@
     <xsl:variable name="id" select="/bx/plugin/data/@currentCategoryId"/>
     
     <xsl:template name="head">
+        
+        <script type="text/javascript" language="JavaScript" src="{$webroot}webinc/js/bx/i18n.js">
+        </script>
+        
         <script type="text/javascript" language="JavaScript">
         var id = '<xsl:value-of select="$id"/>';
         var rootCategory = '<xsl:value-of select="//blogcategories/blogcategories[parentid=0]/id"/>';
         <![CDATA[
             function onLoad() {
+                i18n = new bx_i18n(null);
                 if(typeof i18n == 'undefined')
                     i18n = parent.i18n;
                     
@@ -61,7 +66,12 @@
                 <xsl:for-each select="//blogcategories/blogcategories">
                     <li>
                         <xsl:if test="parentid != 0"><a href="#" onclick="confirmDelete({id},'{fullname}');"><img border="0" alt="delete" src="{$webroot}admin/webinc/img/icons/delete.gif"/></a></xsl:if>
-                        <a href="?id={id}"><xsl:value-of select="fullname"/></a>
+                        <a href="?id={id}"><xsl:value-of select="fullname"/>
+                        
+                        <xsl:if test="parentid = 0">
+                        &#160;(<xsl:value-of select="name"/>)
+                        </xsl:if>
+                        </a>
                     </li>
                 </xsl:for-each>
                 </ul>

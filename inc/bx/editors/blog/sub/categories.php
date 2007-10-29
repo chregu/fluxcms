@@ -48,9 +48,7 @@ class bx_editors_blog_sub_categories extends bx_editors_blog_sub {
             $data['status'] = "1";
             $data['blog_id'] = $blogid;
             $quoted = $this->quotePostData($data);
-            
             $query = $this->getInsertQuery('blogcategories', $quoted, array('name', 'uri', 'fulluri', 'parentid', 'fullname', 'changed', 'status', 'blog_id'));
-            
             $this->dbwrite->query($query);
             $dom = $this->getCategoriesXML($blogid);
         }
