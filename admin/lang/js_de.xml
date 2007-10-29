@@ -48,4 +48,8 @@
     <message key="Do you really want to delete the image &quot;{0}&quot;?">Wollen sie das Bild "{0}" wirklich löschen?</message>
     <message key="Do you really want to delete the gallery &quot;{0}&quot;?">Wollen sie die Galerie "{0}" wirklich löschen?</message>
     
+    <message key="Saving...">Sichern...</message>
+    <message key="Saved">Gespeichert</message>
+    <message key="Save">Sichern</message>
+    
 </catalogue>
