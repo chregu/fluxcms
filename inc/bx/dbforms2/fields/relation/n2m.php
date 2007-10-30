@@ -153,8 +153,11 @@ class bx_dbforms2_fields_relation_n2m extends bx_dbforms2_field {
     }
     
     protected function getXMLAttributes() {
-        
-        return array('linktothat' => $this->attributes['linktothat']);
+        if (empty($this->attributes['linktothat'])) {
+               return array('linktothat' => "");
+        } else {
+            return array('linktothat' => $this->attributes['linktothat']);
+        }
     }
    
 }
