@@ -52,7 +52,8 @@ function formCheck(form, preview) {
     }
     
     if (!checkCategories()  && !checkNewCategory()) {
-        return true;
+        fixEntities();
+        return  blogPost(form);
     }
     fixEntities();
     if (! checkValidXML(form)){
