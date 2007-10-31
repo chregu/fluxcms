@@ -61,7 +61,13 @@ function formCheck(form, preview) {
             return true;
         }
     } else {
-        return blogPost(form);
+        var form = document.getElementById('newcategory');
+        if (form.value == '') {
+            return blogPost(form);
+        } else {
+            return true;
+        }
+        
     }
     
 }
@@ -139,9 +145,9 @@ function savedToSave() {
     var saveButtonBottom = document.getElementById("SaveBottom");
     
     saveButton.value = parent.i18n.translate("Save");
-    saveButton.style.backgroundColor = "#006486";
+    saveButton.style.backgroundColor = "";
     saveButtonBottom.value = parent.i18n.translate("Save");
-    saveButtonBottom.style.backgroundColor = "#006486";
+    saveButtonBottom.style.backgroundColor = "";
     
     return false;
 }
