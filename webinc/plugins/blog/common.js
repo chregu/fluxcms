@@ -51,10 +51,6 @@ function formCheck(form, preview) {
         return false;
     }
     
-    if (!checkCategories()  && !checkNewCategory()) {
-        fixEntities();
-        return  blogPost(form);
-    }
     fixEntities();
     if (! checkValidXML(form)){
         return false;
