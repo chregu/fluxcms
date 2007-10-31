@@ -52,10 +52,6 @@ function formCheck(form, preview) {
     }
     
     if (!checkCategories()  && !checkNewCategory()) {
-        /*if (confirm("You haven't selected any category.\nAre you sure you want to post this?\n(It won't show up on the blog)")) {
-            fixEntities();
-            return true;
-        }*/
         return true;
     }
     fixEntities();
