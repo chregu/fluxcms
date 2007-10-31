@@ -15,7 +15,7 @@ class bx_config extends popoon_classes_config {
     public $allowPHPUpload = false;
     public $adminLanguage = NULL;
     public static $instance = NULL;    
-    static protected $optionIsArray = array('outputLanguages', 'image_allowed_sizes', 'adminLanguages','blogWeblogsPing');
+    static protected $optionIsArray = array('outputLanguages', 'image_allowed_sizes', 'adminLanguages','blogWeblogsPing','dboptions');
     
     public static function getInstance () {
         if (!bx_config::$instance) {

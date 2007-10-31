@@ -301,7 +301,12 @@ class bx_config_generate {
                 //if we want to merge the array values, do that here
                 if (count($child->xpath('item')) > 0 && (string) $child['mergeArray']== 'true' ) {
                      foreach ($child->item as $item) {
-                        $bxc[]=(string) $item;
+                        $key = (string) $item['key'];
+                        if ($key) {
+                            $bxc[$key] =(string) $item;
+                        } else {
+                            $bxc[]=(string) $item;
+                        }
                     }
                     $bxc = array_unique($bxc);
                 }
@@ -310,7 +315,12 @@ class bx_config_generate {
                 if (count($child->xpath('item')) > 0) {
                     $bxc = array();
                     foreach ($child->item as $item) {
-                        $bxc[]=(string) $item;
+                        $key = (string) $item['key'];
+                        if ($key) {
+                            $bxc[$key] =(string) $item;
+                        } else {
+                            $bxc[]=(string) $item;
+                        }
                     }
                 } else {
                     $bxc = (string) $child;

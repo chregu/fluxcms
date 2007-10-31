@@ -132,6 +132,9 @@
         <openIdEnabled  allowFromDB="true">false</openIdEnabled>
         <adminDeleteTmp>true</adminDeleteTmp>
         <filesDoBaseDirCheck>true</filesDoBaseDirCheck>
-        
+            <dboptions>
+                <item key="emulate_prepared">true</item>
+                
+            </dboptions>
         </options>
 </config>
