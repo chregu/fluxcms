@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -57,6 +57,37 @@ require_once 'MDB2/Driver/Datatype/Common.php';
  */
 class MDB2_Driver_Datatype_mysql extends MDB2_Driver_Datatype_Common
 {
+    // {{{ _getCharsetFieldDeclaration()
+
+    /**
+     * Obtain DBMS specific SQL code portion needed to set the CHARACTER SET
+     * of a field declaration to be used in statements like CREATE TABLE.
+     *
+     * @param string $charset   name of the charset
+     * @return string  DBMS specific SQL code portion needed to set the CHARACTER SET
+     *                 of a field declaration.
+     */
+    function _getCharsetFieldDeclaration($charset)
+    {
+        return 'CHARACTER SET '.$charset;
+    }
+
+    // }}}
+    // {{{ _getCollationFieldDeclaration()
+
+    /**
+     * Obtain DBMS specific SQL code portion needed to set the COLLATION
+     * of a field declaration to be used in statements like CREATE TABLE.
+     *
+     * @param string $collation   name of the collation
+     * @return string  DBMS specific SQL code portion needed to set the COLLATION
+     *                 of a field declaration.
+     */
+    function _getCollationFieldDeclaration($collation)
+    {
+        return 'COLLATE '.$collation;
+    }
+
     // }}}
     // {{{ getTypeDeclaration()
 
@@ -92,39 +123,55 @@ class MDB2_Driver_Datatype_mysql extends MDB2_Driver_Datatype_Common
 
         switch ($field['type']) {
         case 'text':
-            return array_key_exists('length', $field) ? 'CHAR ('.$field['length'].')' : 'TEXT';
+            if (empty($field['length']) && array_key_exists('default', $field)) {
+                $field['length'] = $db->varchar_max_length;
+            }
+            $length = !empty($field['length']) ? $field['length'] : false;
+            $fixed = !empty($field['fixed']) ? $field['fixed'] : false;
+            return $fixed ? ($length ? 'CHAR('.$length.')' : 'CHAR(255)')
+                : ($length ? 'VARCHAR('.$length.')' : 'TEXT');
         case 'clob':
-            if (array_key_exists('length', $field)) {
+            if (!empty($field['length'])) {
                 $length = $field['length'];
                 if ($length <= 255) {
                     return 'TINYTEXT';
-                } else {
-                    if ($length <= 65535) {
-                        return 'TEXT';
-                    } elseif ($length <= 16777215) {
-                        return 'MEDIUMTEXT';
-                    }
+                } elseif ($length <= 65532) {
+                    return 'TEXT';
+                } elseif ($length <= 16777215) {
+                    return 'MEDIUMTEXT';
                 }
             }
             return 'LONGTEXT';
         case 'blob':
-            if (array_key_exists('length', $field)) {
+            if (!empty($field['length'])) {
                 $length = $field['length'];
                 if ($length <= 255) {
                     return 'TINYBLOB';
-                } else {
-                    if ($length <= 65535) {
-                        return 'BLOB';
-                    } elseif ($length <= 16777215) {
-                        $type = 'MEDIUMBLOB';
-                    }
+                } elseif ($length <= 65532) {
+                    return 'BLOB';
+                } elseif ($length <= 16777215) {
+                    return 'MEDIUMBLOB';
                 }
             }
             return 'LONGBLOB';
         case 'integer':
+            if (!empty($field['length'])) {
+                $length = $field['length'];
+                if ($length <= 1) {
+                    return 'TINYINT';
+                } elseif ($length == 2) {
+                    return 'SMALLINT';
+                } elseif ($length == 3) {
+                    return 'MEDIUMINT';
+                } elseif ($length == 4) {
+                    return 'INT';
+                } elseif ($length > 4) {
+                    return 'BIGINT';
+                }
+            }
             return 'INT';
         case 'boolean':
-            return 'CHAR (1)';
+            return 'TINYINT(1)';
         case 'date':
             return 'DATE';
         case 'time':
@@ -134,7 +181,9 @@ class MDB2_Driver_Datatype_mysql extends MDB2_Driver_Datatype_Common
         case 'float':
             return 'DOUBLE';
         case 'decimal':
-            return 'DECIMAL(18,'.$db->options['decimal_places'].')';
+            $length = !empty($field['length']) ? $field['length'] : 18;
+            $scale = !empty($field['scale']) ? $field['scale'] : $db->options['decimal_places'];
+            return 'DECIMAL('.$length.','.$scale.')';
         }
         return '';
     }
@@ -175,148 +224,183 @@ class MDB2_Driver_Datatype_mysql extends MDB2_Driver_Datatype_Common
             return $db;
         }
 
-        $default = $autoinc = '';;
-        if (array_key_exists('autoincrement', $field) && $field['autoincrement']) {
+        $default = $autoinc = '';
+        if (!empty($field['autoincrement'])) {
             $autoinc = ' AUTO_INCREMENT PRIMARY KEY';
-        } else {
-            if (array_key_exists('default', $field)) {
-                if ($field['default'] === '') {
-                    $field['default'] = (array_key_exists('notnull', $field) && $field['notnull'])
-                        ? 0 : null;
-                }
-                $default = ' DEFAULT '.$this->quote($field['default'], 'integer');
+        } elseif (array_key_exists('default', $field)) {
+            if ($field['default'] === '') {
+                $field['default'] = empty($field['notnull']) ? null : 0;
             }
+            $default = ' DEFAULT '.$this->quote($field['default'], 'integer');
+        } elseif (empty($field['notnull'])) {
+            $default = ' DEFAULT NULL';
         }
 
-        $unsigned = (array_key_exists('unsigned', $field) && $field['unsigned']) ? ' UNSIGNED' : '';
-        $notnull = (array_key_exists('notnull', $field) && $field['notnull']) ? ' NOT NULL' : '';
+        $notnull = empty($field['notnull']) ? '' : ' NOT NULL';
+        $unsigned = empty($field['unsigned']) ? '' : ' UNSIGNED';
         $name = $db->quoteIdentifier($name, true);
         return $name.' '.$this->getTypeDeclaration($field).$unsigned.$default.$notnull.$autoinc;
     }
 
     // }}}
-    // {{{ _quoteBLOB()
+    // {{{ matchPattern()
 
     /**
-     * Convert a text value into a DBMS specific format that is suitable to
-     * compose query statements.
+     * build a pattern matching string
      *
-     * @param           $value
-     * @return string  text string that represents the given argument value in
-     *                 a DBMS specific format.
-     * @access protected
-     */
-    function _quoteBLOB($value)
-    {
-        $value = $this->_readFile($value);
-        return "'".addslashes($value)."'";
-    }
-
-    // }}}
-    // {{{ _quoteFloat()
-
-    /**
-     * Convert a text value into a DBMS specific format that is suitable to
-     * compose query statements.
+     * EXPERIMENTAL
      *
-     * @param string  $value text string value that is intended to be converted.
-     * @return string  text string that represents the given argument value in
-     *                 a DBMS specific format.
-     * @access protected
+     * WARNING: this function is experimental and may change signature at
+     * any time until labelled as non-experimental
+     *
+     * @access public
+     *
+     * @param array $pattern even keys are strings, odd are patterns (% and _)
+     * @param string $operator optional pattern operator (LIKE, ILIKE and maybe others in the future)
+     * @param string $field optional field name that is being matched against
+     *                  (might be required when emulating ILIKE)
+     *
+     * @return string SQL pattern
      */
-    function _quoteFloat($value)
+    function matchPattern($pattern, $operator = null, $field = null)
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
 
-        return $db->escape($value);
-    }
-
-    // }}}
-    // {{{ _quoteDecimal()
-
-    /**
-     * Convert a text value into a DBMS specific format that is suitable to
-     * compose query statements.
-     *
-     * @param string  $value text string value that is intended to be converted.
-     * @return string  text string that represents the given argument value in
-     *                 a DBMS specific format.
-     * @access protected
-     */
-    function _quoteDecimal($value)
-    {
-        $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
-            return $db;
+        $match = '';
+        if (!is_null($operator)) {
+            $field = is_null($field) ? '' : $field.' ';
+            $operator = strtoupper($operator);
+            switch ($operator) {
+            // case insensitive
+            case 'ILIKE':
+                $match = $field.'LIKE ';
+                break;
+            // case sensitive
+            case 'LIKE':
+                $match = $field.'LIKE BINARY ';
+                break;
+            default:
+                return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+                    'not a supported operator type:'. $operator, __FUNCTION__);
+            }
         }
-
-        return $db->escape($value);
+        $match.= "'";
+        foreach ($pattern as $key => $value) {
+            if ($key % 2) {
+                $match.= $value;
+            } else {
+                $match.= $db->escapePattern($db->escape($value));
+            }
+        }
+        $match.= "'";
+        $match.= $this->patternEscapeString();
+        return $match;
     }
 
     // }}}
-    // {{{ mapNativeDatatype()
+    // {{{ _mapNativeDatatype()
 
     /**
      * Maps a native array description of a field to a MDB2 datatype and length
      *
      * @param array  $field native field description
-     * @return array containing the various possible types and the length
+     * @return array containing the various possible types, length, sign, fixed
      * @access public
      */
-    function mapNativeDatatype($field)
+    function _mapNativeDatatype($field)
     {
         $db_type = strtolower($field['type']);
         $db_type = strtok($db_type, '(), ');
         if ($db_type == 'national') {
             $db_type = strtok('(), ');
         }
-        if (array_key_exists('length', $field)) {
-            $length = $field['length'];
-            $decimal = '';
+        if (!empty($field['length'])) {
+            $length = strtok($field['length'], ', ');
+            $decimal = strtok(', ');
         } else {
             $length = strtok('(), ');
             $decimal = strtok('(), ');
         }
         $type = array();
-        $unsigned = null;
+        $unsigned = $fixed = null;
         switch ($db_type) {
         case 'tinyint':
+            $type[] = 'integer';
+            $type[] = 'boolean';
+            if (preg_match('/^(is|has)/', $field['name'])) {
+                $type = array_reverse($type);
+            }
+            $unsigned = preg_match('/ unsigned/i', $field['type']);
+            $length = 1;
+            break;
         case 'smallint':
+            $type[] = 'integer';
+            $unsigned = preg_match('/ unsigned/i', $field['type']);
+            $length = 2;
+            break;
         case 'mediumint':
+            $type[] = 'integer';
+            $unsigned = preg_match('/ unsigned/i', $field['type']);
+            $length = 3;
+            break;
         case 'int':
         case 'integer':
+            $type[] = 'integer';
+            $unsigned = preg_match('/ unsigned/i', $field['type']);
+            $length = 4;
+            break;
         case 'bigint':
             $type[] = 'integer';
-            if ($length == '1') {
-                $type[] = 'boolean';
-                if (preg_match('/^[is|has]/', $field['name'])) {
-                    $type = array_reverse($type);
-                }
-            }
-            $unsigned = preg_match('/ unsigned/i', $db_type);
+            $unsigned = preg_match('/ unsigned/i', $field['type']);
+            $length = 8;
             break;
-        case 'char':
+        case 'tinytext':
+        case 'mediumtext':
+        case 'longtext':
+        case 'text':
+        case 'text':
         case 'varchar':
+            $fixed = false;
+        case 'string':
+        case 'char':
             $type[] = 'text';
             if ($length == '1') {
                 $type[] = 'boolean';
-                if (preg_match('/[is|has]/', $field['name'])) {
+                if (preg_match('/^(is|has)/', $field['name'])) {
                     $type = array_reverse($type);
                 }
+            } elseif (strstr($db_type, 'text')) {
+                $type[] = 'clob';
+                if ($decimal == 'binary') {
+                    $type[] = 'blob';
+                }
+            }
+            if ($fixed !== false) {
+                $fixed = true;
             }
             break;
         case 'enum':
+            $type[] = 'text';
             preg_match_all('/\'.+\'/U', $field['type'], $matches);
             $length = 0;
+            $fixed = false;
             if (is_array($matches)) {
                 foreach ($matches[0] as $value) {
                     $length = max($length, strlen($value)-2);
                 }
+                if ($length == '1' && count($matches[0]) == 2) {
+                    $type[] = 'boolean';
+                    if (preg_match('/^(is|has)/', $field['name'])) {
+                        $type = array_reverse($type);
+                    }
+                }
             }
+            $type[] = 'integer';
         case 'set':
+            $fixed = false;
             $type[] = 'text';
             $type[] = 'integer';
             break;
@@ -337,30 +421,27 @@ class MDB2_Driver_Datatype_mysql extends MDB2_Driver_Datatype_Common
         case 'double':
         case 'real':
             $type[] = 'float';
-            $unsigned = preg_match('/ unsigned/i', $db_type);
+            $unsigned = preg_match('/ unsigned/i', $field['type']);
             break;
+        case 'unknown':
         case 'decimal':
         case 'numeric':
             $type[] = 'decimal';
-            $unsigned = preg_match('/ unsigned/i', $db_type);
-            break;
-        case 'tinytext':
-        case 'mediumtext':
-        case 'longtext':
-        case 'text':
-            if ($decimal == 'binary') {
-                $type[] = 'blob';
+            $unsigned = preg_match('/ unsigned/i', $field['type']);
+            if ($decimal !== false) {
+                $length = $length.','.$decimal;
             }
-            $type[] = 'clob';
-            $type[] = 'text';
             break;
         case 'tinyblob':
         case 'mediumblob':
         case 'longblob':
         case 'blob':
             $type[] = 'blob';
-            $type[] = 'text';
             $length = null;
+            break;
+        case 'binary':
+        case 'varbinary':
+            $type[] = 'blob';
             break;
         case 'year':
             $type[] = 'integer';
@@ -373,12 +454,18 @@ class MDB2_Driver_Datatype_mysql extends MDB2_Driver_Datatype_Common
                 return $db;
             }
 
-            return $db->raiseError(MDB2_ERROR, null, null,
-                'getTableFieldDefinition: unknown database attribute type: '.$db_type);
+            return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+                'unknown database attribute type: '.$db_type, __FUNCTION__);
         }
 
-        return array($type, $length, $unsigned);
+        if ((int)$length <= 0) {
+            $length = null;
+        }
+
+        return array($type, $length, $unsigned, $fixed);
     }
+
+    // }}}
 }
 
 ?>

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -42,7 +42,7 @@
 // | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: mysql.php,v 1.5 2006/01/12 16:47:15 lsmith Exp $
+// $Id: mysql.php,v 1.11 2007/01/12 11:29:12 quipo Exp $
 //
 
 require_once 'MDB2/Driver/Function/Common.php';
@@ -87,14 +87,34 @@ class MDB2_Driver_Function_mysql extends MDB2_Driver_Function_Common
     // {{{ concat()
 
     /**
-     * return string to caoncatenate two strings
+     * Returns string to concatenate two or more string parameters
      *
-     * @return string to caoncatenate two strings
+     * @param string $value1
+     * @param string $value2
+     * @param string $values...
+     * @return string to concatenate two strings
      * @access public
      **/
     function concat($value1, $value2)
     {
-        return "CONCAT($value1, $value2)";
+        $args = func_get_args();
+        return "CONCAT(".implode(', ', $args).")";
     }
+
+    // }}}
+    // {{{ guid()
+
+    /**
+     * Returns global unique identifier
+     *
+     * @return string to get global unique identifier
+     * @access public
+     */
+    function guid()
+    {
+        return 'UUID()';
+    }
+
+    // }}}
 }
 ?>

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -53,16 +53,17 @@ require_once 'MDB2/Driver/Reverse/Common.php';
  * @package MDB2
  * @category Database
  * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Lorenzo Alberton <l.alberton@quipo.it>
  */
 class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
 {
     // {{{ getTableFieldDefinition()
 
     /**
-     * get the stucture of a field into an array
+     * Get the structure of a field into an array
      *
-     * @param string    $table         name of table that should be used in method
-     * @param string    $field_name     name of field that should be used in method
+     * @param string    $table       name of table that should be used in method
+     * @param string    $field_name  name of field that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
      * @access public
      */
@@ -77,11 +78,14 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
         if (PEAR::isError($result)) {
             return $result;
         }
-        $columns = $db->queryAll("SHOW COLUMNS FROM $table", null, MDB2_FETCHMODE_ASSOC);
+        $table = $db->quoteIdentifier($table, true);
+        $query = "SHOW COLUMNS FROM $table LIKE ".$db->quote($field_name);
+        $columns = $db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
         if (PEAR::isError($columns)) {
             return $columns;
         }
         foreach ($columns as $column) {
+            $column = array_change_key_case($column, CASE_LOWER);
             $column['name'] = $column['field'];
             unset($column['field']);
             if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
@@ -94,9 +98,13 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                 $column = array_change_key_case($column, $db->options['field_case']);
             }
             if ($field_name == $column['name']) {
-                list($types, $length, $unsigned) = $db->datatype->mapNativeDatatype($column);
+                $mapped_datatype = $db->datatype->mapNativeDatatype($column);
+                if (PEAR::IsError($mapped_datatype)) {
+                    return $mapped_datatype;
+                }
+                list($types, $length, $unsigned, $fixed) = $mapped_datatype;
                 $notnull = false;
-                if (array_key_exists('null', $column) && $column['null'] != 'YES') {
+                if (empty($column['null']) || $column['null'] !== 'YES') {
                     $notnull = true;
                 }
                 $default = false;
@@ -107,66 +115,80 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                     }
                 }
                 $autoincrement = false;
-                if (array_key_exists('extra', $column) && $column['extra'] == 'auto_increment') {
+                if (!empty($column['extra']) && $column['extra'] == 'auto_increment') {
                     $autoincrement = true;
                 }
-                $definition = array();
+
+                $definition[0] = array(
+                    'notnull' => $notnull,
+                    'nativetype' => preg_replace('/^([a-z]+)[^a-z].*/i', '\\1', $column['type'])
+                );
+                if (!is_null($length)) {
+                    $definition[0]['length'] = $length;
+                }
+                if (!is_null($unsigned)) {
+                    $definition[0]['unsigned'] = $unsigned;
+                }
+                if (!is_null($fixed)) {
+                    $definition[0]['fixed'] = $fixed;
+                }
+                if ($default !== false) {
+                    $definition[0]['default'] = $default;
+                }
+                if ($autoincrement !== false) {
+                    $definition[0]['autoincrement'] = $autoincrement;
+                }
                 foreach ($types as $key => $type) {
-                    $definition[$key] = array(
-                        'type' => $type,
-                        'notnull' => $notnull,
-                    );
-                    if ($length > 0) {
-                        $definition[$key]['length'] = $length;
+                    $definition[$key] = $definition[0];
+                    if ($type == 'clob' || $type == 'blob') {
+                        unset($definition[$key]['default']);
                     }
-                    if ($unsigned) {
-                        $definition[$key]['unsigned'] = true;
-                    }
-                    if ($default !== false) {
-                        $definition[$key]['default'] = $default;
-                    }
-                    if ($autoincrement !== false) {
-                        $definition[$key]['autoincrement'] = $autoincrement;
-                    }
+                    $definition[$key]['type'] = $type;
+                    $definition[$key]['mdb2type'] = $type;
                 }
                 return $definition;
             }
         }
 
-        return $db->raiseError(MDB2_ERROR, null, null,
-            'getTableFieldDefinition: it was not specified an existing table column');
+        return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+            'it was not specified an existing table column', __FUNCTION__);
     }
 
     // }}}
     // {{{ getTableIndexDefinition()
 
     /**
-     * get the stucture of an index into an array
+     * Get the structure of an index into an array
      *
      * @param string    $table      name of table that should be used in method
-     * @param string    $index_name name of index that should be used in method
+     * @param string    $constraint_name name of constraint that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
      * @access public
      */
-    function getTableIndexDefinition($table, $index_name)
+    function getTableIndexDefinition($table, $constraint_name)
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
 
-        $index_name = $db->getIndexName($index_name);
-        $result = $db->query("SHOW INDEX FROM $table");
+        $table = $db->quoteIdentifier($table, true);
+        $query = "SHOW INDEX FROM $table /*!50002 WHERE Key_name = %s */";
+        $constraint_name_mdb2 = $db->getIndexName($constraint_name);
+        $result = $db->queryRow(sprintf($query, $db->quote($constraint_name_mdb2)));
+        if (!PEAR::isError($result) && !is_null($result)) {
+            // apply 'idxname_format' only if the query succeeded, otherwise
+            // fallback to the given $index_name, without transformation
+            $constraint_name = $constraint_name_mdb2;
+        }
+        $result = $db->query(sprintf($query, $db->quote($constraint_name)));
         if (PEAR::isError($result)) {
             return $result;
         }
+        $colpos = 1;
         $definition = array();
         while (is_array($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC))) {
-            if (!($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE)
-                || $db->options['field_case'] != CASE_LOWER
-            ) {
-                $row = array_change_key_case($row, CASE_LOWER);
-            }
+            $row = array_change_key_case($row, CASE_LOWER);
             $key_name = $row['key_name'];
             if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
                 if ($db->options['field_case'] == CASE_LOWER) {
@@ -175,10 +197,10 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                     $key_name = strtoupper($key_name);
                 }
             }
-            if ($index_name == $key_name) {
+            if ($constraint_name == $key_name) {
                 if (!$row['non_unique']) {
                     return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
-                        'getTableIndexDefinition: it was not specified an existing table index');
+                        $constraint_name . ' is not an existing table constraint', __FUNCTION__);
                 }
                 $column_name = $row['column_name'];
                 if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
@@ -188,17 +210,19 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                         $column_name = strtoupper($column_name);
                     }
                 }
-                $definition['fields'][$column_name] = array();
-                if (array_key_exists('collation', $row)) {
+                $definition['fields'][$column_name] = array(
+                    'position' => $colpos++
+                );
+                if (!empty($row['collation'])) {
                     $definition['fields'][$column_name]['sorting'] = ($row['collation'] == 'A'
                         ? 'ascending' : 'descending');
                 }
             }
         }
         $result->free();
-        if (!array_key_exists('fields', $definition)) {
+        if (empty($definition['fields'])) {
             return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
-                'getTableIndexDefinition: it was not specified an existing table index');
+                $constraint_name . ' is not an existing table constraint', __FUNCTION__);
         }
         return $definition;
     }
@@ -207,7 +231,7 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
     // {{{ getTableConstraintDefinition()
 
     /**
-     * get the stucture of a constraint into an array
+     * Get the structure of a constraint into an array
      *
      * @param string    $table      name of table that should be used in method
      * @param string    $index_name name of index that should be used in method
@@ -221,20 +245,25 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
             return $db;
         }
 
+        $table = $db->quoteIdentifier($table, true);
+        $query = "SHOW INDEX FROM $table /*!50002 WHERE Key_name = %s */";
         if (strtolower($index_name) != 'primary') {
-            $index_name = $db->getIndexName($index_name);
+            $index_name_mdb2 = $db->getIndexName($index_name);
+            $result = $db->queryRow(sprintf($query, $db->quote($index_name_mdb2)));
+            if (!PEAR::isError($result) && !is_null($result)) {
+                // apply 'idxname_format' only if the query succeeded, otherwise
+                // fallback to the given $index_name, without transformation
+                $index_name = $index_name_mdb2;
+            }
         }
-        $result = $db->query("SHOW INDEX FROM $table");
+        $result = $db->query(sprintf($query, $db->quote($index_name)));
         if (PEAR::isError($result)) {
             return $result;
         }
+        $colpos = 1;
         $definition = array();
         while (is_array($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC))) {
-            if (!($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE)
-                || $db->options['field_case'] != CASE_LOWER
-            ) {
-                $row = array_change_key_case($row, CASE_LOWER);
-            }
+            $row = array_change_key_case($row, CASE_LOWER);
             $key_name = $row['key_name'];
             if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
                 if ($db->options['field_case'] == CASE_LOWER) {
@@ -246,7 +275,7 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
             if ($index_name == $key_name) {
                 if ($row['non_unique']) {
                     return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
-                        'getTableConstraintDefinition: it was not specified an existing table constraint');
+                        'it was not specified an existing table constraint', __FUNCTION__);
                 }
                 if ($row['key_name'] == 'PRIMARY') {
                     $definition['primary'] = true;
@@ -261,19 +290,66 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                         $column_name = strtoupper($column_name);
                     }
                 }
-                $definition['fields'][$column_name] = array();
-                if (array_key_exists('collation', $row)) {
+                $definition['fields'][$column_name] = array(
+                    'position' => $colpos++
+                );
+                if (!empty($row['collation'])) {
                     $definition['fields'][$column_name]['sorting'] = ($row['collation'] == 'A'
                         ? 'ascending' : 'descending');
                 }
             }
         }
         $result->free();
-        if (!array_key_exists('fields', $definition)) {
+        if (empty($definition['fields'])) {
             return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
-                'getTableConstraintDefinition: it was not specified an existing table constraint');
+                'it was not specified an existing table constraint', __FUNCTION__);
         }
         return $definition;
+    }
+
+    // }}}
+    // {{{ getTriggerDefinition()
+
+    /**
+     * Get the structure of a trigger into an array
+     *
+     * EXPERIMENTAL
+     *
+     * WARNING: this function is experimental and may change the returned value
+     * at any time until labelled as non-experimental
+     *
+     * @param string    $trigger    name of trigger that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     * @access public
+     */
+    function getTriggerDefinition($trigger)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $query = 'SELECT trigger_name,
+                         event_object_table AS table_name,
+                         action_statement AS trigger_body,
+                         action_timing AS trigger_type,
+                         event_manipulation AS trigger_event
+                    FROM information_schema.triggers
+                   WHERE trigger_name = '. $db->quote($trigger, 'text');
+        $types = array(
+            'trigger_name'    => 'text',
+            'table_name'      => 'text',
+            'trigger_body'    => 'text',
+            'trigger_type'    => 'text',
+            'trigger_event'   => 'text',
+        );
+        $def = $db->queryRow($query, $types, MDB2_FETCHMODE_ASSOC);
+        if (PEAR::isError($def)) {
+            return $def;
+        }
+        $def['trigger_comment'] = '';
+        $def['trigger_enabled'] = true;
+        return $def;
     }
 
     // }}}
@@ -296,41 +372,19 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
      */
     function tableInfo($result, $mode = null)
     {
+        if (is_string($result)) {
+           return parent::tableInfo($result, $mode);
+        }
+
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
 
-        if (is_string($result)) {
-            /*
-             * Probably received a table name.
-             * Create a result resource identifier.
-             */
-            $connection = $db->getConnection();
-            if (PEAR::isError($connection)) {
-                return $connection;
-            }
-            $id = @mysql_list_fields($db->database_name, $result, $connection);
-            $got_string = true;
-        } elseif (MDB2::isResultCommon($result)) {
-            /*
-             * Probably received a result object.
-             * Extract the result resource identifier.
-             */
-            $id = $result->getResource();
-            $got_string = false;
-        } else {
-            /*
-             * Probably received a result resource identifier.
-             * Copy it.
-             * Deprecated.  Here for compatibility only.
-             */
-            $id = $result;
-            $got_string = false;
-        }
-
-        if (!is_resource($id)) {
-            return $db->raiseError(MDB2_ERROR_NEED_MORE_DATA);
+        $resource = MDB2::isResultCommon($result) ? $result->getResource() : $result;
+        if (!is_resource($resource)) {
+            return $db->raiseError(MDB2_ERROR_NEED_MORE_DATA, null, null,
+                'Could not generate result resource', __FUNCTION__);
         }
 
         if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
@@ -343,7 +397,7 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
             $case_func = 'strval';
         }
 
-        $count = @mysql_num_fields($id);
+        $count = @mysql_num_fields($resource);
         $res   = array();
 
         if ($mode) {
@@ -353,11 +407,11 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
         $db->loadModule('Datatype', null, true);
         for ($i = 0; $i < $count; $i++) {
             $res[$i] = array(
-                'table' => $case_func(@mysql_field_table($id, $i)),
-                'name'  => $case_func(@mysql_field_name($id, $i)),
-                'type'  => @mysql_field_type($id, $i),
-                'length'   => @mysql_field_len($id, $i),
-                'flags' => @mysql_field_flags($id, $i),
+                'table' => $case_func(@mysql_field_table($resource, $i)),
+                'name'  => $case_func(@mysql_field_name($resource, $i)),
+                'type'  => @mysql_field_type($resource, $i),
+                'length'   => @mysql_field_len($resource, $i),
+                'flags' => @mysql_field_flags($resource, $i),
             );
             if ($res[$i]['type'] == 'string') {
                 $res[$i]['type'] = 'char';
@@ -365,6 +419,9 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
                 $res[$i]['type'] = 'decimal';
             }
             $mdb2type_info = $db->datatype->mapNativeDatatype($res[$i]);
+            if (PEAR::isError($mdb2type_info)) {
+               return $mdb2type_info;
+            }
             $res[$i]['mdb2type'] = $mdb2type_info[0][0];
             if ($mode & MDB2_TABLEINFO_ORDER) {
                 $res['order'][$res[$i]['name']] = $i;
@@ -374,10 +431,6 @@ class MDB2_Driver_Reverse_mysql extends MDB2_Driver_Reverse_Common
             }
         }
 
-        // free the result only if we were called on a table
-        if ($got_string) {
-            @mysql_free_result($id);
-        }
         return $res;
     }
 }

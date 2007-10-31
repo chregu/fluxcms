@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -42,7 +42,7 @@
 // | Author: Lukas Smith <smith@pooteeweet.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Common.php,v 1.7 2006/01/12 16:47:15 lsmith Exp $
+// $Id: Common.php,v 1.17 2007/01/12 11:29:12 quipo Exp $
 //
 
 /**
@@ -82,7 +82,7 @@ class MDB2_Driver_Function_Common extends MDB2_Module_Common
         }
 
         $error =& $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-            'query: method not implemented');
+            'method not implemented', __FUNCTION__);
         return $error;
     }
 
@@ -147,14 +147,83 @@ class MDB2_Driver_Function_Common extends MDB2_Module_Common
     // {{{ concat()
 
     /**
-     * return string to caoncatenate two strings
+     * Returns string to concatenate two or more string parameters
      *
-     * @return string to caoncatenate two strings
+     * @param string $value1
+     * @param string $value2
+     * @param string $values...
+     * @return string to concatenate two strings
      * @access public
      */
     function concat($value1, $value2)
     {
-        return "$value1 || $value2";
+        $args = func_get_args();
+        return "(".implode(' || ', $args).")";
+    }
+
+    // }}}
+    // {{{ random()
+
+    /**
+     * return string to call a function to get random value inside an SQL statement
+     *
+     * @return return string to generate float between 0 and 1
+     * @access public
+     */
+    function random()
+    {
+        return 'RAND()';
+    }
+
+    // }}}
+    // {{{ lower()
+
+    /**
+     * return string to call a function to lower the case of an expression
+     *
+     * @param string $expression
+     * @return return string to lower case of an expression
+     * @access public
+     */
+    function lower($expression)
+    {
+        return "LOWER($expression)";
+    }
+
+    // }}}
+    // {{{ upper()
+
+    /**
+     * return string to call a function to upper the case of an expression
+     *
+     * @param string $expression
+     * @return return string to upper case of an expression
+     * @access public
+     */
+    function upper($expression)
+    {
+        return "UPPER($expression)";
+    }
+
+    // }}}
+    // {{{ guid()
+
+    /**
+     * Returns global unique identifier
+     *
+     * @return string to get global unique identifier
+     * @access public
+     */
+    function guid()
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $error =& $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+            'method not implemented', __FUNCTION__);
+        return $error;
     }
 
     // }}}

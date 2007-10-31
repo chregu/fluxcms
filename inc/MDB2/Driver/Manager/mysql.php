@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -56,80 +56,6 @@ require_once 'MDB2/Driver/Manager/Common.php';
  */
 class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
 {
-    // {{{ properties
-    var $verified_table_types = array();#
-    // }}}
-
-    // }}}
-    // {{{ _verifyTableType()
-
-    /**
-     * verify that chosen transactional table hanlder is available in the database
-     *
-     * @param string $table_type name of the table handler
-     * @return mixed MDB2_OK on success, a MDB2 error on failure
-     * @access protected
-     */
-    function _verifyTableType($table_type)
-    {
-        $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
-            return $db;
-        }
-
-        switch (strtoupper($table_type)) {
-        case 'BERKELEYDB':
-        case 'BDB':
-            $check = array('have_bdb');
-            break;
-        case 'INNODB':
-            $check = array('have_innobase', 'have_innodb');
-            break;
-        case 'GEMINI':
-            $check = array('have_gemini');
-            break;
-        case 'HEAP':
-        case 'ISAM':
-        case 'MERGE':
-        case 'MRG_MYISAM':
-        case 'MYISAM':
-        case '':
-            return MDB2_OK;
-        default:
-            return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-                $table_type.' is not a supported table type');
-        }
-        $connection = $db->getConnection();
-        if (PEAR::isError($connection)) {
-            return $connection;
-        }
-        if (isset($this->verified_table_types[$table_type])
-            && $this->verified_table_types[$table_type] == $connection
-        ) {
-            return MDB2_OK;
-        }
-        $not_supported = false;
-        for ($i = 0, $j = count($check); $i < $j; ++$i) {
-            $query = 'SHOW VARIABLES LIKE '.$db->quote($check[$i], 'text');
-            $has = $db->queryRow($query, null, MDB2_FETCHMODE_ORDERED);
-            if (PEAR::isError($has)) {
-                return $has;
-            }
-            if (is_array($has)) {
-                $not_supported = true;
-                if ($has[1] == 'YES') {
-                    $this->verified_table_types[$table_type] = $connection;
-                    return MDB2_OK;
-                }
-            }
-        }
-        if ($not_supported) {
-            return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-                $table_type.' is not a supported table type by this MySQL database server');
-        }
-        return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-            'could not tell if '.$table_type.' is a supported table type');
-    }
 
     // }}}
     // {{{ createDatabase()
@@ -189,61 +115,76 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * create a new table
      *
-     * @param string $name     Name of the database that should be created
-     * @param array $fields Associative array that contains the definition of each field of the new table
-     *                        The indexes of the array entries are the names of the fields of the table an
-     *                        the array entry values are associative arrays like those that are meant to be
-     *                         passed with the field definitions to get[Type]Declaration() functions.
+     * @param string $name   Name of the database that should be created
+     * @param array $fields  Associative array that contains the definition of each field of the new table
+     *                       The indexes of the array entries are the names of the fields of the table an
+     *                       the array entry values are associative arrays like those that are meant to be
+     *                       passed with the field definitions to get[Type]Declaration() functions.
+     *                          array(
+     *                              'id' => array(
+     *                                  'type' => 'integer',
+     *                                  'unsigned' => 1
+     *                                  'notnull' => 1
+     *                                  'default' => 0
+     *                              ),
+     *                              'name' => array(
+     *                                  'type' => 'text',
+     *                                  'length' => 12
+     *                              ),
+     *                              'password' => array(
+     *                                  'type' => 'text',
+     *                                  'length' => 12
+     *                              )
+     *                          );
+     * @param array $options  An associative array of table options:
+     *                          array(
+     *                              'comment' => 'Foo',
+     *                              'charset' => 'utf8',
+     *                              'collate' => 'utf8_unicode_ci',
+     *                              'type'    => 'innodb',
+     *                          );
      *
-     *                        Example
-     *                        array(
-     *
-     *                            'id' => array(
-     *                                'type' => 'integer',
-     *                                'unsigned' => 1
-     *                                'notnull' => 1
-     *                                'default' => 0
-     *                            ),
-     *                            'name' => array(
-     *                                'type' => 'text',
-     *                                'length' => 12
-     *                            ),
-     *                            'password' => array(
-     *                                'type' => 'text',
-     *                                'length' => 12
-     *                            )
-     *                        );
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
      */
-    function createTable($name, $fields)
+    function createTable($name, $fields, $options = array())
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
 
-        if (!$name) {
-            return $db->raiseError(MDB2_ERROR_CANNOT_CREATE, null, null,
-                'createTable: no valid table name specified');
+        $query = $this->_getCreateTableQuery($name, $fields, $options);
+        if (PEAR::isError($query)) {
+            return $query;
         }
-        if (empty($fields)) {
-            return $db->raiseError(MDB2_ERROR_CANNOT_CREATE, null, null,
-                'createTable: no fields specified for table "'.$name.'"');
-        }
-        $verify = $this->_verifyTableType($db->options['default_table_type']);
-        if (PEAR::isError($verify)) {
-            return $verify;
-        }
-        $query_fields = $this->getFieldDeclarationList($fields);
-        if (PEAR::isError($query_fields)) {
-            return $db->raiseError(MDB2_ERROR_CANNOT_CREATE, null, null,
-                'createTable: '.$this->getUserinfo());
-        }
-        $name = $db->quoteIdentifier($name, true);
-        $query = "CREATE TABLE $name ($query_fields)".(strlen($db->options['default_table_type'])
-            ? ' TYPE='.$db->options['default_table_type'] : '');
 
+        $options_strings = array();
+
+        if (!empty($options['comment'])) {
+            $options_strings['comment'] = 'COMMENT = '.$db->quote($options['comment'], 'text');
+        }
+
+        if (!empty($options['charset'])) {
+            $options_strings['charset'] = 'DEFAULT CHARACTER SET '.$options['charset'];
+            if (!empty($options['collate'])) {
+                $options_strings['charset'].= ' COLLATE '.$options['collate'];
+            }
+        }
+
+        $type = false;
+        if (!empty($options['type'])) {
+            $type = $options['type'];
+        } elseif ($db->options['default_table_type']) {
+            $type = $db->options['default_table_type'];
+        }
+        if ($type) {
+            $options_strings[] = "ENGINE = $type";
+        }
+
+        if (!empty($options_strings)) {
+            $query .= ' '.implode(' ', $options_strings);
+        }
         return $db->exec($query);
     }
 
@@ -268,7 +209,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      *                                 indexes of the array. The value of each entry of the array
      *                                 should be set to another associative array with the properties
      *                                 of the fields to be added. The properties of the fields should
-     *                                 be the same as defined by the Metabase parser.
+     *                                 be the same as defined by the MDB2 parser.
      *
      *
      *                            remove
@@ -297,7 +238,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
      *                                 array with the properties of the fields to that are meant to be changed as
      *                                 array entries. These entries should be assigned to the new values of the
      *                                 respective properties. The properties of the fields should be the same
-     *                                 as defined by the Metabase parser.
+     *                                 as defined by the MDB2 parser.
      *
      *                            Example
      *                                array(
@@ -357,7 +298,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
                 break;
             default:
                 return $db->raiseError(MDB2_ERROR_CANNOT_ALTER, null, null,
-                    'alterTable: change type "'.$change_name.'" not yet supported');
+                    'change type "'.$change_name.'" not yet supported', __FUNCTION__);
             }
         }
 
@@ -366,12 +307,12 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
         }
 
         $query = '';
-        if (array_key_exists('name', $changes)) {
+        if (!empty($changes['name'])) {
             $change_name = $db->quoteIdentifier($changes['name'], true);
             $query .= 'RENAME TO ' . $change_name;
         }
 
-        if (array_key_exists('add', $changes)) {
+        if (!empty($changes['add']) && is_array($changes['add'])) {
             foreach ($changes['add'] as $field_name => $field) {
                 if ($query) {
                     $query.= ', ';
@@ -380,7 +321,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
             }
         }
 
-        if (array_key_exists('remove', $changes)) {
+        if (!empty($changes['remove']) && is_array($changes['remove'])) {
             foreach ($changes['remove'] as $field_name => $field) {
                 if ($query) {
                     $query.= ', ';
@@ -391,13 +332,13 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
         }
 
         $rename = array();
-        if (array_key_exists('rename', $changes)) {
+        if (!empty($changes['rename']) && is_array($changes['rename'])) {
             foreach ($changes['rename'] as $field_name => $field) {
                 $rename[$field['name']] = $field_name;
             }
         }
 
-        if (array_key_exists('change', $changes)) {
+        if (!empty($changes['change']) && is_array($changes['change'])) {
             foreach ($changes['change'] as $field_name => $field) {
                 if ($query) {
                     $query.= ', ';
@@ -413,7 +354,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
             }
         }
 
-        if (!empty($rename)) {
+        if (!empty($rename) && is_array($rename)) {
             foreach ($rename as $rename_name => $renamed_field) {
                 if ($query) {
                     $query.= ', ';
@@ -438,7 +379,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * list all databases
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of database names on success, a MDB2 error on failure
      * @access public
      */
     function listDatabases()
@@ -464,7 +405,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * list all users
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of user names on success, a MDB2 error on failure
      * @access public
      */
     function listUsers()
@@ -474,7 +415,71 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
             return $db;
         }
 
-        return $db->queryCol('SELECT DISTINCT USER FROM USER');
+        return $db->queryCol('SELECT DISTINCT USER FROM mysql.USER');
+    }
+
+    // }}}
+    // {{{ listFunctions()
+
+    /**
+     * list all functions in the current database
+     *
+     * @return mixed array of function names on success, a MDB2 error on failure
+     * @access public
+     */
+    function listFunctions()
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $query = "SELECT name FROM mysql.proc";
+        /*
+        SELECT ROUTINE_NAME
+          FROM INFORMATION_SCHEMA.ROUTINES
+         WHERE ROUTINE_TYPE = 'FUNCTION'
+        */
+        $result = $db->queryCol($query);
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
+        }
+        return $result;
+    }
+
+    // }}}
+    // {{{ listTableTriggers()
+
+    /**
+     * list all triggers in the database that reference a given table
+     *
+     * @param string table for which all referenced triggers should be found
+     * @return mixed array of trigger names on success, a MDB2 error on failure
+     * @access public
+     */
+    function listTableTriggers($table = null)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $query = 'SHOW TRIGGERS';
+        if (!is_null($table)) {
+            $table = $db->quote($table, 'text');
+            $query .= " LIKE $table";
+        }
+        $result = $db->queryCol($query);
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
+        }
+        return $result;
     }
 
     // }}}
@@ -483,27 +488,68 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * list all tables in the current database
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @param string database, the current is default
+     * @return mixed array of table names on success, a MDB2 error on failure
      * @access public
      */
-    function listTables()
+    function listTables($database = null)
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
 
-        $table_names = $db->queryCol('SHOW TABLES');
+        $query = "SHOW /*!50002 FULL*/ TABLES";
+        if (!is_null($database)) {
+            $query .= " FROM $database";
+        }
+        $query.= "/*!50002  WHERE Table_type = 'BASE TABLE'*/";
+
+        $table_names = $db->queryAll($query, null, MDB2_FETCHMODE_ORDERED);
         if (PEAR::isError($table_names)) {
             return $table_names;
         }
 
         $result = array();
-        foreach ($table_names as $table_name) {
-            if (!$this->_fixSequenceName($table_name, true)) {
-                $result[] = $table_name;
+        foreach ($table_names as $table) {
+            if (!$this->_fixSequenceName($table[0], true)) {
+                $result[] = $table[0];
             }
         }
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
+        }
+        return $result;
+    }
+
+    // }}}
+    // {{{ listViews()
+
+    /**
+     * list all views in the current database
+     *
+     * @param string database, the current is default
+     * @return mixed array of view names on success, a MDB2 error on failure
+     * @access public
+     */
+    function listViews($database = null)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $query = 'SHOW FULL TABLES';
+        if (!is_null($database)) {
+            $query.= " FROM $database";
+        }
+        $query.= " WHERE Table_type = 'VIEW'";
+
+        $result = $db->queryCol($query);
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+
         if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
             $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
         }
@@ -514,10 +560,10 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     // {{{ listTableFields()
 
     /**
-     * list all fields in a tables in the current database
+     * list all fields in a table in the current database
      *
      * @param string $table name of table that should be used in method
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of field names on success, a MDB2 error on failure
      * @access public
      */
     function listTableFields($table)
@@ -542,7 +588,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     // {{{ createIndex()
 
     /**
-     * get the stucture of a field into an array
+     * Get the stucture of a field into an array
      *
      * @author Leoncx
      * @param string    $table         name of the table on which the index is to be created
@@ -587,7 +633,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
         $query = "CREATE INDEX $name ON $table";
         $fields = array();
         foreach ($definition['fields'] as $field => $fieldinfo) {
-            if (array_key_exists('length', $fieldinfo)) {
+            if (!empty($fieldinfo['length'])) {
                 $fields[] = $db->quoteIdentifier($field, true) . '(' . $fieldinfo['length'] . ')';
             } else {
                 $fields[] = $db->quoteIdentifier($field, true);
@@ -626,8 +672,8 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * list all indexes in a table
      *
-     * @param string    $table      name of table that should be used in method
-     * @return mixed data array on success, a MDB2 error on failure
+     * @param string $table name of table that should be used in method
+     * @return mixed array of index names on success, a MDB2 error on failure
      * @access public
      */
     function listTableIndexes($table)
@@ -658,8 +704,8 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
 
         $result = array();
         foreach ($indexes as $index_data) {
-            if ($index_data[$non_unique]) {
-                $result[$this->_fixIndexName($index_data[$key_name])] = true;
+            if ($index_data[$non_unique] && ($index = $this->_fixIndexName($index_data[$key_name]))) {
+                $result[$index] = true;
             }
         }
 
@@ -675,22 +721,22 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * create a constraint on a table
      *
-     * @param string    $table         name of the table on which the constraint is to be created
+     * @param string    $table        name of the table on which the constraint is to be created
      * @param string    $name         name of the constraint to be created
-     * @param array     $definition        associative array that defines properties of the constraint to be created.
-     *                                 Currently, only one property named FIELDS is supported. This property
-     *                                 is also an associative with the names of the constraint fields as array
-     *                                 constraints. Each entry of this array is set to another type of associative
-     *                                 array that specifies properties of the constraint that are specific to
-     *                                 each field.
+     * @param array     $definition   associative array that defines properties of the constraint to be created.
+     *                                Currently, only one property named FIELDS is supported. This property
+     *                                is also an associative with the names of the constraint fields as array
+     *                                constraints. Each entry of this array is set to another type of associative
+     *                                array that specifies properties of the constraint that are specific to
+     *                                each field.
      *
-     *                                 Example
-     *                                    array(
-     *                                        'fields' => array(
-     *                                            'user_name' => array(),
-     *                                            'last_login' => array()
-     *                                        )
-     *                                    )
+     *                                Example
+     *                                   array(
+     *                                       'fields' => array(
+     *                                           'user_name' => array(),
+     *                                           'last_login' => array()
+     *                                       )
+     *                                   )
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
      */
@@ -702,18 +748,16 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
         }
 
         $type = '';
-        if (array_key_exists('primary', $definition) && $definition['primary']) {
-            if (strtolower($name) != 'primary') {
-                return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-                    'Primary Key may must be named primary');
-            }
+        $name = $db->quoteIdentifier($db->getIndexName($name), true);
+        if (!empty($definition['primary'])) {
             $type = 'PRIMARY';
             $name = 'KEY';
-        } else {
-            $name = $db->quoteIdentifier($db->getIndexName($name), true);
-            if (array_key_exists('unique', $definition) && $definition['unique']) {
-                $type = ' UNIQUE';
-            }
+        } elseif (!empty($definition['unique'])) {
+            $type = 'UNIQUE';
+        }
+        if (empty($type)) {
+            return $db->raiseError(MDB2_ERROR_NEED_MORE_DATA, null, null,
+                'invalid definition, could not create constraint', __FUNCTION__);
         }
 
         $table = $db->quoteIdentifier($table, true);
@@ -732,12 +776,13 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * drop existing constraint
      *
-     * @param string    $table         name of table that should be used in method
+     * @param string    $table        name of table that should be used in method
      * @param string    $name         name of the constraint to be dropped
+     * @param string    $primary      hint if the constraint is primary
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
      */
-    function dropConstraint($table, $name)
+    function dropConstraint($table, $name, $primary = false)
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
@@ -745,7 +790,7 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
         }
 
         $table = $db->quoteIdentifier($table, true);
-        if (strtolower($name) == 'primary') {
+        if ($primary || strtolower($name) == 'primary') {
             $query = "ALTER TABLE $table DROP PRIMARY KEY";
         } else {
             $name = $db->quoteIdentifier($db->getIndexName($name), true);
@@ -758,10 +803,10 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     // {{{ listTableConstraints()
 
     /**
-     * list all sonstraints in a table
+     * list all constraints in a table
      *
-     * @param string    $table      name of table that should be used in method
-     * @return mixed data array on success, a MDB2 error on failure
+     * @param string $table name of table that should be used in method
+     * @return mixed array of constraint names on success, a MDB2 error on failure
      * @access public
      */
     function listTableConstraints($table)
@@ -798,7 +843,9 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
                 } else {
                     $index = 'PRIMARY';
                 }
-                $result[$index] = true;
+                if (!empty($index)) {
+                    $result[$index] = true;
+                }
             }
         }
 
@@ -814,12 +861,19 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * create sequence
      *
-     * @param string    $seq_name     name of the sequence to be created
-     * @param string    $start         start value of the sequence; default is 1
+     * @param string    $seq_name name of the sequence to be created
+     * @param string    $start    start value of the sequence; default is 1
+     * @param array     $options  An associative array of table options:
+     *                          array(
+     *                              'comment' => 'Foo',
+     *                              'charset' => 'utf8',
+     *                              'collate' => 'utf8_unicode_ci',
+     *                              'type'    => 'innodb',
+     *                          );
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
      */
-    function createSequence($seq_name, $start = 1)
+    function createSequence($seq_name, $start = 1, $options = array())
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
@@ -828,15 +882,35 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
 
         $sequence_name = $db->quoteIdentifier($db->getSequenceName($seq_name), true);
         $seqcol_name = $db->quoteIdentifier($db->options['seqcol_name'], true);
-        $result = $this->_verifyTableType($db->options['default_table_type']);
-        if (PEAR::isError($result)) {
-            return $result;
+        
+        $options_strings = array();
+
+        if (!empty($options['comment'])) {
+            $options_strings['comment'] = 'COMMENT = '.$db->quote($options['comment'], 'text');
         }
 
-        $res = $db->exec("CREATE TABLE $sequence_name".
-            "($seqcol_name INT NOT NULL AUTO_INCREMENT, PRIMARY KEY ($seqcol_name))".
-            (strlen($db->options['default_table_type']) ? ' TYPE='.$db->options['default_table_type'] : '')
-        );
+        if (!empty($options['charset'])) {
+            $options_strings['charset'] = 'DEFAULT CHARACTER SET '.$options['charset'];
+            if (!empty($options['collate'])) {
+                $options_strings['charset'].= ' COLLATE '.$options['collate'];
+            }
+        }
+
+        $type = false;
+        if (!empty($options['type'])) {
+            $type = $options['type'];
+        } elseif ($db->options['default_table_type']) {
+            $type = $db->options['default_table_type'];
+        }
+        if ($type) {
+            $options_strings[] = "ENGINE = $type";
+        }
+
+        $query = "CREATE TABLE $sequence_name ($seqcol_name INT NOT NULL AUTO_INCREMENT, PRIMARY KEY ($seqcol_name))";
+        if (!empty($options_strings)) {
+            $query .= ' '.implode(' ', $options_strings);
+        }
+        $res = $db->exec($query);
 
         if (PEAR::isError($res)) {
             return $res;
@@ -846,7 +920,8 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
             return MDB2_OK;
         }
 
-        $res = $db->exec("INSERT INTO $sequence_name ($seqcol_name) VALUES (".($start-1).')');
+        $query = "INSERT INTO $sequence_name ($seqcol_name) VALUES (".($start-1).')';
+        $res = $db->exec($query);
         if (!PEAR::isError($res)) {
             return MDB2_OK;
         }
@@ -854,14 +929,12 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
         // Handle error
         $result = $db->exec("DROP TABLE $sequence_name");
         if (PEAR::isError($result)) {
-            return $db->raiseError(MDB2_ERROR, null, null,
-                'createSequence: could not drop inconsistent sequence table ('.
-                $result->getMessage().' ('.$result->getUserinfo().'))');
+            return $db->raiseError($result, null, null,
+                'could not drop inconsistent sequence table', __FUNCTION__);
         }
 
-        return $db->raiseError(MDB2_ERROR, null, null,
-            'createSequence: could not create sequence table ('.
-            $res->getMessage().' ('.$res->getUserinfo().'))');
+        return $db->raiseError($res, null, null,
+            'could not create sequence table', __FUNCTION__);
     }
 
     // }}}
@@ -891,17 +964,22 @@ class MDB2_Driver_Manager_mysql extends MDB2_Driver_Manager_Common
     /**
      * list all sequences in the current database
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @param string database, the current is default
+     * @return mixed array of sequence names on success, a MDB2 error on failure
      * @access public
      */
-    function listSequences()
+    function listSequences($database = null)
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
 
-        $table_names = $db->queryCol('SHOW TABLES');
+        $query = "SHOW TABLES";
+        if (!is_null($database)) {
+            $query .= " FROM $database";
+        }
+        $table_names = $db->queryCol($query);
         if (PEAR::isError($table_names)) {
             return $table_names;
         }

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2004 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -73,11 +73,14 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     // {{{ getTableFieldDefinition()
 
     /**
-     * get the stucture of a field into an array
+     * Get the structure of a field into an array
      *
-     * @param string    $table         name of table that should be used in method
-     * @param string    $fields     name of field that should be used in method
-     * @return mixed data array on success, a MDB2 error on failure
+     * @param string    $table     name of table that should be used in method
+     * @param string    $field     name of field that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure.
+     *          The returned array contains an array for each field definition,
+     *          with all or some of these indices, depending on the field data type:
+     *          [notnull] [nativetype] [length] [fixed] [default] [type] [mdb2type]
      * @access public
      */
     function getTableFieldDefinition($table, $field)
@@ -88,18 +91,30 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
         }
 
         return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-            'getTableFieldDefinition: table field definition is not supported');
+            'method not implemented', __FUNCTION__);
     }
 
     // }}}
     // {{{ getTableIndexDefinition()
 
     /**
-     * get the stucture of an index into an array
+     * Get the structure of an index into an array
      *
      * @param string    $table      name of table that should be used in method
      * @param string    $index      name of index that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
+     *          The returned array has this structure:
+     *          </pre>
+     *          array (
+     *              [fields] => array (
+     *                  [field1name] => array() // one entry per each field covered
+     *                  [field2name] => array() // by the index
+     *                  [field3name] => array(
+     *                      [sorting] => ascending
+     *                  )
+     *              )
+     *          );
+     *          </pre>
      * @access public
      */
     function getTableIndexDefinition($table, $index)
@@ -110,18 +125,31 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
         }
 
         return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-            'getTableIndexDefinition: getting index definition is not supported');
+            'method not implemented', __FUNCTION__);
     }
 
     // }}}
     // {{{ getTableConstraintDefinition()
 
     /**
-     * get the stucture of an constraints into an array
+     * Get the structure of an constraints into an array
      *
      * @param string    $table      name of table that should be used in method
      * @param string    $index      name of index that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
+     *          The returned array has this structure:
+     *          <pre>
+     *          array (
+     *              [primary] => 1
+     *              [fields] => array (
+     *                  [field1name] => array() // one entry per each field covered
+     *                  [field2name] => array() // by the index
+     *                  [field3name] => array(
+     *                      [sorting] => ascending
+     *                  )
+     *              )
+     *          );
+     *          </pre>
      * @access public
      */
     function getTableConstraintDefinition($table, $index)
@@ -132,17 +160,23 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
         }
 
         return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-            'getTableConstraintDefinition: getting index definition is not supported');
+            'method not implemented', __FUNCTION__);
     }
 
     // }}}
     // {{{ getSequenceDefinition()
 
     /**
-     * get the stucture of a sequence into an array
+     * Get the structure of a sequence into an array
      *
      * @param string    $sequence   name of sequence that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
+     *          The returned array has this structure:
+     *          <pre>
+     *          array (
+     *              [start] => n
+     *          );
+     *          </pre>
      * @access public
      */
     function getSequenceDefinition($sequence)
@@ -167,6 +201,46 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
             $definition = array('start' => $start);
         }
         return $definition;
+    }
+
+    // }}}
+    // {{{ getTriggerDefinition()
+
+    /**
+     * Get the structure of a trigger into an array
+     *
+     * EXPERIMENTAL
+     *
+     * WARNING: this function is experimental and may change the returned value 
+     * at any time until labelled as non-experimental
+     *
+     * @param string    $trigger    name of trigger that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     *          The returned array has this structure:
+     *          <pre>
+     *          array (
+     *              [trigger_name]    => 'trigger name',
+     *              [table_name]      => 'table name',
+     *              [trigger_body]    => 'trigger body definition',
+     *              [trigger_type]    => 'BEFORE' | 'AFTER',
+     *              [trigger_event]   => 'INSERT' | 'UPDATE' | 'DELETE'
+     *                  //or comma separated list of multiple events, when supported
+     *              [trigger_enabled] => true|false
+     *              [trigger_comment] => 'trigger comment',
+     *          );
+     *          </pre>
+     *          The oci8 driver also returns a [when_clause] index.
+     * @access public
+     */
+    function getTriggerDefinition($trigger)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+            'method not implemented', __FUNCTION__);
     }
 
     // }}}
@@ -299,8 +373,104 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
             return $db;
         }
 
-        return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
-            'tableInfo: method not implemented');
+        if (!is_string($result)) {
+            return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+                'method not implemented', __FUNCTION__);
+        }
+
+        $db->loadModule('Manager', null, true);
+        $fields = $db->manager->listTableFields($result);
+        if (PEAR::isError($fields)) {
+            return $fields;
+        }
+
+        $flags = array();
+
+        $idxname_format = $db->getOption('idxname_format');
+        $db->setOption('idxname_format', '%s');
+
+        $indexes = $db->manager->listTableIndexes($result);
+        if (PEAR::isError($indexes)) {
+            $db->setOption('idxname_format', $idxname_format);
+            return $indexes;
+        }
+
+        foreach ($indexes as $index) {
+            $definition = $this->getTableIndexDefinition($result, $index);
+            if (PEAR::isError($definition)) {
+                $db->setOption('idxname_format', $idxname_format);
+                return $definition;
+            }
+            if (count($definition['fields']) > 1) {
+                foreach ($definition['fields'] as $field => $sort) {
+                    $flags[$field] = 'multiple_key';
+                }
+            }
+        }
+
+        $constraints = $db->manager->listTableConstraints($result);
+        if (PEAR::isError($constraints)) {
+            return $constraints;
+        }
+
+        foreach ($constraints as $constraint) {
+            $definition = $this->getTableConstraintDefinition($result, $constraint);
+            if (PEAR::isError($definition)) {
+                $db->setOption('idxname_format', $idxname_format);
+                return $definition;
+            }
+            $flag = !empty($definition['primary'])
+                ? 'primary_key' : (!empty($definition['unique'])
+                    ? 'unique_key' : false);
+            if ($flag) {
+                foreach ($definition['fields'] as $field => $sort) {
+                    if (empty($flags[$field]) || $flags[$field] != 'primary_key') {
+                        $flags[$field] = $flag;
+                    }
+                }
+            }
+        }
+
+        if ($mode) {
+            $res['num_fields'] = count($fields);
+        }
+
+        foreach ($fields as $i => $field) {
+            $definition = $this->getTableFieldDefinition($result, $field);
+            if (PEAR::isError($definition)) {
+                $db->setOption('idxname_format', $idxname_format);
+                return $definition;
+            }
+            $res[$i] = $definition[0];
+            $res[$i]['name'] = $field;
+            $res[$i]['table'] = $result;
+            $res[$i]['type'] = preg_replace('/^([a-z]+).*$/i', '\\1', trim($definition[0]['nativetype']));
+            // 'primary_key', 'unique_key', 'multiple_key'
+            $res[$i]['flags'] = empty($flags[$field]) ? '' : $flags[$field];
+            // not_null', 'unsigned', 'auto_increment', 'default_[rawencodedvalue]'
+            if (!empty($res[$i]['notnull'])) {
+                $res[$i]['flags'].= ' not_null';
+            }
+            if (!empty($res[$i]['unsigned'])) {
+                $res[$i]['flags'].= ' unsigned';
+            }
+            if (!empty($res[$i]['auto_increment'])) {
+                $res[$i]['flags'].= ' autoincrement';
+            }
+            if (!empty($res[$i]['default'])) {
+                $res[$i]['flags'].= ' default_'.rawurlencode($res[$i]['default']);
+            }
+
+            if ($mode & MDB2_TABLEINFO_ORDER) {
+                $res['order'][$res[$i]['name']] = $i;
+            }
+            if ($mode & MDB2_TABLEINFO_ORDERTABLE) {
+                $res['ordertable'][$res[$i]['table']][$res[$i]['name']] = $i;
+            }
+        }
+
+        $db->setOption('idxname_format', $idxname_format);
+        return $res;
     }
 }
 ?>
