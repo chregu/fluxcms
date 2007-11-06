@@ -40,7 +40,7 @@ class bx_tree {
         }
         
         $coll = bx_collections::getCollection($this->path, $this->mode);
-        $colls = array();
+	$colls = array();
         $this->childUris= array();
         $this->childUris[$coll->uri] = "_blabla";
         
@@ -52,12 +52,12 @@ class bx_tree {
         $level=1;
         if ($this->recursive) {
             while ($coll) {
-                array_unshift($colls, $coll);
+		array_unshift($colls, $coll);
                 $childUri = $coll->uri;
                 $coll = $coll->getParentCollection();
                 if ($coll) {
                     if ($childUri == $coll->uri)   {
-                        break;
+			break;
                     }
                     $this->childUris[$coll->uri] = $childUri;
                 }
@@ -89,57 +89,59 @@ class bx_tree {
     }
     
     protected function insertChildren($coll,$node,$level) {
-        if (isset($this->childUris[$coll->uri])) {
+        
+	if (isset($this->childUris[$coll->uri])) {
             $childUri = $this->childUris[$coll->uri];
         } else {
             $childUri = "";
         }
-        $nextnode = null;
+        $nextnode = $el= null;
         
-        $displayNamePropertyNS = sprintf('bx:%2s', $GLOBALS['POOL']->config->getOutputLanguage());
-        
-        foreach( $coll->getChildren() as $element => $entry) {
-            if (!$this->perm->isAllowed($entry->getId(),array('read_navi', 'read'))) {
-                continue;
-            }
-            if ($GLOBALS['POOL']->config->advancedRedirect == 'true' AND $entry->getLocalName() == $this->rewriteFrom) {
-                $this->rewrite = TRUE;
-                continue;
-            }
+	$displayNamePropertyNS = sprintf('bx:%2s', $GLOBALS['POOL']->config->getOutputLanguage());
+	if (is_object($coll) && method_exists($coll, 'getChildren')) {
+	    foreach( $coll->getChildren() as $element => $entry) {
+	    
+	        if (!$this->perm->isAllowed($entry->getId(),array('read_navi', 'read'))) {
+                    continue;
+                }
+                if ($GLOBALS['POOL']->config->advancedRedirect == 'true' AND $entry->getLocalName() == $this->rewriteFrom) {
+                    $this->rewrite = TRUE;
+                    continue;
+                }
             
-            $mt = $entry->getProperty("output-mimetype");
-            if ($mt == "httpd/unix-directory") {
-                $el = $this->dom->createElement("collection");
+                $mt = $entry->getProperty("output-mimetype");
+                if ($mt == "httpd/unix-directory") {
+                    $el = $this->dom->createElement("collection");
 
-                $displayName = $entry->getProperty('display-name', $displayNamePropertyNS);
-                $displayNameNode = $this->dom->createElement('display-name');
-		$displayNameNode->appendChild($this->dom->createTextNode(html_entity_decode($displayName, ENT_NOQUOTES, 'UTF-8')));
-                $el->appendChild($displayNameNode);
+                    $displayName = $entry->getProperty('display-name', $displayNamePropertyNS);
+                    $displayNameNode = $this->dom->createElement('display-name');
+		    $displayNameNode->appendChild($this->dom->createTextNode(html_entity_decode($displayName, ENT_NOQUOTES, 'UTF-8')));
+                    $el->appendChild($displayNameNode);
 
-            } elseif (in_array($mt, $this->mimetypes)) {
-                $el = $this->dom->createElement("resource");
-            } else {
-                continue;
+                } elseif (in_array($mt, $this->mimetypes)) {
+                   $el = $this->dom->createElement("resource");
+                } else {
+                    continue;
+                }
+            
+                foreach($this->properties as $prop) {
+                    $el->setAttribute($prop,$entry->getProperty($prop));   
+                }
+           	 
+                $this->fillElement($el, $entry, $coll->uri);
+                $newnode = $node->appendChild($el);
+                $newnode->setAttribute("level",$level); 
+                if ($entry->getLocalName() == $childUri) {
+                    $newnode->setAttribute("selected","selected");
+                    $nextnode = $newnode; 
+                } else if ($mt == "httpd/unix-directory" && $this->levelOpen && $level < $this->levelOpen) {
+		    //$this->insertChildren($entry,$el->appendChild($this->dom->createElement("items")),$level + 1);
+            
+		    $this->insertChildren($entry,$el->appendChild($this->dom->createElement("items")), $level + 1);
+	        }
             }
-            foreach($this->properties as $prop) {
-                $el->setAttribute($prop,$entry->getProperty($prop));   
-            }
-            
-            $this->fillElement($el, $entry, $coll->uri);
-            $newnode = $node->appendChild($el);
-            $newnode->setAttribute("level",$level); 
-            if ($entry->getLocalName() == $childUri) {
-                
-            
-                $newnode->setAttribute("selected","selected");
-                $nextnode = $newnode; 
-            } else if ($mt == "httpd/unix-directory" && $this->levelOpen && $level < $this->levelOpen) {
-                
-                 $this->insertChildren($entry,$el->appendChild($this->dom->createElement("items")),$level + 1);
-            }
-            
-            
-        }   
+        }
+   
         return $nextnode;
     }
     
