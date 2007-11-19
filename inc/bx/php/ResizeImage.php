@@ -465,7 +465,7 @@ $fd = fopen ($this->endImgFile,"w");
         $ok = false;
         $lastM = @filemtime($imageName);
         $this->lastModified = $lastM;
-        if ($lastM && (time() -  $lastM) < $expireTime) {
+        if ($lastM && (time() -  $lastM) < $expireTime && filesize($imageName) > 0) {
             $ok = true;
         } else {
             if ( basename($imageName) != md5($_SERVER['QUERY_STRING'])) {
@@ -495,6 +495,9 @@ $fd = fopen ($this->endImgFile,"w");
             }
             // 301 == redirect :)
             else if ( $req->getResponseCode() == 301) {
+                  copy(BX_PROJECT_DIR.'webinc/images/blank.gif',$imageName);
+                  $ok = true;
+            } else {
                   copy(BX_PROJECT_DIR.'webinc/images/blank.gif',$imageName);
                   $ok = true;
             }
