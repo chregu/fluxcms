@@ -478,6 +478,7 @@ $fd = fopen ($this->endImgFile,"w");
             $req = new HTTP_Request($grav_url,array("timeout" => 5));
             $req->addHeader("User-Agent",'Flux CMS HTTP Fetcher+Cacher $Rev: 2815 $ (http://flux-cms.org)');
             $req->sendRequest();
+            
             if( $req->getResponseCode() == 200) {
                 $img = $req->getResponseBody();
                 $fs = strlen($img);
@@ -499,7 +500,7 @@ $fd = fopen ($this->endImgFile,"w");
                   $ok = true;
             } else {
                   copy(BX_PROJECT_DIR.'webinc/images/blank.gif',$imageName);
-                  $ok = true;
+                  $ok = false;
             }
             if (!$ok) {
                 //if not ok (could not really download from gravatar)
@@ -532,6 +533,11 @@ $fd = fopen ($this->endImgFile,"w");
             $imgData = getimagesize($imageName);
         }
         $this->contentType = $imgData['mime'];
+        if (!empty($fs)) {
+            $this->fileSize = $fs;
+        } else {
+            $this->fileSize = filesize($imageName);
+        }
         return true;
    }
    
@@ -543,6 +549,9 @@ $fd = fopen ($this->endImgFile,"w");
       header("Last-Modified: ".  date('r',$this->lastModified));
       $now = time();
       header("Expires: ".  date('r',$now + ($now - $this->lastModified)));
+      if (!empty($this->fileSize)) {
+          header("Content-Length: ". $this->fileSize);
+      }
       if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
           $lastMod304 =  strtotime($_SERVER["HTTP_IF_MODIFIED_SINCE"]);
           if ($lastMod304 >= $this->lastModified) {
