@@ -21,7 +21,7 @@ Class bx_versioning_diff implements bx_versioning_interface {
 		}
 		
 		$db = $GLOBALS['POOL']->dbwrite;
-		$sQuery = 'INSERT INTO `fluxcms_history_diff` SET diff_path="' . $db->escape($path, true) . '", diff_value="' . $db->escape($diff,true) . '"';
+		$sQuery = 'INSERT INTO `' . $GLOBALS['POOL']->config->getTablePrefix() . 'history_diff` SET diff_path="' . $db->escape($path, true) . '", diff_value="' . $db->escape($diff,true) . '"';
 		$res = $db->query($sQuery);
 		
 		
@@ -39,7 +39,7 @@ Class bx_versioning_diff implements bx_versioning_interface {
     	
     	
     	// TODO: Subqueries for collections
-    	$sQuery = 'SELECT diff_path, diff_id, diff_timestamp, diff_value FROM fluxcms_history_diff WHERE diff_path = "' . $uri . '"ORDER BY diff_timestamp DESC';
+    	$sQuery = 'SELECT diff_path, diff_id, diff_timestamp, diff_value FROM ' . $GLOBALS['POOL']->config->getTablePrefix() . 'history_diff WHERE diff_path = "' . $uri . '"ORDER BY diff_timestamp DESC';
     	
     	
     	$res = $db->query($sQuery);
@@ -98,7 +98,7 @@ Class bx_versioning_diff implements bx_versioning_interface {
 
     	$db = $GLOBALS['POOL']->db;
     	
-    	$sQuery = 'SELECT diff_path, diff_id, diff_timestamp, diff_value FROM fluxcms_history_diff WHERE diff_path = (SELECT diff_path FROM fluxcms_history_diff WHERE diff_id = ' . $id . ') AND diff_timestamp >= (SELECT diff_timestamp FROM fluxcms_history_diff WHERE diff_id = ' . $id . ')'
+    	$sQuery = 'SELECT diff_path, diff_id, diff_timestamp, diff_value FROM ' . $GLOBALS['POOL']->config->getTablePrefix() . 'history_diff WHERE diff_path = (SELECT diff_path FROM ' . $GLOBALS['POOL']->config->getTablePrefix() . 'history_diff WHERE diff_id = ' . $id . ') AND diff_timestamp >= (SELECT diff_timestamp FROM ' . $GLOBALS['POOL']->config->getTablePrefix() . 'history_diff WHERE diff_id = ' . $id . ')'
     				. ' ORDER BY diff_timestamp DESC';
     	$res = $db->query($sQuery);
     	
