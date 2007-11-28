@@ -242,14 +242,16 @@ class bx_resources_file extends bx_resource {
         }
     }
     
-    public function onSave() {
+    public function onSave($old) {
         
         $vconfig = $GLOBALS['POOL']->config->getConfProperty('versioning');
+        
         if ($vconfig && !empty($vconfig)) {
             $vers = bx_versioning::versioning($vconfig);
+
             if ($vers) {
-                
-                $vers->commit($this->fulluri, '');
+            	$vers->setOld($old);
+                $vers->commit($this->props['fileuri'], $this->fulluri, '');
             }
         }
     }

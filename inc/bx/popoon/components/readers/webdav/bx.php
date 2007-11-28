@@ -49,15 +49,16 @@
             }
             //mysql_select_db($this->db_name) or die(mysql_error());
             // TODO throw on connection problems
-
-            
+			$old = file_get_contents(BX_DATA_DIR.$this->_urldecode(!empty($_SERVER["PATH_INFO"]) ? $_SERVER["PATH_INFO"] : "/"));
+			
             // let the base class do all the work
             parent::ServeRequest();
             // trigger onSave() handler
             $method = strtolower($_SERVER["REQUEST_METHOD"]);
+            
             if ($method == 'put' && (int) $this->_http_status >=200 && (int) $this->_http_status <205) {
                 if ($this->_bxResource && method_exists($this->_bxResource, 'onSave')) {
-                    $this->_bxResource->onSave();
+                    $this->_bxResource->onSave($old);
                 }      
             }
         }

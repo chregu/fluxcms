@@ -261,7 +261,7 @@ abstract class bx_resource implements bxIresource {
         }
     }
     
-    public function onSave() {
+    public function onSave($old) {
         return null;
     } 
     
@@ -303,6 +303,18 @@ abstract class bx_resource implements bxIresource {
 	             if ($perm->isAllowed($permId,array('collection-back-delete'))) {
 	             	$dom->addLink("Delete",'javascript:parent.navi.admin.deleteResource("'.$this->id.'");');
 	             }
+	         		
+	             $dom->addTab("History");
+
+	             // TODO: Check permissions
+	             
+	             $vconfig = $GLOBALS['POOL']->config->getConfProperty('versioning');
+
+        		 if ($vconfig && !empty($vconfig)) {
+	             	$dom->addLink("List", 'history'.$this->id);
+        		 }
+        		 
+        		 //$dom->addLink("Overview",'history'.$this->);
          }
     }
 }

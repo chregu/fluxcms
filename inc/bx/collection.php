@@ -285,10 +285,12 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
 
     public function handlePostById($id,$data, $mode = null) {
         $p = $this->getPluginMapById($id);
+        
+        $old = file_get_contents($this->getContentUriById($id,$this->uri));
         $return = $p['plugin']->handlePOST($this->uri,$id,$data,$mode);
         $r = $this->getChildResourceById($id);
         if ($r) {
-            $r->onSave();    
+            $r->onSave($old);    
         }
     
         return $return;
@@ -825,6 +827,7 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
 	            $dom->addLink("Delete",'javascript:parent.navi.admin.deleteResource("'.$this->uri.'",true);');
             }
         }
+        
 
         return $dom;
     }

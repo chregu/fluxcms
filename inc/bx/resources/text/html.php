@@ -181,7 +181,7 @@ class bx_resources_text_html extends bx_resource {
      }
         
 
-    public function onSave() {
+    public function onSave($old) {
         //filter tbody
         if (!empty($_GET['editor']) && $_GET['editor'] == 'fck') {
             $html = file_get_contents($this->props['fileuri']);
@@ -190,17 +190,20 @@ class bx_resources_text_html extends bx_resource {
                 file_put_contents($this->props['fileuri'],$html);
             }
         }
+        
         //versioning
         $vconfig = $GLOBALS['POOL']->config->getConfProperty('versioning');
-
+        
         if ($vconfig && !empty($vconfig)) {
             $vers = bx_versioning::versioning($vconfig);
 
             if ($vers) {
-                $vers->commit($this->props['fileuri'], '');
+            	$vers->setOld($old);
+                $vers->commit($this->props['fileuri'], $this->fulluri, '');
             }
         }
         
+		
         
         bx_metaindex::callIndexerFromFilename($this->props['fileuri'],$this->id);
     }

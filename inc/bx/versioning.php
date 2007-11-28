@@ -9,8 +9,8 @@ class bx_versioning {
     public static function versioning($driver='', $opts=array()) {
         switch($driver) {
             default:
-                return bx_versioning_svn::getInstance($opts);
-            break;
+                return bx_versioning_diff::getInstance($opts);
+            	break;
         }
     }
 
