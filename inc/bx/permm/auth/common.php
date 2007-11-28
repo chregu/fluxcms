@@ -93,18 +93,22 @@ abstract class bx_permm_auth_common {
      * @return  void
      */
     public function start() {
+        $prts = parse_url(BX_WEBROOT);
+        $path = $prts['path'];
+
         if (empty($_SESSION['_authsession']['registered']) && empty($_POST) && !empty($_COOKIE['fluxcms_login']) ) {
                 list($_POST['username'],$_POST['password']) = explode(":", $_COOKIE['fluxcms_login']);
         } elseif (!empty($_POST) && !empty($_POST['remember']) && !empty($_POST['username']) && !empty($_POST['password'])) {
                 $hash = $_POST['username'].':'.md5($_POST['username'].md5($_POST['password']));
                 if (! (isset($_COOKIE['fluxcms_login']) && $_COOKIE['fluxcms_login'] == $hash)) {
-                    setcookie('fluxcms_login',$hash, time() + 3600*24*365,"/",null,null,true);
+                    setcookie('fluxcms_login',$hash, time() + 3600*24*365, $path ,null,null,true);
                     $_COOKIE['fluxcms_login'] = $hash;
                 }
         }
         $this->authObj->assignData();
         $u = $this->specialEncode($this->authObj->username);
         $p = $this->specialEncode($this->authObj->password);
+        ini_set('session.cookie_path', $path);
         @session_start();
         if (!$this->authObj->checkAuth() && $this->authObj->showLogin) {
             $this->authObj->login();
