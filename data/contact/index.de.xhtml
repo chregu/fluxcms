@@ -1,15 +1,28 @@
-<html xmlns:bx="http://bitflux.org/doctypes/bx" xmlns="http://www.w3.org/1999/xhtml" xmlns:forms="http://bitflux.org/forms" xmlns:php="http://php.net/xsl" xmlns:patForms="http://php-tools.net/patForms/1.0" xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns:xi="http://www.w3.org/2001/XInclude">
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns:bx="http://bitflux.org/doctypes/bx"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:forms="http://bitflux.org/forms"
+        xmlns:php="http://php.net/xsl"
+        xmlns:patForms="http://php-tools.net/patForms/1.0"
+        xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
+        xmlns:xi="http://www.w3.org/2001/XInclude"
+>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Prototype Test</title>
         
     </head>
-    
-<body xmlns="http://www.w3.org/1999/xhtml"><div id="content" xmlns="http://www.w3.org/1999/xhtml">
-<h3><br/>
-</h3>
-<p>             Bitte benutzen Sie dieses Formular, um uns zu kontaktieren oder uns eine Nachricht zukommen zu lassen.             </p>
-<forms:errors xmlns:forms="http://bitflux.org/forms">
-</forms:errors>
-<div class="form">                 <xi:include parse="xml" href="index.en.xhtml#xmlns(xhtml=http://www.w3.org/1999/xhtml)xpointer(//xhtml:body//xhtml:div[@name='contactform'])" xmlns:xi="http://www.w3.org/2001/XInclude">             </xi:include></div>
-</div></body></html>
+    <body>
+        <div id="content">
+            <h3>Kontaktieren Sie uns</h3>
+            <p>
+            Bitte benutzen Sie dieses Formular, um uns zu kontaktieren oder uns eine Nachricht zukommen zu lassen.
+            </p>
+
+            <forms:errors/>
+            <div class="form">
+                <xi:include href="index.en.xhtml#xmlns(xhtml=http://www.w3.org/1999/xhtml)xpointer(//xhtml:body//xhtml:div[@name='contactform'])" parse="xml"/>
+            </div>
+        </div>
+    </body>
+</html>
