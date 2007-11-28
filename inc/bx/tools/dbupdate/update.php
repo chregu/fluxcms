@@ -388,6 +388,21 @@ if ($lastVersion < 8823) {
 
 }
 
+if ($lastVersion < 9242) {
+	$res = doQuery("
+CREATE TABLE `".$tablePrefix."history_diff` (
+  `diff_id` bigint(20) NOT NULL auto_increment,
+  `diff_timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `diff_path` varchar(255) NOT NULL default '',
+  `diff_value` text NOT NULL,
+  PRIMARY KEY  (`diff_id`),
+  KEY diff_path (diff_path),
+  KEY diff_timestamp (diff_timestamp)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;", false);
+	
+	updateLastVersion(9242);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
