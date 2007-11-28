@@ -19,8 +19,9 @@
     <sitename allowFromDB="true">Flux CMS Demo</sitename>
     <sitedescription allowFromDB="true">This is my Flux CMS Site</sitedescription>
     
-    
-    <!-- The Blog can have a different name than the site, if not set, sitename is taken -->     
+    <!-- Versioing Support -->
+    <!-- <versioning>diff</versioning> -->
+	<!-- The Blog can have a different name than the site, if not set, sitename is taken -->     
     <blogname allowFromDB="true"></blogname>
     <!-- you can have a description for the Blog RSS , if not set sitedescription is taken -->        
     <blogdescription allowFromDB="true"></blogdescription>        
