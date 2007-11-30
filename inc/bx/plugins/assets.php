@@ -20,7 +20,7 @@ class bx_plugins_assets extends bx_plugin implements bxIplugin {
         $this->lang = $GLOBALS['POOL']->config->getOutputLanguage();
     }
 
-    public function getInstance($mode) {
+    static public function getInstance($mode) {
         if (!self::$instance instanceof bx_plugins_assets) {
             self::$instance = new bx_plugins_assets($mode);
         }    
