@@ -60,9 +60,11 @@ class bx_plugins_admin_history extends bx_component implements bxIplugin {
     
     public function getContentById ($path, $id) {
     	$vconfig = $GLOBALS['POOL']->config->getConfProperty('versioning');
-    	
         if ($vconfig && !empty($vconfig)) {
     		$v = bx_versioning::versioning($vconfig);
+    		if(!$v instanceof bx_versioning_interface) {
+                throw new Exception("Unable to load versioning support (no driver available).");
+    		}
 			return $v->getListById($id);
         }
     }
