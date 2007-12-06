@@ -164,59 +164,72 @@
     <xsl:template match="items/collection| plugin/collection">
         <xsl:variable name="items" select="items/*[(not(@lang) or @lang=$lang) and (not(filename) or filename!='index') and display-order > 0]"/>
         <xsl:if test="$items">
-
-            <ul>
-
-                <xsl:for-each select="$items">
-                    <xsl:sort select="display-order" order="ascending" data-type="number"/>
-                    <xsl:variable name="link">
-                        <xsl:choose>
-                            <xsl:when test="@relink">
-                                <xsl:value-of select="@relink"/>
-                            </xsl:when>
-                            <xsl:when test="local-name()='collection'">
-                                <xsl:if test="not(starts-with(uri,'http://') or starts-with(uri,'https://') )">
-                                    <xsl:value-of select="$webrootLangW"/>
-                                </xsl:if>
-                                <xsl:value-of select="uri"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="concat($webrootLangW,../../uri,filename)"/>.html</xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:variable>
-
-                    <li>
-                    
-                        <a href="{$link}">
-                            <xsl:if test="filename=$filename or @selected='selected'">
-                                <xsl:attribute name="class">selected</xsl:attribute>
-                            </xsl:if>
-                            <xsl:value-of select="title"/>
-                        </a>
-                        <!-- uncomment the following, if you want a counter for 
-                                the number of posts per category on blog pages 
-                             You also have to adjust the blog.xsl.
-                             See http://wiki.bitflux.org/How_to_show_number_of_posts_in_a_category
-                             for details
-                             
-                         -->
-                         <!--
-                        <xsl:if test="@count">
-                                [<xsl:value-of select="@count"/>]
-                        </xsl:if>
-                        -->
-                    </li>
-
-                    <xsl:if test="local-name()='collection' and ( @selected = 'selected')">
-                        <xsl:apply-templates select="."/>
-                    </xsl:if>
-
-                </xsl:for-each>
-            </ul>
+            <xsl:call-template name="doCollection">
+                <xsl:with-param name="items" select="$items"/>
+            </xsl:call-template>
         </xsl:if>
-
     </xsl:template>
 
+    <xsl:template name="doCollection">
+        <xsl:param name="items"/>
+        
+        <ul>
+            <xsl:for-each select="$items">
+                <xsl:sort select="display-order" order="ascending" data-type="number"/>
+                <xsl:variable name="link">
+                    <xsl:choose>
+                        <xsl:when test="@relink">
+                            <xsl:value-of select="@relink"/>
+                        </xsl:when>
+                        <xsl:when test="local-name()='collection'">
+                            <xsl:if test="not(starts-with(uri,'http://') or starts-with(uri,'https://') )">
+                                <xsl:value-of select="$webrootLangW"/>
+                            </xsl:if>
+                            <xsl:value-of select="uri"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat($webrootLangW,../../uri,filename)"/>.html</xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                
+                <li>
+                    
+                    <a href="{$link}">
+                        <xsl:if test="filename=$filename or @selected='selected'">
+                            <xsl:attribute name="class">selected</xsl:attribute>
+                        </xsl:if>
+                        <xsl:value-of select="title"/>
+                    </a>
+                    <!-- uncomment the following, if you want a counter for 
+                        the number of posts per category on blog pages 
+                        You also have to adjust the blog.xsl.
+                        See http://wiki.bitflux.org/How_to_show_number_of_posts_in_a_category
+                        for details
+                        
+                    -->
+                    <!--
+                        <xsl:if test="@count">
+                        [<xsl:value-of select="@count"/>]
+                        </xsl:if>
+                    -->
+                    <xsl:if test="local-name()='collection' and ( @selected = 'selected')">
+                        <xsl:variable name="items" select="items/*[(not(@lang) or @lang=$lang) and (not(filename) or filename!='index') and display-order > 0]"/>
+                        <xsl:if test="$items">
+                            <li>
+                                <xsl:call-template name="doCollection">
+                                    <xsl:with-param name="items" select="$items"/>
+                                </xsl:call-template>
+                            </li>
+                        </xsl:if>
+                    </xsl:if>
+                </li>
+                
+                
+            </xsl:for-each>
+        </ul>
+        
+    </xsl:template>
+    
     <xsl:template name="topnavi">
 
         <xsl:for-each select="$navitreePlugin/collection/items/collection[display-order != 0]">
