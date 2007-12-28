@@ -92,9 +92,9 @@
 
             <input type="text" id="livesearch" name="q" size="15" accesskey="1" tabindex="1" onkeypress="liveSearchStart()"/>
             <div id="LSResult" style="display: none;">
-                <ul id="LSShadow">
-                    <li>&#160;</li>
-                </ul>
+                <div id="LSShadow">
+                
+                </div>
             </div>
         </form>
     </xsl:template>

@@ -89,7 +89,12 @@ class bx_plugins_blog_categories {
        $dom = new DomDocument();
        $parent = $dom;
        foreach($rows as $row) {
-        
+            
+            // Skip categories containing no-, or only posts without sufficient perms. 
+            if (!isset($catCount[$row['id']]) || $catCount[$row['id']][0] <= 0) {
+                continue;
+            }
+            
             if ($row['status'] != 1) {continue;}
             if ($row['level'] == 1 ) {
                 $roottitle = $row['name'];
@@ -119,7 +124,9 @@ class bx_plugins_blog_categories {
                 }
                 
             }
-            if (strpos($cat,$row['fulluri']) === 0) {
+            
+            if (strpos($cat,$row['fulluri']) === 0 ||
+                ($cat === "" && $row['fulluri'] === "root")) {
                 $coll->setAttribute("selected","selected");
             } else {
                 $coll->setAttribute("selected","all");
@@ -135,7 +142,11 @@ class bx_plugins_blog_categories {
             $oldlevel = $row['level'];
         }
         $coll = $dom->createElement("collection");
-        $coll->setAttribute("selected","all");
+        if ($cat === "") {
+            $coll->setAttribute("selected", "selected");
+        } else {
+            $coll->setAttribute("selected","all");
+        }
         if (isset($roottitle)) {
             $titel = $dom->createElement("title",htmlspecialchars($roottitle));
         } else {
@@ -150,6 +161,7 @@ class bx_plugins_blog_categories {
         for ($i = 2; $i < $oldlevel;$i++) {
             $parent = $parent->parentNode->parentNode;
         }
+        
         $parent->insertBefore($coll,$parent->firstChild);
         return $dom;
     }
