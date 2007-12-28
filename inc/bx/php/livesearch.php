@@ -50,7 +50,7 @@ if (strlen($search) > 3) {
 $ret = "<?xml version='1.0' encoding='utf-8'  ?><ul class='LSRes'>";
 //$ret .= '<div class="LSHead">result for '.$search."</div>";
 if ($res->numRows() == 0) {
-    $ret .= '<div xmlns="http://www.w3.org/1999/xhtml" class="resultRow">Nothing found (neither in title nor fulltext)</div>';
+    $ret .= '<li class="resultRow">Nothing found (neither in title nor fulltext)</li>';
 } else {
     while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC) ) {
 	if  (!$db->isUtf8) {
