@@ -407,7 +407,7 @@ class bx_plugins_comments extends bx_plugin implements bxIplugin {
         //   $xml .= '<p style="color:red;">'.$this->newCommentError.'</p>';
         //}
             $xml = '<form name="bx_foo" action="'.$_SERVER['REQUEST_URI'].'#commentform" method="post">
-               <table class="form" style="margin-left:25px;" border="0" cellspacing="0" cellpadding="0" id="commentform">
+               <table class="form" border="0" cellspacing="0" cellpadding="0" id="commentform">
                <tr>
                <td valign="top"><i18n:text i18n:key="blogCommentName">Name</i18n:text>*</td>
                <td class="formHeader" valign="middle"><input class="formgenerell" type="text" name="name" id="name" value="'.$data['name'].'"/></td>

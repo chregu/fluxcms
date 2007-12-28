@@ -1016,7 +1016,7 @@ if(MDB2::isError($res)){
             $xml .= '<p style="color:red;">'.$this->newCommentError.'</p>';
         }
             $xml .= '<form name="bx_foo" action="'.$posturipath.'#commentform" method="post">
-               <table class="form" style="margin-left:25px;" border="0" cellspacing="0" cellpadding="0" id="commentform">
+               <table class="form" border="0" cellspacing="0" cellpadding="0" id="commentform">
                <tr>
                <td valign="top"><i18n:text i18n:key="blogCommentName">Name</i18n:text>*</td>
                <td class="formHeader" valign="middle"><input class="formgenerell" type="text" name="name" id="name" value="'.$data['name'].'"/></td>
