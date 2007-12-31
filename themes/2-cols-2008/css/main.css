@@ -1,0 +1,382 @@
+/* ... IN VALID CODE WE TRUST ...http://www.intensivstation.ch */
+/* css created by miss monorom 2008 http://www.monorom.to */
+/* This css is made specialy for BX-CMS  */
+/* css released under Creative Commons License - http://creativecommons.org/licenses/by/2.0/deed.en  */
+
+/* @import url(bx-additions.css); */
+
+/*body element, you can overwrite that with a custom stylesheet for example in mozilla*/
+
+#ng_bitflux_org, body {
+background-color: #ffffff;
+font-size: 13px;
+font-family:  'Lucida Grande', Verdana, Arial, sans-serif;
+color:#363F47;  
+padding: 0;
+margin: 0;
+}
+
+/* for iePC */ td{
+font-size: 13px;
+}
+
+a {color: #778899;}
+a:visited {color:#778899;}
+a:hover {color: #ff3300;}
+a:active { color:#778899;}
+
+h1{ font-size:18px; }
+h2{ font-size:16px; }
+h3{ font-size:14px; }
+h4{ font-size:12px; }
+
+form{
+padding: 0;
+margin: 0;
+
+}
+
+.form{
+padding: 0;
+margin: 5px 50px 15px 50px;
+}
+
+.captcha {
+width:100px;
+border: 1px solid #aaaaaa; 
+margin-top: 5px;
+padding: 2px;
+}
+
+textarea, .formgenerell input, input.formgenerell {
+width:300px;
+border: 1px solid #aaaaaa; 
+margin-top: 5px;
+padding: 2px;
+}
+
+.formbutton {
+width:100px;
+border: 1px solid #aaaaaa; 
+}
+
+/* patforms filter */
+.formErrors {
+    margin: 5px 25px 25px 25px;
+    padding: 5px 5px 5px 5px;
+    border: 1px solid ;
+    background-color: #FFBBBB;
+}
+
+.formlabelerror {
+    color: #BB1111;
+    font-weight: bold;
+}
+
+
+/* head container for logo and metanavi
+-------------------------------------- */
+#banner {
+padding: 0;
+margin: 0;
+background-color: #778899;
+}
+#metanavi { 
+text-align: right;
+width: 920px;
+margin: 0 auto;
+padding: 5px 0 0 0;
+}
+
+#banner a{
+color: #DDE5EE;
+text-decoration:none; }
+#banner  a:hover {color: #ffffff;}
+
+#banner h1 {
+font-size: 30px;
+width: 920px;
+margin: 0 auto;
+padding: 30px 0 0 0;
+}
+#banner h2{
+width: 920px;
+margin: 0 auto;
+color: #ffffff;
+padding: 5px 0 25px;
+}
+
+/*main-navi
+-------------------------------------- */
+#topnavi {
+background-color: #363F47;
+margin: 0;
+padding:0;
+}
+
+#topnavi ul { 
+list-style-type: none;
+width: 920px;
+margin: 0 auto;
+padding: 3px 0;
+}
+#topnavi li { 
+display: inline;
+/* float: left; */
+margin: 0 ;
+padding: 0;
+}
+
+#topnavi a { 
+color: #DDE5EE;
+text-decoration: none; 
+padding: 3px 15px;
+}
+#topnavi a:visited {color:#DDE5EE;}
+#topnavi a:hover {color: #ffffff;}
+#topnavi a:active { color:#778899;}
+
+#topnavi a.selected, #topnavi a.selected:visited {
+background-color: #ffffff;
+color: #363F47;
+}
+
+/* container to center the layout
+-------------------------------------- */
+#container {
+width: 920px;
+border-left: 1px solid #778899;
+border-right: 1px solid #778899;
+margin: 0 auto 20px auto;
+background-color: #DDE5EE;
+}
+
+
+/* content elements
+-------------------------------------- */
+#content {
+min-height: 450px;
+padding: 25px  0;
+margin:0 220px 0 0;
+background-color: #ffffff;
+}
+
+#content h1, #content h2, #content h3, #content h4 {
+padding: 0 50px;
+margin:0 0 15px 0;
+}
+#content p{
+line-height: 19px;
+padding: 0 50px;
+margin:0 0 15px;
+}
+#content ul{
+padding: 0 50px 0 75px;
+margin:0 0 15px ;
+}
+#content p.center{
+text-align:center;
+}
+/* elements for the gallery
+-------------------------------------- */
+#content #gallerie{
+float:left;
+padding: 0 0 10px 50px;
+margin:0 0 20px;
+}
+ 
+#content .thumbnail{
+float:left;
+width:100px;
+margin: 15px 15px 0 0;
+padding: 0;
+}
+#content .thumbnail img{
+border: 1px solid #778899;
+padding: 1px;
+}
+
+#content  br.antileft {
+clear: left;
+}
+.antifloat {
+clear: both;
+visibility: hidden;
+}
+
+/* elements for the gallery_preview-plugin
+--------------------------------------------*/
+gallerie_preview{
+padding: 0 10px 10px 25px;
+margin:0 20px 20px;
+border: 1px solid #778899;
+}
+
+#gallerie_preview .thumbnail{
+float:left;
+width:100px;
+margin: 10px 10px 0 0;
+padding: 0;
+}
+#gallerie_preview .thumbnail img{
+border: 1px solid #778899;
+padding: 1px;
+}
+
+#gallerie_preview_navi {margin-top: 10px;}
+#gallerie_preview_info {margin-top: 10px; visibility: visible;}
+
+/* elements for left and right navigation
+-------------------------------------- */
+#right {
+float: right;
+font-size: 12px;
+width: 220px;
+margin: 0;
+padding: 0;
+}
+
+#right p{
+padding: 0 15px 15px 25px;
+margin: 0;
+}
+#right a { text-decoration: none; color:#363F47; }
+
+#right ul {
+list-style-type: none;
+margin: 0 25px;
+padding: 0;
+} 
+#right li { margin-bottom: 8px; }
+
+ul#subnav {
+margin: 0;
+padding: 25px 0;
+background-color: #D6E0E2;
+}
+ul#subnav li a {display: block; margin: 0 25px 8px 25px; }
+ul#subnav li li a{ margin: 8px 0 8px 25px; }
+ul#subnav a.selected { 
+font-weight: bold;
+color: #000000;}
+
+#right h3{
+margin: 0 0 10px;
+padding: 25px 0 0 25px;
+}
+
+/*footer
+-------------------------------------- */
+#footer {
+clear: both;
+color: #ffffff;
+margin: 0;
+padding: 3px 15px;
+background-color: #363F47;
+}
+#footer a {color: #DDE5EE;}
+
+/* just used vor the blog
+-------------------------------------- */
+#content .post_title {
+border-bottom: 1px solid #778899;
+margin: 0 50px 3px;
+padding: 0 0 5px;
+}
+#content .post_title a{
+text-decoration: none;
+}
+
+.post_meta_data {
+font-size: 11px;
+padding-top: 0;
+margin: 5px 50px 15px;
+}
+.right {float: right;}
+
+.post_content {
+line-height: 19px;
+padding-top: 0;
+margin: 5px 50px 15px;
+}
+#content .post_content p{
+padding: 0 0 15px 0;
+margin: 0;
+}
+
+.post_content_extended {
+line-height: 18px;
+padding-top: 0;
+margin: 5px 50px 15px;
+}
+
+#content .post_content_extended p{
+	padding: 0 0 15px;
+	margin: 0;
+}
+
+.post_more { float: left;}
+
+h3.blog {margin: 0 0 5px;}
+
+#right  h3.blog {
+background-image: none;
+color: #333;
+margin: 0;
+margin-bottom: 5px;
+}
+.post_links, .post_tags, .post_related_entries  {
+text-align: right;
+font-family: Verdana, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif;
+font-size: 10px;
+padding: 0 50px 20px;
+margin: 0;
+}
+
+.post_tags, .post_related_entries {padding-bottom: 10px;}
+
+.blog_pager{
+padding-top: 0px;
+margin: 5px 50px 15px
+}
+
+#right .blog li {
+line-height:  15px;
+padding: 0px 15px 3px 25px;
+margin: 0;
+text-indent: -1em;
+}
+
+.blog_gravatar {
+    float: right;
+    padding-left: 5px;
+}
+
+#livesearch {
+margin: 0px 15px 15px 25px;
+padding: 0;
+display: block;
+}
+#right input#livesearch  {
+padding:1px;
+width: 120px;
+border: 1px solid #aaaaaa; 
+}
+
+.formurl {display: none;}
+
+/* loginform */
+
+#littleLogin  input.input{
+    font-size: 11px;
+    width: 120px;
+}
+
+#littleLogin input {
+    font-size: 11px;
+    background-color: #f3f3f3;
+    border: 1px solid #555555;
+    margin-top: 3px;
+}
+
+#littleLogin { margin-left: 25px; }
