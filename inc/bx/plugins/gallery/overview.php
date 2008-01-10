@@ -85,26 +85,28 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
      *
      */
     protected function getAlbums($dir) {
+        //echo $dir."<br />";
         $handle = opendir ($dir);
         while (false !== ($file = readdir ($handle))){
+            //echo " -- ".$file."<br />";
             if ((is_dir($dir."/".$file)) AND ($file != "."AND $file != ".." AND $file != '.svn')){
 
                 $info = $this->getPictureInformation($dir."/".$file);
+
                 //skip if no pictures are found
-                if($info === false) {
-                    continue;
+                if($info !== false) {
+
+                    $time = $info['latestPictureDate'];
+
+                    //prevent overwriting existing album
+                    while(isset($this->dirCreatetimeMap[$time])) {
+                        $time++;
+                    }
+                    //create full picture-path to the picture (makex xsl easier ;))
+                    $info['showPicture'] = $info['picturePath'].$info[$this->pictureMode.'Picture'];
+                    $this->dirCreatetimeMap[$time] = $info;
                 }
 
-                $time = $info['latestPictureDate'];
-
-                //prevent overwriting existing album
-                while(isset($this->dirCreatetimeMap[$time])) {
-                    $time++;
-                }
-
-                //create full picture-path to the picture (makex xsl easier ;))
-                $info['showPicture'] = $info['picturePath'].$info[$this->pictureMode.'Picture'];
-                $this->dirCreatetimeMap[$time] = $info;
                 $this->getAlbums($dir."/".$file);
             }
         }
