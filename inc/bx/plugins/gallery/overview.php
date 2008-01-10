@@ -17,11 +17,11 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
 
 
     static private $instance = array();
-    private $dirCreatetimeMap = array();
-    private $DirReplacer = '';
-    private $galleryPath = '/';
-    private $pictureMode = 'random';
-    private $virtualPath = '';
+    protected $dirCreatetimeMap = array();
+    protected $DirReplacer = '';
+    protected $galleryPath = '/';
+    protected $pictureMode = 'random';
+    protected $virtualPath = '';
 
     public static function getInstance($mode) {
         if (!isset(self::$instance[$mode])) {
@@ -63,7 +63,7 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
         return @domdocument::loadXML($xml);
     }
 
-    private function arrayToXMLstring($array) {
+    protected function arrayToXMLstring($array) {
         $xml = '';
         foreach($array as $key => $val) {
             if(is_array($val)) {
@@ -84,7 +84,7 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
     /**
      *
      */
-    private function getAlbums($dir) {
+    protected function getAlbums($dir) {
         $handle = opendir ($dir);
         while (false !== ($file = readdir ($handle))){
             if ((is_dir($dir."/".$file)) AND ($file != "."AND $file != ".." AND $file != '.svn')){
@@ -111,7 +111,7 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
         closedir($handle);
     }
 
-    private function getPictureInformation($dirName) {
+    protected function getPictureInformation($dirName) {
 
         $dir = new ImageDirectoryIterator($dirName);
         $pictureCount = 0;
