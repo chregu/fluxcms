@@ -21,7 +21,12 @@
             descr="Groups">
             
             <dbform:datasource type="foreign" namefield="name" idfield="id" table="groups" />
-            <dbform:liveselect namefield="name" idfield="id" wherefields="name" table="groups"  limit="25"/>
+            <dbform:liveselect 
+                namefield="name" 
+                idfield="id" 
+                wherefields="name" 
+                table="groups" 
+                where="name != 'anonymous' AND name != 'authenticated'"/>
 
         </dbform:field>
 

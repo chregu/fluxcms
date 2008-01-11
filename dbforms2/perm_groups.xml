@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
-<dbform:form 
-    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
->
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
 
     <dbform:fields table="groups">
-
         <dbform:field name="name" type="text" descr="Name"/>
-        
     </dbform:fields>    
-    <dbform:chooser namefield="concat(name,' (',id,')')" wherefields="name" limit="50"/>    
+
+    <dbform:chooser 
+        namefield="concat(name,' (',id,')')" 
+        wherefields="name" 
+        limit="50"
+        where="name != 'anonymous' AND name != 'authenticated'"/>
 
 </dbform:form>
