@@ -12,6 +12,15 @@
     <xsl:param name="numCols" select="4"/>
 
 
+    <xsl:template name="gallery_header">
+        <xsl:param name="gallery" select="''"/>
+
+        <h1>
+            <xsl:value-of select="$gallery/parentName" />
+        </h1>
+    </xsl:template>
+
+
     <xsl:template name="gallery_displayGallery">
         <xsl:param name="gallery" select="''"/>
 
@@ -29,6 +38,14 @@
                             </xsl:attribute>
                         </img>
                     </a>
+
+                    <a class="gallery">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="link" />
+                        </xsl:attribute>
+                        <xsl:value-of select="displayName" />
+                    </a>
+
                 </div>
 
                 <xsl:if test="position() mod $numCols = 0">
