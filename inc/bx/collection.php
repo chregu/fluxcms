@@ -511,6 +511,10 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
         
         //inform plugins, that collection moved
         
+        // inform permission management that collection has beem moved:
+        $permObj = bx_permm::getInstance(bx_config::getInstance()->getConfProperty('permm'));
+        $permObj->movePermissions($this->uri, $to);
+
         return true;
     }
     

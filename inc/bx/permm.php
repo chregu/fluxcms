@@ -166,14 +166,23 @@ Class bx_permm {
     }
     
     public function checkPassword($password) {
-        
         return $this->authObj->checkPassword($password);
     }
-    
-    
-   
+
+    /**
+     * movePermissions() is called, when a colleciton is moved
+     * 
+     * @param mixed $from_uri 
+     * @param mixed $to_uri 
+     * @return void
+     */
+    public function movePermissions($from_uri, $to_uri)
+    {
+        if ($this->permObj && method_exists($this->permObj, "movePermissions")) {
+            $this->permObj->movePermissions($from_uri, $to_uri);
+        }
+        return NULL;
+    }
     
 }
-
-
 ?>
