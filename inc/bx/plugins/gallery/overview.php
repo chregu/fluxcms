@@ -42,6 +42,9 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
 
         $this->galleryPath = $path;
 
+        $coll = bx_collections::getCollection($path);
+        $parentName = $coll->getDisplayName();
+
         $currentDir = $this->getVirtualGalleryRoot($path);
         $this->virtualPath =  $currentDir;
         $currentDir = BX_PROJECT_DIR.$currentDir;
@@ -57,7 +60,7 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
         foreach($this->dirCreatetimeMap as $album) {
             $xml .= "<album>".$this->arrayToXMLstring($album)."</album>";
         }
-        $xml = "<overview>$xml</overview>";
+        $xml = "<overview><parentName>$parentName</parentName>$xml</overview>";
 
         //and send back as dom
         return @domdocument::loadXML($xml);
