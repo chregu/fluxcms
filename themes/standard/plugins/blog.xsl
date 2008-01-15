@@ -624,8 +624,8 @@ var commentButtonName      = "bx_plugins_blog_all";
 
     <xsl:template name="plazeLongLat">
         <xsl:param name="plazes"/>
-        (<span class="latitude"><xsl:value-of select="format-number($plazes/blog:plazelat,'#.000')"/></span>,
-         <span class="longitude"><xsl:value-of select="format-number($plazes/blog:plazelon,'#.000')"/></span>)
+        (<a href="http://maps.google.com/maps?q={$plazes/blog:plazelat},{$plazes/blog:plazelon}"><span class="latitude"><xsl:value-of select="format-number($plazes/blog:plazelat,'#.000')"/></span>,
+         <span class="longitude"><xsl:value-of select="format-number($plazes/blog:plazelon,'#.000')"/></span></a>)
     </xsl:template>
 
     <xsl:template match="xhtml:div[@id = 'captcha']" mode="xhtml">
