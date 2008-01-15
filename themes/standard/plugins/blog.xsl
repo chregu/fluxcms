@@ -576,7 +576,7 @@ var commentButtonName      = "bx_plugins_blog_all";
         <xsl:param name="blogInfo"/>
         <xsl:if test="$blogInfo/blog:plazes">
 
-            <div class="post_tags">
+            <div class="post_tags geo">
                 <xsl:call-template name="plaze">
                     <xsl:with-param name="blogInfo" select="$blogInfo"/>
                 </xsl:call-template>
@@ -624,8 +624,8 @@ var commentButtonName      = "bx_plugins_blog_all";
 
     <xsl:template name="plazeLongLat">
         <xsl:param name="plazes"/>
-        (<xsl:value-of select="format-number($plazes/blog:plazelat,'#.000')"/>,
-         <xsl:value-of select="format-number($plazes/blog:plazelon,'#.000')"/>)
+        (<span class="latitude"><xsl:value-of select="format-number($plazes/blog:plazelat,'#.000')"/></span>,
+         <span class="longitude"><xsl:value-of select="format-number($plazes/blog:plazelon,'#.000')"/></span>)
     </xsl:template>
 
     <xsl:template match="xhtml:div[@id = 'captcha']" mode="xhtml">
