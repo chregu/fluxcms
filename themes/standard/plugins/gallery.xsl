@@ -341,7 +341,7 @@
                     <a href="{$gallery_collUri}{@name}">
                     <xsl:value-of select="@name"/>
                     <br/>
-                        <img alt="preview" src="/{$path}{@name}/{@preview}" width="150px"/>
+                        <img alt="preview" src="{$webroot}{$path}{@name}/{@preview}" width="150px"/>
                     </a>
                 </div>
             </xsl:if>
