@@ -62,10 +62,10 @@ $queries[] = "CREATE TABLE `".$tablePrefix."mail_queue` (
 
 $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_drafts` (
   `from` varchar(100) NOT NULL,
-  `subject` varchar(100) NOT NULL,
-  `htmlfile` varchar(50) NOT NULL,
-  `textfile` varchar(50) NOT NULL,
-  `attachment` varchar(150) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `htmlfile` varchar(255) NOT NULL,
+  `textfile` varchar(255) NOT NULL,
+  `attachment` varchar(255) NOT NULL,
   `sent` timestamp NOT NULL default '0000-00-00 00:00:00',
   `prepared` timestamp NOT NULL default '0000-00-00 00:00:00',
   `ID` int(10) unsigned NOT NULL auto_increment,
@@ -153,16 +153,16 @@ $queries[] = "CREATE TABLE `".$tablePrefix."newsletter_cache` (
   `status` tinyint(4) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-/*
 
+/*
 foreach($queries as $query){
     $res = $db->query($query);
     if ($db->isError($res)) {
         "installation failed, please report to chregu@flux-cms.org";    
          printError($res);
     }
-}*/
-
+}
+*/
 print "</pre>";
 echo "<h1>Success ;)</h1>";
 echo "<p>Newsletter-Plugin-Tables successfully created. Please also adjust the .configxml to your environement.</p>";
