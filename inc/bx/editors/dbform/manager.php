@@ -513,7 +513,7 @@ class bx_editors_dbform_manager {
                     $fields = $this->config->getValues( $this->configRoot."/fields");
                     $table = $fields['table'];
                     $this->db->loadModule("extended");
-                    $res = $this->db->extended->getOne("select $rang from ".$this->tablePrefix."$table where $rang = ".($this->http_vars[$name] ). " and ". $this->idField . " != " .$this->http_vars[$this->idField]);
+                    $res = $this->db->queryOne("select $rang from ".$this->tablePrefix."$table where $rang = ".($this->http_vars[$name] ). " and ". $this->idField . " != " .$this->http_vars[$this->idField]);
                     if ($res || $this->http_vars[$name] == 0) {
                         if ($this->http_vars[$this->idField]) {
                             $moveby = 1;
