@@ -49,32 +49,33 @@
 class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
 	protected $id 			= null;
-	protected $path 		= null;	
-	
+	protected $path 		= null;
+
 	protected $db 			= null;
 	protected $totalItems 	= null;
-	
+
 	protected $pageTitle 	= '';
-	
+
 	protected $tablePrefix  = '';
 	protected $itemsPerPage	= 20;
-	
+
 	protected $currentPage  = 1;
 	protected $view			= 'splash';
-	
-	
+
+
 	protected $isLoggedIn 	= false;
 	static public $instance = array();
-	
+
 
 	protected $cache4tags	= '';
-	
+
 	/**
 	 * getInstance
 	 *
 	 * returns an instance of the plugin
 	 *
 	 * @param mode not used until now.
+	 * @return bx_plugins_linklog
 	 *
 	 */
 	public static function getInstance($mode) {
@@ -86,13 +87,13 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
 	// this gets called on every instance of the class
 	protected function __construct($mode) {
-		
+
 		$this->db 		 		= $GLOBALS['POOL']->db;
 		$this->tablePrefix 		= $GLOBALS['POOL']->config->getTablePrefix();
 		$this->mode 			= $mode; // ??
 		$this->cache4tags		= BX_TEMP_DIR."/". $this->tablePrefix."linklog_tags.cache";
 		$this->setLoginStatus();
-		
+
 	}
 
 	/*
@@ -127,25 +128,25 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 */
 	public function getContentById($path, $id) {
 		$this->path		   = $path;
-		$this->id		   = $id;		
-		
+		$this->id		   = $id;
+
 		$this->currentPage = $this->getCurrentPage($_GET);
 		$this->setView();
-		
-		return $this->getView();		
+
+		return $this->getView();
 
 	}
-	
+
 	/**
 	 * Sets the view depending on the URL
-	 * 
+	 *
 	 * @return void
 	 * */
 	private function setView(){
 		$dirname = dirname($this->id);
-		
+
 		if(strpos($this->id, 'plugin=') === 0){
-			
+				
 			$this->view = 'plugin';
 		}elseif(strpos($dirname, 'archive') === 0){
 			$this->view = 'archive';
@@ -156,14 +157,14 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		}else{
 			$this->view = 'tags';
 		}
-		
+
 	}
-	
+
 	/**
-	* Fetches the content depending on the URL
-	*  
-	* return DOMObject
-	* */
+	 * Fetches the content depending on the URL
+	 *
+	 * return DOMObject
+	 * */
 	private function getView(){
 		$params = dirname($this->id);
 		switch($this->view){
@@ -186,7 +187,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 				return $this->getSplash();
 		}
 	}
-	
+
 	/**
 	 * getSplash
 	 *
@@ -195,10 +196,10 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	private function getSplash(){
 		$sql = bx_plugins_linklog_queries::splash($this->tablePrefix);
 		$res = $this->getResultSet($sql);
-		
+
 		$sql = bx_plugins_linklog_queries::splashCount($this->tablePrefix);
 		$this->totalItems = $this->getCount($sql);
-		
+
 		return $this->processLinks($res);
 	}
 
@@ -211,11 +212,11 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	private function getArchive(){
 		// FIXME: thats a bit hacky here
 		$this->pageTitle = 'Archive ('.current(explode("/",str_replace('archive/', '', mysql_escape_string($this->id)))).')';
-		$sql = bx_plugins_linklog_queries::archive($this->id, $this->tablePrefix);		
+		$sql = bx_plugins_linklog_queries::archive($this->id, $this->tablePrefix);
 		$res = $this->getResultSet($sql);
-		
-        $this->totalItems = $this->getCount(bx_plugins_linklog_queries::archiveCount($this->id, $this->tablePrefix));
-        
+
+		$this->totalItems = $this->getCount(bx_plugins_linklog_queries::archiveCount($this->id, $this->tablePrefix));
+
 		return $this->processLinks($res);
 	}
 
@@ -271,18 +272,18 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
 		foreach($links as $link){ // FIXME: only loop new items (possible by magpie?)
 
-			$data = array(
+		$data = array(
 			'title' => $link['title'],
 			'url'   => $link['link'],
 			'description' => $link['description'],
 			'tags' => $link['dc']['subject'],
 			'time' => $link['date'],
-			);
-			if( ! strpos($link['name'], $deliciousName) ){
-				$data['via'] .= '' . end( explode ("/", $this->simpleCleanUri($link['name']) ) ) . '';
-			}
+		);
+		if( ! strpos($link['name'], $deliciousName) ){
+			$data['via'] .= '' . end( explode ("/", $this->simpleCleanUri($link['name']) ) ) . '';
+		}
 
-			$res = $editor->insertLink($data); // FIXME somehow previoisly check if the link already exists.
+		$res = $editor->insertLink($data); // FIXME somehow previoisly check if the link already exists.
 
 		}
 
@@ -296,6 +297,17 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	}
 
 
+	public function getLinksByTag($tag){
+		$res = $this->getResultSetByTag($tag);
+		if($res->numRows() === 0){
+			return null;
+		}
+		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+			$links[] = $row;			
+		}		
+		return $links;
+	}
+
 	/**
 	 * getLinksByTag
 	 *
@@ -303,33 +315,39 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 *
 	 */
 	private function getTags(){
+
 		$querystring = bx_plugins_linklog_queries::getQuerystringFromId($this->id);
+
 		// var_dump($querystring);
-		// may be used for more caching: 
+		// may be used for more caching:
 		$identifier = str_replace(" ", "+", $querystring);
 		$this->pageTitle = ucfirst($identifier);
-		
-		
-		$sql = bx_plugins_linklog_queries::linksByTag($querystring, $this->tablePrefix);
-		$res = $this->getResultSet($sql);
+
+		$res = $this->getResultSetByTag($querystring);
 
 		$sql = bx_plugins_linklog_queries::linksByTagCount($querystring, $this->tablePrefix);
-		
+
 		$this->totalItems = $this->getCount($sql);
-		
+
 		return $this->processLinks($res, $identifier);
 	}
 
- 
+
+	private function getResultSetByTag($tag){
+		$sql = bx_plugins_linklog_queries::linksByTag($tag, $this->tablePrefix);
+		return $this->getResultSet($sql);
+
+	}
+
 
 	/*
 	 * @param array $vars(excludes => array(), 'exludes' => false || array)
 	 * @todo: implement ;)
 	 * */
 	private function getMetaData(){
-		
-		
-		return  "<meta><title>".$this->pageTitle."</title></meta>"; 
+
+
+		return  "<meta><title>".$this->pageTitle."</title></meta>";
 		// FIXME:
 
 
@@ -349,14 +367,14 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	private function processLinks($res, $identifier = false){
 
 		$map2tags = $this->mapTags2Links();
-		
+
 		$xml   = "<links>";
-		
+
 		// we should add some meta-data here ;)
 		$xml .= $this->getMetaData();
 
 		if($this->totalItems > $this->itemsPerPage){
-		   $xml .= $this->getPager();
+			$xml .= $this->getPager();
 		}
 
 		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
@@ -365,26 +383,26 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		}
 
 		$xml .= "</links>";
-		
-		
-		
+
+
+
 
 		return $this->getDomObjectFromString($xml);
 
 
 	}
-    /*
-    private function getPager($nrOfLinks){
-    	
-        // $totalPages = ceil($nrOfLinks / $this->itemsPerPage);
-        
-        $xml  = '<pager>';
-        $xml .= '<total>' . $totalPages . '</total>';        
-        $xml .= '<currentPage>' . $this->currentPage . '</currentPage>';                
-        $xml .= '</pager>';
-        
-        return $xml;        
-    }*/
+	/*
+	 private function getPager($nrOfLinks){
+	  
+	 // $totalPages = ceil($nrOfLinks / $this->itemsPerPage);
+
+	 $xml  = '<pager>';
+	 $xml .= '<total>' . $totalPages . '</total>';
+	 $xml .= '<currentPage>' . $this->currentPage . '</currentPage>';
+	 $xml .= '</pager>';
+
+	 return $xml;
+	 }*/
 
 
 
@@ -429,7 +447,7 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
 	/**
 	 * create a simple xml string for a single tag
-	 * 
+	 *
 	 * @param array tag = array('name' => ..., 'fulluri' => ..., 'id' => ...)
 	 * @return string
 	 */
@@ -451,23 +469,23 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	private function getPlugin(){
 
 		$plugin = substr($this->id,7);
-		
+
 		// this is a bit messy :)
 		if ($pos = strpos($plugin,"(")) {
 			$pos2 = strpos($plugin,")");
 			$params = substr($plugin,$pos+1, $pos2 - $pos - 1);
-			
+				
 			$plugin = substr($plugin,0,$pos);
 			$params = explode(",",$params);
 			// $params = str_replace(" ", '+', explode(",",$params));
 		}  else {
 			$params = array();
 		}
-		
-		
+
+
 
 		$plugin = "bx_plugins_linklog_".$plugin;
-		
+
 		$xml =  call_user_func(array($plugin,"getContentById"), $this->path, $this->id, $params,$this->tablePrefix);
 
 		if (is_string($xml)) {
@@ -498,11 +516,11 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	 * )
 	 */
 	private function mapTags2Links(){
-		
+
 		if($this->checkMapCache()){
 			return $this->getMapCache();
 		}
-		
+
 		$sql = bx_plugins_linklog_queries::tags($this->tablePrefix);
 		$res = $this->getResultSet($sql, false);
 		$tags = $this->prepareTagsArray($res);
@@ -520,15 +538,15 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	/*
 	 * loop through all merges, to be able to fetch a category of the
 	 * link in one catch
-	 * 
+	 *
 	 * @param array all tags with its key as index
 	 * @param mysql_result_set with all linkids and corresponding tagid
 	 * @return array index is linkid, values are arrays with the tags
 	 */
 	private function doMap($tags, $res){
-		
+
 		$map = array();
-		
+
 		while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)){
 			if(!array_key_exists($row['linkid'], $map)){
 				$map[$row['linkid']] = array($tags[$row['tagid']]);
@@ -536,13 +554,13 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 				array_push($map[$row['linkid']], $tags[$row['tagid']]);
 			}
 		}
-		
+
 		return $map;
 	}
 
 	/*
 	 * loop through all tags to create an array with its id as index
-	 * 
+	 *
 	 * @param mysql_result_set with all the tags and id's
 	 * @return array containing all tags with the id as their key
 	 */
@@ -552,33 +570,33 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		}
 		return $tags;
 	}
-	
+
 	/**
-	* checks if the cache-file exists
-	* 
-	* @return boolean true if it exists
-	* */
+	 * checks if the cache-file exists
+	 *
+	 * @return boolean true if it exists
+	 * */
 	private function checkMapCache(){
 		return file_exists($this->cache4tags);
 	}
-	
+
 	/**
-	* gets the cache
-	* 
-	* @return array
-	*/
+	 * gets the cache
+	 *
+	 * @return array
+	 */
 	private function getMapCache(){
 		return unserialize(file_get_contents($this->cache4tags));
 	}
-	
+
 	/**
-	* writes the cache
-	* @return boolean true on success
-	*/
+	 * writes the cache
+	 * @return boolean true on success
+	 */
 	private function writeMapCache($map){
-		return file_put_contents($this->cache4tags, serialize($map));		
+		return file_put_contents($this->cache4tags, serialize($map));
 	}
-	
+
 	/**
 	 * Creates a fully linked date-view
 	 *
@@ -591,8 +609,8 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		$base = $this->path . 'archive';
 		$dateparts = explode('-', $date);
 
-		
-		
+
+
 		$i = 1;
 		foreach($dateparts as $time){
 			if($i > 1){
@@ -617,60 +635,60 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 
 	//private function getPager(){
 	private function getPager(){
-		
+
 		$totalPages = (int) ceil($this->totalItems / $this->itemsPerPage);
-		
+
 		$xml  = '<pager>';
 		if(($this->currentPage + 1) <= $totalPages){
 			$xml  .= '<next href="./?page='.($this->currentPage + 1) . '">'.($this->currentPage + 1).'</next>';
 		}else{
 			$xml .= '<next />';
-		}		
+		}
 		if(($this->currentPage - 1) >= 1){
 			$xml  .= '<prev href="./?page='.($this->currentPage - 1) . '">'.($this->currentPage - 1 ).'</prev>';
 		}else{
 			$xml .= '<prev />';
 		}
-		
+
 		$xml .= '<total>'.$totalPages.'</total>';
 		$xml .= '<current>'.$this->currentPage.'</current>';
-		
-		
+
+
 		$xml .= '</pager>';
-		
+
 		return $xml;
 	}
-	
-	
+
+
 	/**
-	* @param string SQL-Query
-	* @return mysql_resultset
-	* */
+	 * @param string SQL-Query
+	 * @return mysql_resultset
+	 * */
 	private function getResultSet($sql, $addLimit = true){
 		$start = ( $this->currentPage - 1 ) * $this->itemsPerPage ;
-		
+
 		// set the limit of the mysql result set
 		if($addLimit){
 			$sql .=  ' LIMIT '.$start . ', ' . $this->itemsPerPage;
 		}
-		
+
 		$res = $this->db->query($sql);
-		
+
 		if (MDB2::isError($res)) {
 			throw new PopoonDBException($res);
 		}
 		return $res;
 	}
 
-    private function getCount($sql){
-    	
-		$res = $this->db->query($sql);		
+	private function getCount($sql){
+		 
+		$res = $this->db->query($sql);
 		if (MDB2::isError($res)) {
 			throw new PopoonDBException($res);
 		}
-		
-        return current($res->fetchRow());        
-    }
+
+		return current($res->fetchRow());
+	}
 
 	/**
 	 * get a Dom Object from a wellformed XML-String
@@ -693,10 +711,10 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 	}
 
 	/**
-	* Sets class variable isLoggedIn to true if user is currently logged in.
-	* 
-	* @return void 
-	* */
+	 * Sets class variable isLoggedIn to true if user is currently logged in.
+	 *
+	 * @return void
+	 * */
 	private function setLoginStatus(){
 		$perm = bx_permm::getInstance();
 		if($perm->isLoggedIn()){
@@ -705,14 +723,14 @@ class bx_plugins_linklog extends bx_plugin implements bxIplugin {
 		return;
 	}
 
-	
+
 	private function getCurrentPage($getVars){
-		
+
 		if(array_key_exists('page', $getVars) && (int) $getVars['page'] > 1){
 			return ((int) $getVars['page'] );
 		}
 		return 1;
 	}
-	
+
 }
 
