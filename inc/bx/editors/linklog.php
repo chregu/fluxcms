@@ -472,7 +472,7 @@ class bx_editors_linklog extends bx_editor implements bxIeditor {
                  * compare with previous created array of existing tags
                  */
                 // use the fulluri as index
-                $fulluri = bx_helpers_string::makeUri($tag);
+                $fulluri = bx_helpers_string::makeUri($tag, true);
                 if(!$tagid[$fulluri]){
                     $tagid[$fulluri] = $this->insertSingleTag($tag);
                 } // end if must insert new tag to db
