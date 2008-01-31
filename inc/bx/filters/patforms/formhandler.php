@@ -10,14 +10,14 @@ class bx_filters_patforms_formhandler {
         $this->configParams = $configParams;
         $this->i18n = $driver;
     }
-    
+
     public function getText($key) {
         if(!($text = $this->i18n->getText($key))) {
             return $key;
         }
-        return $text;   
+        return $text;
     }
-    
+
 }
 
 ?>
