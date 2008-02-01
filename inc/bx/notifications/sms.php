@@ -29,6 +29,7 @@ class bx_notifications_sms extends bx_notification {
                 $fromAdress = 'ASPSMS';
             }
         }
+        $this->sms->recipients = array();
 
         //messages ned to be iso-latin
         $message = utf8_decode($message);
