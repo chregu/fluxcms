@@ -192,7 +192,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
 
         // add to database
         $seq = $GLOBALS['POOL']->dbwrite->nextID($prefix.'_sequences');
-        $query = "insert into ".$prefix."newsletter_users ($seq, $queryFields activation,status,created) value(".$queryValues."'','',NOW())";
+        $query = "insert into ".$prefix."newsletter_users (ID, $queryFields activation,status,created) value($seq ,".$queryValues."'','',NOW())";
         if($GLOBALS['POOL']->dbwrite->exec($query) !== 1) {
             // could not insert user
             return false;
