@@ -203,7 +203,7 @@ class bx_plugins_newsletter extends bx_plugin implements bxIplugin {
         // add to selected groups
         foreach($data['groups'] as $grp) {
             $seq = $GLOBALS['POOL']->dbwrite->nextID($prefix.'_sequences');
-            $query = "insert into ".$prefix."newsletter_users2groups (ID, fk_user, fk_group) value('.$seq.', '".$userid."', '".$grp."')";
+            $query = "insert into ".$prefix."newsletter_users2groups (ID, fk_user, fk_group) value('$seq', '$userid', '$grp')";
             $GLOBALS['POOL']->dbwrite->exec($query);
         }
 
