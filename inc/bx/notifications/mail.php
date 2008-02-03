@@ -2,42 +2,42 @@
 
 
 class bx_notifications_mail extends bx_notification {
-    
+
     static protected $instance = null;
-    
+
     protected function __construct() {
-        
-    } 
-    
+
+    }
+
     static public function getInstance() {
         if (!(self::$instance)) {
             self::$instance = new bx_notifications_mail();
-        } 
+        }
         return self::$instance;
     }
-    
+
     public function send($to, $subject, $message, $fromAdress = null, $fromName= null, $options = array()) {
         if (!$fromAdress) {
-            $fromAdress = 'unknown@example.org';   
+            $fromAdress = 'unknown@example.org';
         }
-        
+
         if ($fromName) {
             $from = $fromName . '<'.$fromAdress.'>';
         } else {
             $from = $fromAdress;
-        } 
-        
-        if(strpos($from, "\n") !== FALSE or strpos($from, "\r") !== FALSE) { 
+        }
+
+        if(strpos($from, "\n") !== FALSE or strpos($from, "\r") !== FALSE) {
             throw new Exception("From: is invalid.");
         }
-        if(strpos($to, "\n") !== FALSE or strpos($to, "\r") !== FALSE) { 
+        if(strpos($to, "\n") !== FALSE or strpos($to, "\r") !== FALSE) {
             throw new Exception("To: is invalid.");
         }
-        
-        if(strpos($subject, "\n") !== FALSE or strpos($subject, "\r") !== FALSE) { 
+
+        if(strpos($subject, "\n") !== FALSE or strpos($subject, "\r") !== FALSE) {
             throw new Exception("Subject: is invalid.");
         }
-        
+
         if (!defined('PHP_EOL')) {
             define('PHP_EOL',"\n");
         }
@@ -51,8 +51,8 @@ class bx_notifications_mail extends bx_notification {
         }
         else if ($options['charset'] == "utf8") {
             $options['charset']  = 'UTF-8';
-        } 
-        
+        }
+
         $headers .= "Content-Type: text/plain; charset=\"".$options['charset']."\"".PHP_EOL."Content-Transfer-Encoding: 8bit".PHP_EOL;
         // recode utf8 strings
         if ($options['charset'] != "UTF-8") {
@@ -65,16 +65,21 @@ class bx_notifications_mail extends bx_notification {
           $message = utf8_decode($message);
          }
         }
+
+        //make correct 7bit header for the subject
+        $subject = preg_replace('~([\xA0-\xFF])~e', '"=" . strtoupper(dechex(ord("$1")))', $subject);
+        $subject = '=?'.$options['charset'].'?Q?' . $subject . '?=';
+
         mail($to, $subject, $message, $headers);
         return true;
     }
-    
+
     public function sendByUsername($username, $subject, $message, $fromAdress = null, $fromName = null) {
-        
+
         $prefix = $GLOBALS['POOL']->config->getTablePrefix();
-        
+
         $query = "select user_email,user_fullname from ".$prefix."users where user_login =".$GLOBALS['POOL']->db->quote($username);
-        
+
         $row = $GLOBALS['POOL']->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
         if (MDB2::isError($row)) {
             throw new PopoonDBException($row);
@@ -82,15 +87,15 @@ class bx_notifications_mail extends bx_notification {
         if (!$row['user_fullname']) {
             $row['user_fullname'] = $username;
         }
-        
+
         if (!empty($row['user_email'])) {
-            
-            
+
+
             $to = $row['user_fullname'] . ' <' .$row['user_email'].'>';
             if ($to) {
                 $this->send($to,$subject,$message,$fromAdress, $fromName);
             }
         }
     }
-    
+
 }
