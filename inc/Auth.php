@@ -16,7 +16,7 @@
 // | Authors: Martin Jansen <mj@php.net>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: Auth.php 8601 2007-05-02 08:42:07Z chregu $
 //
 
 require_once 'PEAR.php';
@@ -150,7 +150,7 @@ class Auth {
      * @var string
      */
     var $_sessionName = '_authsession';
-
+    
     /**
      * Package Version
      *
@@ -160,34 +160,34 @@ class Auth {
 
     /**
      * Flag to use advanced security
-     * When set extra checks will be made to see if the
-     * user's IP or useragent have changed across requests.
+     * When set extra checks will be made to see if the 
+     * user's IP or useragent have changed across requests. 
      * Turned off by default to preserve BC.
      *
      * @var boolean
-     */
+     */     
     var $advancedsecurity = false;
-
+    
     /**
      * Username key in POST array
      *
      * @var string
      */
     var $_postUsername = 'username';
-
+    
     /**
      * Password key in POST array
      *
      * @var string
      */
     var $_postPassword = 'password';
-
+    
     /**
      * A hash to hold various superglobals as reference
      * @var array
      */
     var $authdata;
-
+    
     var $idcol = 'id';
 
     // {{{ Constructor
@@ -212,12 +212,12 @@ class Auth {
 	    $this->_sessionName = $options['sessionName'];
             unset($options['sessionName']);
         }
-
+        
         if (!empty($options['postUsername'])) {
             $this->_postUsername = $options['postUsername'];
             unset($options['postUsername']);
         }
-
+        
         if (!empty($options['postPassword'])) {
             $this->_postPassword = $options['postPassword'];
             unset($options['postPassword']);
@@ -243,7 +243,7 @@ class Auth {
         // Pass a reference to auth to the container, ugly but works
         // this is used by the DB container to use method setAuthData not staticaly.
         $this->storage->_auth_obj =& $this;
-
+        
     }
 
     // }}}
@@ -308,7 +308,7 @@ class Auth {
      */
     function start()
     {
-
+        
         $this->assignData();
         @session_start();
 
@@ -575,7 +575,7 @@ class Auth {
         $session[$this->_sessionName]['timestamp']  = time();
         $session[$this->_sessionName]['idle']       = time();
     }
-
+    
     function setAdvancedSecurity($flag=true) {
         $this->advancedsecurity = $flag;
     }
@@ -601,7 +601,7 @@ class Auth {
                 $this->logout();
                 return false;
             }
-
+            
             // Check for useragent change
             if (isset($session[$this->_sessionName]['sessionuseragent']) && isset($_SERVER['HTTP_USER_AGENT']) && $session[$this->_sessionName]['sessionuseragent'] != $_SERVER['HTTP_USER_AGENT']) {
                 // Check if the User-Agent of the user has changed, if so we assume a man in the middle attack and log him out
@@ -611,7 +611,7 @@ class Auth {
                 return false;
                 $this->logout();
             }
-
+            
         }
 
 	if (isset($session[$this->_sessionName])) {
@@ -790,14 +790,13 @@ class Auth {
      */
     function getUsername()
     {
-
         $session = &$this->_importGlobalVariable('session');
         if (!isset($session[$this->_sessionName]['username'])) {
             return '';
         }
         return $session[$this->_sessionName]['username'];
     }
-
+    
     function getUserId()
     {
         $session = &$this->_importGlobalVariable('session');
@@ -896,7 +895,7 @@ class Auth {
      *
      * @access public
      * @param string Username
-     * @param string The new password
+     * @param string The new password 
      * @return mixed True on success, PEAR error object on error
      *               and AUTH_METHOD_NOT_SUPPORTED otherwise.
      */
