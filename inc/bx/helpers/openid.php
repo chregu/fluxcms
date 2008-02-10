@@ -36,6 +36,19 @@ class bx_helpers_openid {
         : false;
     }
     
+    static function microid ($email,$url) {
+	$email = trim($email);
+		if (!$email) {
+        		return "";  
+		}
+		$url = trim($url,"/ ");
+		if (!$url) {
+			return "";
+		}
+
+		return sha1(sha1("mailto:".$email) .  sha1($url));                 
+
+	}    
     
 }
 
