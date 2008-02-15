@@ -20,42 +20,42 @@
 */
 
 class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
-    
+
     static public $instance = array();
     protected $res = array();
-    
+
     protected $db = null;
     protected $tablePrefix = null;
-    
+
     public static function getInstance($mode) {
-        
+
         if (!isset(self::$instance[$mode])) {
             self::$instance[$mode] = new bx_plugins_tagcloud($mode);
-        } 
+        }
         return self::$instance[$mode];
     }
-    
+
     protected function __construct($mode) {
         $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $this->db = $GLOBALS['POOL']->db;
         $this->mode = $mode;
     }
-    
+
     public function isRealResource($path , $id) {
         return true;
     }
-    
+
     public function getIdByRequest($path, $name = NULL, $ext = NULL) {
-        
+
         return $name.'.'.$this->name;
-        
+
     }
-    
+
     public function getContentById($path, $id){
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $tags = array();
         $locations = $this->getParameter($path,"locations");
-        
+
         if($this->getParameter($path,"maxfontsize")) {
             $this->maxFontSize = $this->getParameter($path,"maxfontsize");
         } else {
@@ -70,13 +70,13 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
         $res = $GLOBALS['POOL']->db->query($query);
        if(MDB2::isError($res)){
             throw new PopoonDBException($res);
-	} 
+  }
         while($row = $res->fetchAll(MDB2_FETCHMODE_ASSOC)) {
             $tags = $row;
         }
-        
+
         $max = $this->maxof($tags);
-        
+
         $res = $GLOBALS['POOL']->db->query($query);
         $xml = "<tagcloud>";
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
@@ -88,13 +88,13 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
             $xml .= "</tag>";
         }
         $xml .= "</tagcloud>";
-        
+
         $dom = new DomDocument();
         $dom->loadXML($xml);
         return $dom;
-        
+
     }
-    
+
     public function getFontSize($count, $max, $path) {
         $count = $count-1;
         $max = $max-1;
@@ -102,24 +102,27 @@ class bx_plugins_tagcloud extends bx_plugin implements bxIplugin {
         $percent = $count / $max * 100;
         $size = $percent / 100 * $diff;
         $res = $this->minFontSize + $size;
-        
+
         return round($res);
     }
-    
+
     public function maxof($array) {
          $max = 0;
          foreach($array as $element) {
              if ($element['tagcount'] > $max) {
                  $max = $element['tagcount'];
              }
-             
+
          }
          return $max;
     }
-    
+
     public function adminResourceExists($path, $id, $ext=null, $sample = false) {
-        return true;
+        if($ext == 'xhtml') {
+            return true;
+        }
+        return false;
     }
-    
+
 }
 ?>
