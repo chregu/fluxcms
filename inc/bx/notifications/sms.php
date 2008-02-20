@@ -31,9 +31,6 @@ class bx_notifications_sms extends bx_notification {
         }
         $this->sms->recipients = array();
 
-        //messages ned to be iso-latin
-        $message = utf8_decode($message);
-
         $this->sms->setOriginator($fromAdress);
 
         $to = $this->cleanNumbers($to);
@@ -45,7 +42,6 @@ class bx_notifications_sms extends bx_notification {
         foreach($to as $nr) {
             $this->sms->addRecipient($nr);
         }
-
 
         $this->sms->setContent($message);
 
@@ -104,21 +100,6 @@ class bx_notifications_sms extends bx_notification {
         return false;
     }
 
-
-    private function encodeSms($message) {
-        $newmsg = '';
-        //messages ned to be iso-latin
-        $message = utf8_decode($message);
-        for($x = 0; $x < strlen($message); $x++) {
-            if(ord($message[$x]) > 127) {
-                $newmsg .= "&#".ord($message[$x]).";";
-            }
-            else {
-                $newmsg .= $message[$x];
-            }
-        }
-        return $newmsg;
-    }
 
     private function getCredits() {
         if(!$credits = $this->sms->showCredits()) {
