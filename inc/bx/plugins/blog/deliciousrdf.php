@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | BxCms                                                                |     
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2007 Liip AG                                      |
+// | Copyright (c) 2001-2008 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -20,7 +20,7 @@ class bx_plugins_blog_deliciousrdf {
             $simplecache = popoon_helpers_simplecache::getInstance();
   
             $simplecache->cacheDir = BX_TEMP_DIR;
-            $uri = 'http://del.icio.us:80/rss/'.$params[0];
+            $uri = 'http://feeds.delicious.com:80/rss/'.$params[0];
             
             $t = $simplecache->simpleCacheHttpRead($uri,3600);
             // some installations (my mac..) have problems with installing iconv correctly
