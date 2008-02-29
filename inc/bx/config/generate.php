@@ -12,7 +12,12 @@ class bx_config_generate {
     static function mergeXML($xml1, $xml2) {
         
         $dom1 = new domdocument();
-        $dom1->load($xml1);
+        
+        $foo = $dom1->load($xml1);
+        if($foo === false){
+        	die('could not load ' . $xml1 . ' - please check syntax');
+        }
+        
         $dom2 = new domdocument();
         $dom2->load($xml2);
         
