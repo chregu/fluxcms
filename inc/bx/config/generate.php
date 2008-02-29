@@ -13,8 +13,8 @@ class bx_config_generate {
         
         $dom1 = new domdocument();
         
-        $foo = $dom1->load($xml1);
-        if($foo === false){
+        
+        if(!$dom1->load($xml1)){
         	die('could not load ' . $xml1 . ' - please check syntax');
         }
         
