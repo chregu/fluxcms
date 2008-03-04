@@ -187,8 +187,8 @@ class bx_editors_newsmailer_newsmailer {
     {
     	// read in the newsletter templates if existing
         
-    	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html");
-		$textMessage = $this->readNewsletterFile($draft['textfile'], "text");
+    	$htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html", $draft['colluri']);
+		$textMessage = $this->readNewsletterFile($draft['textfile'], "text", $draft['colluri']);
 
 		$dom = new DomDocument();
 		
