@@ -139,6 +139,7 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
                 $content = preg_replace("#<atom:content[^>]*>#","",$content[0]->asXML());
                 $content = str_replace("</atom:content>","",html_entity_decode(str_replace("&lt;","&amp;lt;",$content),ENT_NOQUOTES,'UTF-8'));
                 $content = str_replace('xmlns:blog="http://bitflux.org/doctypes/blog"',"",$content);
+                $content = str_replace('xmlns:i18n="http://apache.org/cocoon/i18n/2.1"','',$content);
             } else {
                 $content = "";
             }
