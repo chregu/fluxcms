@@ -186,7 +186,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $id = "index";
         }
         
-        $query = "SELECT ".$tablePrefix."blogposts.id ";
+        $query = "SELECT DISTINCT ".$tablePrefix."blogposts.id ";
         
         if (!empty($_GET['qmode'])) {
             if (preg_match('#.*[a-z0-9]$#',$_GET['qmode'])) {
