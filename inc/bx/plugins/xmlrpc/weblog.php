@@ -157,7 +157,7 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
             
             
             if ($tags = trim($entry->tags)) {
-                if (strpos($_SERVER['HTTP_USER_AGENT'],"ecto") !== false) {
+                if (strpos($_SERVER['HTTP_USER_AGENT'],"ecto") !== false && strpos($_SERVER['HTTP_USER_AGENT'],'ecto/3') === false) {
                     $tags = bx_metaindex::splitTags($tags);
                     $keywords = "<!-- technorati tags start -->";
                         foreach ($tags as $tag) {
