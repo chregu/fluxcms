@@ -222,7 +222,8 @@ class bx_plugins_xmlrpc_weblog extends bx_plugins_xmlrpc {
         bx_helpers_file::mkpath(BX_OPEN_BASEDIR.$dir);
         
         file_put_contents(BX_OPEN_BASEDIR.$dir.$base, $val['bits']);
-          return new XML_RPC_Response (new XML_RPC_Value(BX_WEBROOT_W.str_replace("//","/",$dir.$base)));;
+        $url = new XML_RPC_Value(BX_WEBROOT_W.str_replace("//","/",$dir.$base));
+        return new XML_RPC_Response (new XML_RPC_Value(array('url' => $url), "struct"));
     }
     
     function getCategoryList($params) {
