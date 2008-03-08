@@ -347,8 +347,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
             
             $total = $res->numRows();
-            $query .= $leftjoin . $archivewhere ;
-            $query .= ' group by '.$tablePrefix.'blogposts.id ';
+            $query .= $leftjoin . $archivewhere . ' ';
             
             $query .= 'order by post_date DESC limit '.$startEntry . ','.$maxPosts;
         } else {
