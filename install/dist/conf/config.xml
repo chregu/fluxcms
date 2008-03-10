@@ -14,7 +14,7 @@
     <options cacheDBOptions="true">
 
     
-    <theme allowFromDB="true">3-cols</theme>
+    <theme allowFromDB="true">3-cols-2008</theme>
     <themeCss allowFromDB="true">main.css</themeCss>
     <sitename allowFromDB="true">Flux CMS Demo</sitename>
     <sitedescription allowFromDB="true">This is my Flux CMS Site</sitedescription>
