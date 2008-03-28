@@ -20,7 +20,6 @@ class bx_errorhandler {
     }
 
     public function error($errno, $errstr, $errfile, $errline, $ctx) {
-
         if ($errno & error_reporting()) {
             switch ($errno) {
                 case E_WARNING:
@@ -30,6 +29,7 @@ class bx_errorhandler {
                     $this->addReport("Notice",$errno,$errstr,$errfile,$errline,$ctx);
                 break;
                 case E_STRICT:
+                case 8192: //E_DEPRECATED...
                 $doReport = true;
                 foreach ($this->excludePath as $path) {
                     if (strpos($errfile,$path) !== false) {
