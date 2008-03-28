@@ -132,7 +132,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                     }
                 }
                 if (!empty($_POST['store'])) {
-					$fd = fopen(BX_PROJECT_DIR."data".$colluri."storage.xml","w");   
+					$fd = fopen(BX_DATA_DIR."".$colluri."storage.xml","w");   
 				} else {
 					$fd = fopen("blog://".$id,"w");
 					$data['uri'] = bx_helpers_string::makeUri($data['uri']);
@@ -195,7 +195,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
 					} else if (empty($_POST['ajax'])  && empty($_GET['ajax'])) {
 						header("Location: ".$data['uri'] .".html");
 					} else {
-						unlink(BX_PROJECT_DIR."data".$colluri."storage.xml");
+						unlink(BX_DATA_DIR."".$colluri."storage.xml");
 						header("Location: ".$data['uri'] .".html?ajax=1");
 					}
                 }
