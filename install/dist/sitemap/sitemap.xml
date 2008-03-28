@@ -105,6 +105,11 @@
                         <map:parameter type="options" name="registerPhpFunctions" value="true"/>
   			<map:parameter type="allowedPhpFunctions" name="one" value="config://xslt_allowed_phpfunctions"/>    
                     </map:transform>
+                    <map:transform type="i18n" src="constant(BX_OPEN_BASEDIR)lang/master">
+                        <map:parameter name="locale" value="{locale}"/>
+                        <map:parameter name="driver" value="xml"/>
+                    </map:transform>
+                    
                     <map:serialize type="xhtml">
                         <map:parameter type="header" name="HTTP" value="404 Not Found"/>
                         <map:parameter name="stripScriptCDATA" value="true"/>
@@ -135,6 +140,11 @@
                         <map:parameter type="options" name="registerPhpFunctions" value="true"/>
                         <map:parameter type="allowedPhpFunctions" name="one" value="config://xslt_allowed_phpfunctions"/>    
                     </map:transform>
+                     <map:transform type="i18n" src="constant(BX_OPEN_BASEDIR)lang/master">
+                         <map:parameter name="locale" value="{locale}"/>
+                         <map:parameter name="driver" value="xml"/>
+                     </map:transform>
+                     
                     <map:serialize type="xhtml" noHttpCaching="true">
                       <!--  <map:parameter type="header" name="HTTP" value="404 Not Found"/>-->
                         <map:parameter name="stripScriptCDATA" value="true"/>
