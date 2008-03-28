@@ -88,7 +88,7 @@ class bx_streams_blog extends bx_streams_buffer {
 					//FIXME: Abfrage nach storage.xml
                     if(file_exists(BX_DATA_DIR."blog/storage.xml") && $section != 'storage') {
 						$filetime = date ("F d Y H:i:s.", filemtime(BX_DATA_DIR."blog/storage.xml"));
-						$fileString = file_get_contents(BX_PROJECT_DIR."data/blog/storage.xml"); 
+						$fileString = file_get_contents(BX_DATA_DIR."blog/storage.xml"); 
 						
 						preg_match('#<title>(.*)</title>#', $fileString, $matches);
 						
