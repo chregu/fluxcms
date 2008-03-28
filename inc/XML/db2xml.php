@@ -498,7 +498,7 @@ class XML_db2xml {
             // please apply the patch  from
             // http://svn.bitflux.ch/repos/public/misc/dompatches/documentfragment_appendXML.patch
             // if you're using sth around PHP 5.0.0 
-            if ( is_callable(array('domdocumentfragment','appendXML'))) {
+            if (version_compare(phpversion(),"5.0.99",">") || is_callable(array('domdocumentfragment','appendXML'))) {
                 self::$contentToXmlTranslation =  XML_db2xml::CONTENT_APPEND_FRAGMENT;
             } else {
                 self::$contentToXmlTranslation =  XML_db2xml::CONTENT_APPEND_DOCUMENT;
