@@ -13,9 +13,9 @@ AddType text/xml rng
 
 #  set this to 2039 for public website.. (or even less)
 #E_STRICT | E_ALL
-php_value error_reporting 4095 
+php_value error_reporting 16383 
 # E_ALL & ~E_NOTICE
-#php_value error_reporting 2039 
+#php_value error_reporting 14327 
 
 #security stuff
 # If you need to fopen http:// files, use something else than fopen (curl, pear class, whatever)
