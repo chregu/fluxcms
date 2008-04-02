@@ -349,7 +349,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $total = $res->numRows();
             $query .= $leftjoin . $archivewhere . ' ';
             
-            if(!isset($GLOBALS['POOL']->config->blogEditOwnOnly)) {
+            if(isset($GLOBALS['POOL']->config->blogEditOwnOnly)) {
                 $blogEditOwnOnly = $GLOBALS['POOL']->config->blogEditOwnOnly;
             } else {
                 $blogEditOwnOnly = 0;
