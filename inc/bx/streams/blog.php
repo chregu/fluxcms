@@ -322,8 +322,9 @@ class bx_streams_blog extends bx_streams_buffer {
 		foreach (self::$adminPlugins as $plugin) {
             $post = call_user_func(array("bx_plugins_blog_".$plugin,"onInsertNewPost"),$post);
         }
+        /*ICONOMIX post_author_id and $_SESSION['_authsession']['data']['id'] are for the blogpermission part*/
 		$query = "insert into ".$this->tablePrefix."blogposts 
-            (id, blog_id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode, post_lang) values 
+            (id, blog_id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode, post_lang, post_author_id) values 
             ($post->id, 
             $blogid, 
             ".$db->quote($post->author,'text').", 
@@ -336,7 +337,8 @@ class bx_streams_blog extends bx_streams_buffer {
             ".$db->quote(bx_helpers_string::utf2entities($post->getInfoString()),'text').",
             ".$db->quote($post->status).",
             ".$db->quote($post->comment_mode).",
-			".$db->quote($post->lang)."
+			".$db->quote($post->lang).",
+            ".$db->quote($_SESSION['_authsession']['data']['id'])."
             )";
         
         $res = $dbwrite->query($query);

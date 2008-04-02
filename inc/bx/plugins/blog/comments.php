@@ -29,6 +29,7 @@
     }
     
     static protected function getCommentXML($res) {
+        
         $xml = '';
         $lastModified = 0;
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
@@ -104,6 +105,16 @@
         
         if ($overviewPerm != 7) {
             $query .= " and post_date < '".$gmnow."'";
+        }
+        
+        if(!isset($GLOBALS['POOL']->config->blogEditOwnOnly)) {
+            $blogEditOwnOnly = $GLOBALS['POOL']->config->blogEditOwnOnly;
+        } else {
+            $blogEditOwnOnly = 0;
+        }
+        
+        if($blogEditOwnOnly == 1 && isset($_SESSION['_authsession']['data']['id']) && $_SESSION['_authsession']['data']['user_gid'] != 1) {
+            $query .= 'and (blogposts.post_author_id = '.$_SESSION['_authsession']['data']['id'].' )';
         }
         
         $query .= "order by comment_date desc limit 10";

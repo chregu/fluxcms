@@ -349,6 +349,16 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $total = $res->numRows();
             $query .= $leftjoin . $archivewhere . ' ';
             
+            if(!isset($GLOBALS['POOL']->config->blogEditOwnOnly)) {
+                $blogEditOwnOnly = $GLOBALS['POOL']->config->blogEditOwnOnly;
+            } else {
+                $blogEditOwnOnly = 0;
+            }
+            
+            if($blogEditOwnOnly == 1 && isset($_SESSION['_authsession']['data']['id']) && $_SESSION['_authsession']['data']['user_gid'] != 1) {
+                $query .= 'and (post_author_id = '.$_SESSION['_authsession']['data']['id'].' )';
+            }
+            
             $query .= 'order by post_date DESC limit '.$startEntry . ','.$maxPosts;
         } else {
 
@@ -694,7 +704,7 @@ if(MDB2::isError($res)){
                     $imgid = 0;
                     $perm = bx_permm::getInstance();
                     if (!$perm->isLoggedIn()) {
-            $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
+                        $days = $GLOBALS['POOL']->config->blogCaptchaAfterDays;
                         $isCaptcha = bx_helpers_captcha::isCaptcha($days, $row['post_date']);
                     } else {
                         $isCaptcha = false;
