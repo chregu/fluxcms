@@ -223,7 +223,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $doComments = false; 
             $total = $GLOBALS['POOL']->db->query($query)->fetchOne(0);
             if($_GET['q']) {
-            $totalRes = $GLOBALS['POOL']->db->query($query);
+                $totalRes = $GLOBALS['POOL']->db->query($query);
                 $total = $totalRes->numRows();
             }
                 if (MDB2::isError($total)) {
