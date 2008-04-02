@@ -403,6 +403,11 @@ CREATE TABLE `".$tablePrefix."history_diff` (
 	updateLastVersion(9242);
 }
 
+if ($lastVersion < 10145) {
+    addCol("blogposts","post_author_id"," int(11) NOT NULL ","", false);
+    updateLastVersion(10145);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
