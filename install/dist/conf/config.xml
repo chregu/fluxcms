@@ -40,7 +40,12 @@
     
     <!-- even if comments are allowed, only allow trackbacks for a month -->
     <blogTrackbacksTimeLimit>true</blogTrackbacksTimeLimit>
-            
+    
+    <!-- Only admin with gid = 1 can edit all blogposts. 
+         Admins with gid > 1 can only edit their own blogposts.
+         Requires SimplePerm activated.
+     -->
+     <blogEditOwnOnly>0</blogEditOwnOnly>        
         
     <openIdEnabled allowFromDB="true">false</openIdEnabled>
     
