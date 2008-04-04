@@ -21,7 +21,7 @@ class bx_notifications_mail extends bx_notification {
             $fromAdress = 'unknown@example.org';
         }
 
-        if ($fromName) {
+        if ($fromName && PHP_OS != 'WINNT') {
             $from = $fromName . '<'.$fromAdress.'>';
         } else {
             $from = $fromAdress;
@@ -53,6 +53,10 @@ class bx_notifications_mail extends bx_notification {
             $options['charset']  = 'UTF-8';
         }
 
+        if (!empty($options['bcc'])) {
+        	$headers .= "Bcc: ". $options['bcc'].PHP_EOL;
+        } 
+        
         $headers .= "Content-Type: text/plain; charset=\"".$options['charset']."\"".PHP_EOL."Content-Transfer-Encoding: 8bit".PHP_EOL;
         // recode utf8 strings
         if ($options['charset'] != "UTF-8") {
@@ -70,8 +74,7 @@ class bx_notifications_mail extends bx_notification {
         $subject = preg_replace('~([\xA0-\xFF])~e', '"=" . strtoupper(dechex(ord("$1")))', $subject);
         $subject = '=?'.$options['charset'].'?Q?' . $subject . '?=';
 
-        mail($to, $subject, $message, $headers);
-        return true;
+        return mail($to, $subject, $message, $headers);
     }
 
     public function sendByUsername($username, $subject, $message, $fromAdress = null, $fromName = null) {

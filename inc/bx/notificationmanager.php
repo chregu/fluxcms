@@ -18,12 +18,12 @@ class bx_notificationmanager {
     }
     public function send( $to, $subject, $message, $fromAdress, $fromName= null, $options = array()) {
         
-        $this->transport->send($to,$subject,$message, $fromAdress, $fromName,$options);    
+       return $this->transport->send($to,$subject,$message, $fromAdress, $fromName,$options);    
     }
     
     public function sendByUsername( $to, $subject, $message, $fromAdress, $fromName= null, $options = array()) {
         
-        $this->transport->sendByUsername($to,$subject,$message, $fromAdress, $fromName, $options);    
+        return $this->transport->sendByUsername($to,$subject,$message, $fromAdress, $fromName, $options);    
     }
 
     
@@ -37,7 +37,7 @@ class bx_notificationmanager {
         
         $t = self::getInstance($default);
         
-        $t->sendByUsername($username,$subject,$message,$fromAdress,$fromName,$options);
+        return $t->sendByUsername($username,$subject,$message,$fromAdress,$fromName,$options);
     }
     
     
