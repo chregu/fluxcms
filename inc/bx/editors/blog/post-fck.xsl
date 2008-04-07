@@ -265,6 +265,9 @@
                                 <xsl:when test="$mode = 2">
                                     <i18n:text>Always allow comments</i18n:text>
                                 </xsl:when>
+                                <xsl:when test="$mode = 4">
+                                    <i18n:text>Moderated comments</i18n:text>
+                                </xsl:when>
                                  <xsl:when test="$mode = 3">
                                     <i18n:text>No comments allowed</i18n:text>
                                 </xsl:when>
@@ -283,6 +286,14 @@
                                 <xsl:attribute name="selected">selected</xsl:attribute>
                             </xsl:if>
                             <i18n:text>Always allow comments</i18n:text></option>
+                            
+                            <option value="4">
+                            <xsl:if test="atom:comment_mode = 4">
+                                <xsl:attribute name="selected">selected</xsl:attribute>
+                            </xsl:if>
+                            <i18n:text>Moderated comments</i18n:text></option>
+                            
+                                
                             <option value="3">
                             <xsl:if test="atom:comment_mode = 3">
                                 <xsl:attribute name="selected">selected</xsl:attribute>
