@@ -8,19 +8,19 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     
     /** bx_editor::getPipelineParametersById */
     public function getPipelineParametersById($path, $id) {
-        
-        $params=array();
+		
+		$params=array();
         $params['pipelineName'] = 'blog';
         $parts = bx_collections::getCollectionUriAndFileParts($id,'admin');
         $params['xslt'] = $this->getStylesheetName($parts['colluri'], $parts['rawname']);
-        if (!(empty($_POST['ajax']) && empty($_GET['ajax']))) {
-            $params['output-mimetype'] = 'text/xml';
-        }
-        return $params;
+		if (!(empty($_POST['ajax']) && empty($_GET['ajax']))) {
+			$params['output-mimetype'] = 'text/xml';
+		}
+		return $params;
     }
     
     protected function getStylesheetName($path,$id) {
-        switch ($id) {
+	    switch ($id) {
             case ".":
             return "start.xsl";
             
@@ -33,24 +33,24 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
             return $this->getStylesheetNameBySubEditor($subEditor);
             
         }
-        
-        if (!(empty($_POST['ajax'])  && empty($_GET['ajax']))) {
-            return "post-ajax.xsl";    
-        } else {
-            return "post-fck.xsl"; // very strange default value... -- qmax
-        }
+		
+		if (!(empty($_POST['ajax'])  && empty($_GET['ajax']))) {
+			return "post-ajax.xsl";	
+		} else {
+			return "post-fck.xsl"; // very strange default value... -- qmax
+		}
         
     }
     
     public function handlePOST($path, $id, $data) {
         bx_log::log($data);
-        
+    	
         $sub = substr($id, strrpos($id, '/', -3)+1, -2);
-        $perm = bx_permm::getInstance();
-        if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
-            throw new BxPageNotAllowedException();
-        }    
-        $parts =  bx_collections::getCollectionAndFileParts($id, "output");
+    	$perm = bx_permm::getInstance();
+	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
+        	throw new BxPageNotAllowedException();
+    	}	
+    	$parts =  bx_collections::getCollectionAndFileParts($id, "output");
         $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
@@ -122,7 +122,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                         $data['categories'][$data['newcategory']] = "on";
                     }
                 }
-                
+				
                 bx_global::registerStream("blog");
                 
                 // remove  html enitities sometimes sent by fckeditor
@@ -132,15 +132,15 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                     }
                 }
                 if (!empty($_POST['store'])) {
-                    $fd = fopen(BX_DATA_DIR."".$colluri."storage.xml","w");   
-                } else {
-                    $fd = fopen("blog://".$id,"w");
-                    $data['uri'] = bx_helpers_string::makeUri($data['uri']);
-                    if (!isset($data['id']) || !($data['id'])) {
-                        $data['uri'] =  bx_streams_blog::getUniqueUri($data['uri'],$id);
-                    }
-                }
-                if (isset($data['nl2br']) && $data['nl2br'] == 1) {
+					$fd = fopen(BX_DATA_DIR."".$colluri."storage.xml","w");   
+				} else {
+					$fd = fopen("blog://".$id,"w");
+					$data['uri'] = bx_helpers_string::makeUri($data['uri']);
+					if (!isset($data['id']) || !($data['id'])) {
+						$data['uri'] =  bx_streams_blog::getUniqueUri($data['uri'],$id);
+					}
+				}
+				if (isset($data['nl2br']) && $data['nl2br'] == 1) {
                     //our own nl2br
                     $data['content'] = preg_replace("#\r#","",$data['content']);
                     $data['content'] = preg_replace("#([^>])[\n]{2,}#","$1<br/>\n<br/>\n",$data['content']);
@@ -162,7 +162,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 
                 fwrite($fd, '<title>'.$data['title'].'</title>');
                 fwrite($fd, '<lang>'.$data['lang'].'</lang>');
-                fwrite($fd, '<id>'.$data['id'].'</id>');
+				fwrite($fd, '<id>'.$data['id'].'</id>');
                 fwrite($fd, '<uri>'.$data['uri'].'</uri>');
                 fwrite($fd, '<created>'.$data['created'].'</created>');
                 fwrite($fd, '<expires>'.$data['expires'].'</expires>');
@@ -186,18 +186,18 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 
                 fwrite($fd, '</entry>');
                 fclose($fd);
-                if ( "/".$data['uri'].".html" != $id) {
-                    
-                    if (!empty($_POST['store']) ) {
-                        // send ok...
-                    } else if (empty($_POST['ajax'])  && empty($_GET['ajax'])) {
-                        header("Location: ".$data['uri'] .".html");
-                    } else  {
-                        if (file_exists(BX_DATA_DIR."".$colluri."storage.xml")) {
-                            unlink(BX_DATA_DIR."".$colluri."storage.xml");
-                        }
-                        header("Location: ".$data['uri'] .".html?ajax=1");
-                    }
+				if ( "/".$data['uri'].".html" != $id) {
+					
+					if (!empty($_POST['store']) ) {
+						// send ok...
+					} else if (empty($_POST['ajax'])  && empty($_GET['ajax'])) {
+						header("Location: ".$data['uri'] .".html");
+					} else  {
+					    if (file_exists(BX_DATA_DIR."".$colluri."storage.xml")) {
+					        unlink(BX_DATA_DIR."".$colluri."storage.xml");
+					    }
+					    header("Location: ".$data['uri'] .".html?ajax=1");
+				    }
                 }
             }
         }
@@ -205,11 +205,11 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     
     public function getEditContentById($id) {
         $sub = substr($id, strrpos($id, '/', -2)+1, -1);
-        $perm = bx_permm::getInstance();
-        if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
-            throw new BxPageNotAllowedException();
-        }    
-        
+    	$perm = bx_permm::getInstance();
+	    if (!$perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
+        	throw new BxPageNotAllowedException();
+    	}	
+    	
         if(($subEditor = $this->getSubEditorNameById($id)) !== FALSE) {
             if(($se = $this->getSubEditorInstance($subEditor)) !== FALSE) {
                 return $se->getEditContentById($id);
@@ -218,23 +218,23 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
     }
     
     protected function getSubEditorNameById($id) {
-        if(preg_match('#sub/([^\/]+)\/#', $id, $m)) {
-            return $m[1];
+		if(preg_match('#sub/([^\/]+)\/#', $id, $m)) {
+			return $m[1];
         }
         return FALSE;
     }
     
     public static function isTabAllowed($sub) {
-        
-        $perm = bx_permm::getInstance();
-        if ($perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
-            return true;
-        }    
-        return false;
+    	
+    	$perm = bx_permm::getInstance();
+	    if ($perm->isAllowed('/blog/',array('blog-back-'.$sub))) {
+        	return true;
+    	}	
+    	return false;
     }
     
     protected function getStylesheetNameBySubEditor($editor) {
-        return "sub/xsl/$editor.xsl";
+		return "sub/xsl/$editor.xsl";
     }
     
     protected function getSubEditorInstance($editor) {

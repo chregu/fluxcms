@@ -77,9 +77,14 @@ class bx_plugins_blog_handlecomment {
         if ($row['post_comment_mode'] == 99) {
             $row['post_comment_mode'] = $GLOBALS['POOL']->config->blogDefaultPostCommentMode;
         }
-        if (!($row['post_comment_mode'] == 2 || ($row['post_comment_mode'] == 1 && (time() - 2678800) < $row['unixtime']))) {
+        if (!($row['post_comment_mode'] == 2 || $row['post_comment_mode'] == 4 || ($row['post_comment_mode'] == 1 && (time() - 2678800) < $row['unixtime']))) {
             die("No comments allowed anymore...");
         }
+        $commentRejected = "";
+        if ($row['post_comment_mode'] == 4) {
+            $commentRejected = "* By default moderated comment\n";
+        }
+        
         
         //check remember stuff
         if(!empty($data['remember'])) {
@@ -128,7 +133,6 @@ class bx_plugins_blog_handlecomment {
         $data['comments'] = self::cleanUpComment($data['comments']);
         
         
-        $commentRejected = "";
         //deleteIt == true => Rejected comment
         $deleteIt = false;
         
@@ -360,8 +364,8 @@ class bx_plugins_blog_handlecomment {
                 $emailBodyID = 'emailBodyAnfrage';
                 
                 $emailBody .= utf8_decode(self::lookup($emailBodyID));
-		//BC with old blogcomments.xml files
-		$data['base'] = $data['openid_url'];
+                //BC with old blogcomments.xml files
+                $data['base'] = $data['openid_url'];
                 self::_replaceTextFields($emailBody, $data);
                 $emailBody = html_entity_decode($emailBody,ENT_QUOTES,'UTF-8');
                 
@@ -391,7 +395,6 @@ class bx_plugins_blog_handlecomment {
                 
                 if(!$commentRejected) {
                     bx_plugins_blog_commentsnotification::sendNotificationMails($lastID,$row['id'],$parts['coll']->uri);
-                    
                     header ('Location: '. bx_helpers_uri::getLocationUri($row["post_uri"]) . '.html?sent='.time().'#comment'.$lastID);
                 } else {
                     //put it in the db;
@@ -400,9 +403,13 @@ class bx_plugins_blog_handlecomment {
                     if ($deleteIt) {
                         print ("Comment rejected. Looks like blogspam.");
                     } else {
-                        print ("<h1>Possible blogspam</h1>Your comment is considered as possible blogspam and therefore moderated. <br/> If it's legitimate, the author will make it available later.<br/> Your message is not lost ;) <br/>Thanks for your understanding.<p/>");
-                        print ("The reasons are: <br/>");
-                        print nl2br(htmlspecialchars($commentRejected));
+                        if ($row['post_comment_mode'] == 4) {
+                            header ('Location: '. bx_helpers_uri::getLocationUri($row["post_uri"]) . '.html?mod=1&sent='.time().'#commentNotice');
+                        } else {
+                            print ("<h1>Possible blogspam</h1>Your comment is considered as possible blogspam and therefore moderated. <br/> If it's legitimate, the author will make it available later.<br/> Your message is not lost ;) <br/>Thanks for your understanding.<p/>");
+                            print ("The reasons are: <br/>");
+                            print nl2br(htmlspecialchars($commentRejected));
+                        }
                     }
                 }
                 exit();

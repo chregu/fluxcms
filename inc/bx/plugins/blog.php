@@ -560,7 +560,7 @@ if(MDB2::isError($res)){
                 $row['post_comment_mode'] = $GLOBALS['POOL']->config->blogDefaultPostCommentMode;
             }
             $onemonthago = time() - 2678400;
-            if ($row['post_comment_mode'] == 2 || ($row['post_comment_mode'] == 1 && $onemonthago < $row['unixtime'])) {
+            if ($row['post_comment_mode'] == 2 || $row['post_comment_mode'] == 4 || ($row['post_comment_mode'] == 1 && $onemonthago < $row['unixtime'])) {
                 $xml .= ' blog:post_comment_allowed="1" ';
                 if ($GLOBALS['POOL']->config->blogTrackbacksTimeLimit == 'true' && $onemonthago  > $row['unixtime']) {
                     $xml .= ' blog:post_trackbacks_allowed="0" ';
@@ -1026,7 +1026,10 @@ if(MDB2::isError($res)){
          
          
         if ($this->newCommentError) {
-            $xml .= '<p style="color:red;">'.$this->newCommentError.'</p>';
+            $xml .= '<p name="commentNotice" style="color:red;">'.$this->newCommentError.'</p>';
+        } else if (!empty($_GET['mod'])) {
+            $xml .= '<p name="commentNotice" style="color:red;"><i18n:text>Moderated Comment</i18n:text></p>';
+            
         }
             $xml .= '<form name="bx_foo" action="'.$posturipath.'#commentform" method="post">
                <table class="form" border="0" cellspacing="0" cellpadding="0" id="commentform">
