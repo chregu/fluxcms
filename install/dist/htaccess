@@ -11,11 +11,14 @@ AddType text/xml rng
 # They are not really needed, the CMS works also without them,
 # But we added them here to ensure some reasonable default values
 
-#  set this to 2039 for public website.. (or even less)
+#  set this to 6143 for public website.. (or even less)
 #E_STRICT | E_ALL
-php_value error_reporting 16383 
-# E_ALL & ~E_NOTICE
-#php_value error_reporting 14327 
+#php_value error_reporting 16383
+#(E_STRICT | E_ALL) & ~E_DEPRECATED 
+#php_value error_reporting 8191
+#E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT
+php_value error_reporting 6135
+
 
 #security stuff
 # If you need to fopen http:// files, use something else than fopen (curl, pear class, whatever)
