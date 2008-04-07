@@ -29,7 +29,6 @@ class bx_errorhandler {
                     $this->addReport("Notice",$errno,$errstr,$errfile,$errline,$ctx);
                 break;
                 case E_STRICT:
-                case 8192: //E_DEPRECATED...
                 $doReport = true;
                 foreach ($this->excludePath as $path) {
                     if (strpos($errfile,$path) !== false) {
@@ -40,6 +39,19 @@ class bx_errorhandler {
                 if ($doReport) {
                     $this->addReport("Strict",$errno,$errstr,$errfile,$errline,$ctx);
                 }
+                break;
+                case 8192: //E_DEPRECATED...
+                $doReport = true;
+                foreach ($this->excludePath as $path) {
+                    if (strpos($errfile,$path) !== false) {
+                        $doReport = false;
+                        break;
+                    }
+                }
+                if ($doReport) {
+                    $this->addReport("Deprecated",$errno,$errstr,$errfile,$errline,$ctx);
+                }
+                
                 break;
                 case E_USER_ERROR:
                 echo "<b>USER_ERROR</b> [$errno] $errstr<br />\n";
