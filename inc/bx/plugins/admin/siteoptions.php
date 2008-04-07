@@ -147,7 +147,9 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
         $this->addSelectOption("blogDefaultPostCommentMode",array(
            1 => "Allow comments for 1 month",
            2 => "Always allow comments",
-           3 => "No comments allowed"), $dom,array("help"=>$i18n->translate("default_blogcommentmode")));
+           3 => "No comments allowed",
+           4 => "Moderated comments"
+           ), $dom,array("help"=>$i18n->translate("default_blogcommentmode")));
         
         $this->addSelectOption("blogSendModeratedCommentNotification",array(
         'false' => "No",
