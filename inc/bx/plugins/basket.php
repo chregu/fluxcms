@@ -77,8 +77,9 @@ class bx_plugins_basket extends bx_plugin {
             $db2xml = new XML_db2xml(null, $this->basketname);
             $domdoc->loadXML('<basket/>');
             
-           
             if (isset($this->storage[$this->basketname]['basket'])) { 
+                ksort($this->storage[$this->basketname]['basket']);
+                
                 foreach($this->storage[$this->basketname]['basket'] as $idfield => $opts) {
                     
                     $e = $domdoc->createElement('entry');
