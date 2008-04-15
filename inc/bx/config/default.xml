@@ -3,6 +3,11 @@
     <constants>
         <constant name="BX_WEBROOT">auto</constant>
         
+        <constant name="BX_WEBROOT_THEMES">{BX_WEBROOT}themes/</constant>
+        <constant name="BX_WEBROOT_WEBINC">{BX_WEBROOT}webinc/</constant>
+        <constant name="BX_WEBROOT_FILES">{BX_WEBROOT}files/</constant>
+        
+        
         <constant name="BX_PROJECT_DIR">auto</constant>
         
         <!-- Some plugins check for this and do not allow access for stuff above that
