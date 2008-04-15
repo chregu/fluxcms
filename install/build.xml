@@ -118,7 +118,7 @@
   
 
     <target name="installUser" depends="installDB, installDBUTF8" if="databaseRoot.User" description="Create the DB user">
-        <mdb2  url="${database.type}://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/${database.name}">GRANT ALTER, CREATE, INDEX, INSERT, LOCK TABLES, SELECT, UPDATE, DROP, DELETE ON ${database.name}. * TO '${database.user}@${database.host}' IDENTIFIED BY '${database.password}';</mdb2>
+        <mdb2  url="${database.type}://${databaseRoot.User}:${databaseRoot.Password}@${database.host}/${database.name}">GRANT ALTER, CREATE, INDEX, INSERT, LOCK TABLES, SELECT, UPDATE, DROP, DELETE ON ${database.name}. * TO '${database.user}'@${database.host} IDENTIFIED BY '${database.password}';</mdb2>
     </target>
     
     
