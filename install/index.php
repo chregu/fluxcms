@@ -337,7 +337,7 @@ function checkRequired() {
 }
 
 function subdir() {
-    $dir = substr(str_replace($_SERVER['DOCUMENT_ROOT'],"",str_replace("\\","/",getcwd())),0,-7);
+    $dir = substr(str_replace(realpath($_SERVER['DOCUMENT_ROOT']),"",str_replace("\\","/",realpath(getcwd()))),0,-7);
     if ($dir == "/") { $dir = "";}
     return $dir;
 }
