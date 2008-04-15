@@ -13,6 +13,9 @@
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" 
     doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"/>
     <xsl:param name="webroot"/>
+    <xsl:param name="webrootFiles"  select="concat($webroot,'files/')"/>
+    <xsl:param name="webrootWebinc"  select="concat($webroot,'webinc/')"/>
+    <xsl:param name="webrootThemes" select="concat($webroot,'themes/')"/>
     <xsl:param name="webrootLang"/>
     <xsl:param name="requestUri"/>
     <xsl:param name="mode"/>
@@ -83,10 +86,10 @@
                 <link rel="openid.server" href="{$webroot}/admin/openid/" />
 <xsl:text>
 </xsl:text>                
-                <link type="text/css" href="{$webroot}themes/{$theme}/css/{$themeCss}" rel="stylesheet" media="screen"/>
+                <link type="text/css" href="{$webrootThemes}{$theme}/css/{$themeCss}" rel="stylesheet" media="screen"/>
 <xsl:text>
 </xsl:text>                
-                <link type="text/css" href="{$webroot}themes/{$theme}/css/mobile.css" rel="stylesheet" media="handheld"/>
+                <link type="text/css" href="{$webrootThemes}{$theme}/css/mobile.css" rel="stylesheet" media="handheld"/>
 <xsl:text>
 </xsl:text>                
                 <link rel="shortcut icon" href="{$webroot}favicon.ico" type="image/x-icon"/>
@@ -274,7 +277,7 @@
 
 <p>
         <a href="{$webroot}blog/rss.xml">
-            <img border="0" src="{$webroot}themes/{$theme}/buttons/rss.png" alt="RSS 2.0 feed"/>
+            <img border="0" src="{$webrootThemes}{$theme}/buttons/rss.png" alt="RSS 2.0 feed"/>
         </a>
 </p>
     </xsl:template>
