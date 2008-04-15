@@ -15,8 +15,14 @@
 
 
     <xsl:param name="ICBM" select="php:functionString('bx_helpers_config::getOption','ICBM')"/>
+    <xsl:param name="webrootFiles"  select="concat($webroot,'files/')"/>
+    <xsl:param name="webrootWebinc"  select="concat($webroot,'webinc/')"/>
+    <xsl:param name="webrootThemes" select="concat($webroot,'themes/')"/>
+
     <xsl:variable name="blogname" select="php:functionString('bx_helpers_config::getOption','blogname')"/>
     <xsl:variable name="blogroot" select="concat(substring($webroot,1,string-length($webroot)-1),$collectionUri)"/>
+
+
 
     <xsl:output encoding="utf-8" method="xml"/>
     <xsl:variable name="singlePost">
@@ -117,7 +123,7 @@
             <ul>
                 <li>
                     <a href="{$blogroot}rss.xml">
-                        <img src="{$webroot}/themes/{$theme}/buttons/rss.png" width="80" height="15" alt="RSS 2.0 Feed" border="0"/>
+                        <img src="{$webrootThemes}{$theme}/buttons/rss.png" width="80" height="15" alt="RSS 2.0 Feed" border="0"/>
                     </a>
                 </li>
                 <li>
@@ -127,17 +133,17 @@
                 </li>
                 <li>
                     <a href="http://validator.w3.org/check?uri=referer">
-                        <img src="{$webroot}/themes/{$theme}/buttons/xhtml10.png" width="80" height="15" alt="XHTML 1.0 compliant" border="0"/>
+                        <img src="{$webrootThemes}{$theme}/buttons/xhtml10.png" width="80" height="15" alt="XHTML 1.0 compliant" border="0"/>
                     </a>
                 </li>
                 <li>
                     <a href="http://www.flux-cms.org">
-                        <img src="{$webroot}/themes/{$theme}/buttons/fluxcms.png" width="80" height="15" alt="Powered by Flux CMS" border="0"/>
+                        <img src="{$webrootThemes}{$theme}/buttons/fluxcms.png" width="80" height="15" alt="Powered by Flux CMS" border="0"/>
                     </a>
                 </li>
                 <li>
                     <a href="http://www.popoon.org">
-                        <img src="{$webroot}/themes/{$theme}/buttons/popoon.png" width="80" height="15" alt="Powered by Popoon" border="0"/>
+                        <img src="{$webrootThemes}{$theme}/buttons/popoon.png" width="80" height="15" alt="Powered by Popoon" border="0"/>
                     </a>
                     
 
@@ -346,7 +352,7 @@
     <xsl:template match="xhtml:span[@class='openid']" mode="xhtml">
         &#160;
         <a target="_blank" href="http://openid.net/">
-            <img src="{$webroot}{'webinc/images/openid.gif'}" alt="open_id"/>
+            <img src="{$webrootWebinc}images/openid.gif" alt="open_id"/>
         </a>
     </xsl:template>
 
@@ -369,11 +375,11 @@
                 <h2 class="post_title">
                     <xsl:if test="$username != ''">
                         <a href="{$webroot}admin/edit{$collectionUri}{../@blog:post_uri}.html">
-                            <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/editbutton.png" alt="editbutton"/>&#160;
+                            <img style="vertical-align: bottom; border: 0px;" src="{$webrootWebinc}images/editbutton.png" alt="editbutton"/>&#160;
                         </a>
                     </xsl:if>
                     <xsl:if test="../@blog:post_status != 1">
-                        <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/privat.gif"/>
+                        <img style="vertical-align: bottom; border: 0px;" src="{$webrootWebinc}/images/privat.gif"/>
                     </xsl:if>
                     <xsl:apply-templates/>
                 </h2>
@@ -382,12 +388,12 @@
                 <h2 class="post_title">
                     <xsl:if test="$username != ''">
                         <a href="{$webroot}admin/edit{$collectionUri}{../@blog:post_uri}.html">
-                            <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/editbutton.png" alt="editbutton"/>&#160;
+                            <img style="vertical-align: bottom; border: 0px;" src="{$webrootWebinc}/images/editbutton.png" alt="editbutton"/>&#160;
                         </a>
                     </xsl:if>
                     <a href="{../xhtml:div[@class='post_links']/xhtml:span[@class='post_uri']/xhtml:a/@href}">
                         <xsl:if test="../@blog:post_status != 1">
-                            <img style="vertical-align: bottom; border: 0px;" src="{$webroot}webinc/images/privat.gif"/>
+                            <img style="vertical-align: bottom; border: 0px;" src="{$webrootWebinc}/images/privat.gif"/>
                         </xsl:if>
                         <xsl:apply-templates/>
                     </a>
