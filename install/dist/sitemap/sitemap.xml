@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!---->
 <!--1-->
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
 
@@ -121,8 +122,8 @@
                         <map:part strip-root="true">
                             <map:generate type="bxcms" src="{../1}">
                                 <map:parameter name="collection" value="/"/>
-                                  <map:parameter name="filename" value="__pagenotallowed"/>
-                                  <map:parameter name="ext" value="html"/>
+                                <map:parameter name="filename" value="index"/>
+                                <map:parameter name="ext" value="html"/>
 
 
                             </map:generate>
@@ -206,6 +207,9 @@
                         <map:otherwise>
                             <map:transform type="xslt" src="constant(BX_THEMES_DIR)/{config://theme}/{xslt}">
                                 <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                                <map:parameter name="webrootFiles" value="constant(BX_WEBROOT_FILES)"/>
+                                <map:parameter name="webrootThemes" value="constant(BX_WEBROOT_THEMES)"/>
+                                <map:parameter name="webrootWebinc" value="constant(BX_WEBROOT_WEBINC)"/>
                                 <map:parameter name="webrootLang" value="{webrootLang}"/>
                                 <map:parameter name="requestUri" value="{requestUri}"/>
                                 <map:parameter name="collectionUri" value="{collectionUri}"/>
