@@ -32,6 +32,9 @@ php_flag allow_call_time_pass_reference  On
 #Options -Indexes
 
 RewriteEngine On
+#Minify all js and css files, disable by default
+#RewriteRule ^(.*\.(css|js))$ /inc/minify/minify.php?files=$1 [L,NC]
+
 
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##themes/standard/.*
 RewriteRule ^/*themes/admin/(.+)$ ./themes/standard/admin/$1 [L]
@@ -78,6 +81,7 @@ RewriteCond     %{REQUEST_URI}  !^/*##DIR##dynimages/
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##files/
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##install/
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##_hosts/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##inc/minify/minify.php
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##admin/form/
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##admin/webinc/
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##favicon
