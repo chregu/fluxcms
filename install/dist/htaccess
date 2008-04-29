@@ -33,6 +33,7 @@ php_flag allow_call_time_pass_reference  On
 
 RewriteEngine On
 #Minify all js and css files, disable by default
+#RewriteCond  %{REQUEST_URI} !^/*##DIR##admin/
 #RewriteRule ^(.*\.(css|js))$ /inc/minify/minify.php?files=$1 [L,NC]
 
 

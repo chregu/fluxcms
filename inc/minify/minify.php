@@ -449,7 +449,7 @@ class Minify {
       // Even when the file exists, we still throw a
       // MinifyFileNotFoundException in order to try to prevent an information
       // disclosure vulnerability.
-      throw new MinifyFileNotFoundException("File not found: $file");
+      throw new MinifyFileNotFoundException("Minify: File not found: $file");
     }
 
     return $filepath;
