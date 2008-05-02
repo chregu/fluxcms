@@ -138,7 +138,7 @@ class Minify {
    *   Minify::TYPE_JS)
    * @return string minified string
    */
-  public static function minify($string, $type = self::TYPE_JS) {
+  public static function minifyBoth($string, $type = self::TYPE_JS) {
     return $type === self::TYPE_JS ? self::minifyJS($string) :
         self::minifyCSS($string);
   }
@@ -173,7 +173,7 @@ class Minify {
    */
   protected static function minifyJS($js) {
     require_once dirname(__FILE__).'/lib/jsmin.php';
-    return JSMin::minify($js);
+    return JSMin::minifyBoth($js);
   }
 
   /**
@@ -316,7 +316,7 @@ class Minify {
       }
     }
 
-    $combined = $minify ? self::minify(implode("\n", $combined), $this->type) :
+    $combined = $minify ? self::minifyBoth(implode("\n", $combined), $this->type) :
         implode("\n", $combined);
 
     // Save combined contents to the cache.
