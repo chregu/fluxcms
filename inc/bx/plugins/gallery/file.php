@@ -35,7 +35,7 @@ class bx_plugins_gallery_file {
                     $prefix = $GLOBALS['POOL']->config->getTablePrefix();
                     $subgallery = "/".$options['path'].$name."/";
                     
-                    $query = "select path from ".$prefix."properties where path like '".$subgallery."%' and name = 'preview' and value = '1'";
+                    $query = "select * from ".$prefix."properties where path like '".$subgallery."%' and name = 'preview' and value = '1'";
                     foreach ( $GLOBALS['POOL']->db->queryCol($query) as $pic) {
                         $pic = str_replace($subgallery,"",$pic);
                         
@@ -52,7 +52,6 @@ class bx_plugins_gallery_file {
                         $node = $this->dom->createElement('image');
                         $node->setAttribute('href', $name);
                         $node->setAttribute('id', $name);
-                        $options['images']->appendChild($node);
                         //bx_helpers_debug::webdump($options['path'].$name);
                         /* this code would allow captions and title in overviews as well... */
                         $preview = bx_resourcemanager::getProperty("/".$options['path'].$name,"preview",'bx:'.$lang);
@@ -63,7 +62,7 @@ class bx_plugins_gallery_file {
                             
                         if ($options['mode'] != 'image' && $options['descriptionInOverview']) {
                             
-                            $description = bx_resourcemanager::getProperty("/".$options['path']."subgallery","description",'bx:'.$lang);
+                            $description = bx_resourcemanager::getProperty("/".$options['path'],"description",'bx:'.$lang);
                             if ($description) {
                                 $node->appendChild($this->dom->createTextNode(html_entity_decode($description,ENT_COMPAT,"UTF-8")));
                             }
@@ -72,6 +71,7 @@ class bx_plugins_gallery_file {
                         if ($options['mode'] != 'image' && $options['titleInOverview']) {
                             $title = bx_resourcemanager::getProperty("/".$options['path'].$name,"title",'bx:'.$lang);
                             if ($title) {
+                                
                                 $node->setAttribute('imageTitle', html_entity_decode($title,ENT_COMPAT,"UTF-8"));
                             }
                         }
@@ -100,6 +100,7 @@ class bx_plugins_gallery_file {
                            
                         }
                         
+                        $options['images']->appendChild($node);
                     }
                     $options['numberOfImages']++;
                 }
