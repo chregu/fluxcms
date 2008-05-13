@@ -320,7 +320,10 @@
                         </td>
                         <td>
                         
-                            <a href="#" onClick="cal.select(document.forms.entry.created,'anchor_post_date','yyyy-MM-ddT00:00'); return false;" name="anchor_post_date" id="anchor_post_date">select</a><div id="caldiv" style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
+                            <div id="displayCalendar">
+                            <a href="#" onClick="cal.select(document.forms.entry.created,'displayCalendar','yyyy-MM-ddT00:00'); return false;" name="anchor_post_date" id="anchor_post_date">select</a>
+                            </div>
+                            <div id="caldiv" style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
                             <br/>
                         </td>
                     </tr>
@@ -358,7 +361,7 @@
                             <input id="expires"  name="bx[plugins][admin_edit][expires]" size="40" value="{atom:expires}"/>
                         </td>
                         <td>
-                            <a href="#" onClick="cal.select(document.forms.entry.expires,'anchor_post_date','yyyy-MM-ddT00:00'); return false;" name="anchor_post_date" id="anchor_post_date">select</a><div id="caldiv" style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
+                            <a href="#" onClick="cal.select(document.forms.entry.expires,'displayCalendar','yyyy-MM-ddT00:00'); return false;" name="anchor_post_date" id="anchor_post_date">select</a><div id="caldiv" style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;"></div>
                             <br/>
                         </td>
                     </tr>
