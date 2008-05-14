@@ -61,6 +61,8 @@ class bx_editors_newsmailer_newsmailer {
      */
     public function autoPrepareNewsletter($draftId)
     {
+        bx_log::logNewsletter("START autoPrepareNewsletter (id: $draftId)");
+
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
     //mark as prepareds    
     $query = "UPDATE ".$prefix."newsletter_drafts SET prepared=NOW() WHERE id=".$draftId;
@@ -75,16 +77,19 @@ class bx_editors_newsmailer_newsmailer {
     	$this->baseUrl = $draft["baseurl"];
     	// read in the newsletter templates if existing
     	   $htmlMessage = $this->readNewsletterFile($draft['htmlfile'], "html", $draft['colluri']);
+	   bx_log::logNewsletter("Reading text newsletter file: " . $draft['textfile'] . " (colluri: " . $draft['colluri'] . ")");
 		$textMessage = $this->readNewsletterFile($draft['textfile'], "text", $draft['colluri']);
 
 		$dom = new DomDocument();
 		
 		if(!empty($draft['htmlfile'])) {
+			bx_log::logNewsletter("Loading HTML mail");
 			$dom->loadXML($htmlMessage);
 			
 			$dom = $this->transformHTML($dom);
 			
 			if($draft["embed"] == 1) {
+				bx_log::logNewsletter("Embedding pictures");
 				self::$htmlImages = array();
 				$dom = $this->transformHTMLImages($dom);
             } else {
@@ -109,6 +114,7 @@ class bx_editors_newsmailer_newsmailer {
 		}
 		
 		if(!empty($draft['attachment'])) {
+            bx_log::logNewsletter("Adding attachment");
 			$path = ltrim($draft['attachment'], "/");
 			if(($attachment = @file_get_contents($path)) == true) {
     			$shortname = end(preg_split("[\\/]", $path));
@@ -151,6 +157,7 @@ class bx_editors_newsmailer_newsmailer {
     
     	$query = "DELETE FROM ".$prefix."newsletter_cache WHERE fk_draft=".$draftId;
     	$GLOBALS['POOL']->dbwrite->exec($query);
+        bx_log::logNewsletter("DONE autoPrepareNewsletter (id: $draftId)");
     }
     
     /**
@@ -159,6 +166,7 @@ class bx_editors_newsmailer_newsmailer {
      */
     public function autoSendNewsletter($draftId)
     {
+        bx_log::logNewsletter("START autoSendNewsletter (id: $draftId)");
     	sleep(1);
     	
     	$prefix = $GLOBALS['POOL']->config->getTablePrefix();
@@ -172,7 +180,7 @@ class bx_editors_newsmailer_newsmailer {
     	$mail_queue = new Mail_Queue($this->db_options, $mailoptions);
 		$retval = $mail_queue->sendMailsInQueue();	
 		
-    		
+        bx_log::logNewsletter("DONE autoSendNewsletter (id: $draftId)");
 		return !$mail_queue->isError($retval);    	
     }
     
@@ -319,18 +327,18 @@ class bx_editors_newsmailer_newsmailer {
      * @param inputdom DomDocument
      * @return transformed DocDocument
      */
-    protected function transformHTMLimages($inputdom)
+    protected function transformHTMLImages($inputdom)
     {
 		$xsl = new DomDocument();
 		//$xsl->load('themes/'.bx_helpers_config::getTheme().'/htmlimage.xsl');
 		$xsl->load('themes/standard/plugins/newsletter/htmlimage.xsl');
 		$proc = new XsltProcessor();
 		$proc->registerPHPFunctions();
-		$xsl = $proc->importStylesheet($xsl);
-		return $proc->transformToDoc($inputdom);  	
+		$proc->importStylesheet($xsl);
+		return $proc->transformToDoc($inputdom);
     }
     
-    protected function transformHTMLimagesLinks($inputdom,$webroot)
+    protected function transformHTMLImagesLinks($inputdom,$webroot)
     {
 		$xsl = new DomDocument();
 		//$xsl->load('themes/'.bx_helpers_config::getTheme().'/htmlimage.xsl');
@@ -369,14 +377,14 @@ class bx_editors_newsmailer_newsmailer {
 
 		// replace templates in the form {m|f:Text} with the included text in case 
 		// the gender matches the condition
-		if($person['gender'] == '0') {
-			$replace = array("$2", "");
-		} else {
-			$replace = array("", "$2");	
-		}
-    	$message = preg_replace(array("/{([m]{1}):([^\}]*)}/", "/{([f]{1}):([^\}]*)}/"), 
-									$replace, 
-									$message);  
+                switch ($person['gender']) {
+                    case '0': $replace = array("$2", "", ""); break;
+                    case '1': $replace = array("", "$2", ""); break;
+                    default:  $replace = array("", "", "$2"); break;
+                }
+    	$message = preg_replace(array("/{([m]{1}):([^\}]*)}/",
+                                      "/{([f]{1}):([^\}]*)}/",
+                                      "/{([g]{1}):([^\}]*)}/"), $replace, $message);
     	
     	// remove language code from filename
     	$webfilename = preg_replace('/(.*).(.{2}).xhtml/', '\1.html', $filename);
@@ -393,7 +401,18 @@ class bx_editors_newsmailer_newsmailer {
     	array_push($values, $this->baseUrl.$draft['colluri'].$webfilename);
     	array_push($values, date("m/Y"));
     	
-    	return str_replace($templates, $values, $message);
+    	$result = str_replace($templates, $values, $message);
+    	if (empty($result)) {
+    		echo "Got empty message\n";
+    		print_r($templates);
+    		print_r($values);
+    		echo "============\n";
+    		print_r($message);
+    		echo "============\n";
+    		die("!");
+    	}
+    	
+    	return $result;
     }
 
     /**
@@ -431,6 +450,7 @@ class bx_editors_newsmailer_newsmailer {
      */
     public static function adjustImagePath($path)
     {
+        bx_log::logNewsletter("adjustImagePath: $path");
     	// extract filename
     	$path = ltrim($path, "/");
     	$shortname = end(preg_split("[\\/]", $path));	
@@ -439,6 +459,7 @@ class bx_editors_newsmailer_newsmailer {
     		
     		// save the loaded image, this array is being read by sendNewsletter() later
     		self::$htmlImages[] = array("name" => $shortname, "content" => $content);
+        bx_log::logNewsletter("adjustImagePath - shortname = $shortname");
     	}
     	
     	return $shortname;
