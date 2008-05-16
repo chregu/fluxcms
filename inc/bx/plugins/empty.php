@@ -36,7 +36,7 @@ class bx_plugins_empty extends bx_plugin implements bxIplugin {
     }
     
     public function getIdByRequest($path, $name = NULL, $ext =NULL) {
-        return "empty.empty";
+        return "$path.$name";
     }
         
     
