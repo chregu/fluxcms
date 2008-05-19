@@ -40,7 +40,8 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
 
     public function getContentById($path,$id) {
 
-        $this->galleryPath = $path;
+
+	$this->galleryPath = $path;
 
         $coll = bx_collections::getCollection($path);
         $parentName = $coll->getDisplayName();
@@ -61,7 +62,6 @@ class bx_plugins_gallery_overview extends bx_plugins_gallery {
             $xml .= "<album>".$this->arrayToXMLstring($album)."</album>";
         }
         $xml = "<overview><parentName>$parentName</parentName>$xml</overview>";
-
         //and send back as dom
         return @domdocument::loadXML($xml);
     }
