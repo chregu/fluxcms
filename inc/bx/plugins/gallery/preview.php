@@ -172,7 +172,7 @@ $dom->appendChild($element);
         }
 
       
-	//$xml .= "<lightBoxOn>".$this->lightBoxOn."</lightBoxOn>";
+	$xml .= "<lightBoxOn>".$this->lightBoxOn."</lightBoxOn>";
 /*        if ($flickrParams) {
             $f = new Services_flickr($flickrParams['userid']);
             $sets = $f->getPhotoSets();
