@@ -13,6 +13,7 @@
             <!--<parameter name="virtualDir" value="{path}"/>-->
         <parameter name="columnsPerPage" value="4"/>
             <parameter name="rowsPerPage" value="4"/>
+	      <parameter name="lightboxOn" value="true"/>
                         
         </plugin>
     <plugin type="navitree"/>
