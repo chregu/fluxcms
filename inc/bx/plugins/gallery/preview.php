@@ -110,6 +110,13 @@ class bx_plugins_gallery_preview extends bx_plugins_gallery{
         $options = array();
 
         $dom = new domDocument();
+	
+
+
+// We insert the new element as root (child of the document)
+$dom->appendChild($element);
+	 
+	 
         $drivers = array();
         
         if (count($drivers) == 0) {
@@ -164,7 +171,8 @@ class bx_plugins_gallery_preview extends bx_plugins_gallery{
              $d->getImagesAndAlbums($options);
         }
 
-        
+      
+	//$xml .= "<lightBoxOn>".$this->lightBoxOn."</lightBoxOn>";
 /*        if ($flickrParams) {
             $f = new Services_flickr($flickrParams['userid']);
             $sets = $f->getPhotoSets();
@@ -213,6 +221,9 @@ class bx_plugins_gallery_preview extends bx_plugins_gallery{
         $dom->documentElement->appendChild($pagerNode);
         $dom->documentElement->appendChild($albumTree);
 
+
+	
+	
         return $dom;
 
     
