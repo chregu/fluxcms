@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<dbform:form
+        xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+        xmlns:xi="http://www.w3.org/2001/XInclude">
+<dbform:fields table="orders">
+   <dbform:field name="name" type="text" descr="Name"/>
+   <dbform:field name="forename" type="text" descr="Vorname"/>
+   <dbform:field name="mail" type="text" descr="Email"/>
+   <dbform:field name="phone" type="text" descr="Telefon"/>
+   <dbform:field name="company" type="text" descr="Auftraggeber / Firma"/>
+   <dbform:field name="title" type="text" descr="Titel des Vorhabens"/>
+   <dbform:field name="description" type="text_area" descr="Kurzbeschreibung"/>
+   <dbform:field name="contactperson" type="text" descr="Kontaktperson"/>
+   
+   <dbform:form name="dates" title="Dates">
+        <dbform:fields table="order_dates" thatidfield="fk_bestellungs_id">
+            <dbform:field type="listview_12n" name="dates" thatidfield="fk_bestellungs_id" idfield="id" namefield="concat(date, ':' ,confirm)" orderby="id" />
+            <xi:include href="dates.xml#xmlns(dbform=http://bitflux.org/dbforms2/1.0)xpointer(/dbform:form/dbform:fields/dbform:field)" parse="xml"/>
+        </dbform:fields>
+    </dbform:form>
+   
+</dbform:fields>
+
+<dbform:chooser namefield="concat(title,' - ',name,' ',forename)" wherefields="id" limit="100"/>
+</dbform:form>
+

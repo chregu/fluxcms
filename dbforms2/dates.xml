@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<dbform:form xmlns:dbform="http://bitflux.org/dbforms2/1.0">
+    
+    <dbform:fields table="order_dates" thatidfield="fk_bestellungs_id">
+        
+        <dbform:field name="date" type="date_time" descr="Datum">
+            <dbform:datasource type="foreign" table="order_dates" namefield="date" idfield="id" order="id"/>
+        </dbform:field>
+        
+        <dbform:field name="confirm" type="select" descr="Bestätigung">
+            <dbform:value name="0">Nicht Bestätigt</dbform:value>
+            <dbform:value name="1">Bestätigt</dbform:value>
+        </dbform:field>
+        
+    </dbform:fields>  
+
+</dbform:form>
