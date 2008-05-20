@@ -173,7 +173,6 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             }
         }
         $startEntry  = (int) (isset($_GET['start']) ? $_GET['start'] : 0);
-        var_dump($startEntry);
         if (($pos = strrpos($id,"/")) > 0) {
             $cat = substr($id,0,$pos);
             $id = substr($id, $pos + 1);
