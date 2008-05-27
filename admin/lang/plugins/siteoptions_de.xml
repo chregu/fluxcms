@@ -48,7 +48,7 @@
     Koordinaten nicht kennen, gehen Sie zu <a target='_new' href='http://multimap.com'>Multimap.com</a>, und suchen Sie ihren Ort.
     Kopieren Sie die Daten aus der Box 'Map Information' in das untenstehende Textfeld.]]></message>
     <message key="help_outputlanguages">Verfügbare Ausgabe-Sprachen (Zwei Buchstaben pro Sprache, mehrere getrennt durch Semikolons) z.B.: 'de;en'</message>
-    <message key="help_defaultlanguage">Standard-Sprache (Zwei Buchstaben aus der Liste von oben)</message>
+    <message key="help_defaultlanguage">Standard-Sprache (Zwei Buchstaben aus der Liste von oben oder "auto" für automatische Browser-Spracherkennung)</message>
     <message key="help_image_allowed_sizes">Erlaubte Bildgrössen für das dynamische Generieren von Bildern</message>
 <message key="Blog Default Editor">Wir empfehlen den WYSIWYG (what you see is what you get) Editor. Dieser hat auch mehr Möglichkeiten, als der Source Editor. Sollte Ihr Browser den WYSIWYG Modus nicht unterstützen, wird automatisch der Source Editor benutzt.</message>    
 <message key="help_blogWeblogsPing">Welche Ping Services aufgerufen werden sollen.</message>  
