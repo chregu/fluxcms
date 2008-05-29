@@ -80,6 +80,8 @@ class bx_plugins_basket extends bx_plugin {
             if (isset($this->storage[$this->basketname]['basket'])) { 
                 ksort($this->storage[$this->basketname]['basket']);
                 
+                var_dump([$this->basketname]['basket'])
+                
                 foreach($this->storage[$this->basketname]['basket'] as $idfield => $opts) {
                     
                     $e = $domdoc->createElement('entry');
