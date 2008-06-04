@@ -70,9 +70,9 @@ class bx_notifications_mail extends bx_notification {
          }
         }
 
+        $cs = strtoupper($options['charset']);   
         //make correct 7bit header for the subject
-        $subject = preg_replace('~([\xA0-\xFF])~e', '"=" . strtoupper(dechex(ord("$1")))', $subject);
-        $subject = '=?'.$options['charset'].'?Q?' . $subject . '?=';
+        $subject = preg_replace('~([\xA0-\xFF])~e', '"=?$cs?Q?=" . strtoupper(dechex(ord("$1"))) . "?="', $subject);
 
         return mail($to, $subject, $message, $headers);
     }
