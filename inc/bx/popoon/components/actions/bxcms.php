@@ -235,7 +235,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 "mode" => $mode,
                 'lang' => $lang,
                 'locale' => $GLOBALS['POOL']->config->getOutputLocale(),
-                'webrootLang' => $webrootLang,
+                'webrootLang' => BX_WEBROOT_LANG,
                 'fileNumber' => $fileNumber
             );
                          
