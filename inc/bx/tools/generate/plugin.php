@@ -1,4 +1,8 @@
 <?php
+
+error_reporting(2047);
+ini_set('display_errors',1);
+
 require_once("inc/bx/init.php");
 bx_init::start('conf/config.xml', "");
 
