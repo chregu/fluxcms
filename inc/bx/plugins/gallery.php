@@ -295,7 +295,7 @@ class bx_plugins_gallery extends bx_plugin {
            $to = $rootPath .$parts['rawname']. $filename;
            bx_helpers_file::mkPath(dirname($to));  
            $id = str_replace(BX_OPEN_BASEDIR,"/",$to);
-           $mimetype = popoon_helpers_mimetypes::getFromFileLocation($tmpname);
+           $mimetype = popoon_helpers_mimetypes::getFromFileLocation($filename);
            if ($resourceType != 'archive' && strpos($mimetype,'image/') !== 0) {
                if($returnAfterwards)
                    return FALSE;
