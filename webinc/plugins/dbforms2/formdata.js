@@ -43,7 +43,7 @@ function dbforms2_formData() {
     }
 
     this.setXML = function(xml) {
-        this.xml = xml;
+        this.xml = Sarissa.fixFirefox3Permissions(xml);
     }
     
     this.getValueByFieldID = function(fieldID) {

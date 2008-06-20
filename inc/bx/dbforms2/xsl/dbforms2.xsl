@@ -32,7 +32,7 @@
             <head>
                 <link href="{$webroot}themes/standard/admin/css/dbforms2.css" rel="stylesheet" media="screen" type="text/css"/>
 
-                <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/sarissa.js'"/></xsl:call-template>
+                <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/sarissa_0.9.9.4.js'"/></xsl:call-template>
 
                 <xsl:if test="/form/fields//textarea[@type='text_wysiwyg']">
                     <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/fck/fckeditor.js'"/></xsl:call-template>

@@ -71,16 +71,18 @@ function dbforms2_liveselect() {
         uri = uri + get;
         
         this.data = Sarissa.getDomDocument();
-    
         var wrappedCallback = new ContextFixer(this._sarissaOnLoadCallback, this);
         this.data.onreadystatechange = wrappedCallback.execute;
         
         this.dataLoaded = false;
+        
         this.data.load(uri);
     }
     
     this.loadEntriesFromXML = function() {
-        var entry = this.data.documentElement.firstChild.firstChild;
+       this.data = Sarissa.fixFirefox3Permissions(this.data);
+       var entry = this.data.documentElement.firstChild.firstChild;
+        
         this.results.removeAllEntries();
         while(entry) {
             idNS = entry.getElementsByTagName('_id');
