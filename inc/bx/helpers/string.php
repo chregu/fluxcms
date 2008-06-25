@@ -407,6 +407,9 @@ class bx_helpers_string {
     static function transformFromContentTypeToUTF8($str) {
         
         if (isset($_SERVER['CONTENT_TYPE']) && preg_match('#charset=([^/s^;]+)#',$_SERVER['CONTENT_TYPE'],$matches)) {
+            if ($matches[1] == 'UTF-8') {
+                return $str;
+            }
             if ($matches[1] == "ISO-8859-1") {
                 return utf8_encode($str);
             }
