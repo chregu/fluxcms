@@ -166,13 +166,13 @@ class bx_plugins_blog_handlecomment {
             if(strpos($data['url'], "\n") !== FALSE or strpos($data['url'], "\r") !== FALSE) {
                 $commentRejected .= "* Multi line hidden URL field \n";
             }
-            self::discardIt(" Hidden URL field was not empty, assuming bot: " . $data['url']);
+            self::discardIt(" Hidden URL field was not empty, assuming bot: " . $data['url'],$data['comments']);
             $deleteIt = true;
         }
         
         if (stripos($data['comments'],"[URL") !== false) {
             $commentRejected .= "* Non-supported '[URL]' used\n";
-            self::discardIt(" Non-supported '[URL]' used");
+            self::discardIt(" Non-supported '[URL]' used",$data['comments']);
         }
         /* Max 5 links per post and SURBL check */
         /* No check, when logged in */
@@ -193,7 +193,7 @@ class bx_plugins_blog_handlecomment {
                     if (count($urls) > ($maxurls + 5)) {
                         $deleteIt = true;
                        if (count($urls) >= $maxurls + 10) {
-                           self::discardIt(" More than 15 unique links in comment  (". count($urls) .")");
+                           self::discardIt(" More than 15 unique links in comment  (". count($urls) .")", $data['comments']);
                        }
                     }
                 }
@@ -214,7 +214,6 @@ class bx_plugins_blog_handlecomment {
         }
         $comment_notification_hash = md5($data['email'] . rand().microtime(true));
         $comment_hash = md5($_SERVER['REMOTE_ADDR'] . rand().microtime(true));
-        
         if (!$deleteIt) {  
             
                 include_once(BX_LIBS_DIR.'plugins/blog/akismet2.php');
@@ -236,7 +235,6 @@ class bx_plugins_blog_handlecomment {
                   $deleteIt = true;
                 }
         }
-        
         
         //akismet 
         if (!$deleteIt) {  
@@ -409,6 +407,7 @@ class bx_plugins_blog_handlecomment {
                             print ("<h1>Possible blogspam</h1>Your comment is considered as possible blogspam and therefore moderated. <br/> If it's legitimate, the author will make it available later.<br/> Your message is not lost ;) <br/>Thanks for your understanding.<p/>");
                             print ("The reasons are: <br/>");
                             print nl2br(htmlspecialchars($commentRejected));
+                            print "<hr/>Your comment was:<hr/>" . str_replace("&lt;br /&gt;","<br />",htmlentities($data['comments']) )."<hr/>";
                         }
                     }
                 }
@@ -454,10 +453,11 @@ class bx_plugins_blog_handlecomment {
         $subject = preg_replace($patterns, $replacements, $subject);
     }
     
-    static protected function discardIt($msg) {
+    static protected function discardIt($msg,$comment) {
          
-            print ("Comment rejected. Looks like blogspam.");
-	error_log("Flux: Blog Comment Discarded for " . BX_WEBROOT ." : ". $msg);
+            print ("Comment rejected. Looks like blogspam.<br/>");
+            print "Your comment was:<hr/>" . str_replace("&lt;br /&gt;","<br />",htmlentities($comment))."<hr/>";
+	       error_log("Flux: Blog Comment Discarded for " . BX_WEBROOT ." : ". $msg);
             die();
     }
     
