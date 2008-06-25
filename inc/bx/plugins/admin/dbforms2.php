@@ -71,6 +71,10 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
             if(!empty($rawpost)) {
                 $db = $GLOBALS['POOL']->dbwrite;
                 
+                //if there's no encoding in the xml, convert it from the HTTP headers to UTF-8
+                // FF 3 issue
+                $rawpost = bx_helpers_string::fixXMLEncodingFromHTTP($rawpost);    
+                
                 // create a new DOM document out of the posted string
                 $xmlData = new DOMDocument();
                 $xmlData->loadXML($rawpost);

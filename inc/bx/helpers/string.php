@@ -404,7 +404,24 @@ class bx_helpers_string {
             )*$%xs', $string);
     }
     
+    static function transformFromContentTypeToUTF8($str) {
+        
+        if (isset($_SERVER['CONTENT_TYPE']) && preg_match('#charset=([^/s^;]+)#',$_SERVER['CONTENT_TYPE'],$matches)) {
+            if ($matches[1] == "ISO-8859-1") {
+                return utf8_encode($str);
+            }
+            return iconv($matches[1],"UTF-8",$str);
+        } 
+        //if no charset, then return as it came
+        return $str;
+    }
+    
+    static function fixXMLEncodingFromHTTP($xml) {
+        if (!preg_match("#<?xml[^>]+encoding=#",$xml)) {
+            return bx_helpers_string::transformFromContentTypeToUTF8($xml);   
+        }
+        return $xml;
+    }
      
 }
 
-?>
