@@ -66,7 +66,9 @@ class bx_dbforms2_fields_file extends bx_dbforms2_field {
             if ($file['tmp_name']) {
                 $xml .= 'field.setValue("'.$filename.'");';
             }
-            $xml .= '    field.closeIframe();
+            $xml .= '    
+            field.onChange();
+            field.closeIframe();   
         }
         </script>
         </head>
