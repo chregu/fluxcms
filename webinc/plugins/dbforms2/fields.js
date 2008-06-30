@@ -617,7 +617,7 @@ function dbforms2_field_file(DOMNode) {
 			iframe.DOMNode = this.DOMNode;
 			iframe.onload = function() { 
 				var doc = this.contentDocument;
-				doc.forms.upload.action = document.location.pathname + "/upload/";
+				doc.forms.upload.action = document.location.protocol + '//' + document.location.host + document.location.pathname + "/upload/";
 				var fu = doc.getElementById("fieldname");
 				fu.value = this.DOMNode.name;
 				this.onload = null;
