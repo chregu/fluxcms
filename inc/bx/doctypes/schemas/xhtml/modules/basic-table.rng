@@ -29,6 +29,10 @@
     <attribute name="border">
       <ref name="Text.datatype"/>
     </attribute>
+    <attribute name="align">
+      <ref name="Text.datatype"/>
+    </attribute>
+
     <attribute name="width">
       <ref name="Text.datatype"/>
     </attribute>
