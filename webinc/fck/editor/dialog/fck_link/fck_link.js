@@ -481,8 +481,20 @@ function Ok()
 
 	// No link selected, so try to create one.
 	if ( !oLink )
-		oLink = oEditor.FCK.CreateLink( sUri ) ;
-	
+		//oLink = oEditor.FCK.CreateLink( sUri ) ;
+        FCK.ExecuteNamedCommand( 'CreateLink', sUri ) ;
+      
+      // Look for the just created link.
+       var oLinks = oEditor.FCK.EditorDocument.links ;
+   
+       for ( i = 0 ; i < oLinks.length ; i++ )
+       {
+          if ( oLinks[i].href.match(sUri))
+          {
+             var oLink = oLinks[i];
+          }
+       }
+
 	if ( oLink )
 		sInnerHtml = oLink.innerHTML ;		// Save the innerHTML (IE changes it if it is like a URL).
 	else
