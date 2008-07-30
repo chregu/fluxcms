@@ -109,16 +109,13 @@ if ($GLOBALS['POOL']->config->adminDeleteTmp == 'true') {
 }
 ?>
 </span>
-<?php if(popoon_classes_browser::isSafari()) { ?>
-<div onclick="this.style.display = 'none'" class="browserWarning">Safari works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
-<?php } else if(popoon_classes_browser::isOpera8()) { ?>
-<div  onclick="this.style.display = 'none'"  class="browserWarning">Opera 8/9 works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a 
-Mozilla based browser.</div>
+<?php if(popoon_classes_browser::isSafari() && !popoon_classes_browser::isSafari3()) { ?>
+<div onclick="this.style.display = 'none'" class="browserWarning">Safari 2 works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, upgrade to at least Safari 3 or Firefox.</div>
+<?php } else if(popoon_classes_browser::isOpera8() && !popoon_classes_browser::isOpera95()) { ?>
+<div  onclick="this.style.display = 'none'"  class="browserWarning">Opera 8/9 works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, upgrade to at least Opera 9.5 or Firefox </div>
 <?php } else if(popoon_classes_browser::isKonqueror34()) { ?>
 <div  onclick="this.style.display = 'none'"  class="browserWarning">Konqueror works quite well with the Flux CMS Admin. But, if you want to use any of the WYSIWYG editors, we highly recommend using a Mozilla based browser.</div>
-<?php } else if(popoon_classes_browser::isMSIEWin()) {?>
-<div  onclick="this.style.display = 'none'"  class="browserWarning">Not all features and esp. WYSIWYG editors are supported on MSIE/Win. <br/>We highly recommend using a Mozilla based browser.</div>
-<?php } else if(!popoon_classes_browser::isMozilla()) { ?>
+<?php } else if(!popoon_classes_browser::supportedByFCK()) { ?>
 <div  onclick="this.style.display = 'none'"  class="browserWarningRed">Your browser is not supported in  Flux CMS Admin. <br/>We highly recommend using a Mozilla based browser.</div>
 <?php } else {
    /* print "Version : ";
