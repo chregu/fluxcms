@@ -69,7 +69,7 @@ FCKConfig.ToolbarSets["Default"] = [
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
-	['Image','Table','Rule','Smiley','SpecialChar','UniversalKey'],
+	['Image','Table','Rule','Smiley','SpecialChar'],
 	['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
 	'/',
 	['Style','FontFormat','FontName','FontSize'],
@@ -77,7 +77,7 @@ FCKConfig.ToolbarSets["Default"] = [
 	['About']
 ] ;
 FCKConfig.ToolbarSets["BxCMS"] = [
-	['Bold','Italic','Subscript','Superscript','-','OrderedList','UnorderedList','-','Link','Unlink','-','Source','-','Cut','Copy','Paste','PasteText','PasteWord','-','Image','Table','Rule','SpecialChar','UniversalKey']
+	['Bold','Italic','Subscript','Superscript','-','OrderedList','UnorderedList','-','Link','Unlink','-','Source','-','Cut','Copy','Paste','PasteText','PasteWord','-','Image','Table','Rule','SpecialChar']
 ] ;
 
 
