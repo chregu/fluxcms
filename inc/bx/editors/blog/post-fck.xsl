@@ -17,7 +17,7 @@
     <xsl:variable name="langsAvail" select="php:functionString('bx_helpers_config::getLangsAvailXML')"/>
     <xsl:variable name="showAdvancedView" select="php:functionString('bx_helpers_globals::COOKIE','blogAdvancedView')"/> 
     <xsl:variable name="editor" select="php:functionString('bx_helpers_config::getOption','blogDefaultEditor')"/> 
-    <xsl:variable name="doFck" select="php:functionString('popoon_classes_browser::hasContentEditable') and $editor != 'source'"/>
+    <xsl:variable name="doFck" select="php:functionString('popoon_classes_browser::supportedByFCK') and $editor != 'source'"/>
     
    
     <xsl:template match="/">

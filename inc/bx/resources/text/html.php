@@ -106,11 +106,12 @@ class bx_resources_text_html extends bx_resource {
  		if($perm->isAllowed($localUri,array('xhtml-back-edit_oneform'))) {
         	$e[] = "oneform";
     	}	
- 		if($perm->isAllowed($localUri,array('xhtml-back-edit_fck'))) {
-        	$e[] = "fck";
-    	}	
  		$e[] = "ooo";
     	
+ 		if(popoon_classes_browser::supportedByFCK() && $perm->isAllowed($localUri,array('xhtml-back-edit_fck'))) {
+            array_unshift($e, "fck");
+        }   
+        
         if (popoon_classes_browser::isMozilla()) {
         	if($perm->isAllowed($localUri,array('xhtml-back-edit_kupu'))) {
         		array_unshift($e, 'kupu');
