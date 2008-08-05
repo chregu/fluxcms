@@ -46,7 +46,11 @@ document.forms['bookmarks'].selectElement.selectedIndex = 0;
 <body>
 
 <form name="bookmarks">
-<div id="top"><p class="logo"><a class="logolink" href="http://flux-cms.org" target="_blank">Flux CMS</a></p>
+<div id="top"><p class="logo">
+
+<a class="logolink" href="http://flux-cms.org" target="_blank" onmouseover="document.getElementById('versioninfo').style.display = 'inline';">Flux CMS</a>
+
+</p>
 <a class="logolink" target="_top" href="<?php echo BX_WEBROOT; ?>"><?php print bx_helpers_config::getOption('sitename');?></a>
 <br class="clr"/></div>
 
@@ -59,6 +63,11 @@ if (file_exists("../../structure/quicklinks.php")) {
 ?>
 
 <span style="float: right; ">
+<span id="versioninfo" style="display: none; font-variant: italics;">[Version: <?php echo BXCMS_VERSION . " / ". BXCMS_BUILD_DATE .".".BXCMS_BUILD_HOUR ." / ".BXCMS_REVISION;?>]
+&#160;
+&#160;
+&#160;
+</span>
 Bookmarks:<select name="selectElement" onchange="javascript:changeElement()">
 <option value="">--</option>
 

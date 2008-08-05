@@ -17,6 +17,7 @@ class bx_notifications_mail extends bx_notification {
     }
 
     public function send($to, $subject, $message, $fromAdress = null, $fromName= null, $options = array()) {
+        
         if (!$fromAdress) {
             $fromAdress = 'unknown@example.org';
         }
@@ -42,7 +43,7 @@ class bx_notifications_mail extends bx_notification {
             define('PHP_EOL',"\n");
         }
         $headers = "From: $from".PHP_EOL;
-        $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_REVISION.")".PHP_EOL;
+        $headers .= "User-Agent: Flux CMS Mailer (".BXCMS_VERSION."/".BXCMS_BUILD_DATE.")".PHP_EOL;
         if (!empty($_SERVER['HTTP_HOST'])) {
             $headers .= "X-Flux-Host: ".$_SERVER['HTTP_HOST'].PHP_EOL;
         }
