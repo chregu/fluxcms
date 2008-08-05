@@ -44,7 +44,7 @@ RemoveFormat		: "Formatierungen entfernen",
 InsertLinkLbl		: "Link",
 InsertLink			: "Link einfügen/editieren",
 RemoveLink			: "Link entfernen",
-VisitLink			: "Open Link",	//MISSING
+VisitLink			: "Link aufrufen",
 Anchor				: "Anker einfügen/editieren",
 AnchorDelete		: "Anker entfernen",
 InsertImageLbl		: "Bild",
@@ -73,9 +73,9 @@ BlockJustify		: "Blocksatz",
 DecreaseIndent		: "Einzug verringern",
 IncreaseIndent		: "Einzug erhöhen",
 Blockquote			: "Zitatblock",
-CreateDiv			: "Create Div Container",	//MISSING
-EditDiv				: "Edit Div Container",	//MISSING
-DeleteDiv			: "Remove Div Container",	//MISSING
+CreateDiv			: "Erzeuge Div Block",
+EditDiv				: "Bearbeite Div Block",
+DeleteDiv			: "Entferne Div Block",
 Undo				: "Rückgängig",
 Redo				: "Wiederherstellen",
 NumberedListLbl		: "Nummerierte Liste",
@@ -519,8 +519,8 @@ DlgAboutVersion		: "Version",
 DlgAboutInfo		: "Für weitere Informationen siehe",
 
 // Div Dialog
-DlgDivGeneralTab	: "General",	//MISSING
-DlgDivAdvancedTab	: "Advanced",	//MISSING
-DlgDivStyle		: "Style",	//MISSING
-DlgDivInlineStyle	: "Inline Style"	//MISSING
+DlgDivGeneralTab	: "Allgemein",
+DlgDivAdvancedTab	: "Erweitert",
+DlgDivStyle		: "Style",
+DlgDivInlineStyle	: "Inline Style"
 };

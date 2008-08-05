@@ -360,7 +360,7 @@ PasteErrorCopy	: "Your browser security settings don't permit the editor to auto
 PasteAsText		: "Paste as Plain Text",
 PasteFromWord	: "Paste from Word",
 
-DlgPasteMsg2	: "Please paste inside the following box using the keyboard (<STRONG>Ctrl+V</STRONG>) and hit <STRONG>OK</STRONG>.",
+DlgPasteMsg2	: "Please paste inside the following box using the keyboard (<strong>Ctrl+V</strong>) and hit <strong>OK</strong>.",
 DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",
 DlgPasteIgnoreFont		: "Ignore Font Face definitions",
 DlgPasteRemoveStyles	: "Remove Styles definitions",
@@ -506,7 +506,7 @@ DlgDocPreview		: "Preview",
 // Templates Dialog
 Templates			: "Templates",
 DlgTemplatesTitle	: "Content Templates",
-DlgTemplatesSelMsg	: "Please select the template to open in the editor<br>(the actual contents will be lost):",
+DlgTemplatesSelMsg	: "Please select the template to open in the editor<br />(the actual contents will be lost):",
 DlgTemplatesLoading	: "Loading templates list. Please wait...",
 DlgTemplatesNoTpl	: "(No templates defined)",
 DlgTemplatesReplace	: "Replace actual contents",
@@ -519,8 +519,8 @@ DlgAboutVersion		: "version",
 DlgAboutInfo		: "For further information go to",
 
 // Div Dialog
-DlgDivGeneralTab	: "General",	//MISSING
-DlgDivAdvancedTab	: "Advanced",	//MISSING
-DlgDivStyle		: "Style",	//MISSING
-DlgDivInlineStyle	: "Inline Style"	//MISSING
+DlgDivGeneralTab	: "General",
+DlgDivAdvancedTab	: "Advanced",
+DlgDivStyle		: "Style",
+DlgDivInlineStyle	: "Inline Style"
 };
