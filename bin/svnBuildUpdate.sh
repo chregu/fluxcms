@@ -11,7 +11,8 @@ echo $NEW;
 echo $OLD;
 if test $NEW != $OLD
 then
-date=`date +%Y%m%d%H%M`; sed -e "s/BXCMS_BUILD','.*/BXCMS_BUILD','$date');/" inc/bx/init.php > inc/bx/init.php.new ; mv inc/bx/init.php.new inc/bx/init.php
+date=`date +%-y.%-m.%-d`; sed -e "s/BXCMS_BUILD_DATE','.*/BXCMS_BUILD_DATE','$date');/" inc/bx/init.php > inc/bx/init.php.new ; mv inc/bx/init.php.new inc/bx/init.php
+date=`date +%-H.%-M`; sed -e "s/BXCMS_BUILD_HOUR','.*/BXCMS_BUILD_HOUR','$date');/" inc/bx/init.php > inc/bx/init.php.new ; mv inc/bx/init.php.new inc/bx/init.php
 svn ci -m"automatic BuildDate Update" inc/bx/init.php
 rm div/phpfiles
 for i in `find $dir -name "*.php"` ; do md5sum $i >> div/phpfiles; done 
