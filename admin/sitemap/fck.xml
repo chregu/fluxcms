@@ -18,7 +18,9 @@
 
         <map:pipeline>
             <map:match type="uri" pattern="fck/fckstyles.xml*">
-             <map:read type="resource" src="constant(BX_PROJECT_DIR)conf/fck/fckstyles.xml" mime-type="auto"/>
+             <map:read type="resource" src="constant(BX_PROJECT_DIR)conf/fck/fckstyles.xml" 
+                 fallback="constant(BX_PROJECT_DIR)webinc/fck/fckstyles.xml"
+                 mime-type="auto"/>
             </map:match>
         </map:pipeline>
 
