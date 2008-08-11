@@ -367,7 +367,7 @@
                     </tr>
 
                     
-                    <tr id="advanced5">
+                    <tr id="advanced8">
                         <xsl:call-template name="displayOrNot"/>
                         <td>Trackback URLs</td>
                         <td>
