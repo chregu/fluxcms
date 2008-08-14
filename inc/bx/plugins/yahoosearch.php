@@ -5,13 +5,8 @@
 * BX_INC_DIR.'bx/plugins/yahoosearch.php'
 */ 
  
-/**
-* This plugin does not really do anything. It's just a simple example 
-* of how a plugin is workting.
-*
-* calling it on e.g. /hello will output "Hello World"
-* calling it on e.g. /hello/foo will output "Hello foo"
-*
+/*
+
 * To use this plugin in a collection, put the following into .configxml
 *** 
     <bxcms xmlns="http://bitflux.org/config">
@@ -56,11 +51,25 @@ class bx_plugins_yahoosearch extends bx_plugin implements bxIplugin {
 	     $this->path = $path;
 	    $bossAppId = $this->getParameter($path, 'BOSSAppID');
 	    $testSite = $this->getParameter($path, 'testSite');
+	    
+	    $yahoourl = "http://boss.yahooapis.com/ysearch/web/v1/".$query."+site:";
+	    
 	    if($testSite != ""){
-		   $dom =   bx_helpers_simplecache::staticHttpReadAsDom("http://boss.yahooapis.com/ysearch/web/v1/".$query."+site:".$testSite."?appid=".$bossAppId."&start=".$dirname."&format=xml");
+		    $yahoourl .= $testSite;
 	    }else{
-		    $dom =   bx_helpers_simplecache::staticHttpReadAsDom("http://boss.yahooapis.com/ysearch/web/v1/".$query."+site:".$_SERVER['HTTP_HOST']."?appid=".$bossAppId."&start=".$dirname."&format=xml");
+		    $yahoourl .=  $_SERVER['HTTP_HOST'];
 	    }
+	    
+	    $yahoourl .="?appid=".$bossAppId."&start=".$dirname;
+	    
+	    if($testSite != ""){
+		$yahoourl .= "&type=".$_GET['type'];
+	    }
+	    
+		$yahoourl .= "&format=xml";
+	    
+	     $dom =   bx_helpers_simplecache::staticHttpReadAsDom($yahoourl);
+		     
 	    return $dom; 
     } 
  
@@ -70,5 +79,4 @@ class bx_plugins_yahoosearch extends bx_plugin implements bxIplugin {
         return true; 
     } 
  
-} 
-?> 
+}
