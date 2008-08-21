@@ -4,15 +4,13 @@
 * 
 * <plugin type="basket">
 *    <parameter name="basketname" value="kursbestellung"/>
-*    <parameter name="baskethandlerclass" value="bx_helpers_ebbasket"/>
+*    <parameter name="baskethandlerclass" value="bx_helpers_novabasket"/>
 * </plugin>
 * 
 *
 */
 
-
 class bx_plugins_basket extends bx_plugin {
-
 
     static private $instance = array();
     private $basketname='';
@@ -21,6 +19,7 @@ class bx_plugins_basket extends bx_plugin {
     private $idprefx = '';
     
     protected function __construct($mode) { 
+
         @session_start();
         if (!isset($_SESSION['basket'])) {
             $_SESSION['basket'] = array();
@@ -56,7 +55,6 @@ class bx_plugins_basket extends bx_plugin {
         $this->basketname = $this->getParameter($path, 'basketname');
         $handlerClassName = $this->getParameter($path, 'baskethandlerclass');
         $this->baskethandler = new $handlerClassName();
-        
 	    //post
         if ($_SERVER["REQUEST_METHOD"] == 'POST' && is_object($this->baskethandler) && method_exists($this->baskethandler, 'postRequest')) {
             $this->baskethandler->postRequest($this->basketname, $this, $this->storage);
@@ -71,6 +69,7 @@ class bx_plugins_basket extends bx_plugin {
             }
         }
 	    
+
         $domdoc= new DomDocument();
         if (isset($this->storage[$this->basketname])) {
         
@@ -81,7 +80,7 @@ class bx_plugins_basket extends bx_plugin {
                 ksort($this->storage[$this->basketname]['basket']);
                 
                 foreach($this->storage[$this->basketname]['basket'] as $idfield => $opts) {
-                    
+                  //  var_export($idfield.":   ".$opts."  <br/>");
                     $e = $domdoc->createElement('entry');
                     if ($e) {
                         $e->setAttribute('idfield', $idfield);
@@ -97,6 +96,79 @@ class bx_plugins_basket extends bx_plugin {
                     }
                     
                     $domdoc->documentElement->appendChild($e);
+                }
+		
+
+		foreach($this->storage[$this->basketname]['user'] as $idfield => $opts) {
+			 //var_export($idfield.":   ".$opts."<br/>");
+                    $u = $domdoc->createElement('user');
+                    if ($u) {
+                        $u->setAttribute('idfield', $idfield);
+                        
+                        if ($opts && sizeof($opts) > 0) {
+			 //var_export($idfield.":   ".$opts."  <br/>");
+
+                            bx_helpers_xml::array2Dom($opts, $domdoc, $u);
+                        } 
+                        
+                       
+                    }
+                    
+                    $domdoc->documentElement->appendChild($u);
+                }
+		
+		//Shippingadresse
+		foreach($this->storage[$this->basketname]['shipping'] as $idfield => $opts) {
+			 //var_export($idfield.":   ".$opts."<br/>");
+                    $u = $domdoc->createElement('shipping');
+                    if ($u) {
+                        $u->setAttribute('idfield', $idfield);
+                        
+                        if ($opts && sizeof($opts) > 0) {
+			 //var_export($idfield.":   ".$opts."  <br/>");
+
+                            bx_helpers_xml::array2Dom($opts, $domdoc, $u);
+                        } 
+                       
+                    }
+                    
+                    $domdoc->documentElement->appendChild($u);
+                }
+		
+		
+		//Billsadresse
+		foreach($this->storage[$this->basketname]['bill'] as $idfield => $opts) {
+			 //var_export($idfield.":   ".$opts."<br/>");
+                    $u = $domdoc->createElement('bill');
+                    if ($u) {
+                        $u->setAttribute('idfield', $idfield);
+                        
+                        if ($opts && sizeof($opts) > 0) {
+			 //var_export($idfield.":   ".$opts."  <br/>");
+
+                            bx_helpers_xml::array2Dom($opts, $domdoc, $u);
+                        } 
+              
+                    }
+                    
+                    $domdoc->documentElement->appendChild($u);
+                }
+		
+//		
+		foreach($this->storage[$this->basketname]['costs'] as $idfield => $opts) {
+                    $u = $domdoc->createElement('costs');
+                    if ($u) {
+                        $u->setAttribute('idfield', $idfield);
+                        
+                        if ($opts && sizeof($opts) > 0) {
+			 //var_export($idfield.":   ".$opts."  <br/>");
+
+                            bx_helpers_xml::array2Dom($opts, $domdoc, $u);
+                        } 
+                       
+                    }
+                    
+                    $domdoc->documentElement->appendChild($u);
                 }
             }
             
@@ -150,6 +222,11 @@ class bx_plugins_basket extends bx_plugin {
     }
     
     
+    private function deleteHandler($path, $id) {
+	        $key = dirname($id);
+		unset($this->storage[$this->basketname]['basket'][$key]);
+    }
+    
     private function removeHandler($path, $id) {
         if (isset($_REQUEST[$this->basketname]['remove'])) {
             foreach($_REQUEST[$this->basketname]['remove'] as $idfield=>$value) {
@@ -160,15 +237,38 @@ class bx_plugins_basket extends bx_plugin {
         }
     }
     
-    
-    private function confirmpaymentHandler($path, $id) {
+    private function userInfoHandler($path, $id) {
         $prms=array();
         if (isset($_REQUEST[$this->basketname])) {
             $prms = $_REQUEST[$this->basketname];
         }
+
+        if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'userInfoHandler')) {
+            $this->baskethandler->userInfoHandler($path, $id, $this->basketname, $this->storage, $prms);
+        }
         
-        if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'confirmpaymentHandler')) {
-            $this->baskethandler->confirmpaymentHandler($path, $id, $this->getBasket($this->basketname), $prms);
+    }
+    
+    private function overviewHandler($path, $id) {
+        $prms=array();
+        if (isset($_REQUEST[$this->basketname])) {
+            $prms = $_REQUEST[$this->basketname];
+        }
+
+        if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'overviewHandler')) {
+            $this->baskethandler->overviewHandler($path, $id, $this->basketname, $this->storage, $this->getParameterAll($path,"helper"));
+        }
+        
+    }
+    
+      private function checkloginHandler($path, $id) {
+        $prms=array();
+        if (isset($_REQUEST[$this->basketname])) {
+            $prms = $_REQUEST[$this->basketname];
+        }
+
+        if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'checkloginHandler')) {
+            $this->baskethandler->checkloginHandler($path, $id, $this->basketname, $this->storage, $prms);
         }
         
     }
@@ -181,6 +281,19 @@ class bx_plugins_basket extends bx_plugin {
         }
     }
     
+    private function orderHandler($path, $id) {
+           if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'orderHandler')) {
+		   $prms =
+               $this->baskethandler->orderHandler($path, $id, $this->basketname, $this->storage, $this->getParameterAll($path,"helper"));
+           }
+       }
+       
+     private function newloginHandler($path, $id) {
+           if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'newloginHandler')) {
+               $this->baskethandler->newloginHandler($this->basketname, $this->storage);
+           }
+       }
+       
     private function finishHandler($path, $id) {
            if (is_object($this->baskethandler) && method_exists($this->baskethandler, 'finishHandler')) {
                $this->baskethandler->finishHandler($path, $id, $this->getBasket($this->basketname));
@@ -198,7 +311,6 @@ class bx_plugins_basket extends bx_plugin {
                 return $_REQUEST['command'];
             } 
         }
-        
         return $command;
     }
     
@@ -222,6 +334,8 @@ class bx_plugins_basket extends bx_plugin {
                 return time();       
     
     }
+    
+
     
 }
 
