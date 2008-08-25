@@ -571,7 +571,7 @@ class bx_streams_blog extends bx_streams_buffer {
         $query = "select post_uri, blog_id from ".$tablePrefix."blogposts where id = '$id'";
         $res = $GLOBALS['POOL']->db->query($query);
         $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
-        $postPath = substr($path, 0, -1).$row['post_uri'].'.html';
+        $postPath = bx_helpers_string::removeDoubleSlashes($path.$row['post_uri'].'.html');
         
         $query = "delete from ".$tablePrefix."properties where path = '$postPath'";
         $GLOBALS['POOL']->dbwrite->query("$query");
