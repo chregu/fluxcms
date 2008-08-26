@@ -1,8 +1,8 @@
 <?php
 
 define('BXCMS_VERSION', "1.6-dev");
-define('BXCMS_BUILD_DATE','8.8.14');
-define('BXCMS_BUILD_HOUR','16.11');
+define('BXCMS_BUILD_DATE','8.8.26');
+define('BXCMS_BUILD_HOUR','8.11');
 //define('BXCMS_REVISION',preg_replace('/\$Rev$'));    
 define('BXCMS_REVISION', '$Rev$');
 
