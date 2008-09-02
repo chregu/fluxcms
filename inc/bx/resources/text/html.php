@@ -10,7 +10,6 @@ class bx_resources_text_html extends bx_resource {
     protected $lang = "";
     
     public function __construct($id, $new = false) {
-      
         $this->mimetype = "text/html";
         $this->fulluri = $id;
         $this->props['fileuri'] = BX_DATA_DIR.$id;
@@ -28,17 +27,21 @@ class bx_resources_text_html extends bx_resource {
     }
     
     public function getContentUriSample() {
+        $theme = $GLOBALS['POOL']->config->getConfProperty('theme');
+        
         if (isset($_REQUEST['template'])) {
             
-            $theme = $GLOBALS['POOL']->config->getConfProperty('theme');
-	    $template = sprintf("%s%s/templates/%s", BX_THEMES_DIR, $theme, $_REQUEST['template']);
-
+            $template = sprintf("%s%s/templates/%s", BX_THEMES_DIR, $theme, $_REQUEST['template']);
             if (file_exists($template)) {
                 return $template;
             }
             
         }
         
+        $template = sprintf("%s%s/templates/%s", BX_THEMES_DIR, $theme, "default.xhtml");
+        if (file_exists($template)) {
+            return $template;
+        }
         return BX_LIBS_DIR.'doctypes/default.xhtml';
         
     }
