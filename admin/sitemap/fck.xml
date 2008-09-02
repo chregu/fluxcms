@@ -45,6 +45,8 @@
                 <map:parameter name="dataUri" value="{../dataUri}"/>
                 <map:parameter name="requestUri" value="{../id}"/>
                 <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                <map:parameter name="template" value="phpglobals://_GET[template]" default="default.xhtml"/>
+
                 <map:parameter type="options" name="registerPhpFunctions" value="true"/>
             </map:transform>
             
