@@ -14,7 +14,7 @@ class bx_init {
     static $configCachedFile = '' ;
     
     
-    static function start($configfile, $root = null) {
+    static function start($configfile, $root = null,$configOptions = array()) {
         //start install, if no $configfile
         if ($root ) {
             define ('BX_INIT_ROOT',realpath($root).'/');
@@ -61,6 +61,17 @@ class bx_init {
         bx_errorhandler::getInstance();
         
         include_once($configCachedFile.'.post');
+        
+        //overwrite values from the config file with values from $configOptions
+        /* eg. in index.php
+        if (strpos($_SERVER['HTTP_HOST'],'euvidea.ch') !== false) { $defaultLang = 'de';} 
+        else {$defaultLang = 'en';}
+        */
+        foreach($configOptions as $key => $value) {
+            if (isset($bx_config[$key])) {
+                $bx_config[$key] = $value;
+            }
+        }
         //autoupdate code  
         if (isset($bx_config->autodbupdate) && $bx_config->autodbupdate == 'true') {
             $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
