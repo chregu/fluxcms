@@ -74,19 +74,24 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 //if there's no encoding in the xml, convert it from the HTTP headers to UTF-8
                 // FF 3 issue
                 $rawpost = bx_helpers_string::fixXMLEncodingFromHTTP($rawpost);    
-                
                 // create a new DOM document out of the posted string
                 $xmlData = new DOMDocument();
-                $xmlData->loadXML($rawpost);
+                if (!$xmlData->loadXML($rawpost)) {
+                    $d = iconv("UTF-8","UTF-8//IGNORE",$rawpost);
+                    if (!$xmlData->loadXML($d)) {
+                        bx_helpers_debug::dump_errorlog($rawpost);
+                        return $dom;
+                    }
+                }
                 
                 // get values as an array
                 $values = bx_dbforms2_data::getValuesByXML($form, $xmlData);
                 $form->setValues($values);
                 
                 // set current form id
-                if(isset($values[$form->idField]) && $form->idField)
+                if(isset($values[$form->idField]) && $form->idField) {
                     $form->currentID = $values[$form->idField];
-
+                }
                 
                 if($xmlData->documentElement->getAttribute('getnewid') == 'true') {
                     $newId = $db->nextID($form->tablePrefix.'_sequences');
