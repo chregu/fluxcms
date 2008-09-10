@@ -88,9 +88,9 @@ class bx_collections {
             $p['ext'] = '';
         }
          
-        if (preg_match('#^(.+)_([0-9]+)$#',$p['name'],$matches)) {
+        if (preg_match('#^(.+)_([0-9:]+)$#',$p['name'],$matches)) {
             $p['name']= $matches[1];
-            $p['number'] = $matches[2];
+            $p['number'] = str_replace(':',',',$matches[2]);
         } else {
             $p['number'] = "";
         }
