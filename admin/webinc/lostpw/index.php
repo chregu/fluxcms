@@ -55,7 +55,7 @@ if (isset($_POST['username']) && !isset($_POST['password'])) {
     } else {
         $email = $row['user_email'];
         $id = $row['id'];
-        $hash = md5($id. $email. time() . rand() . "secret...");
+        $hash = bx_helpers_int::getRandomHex(var_export($row,true));
         $body = 'Hi
         
 Your password can now be reset.
