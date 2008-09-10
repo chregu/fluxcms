@@ -45,7 +45,7 @@ class bx_helpers_perm {
                 
                 $id = $GLOBALS['POOL']->dbwrite->nextId($px."_sequences");
                 
-                $h = md5(time() . rand(0,1000000000) . $GLOBALS['POOL']->config->magicKey.$id);
+                $h = bx_helpers_int::getRandomHex($px.$id);
                 
                 $query = "insert into ".$px."options (id,name,value) values($id,'accesshash','$h')";
                 self::$accessHash = $h;
@@ -64,7 +64,7 @@ class bx_helpers_perm {
             $px = $GLOBALS['POOL']->config->getTablePrefix();
         
             $id = $db->nextId($px."_sequences");
-            $h = md5(time() . rand(0,1000000000) . $GLOBALS['POOL']->config->magicKey.$id);
+            $h = bx_helpers_int::getRandomHex($px.$id);
                 
             $query = "update ".$px."options set value ='$h' where name = 'accesshash'";
             $res = $GLOBALS['POOL']->dbwrite->query($query);

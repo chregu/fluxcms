@@ -342,7 +342,7 @@ class bx_plugins_comments extends bx_plugin implements bxIplugin {
             print ("Comment rejected. Looks like you're trying to spam the world....");
             die();
         }
-        $comment_notification_hash = md5($data['email'] . rand().microtime(true));
+        $comment_notification_hash = bx_helpers_int::getRandomHex(md5($commentRejected));
         $db = $GLOBALS['POOL']->dbwrite;
         if (!isset($data['comment_notification'])) {
             $data['comment_notification'] = 0;
@@ -364,7 +364,6 @@ class bx_plugins_comments extends bx_plugin implements bxIplugin {
 			if (!trim($data['name'])) {
 				$commentRejected .= "* Name was empty: '".$data['name']."'\n";
 		}
-		bx_helpers_debug::webdump($query);
 		$res = $GLOBALS['POOL']->dbwrite->query($query);
         
 		

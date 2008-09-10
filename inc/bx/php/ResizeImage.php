@@ -434,7 +434,7 @@ $fd = fopen ($this->endImgFile,"w");
        $this->deleteFileAfter = true;
        $this->lastModified = time();
        //if test is 1 delete all captcha files in dynimages
-       $test = rand(1,500);
+       $test = mt_rand(1,500);
        if($test <= 1) {
 
            $dir = $this->endImgPath."/";

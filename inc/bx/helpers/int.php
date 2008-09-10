@@ -3,7 +3,6 @@ class bx_helpers_int {
     
     public static function getRand($min=0, $max=10000) {
         
-        mt_srand();
         $rand = mt_rand($min, $max);
         $rand = ($rand < $min) ? $min : $rand;
         $rand = ($rand > $max) ? $max : $rand;
@@ -12,10 +11,14 @@ class bx_helpers_int {
         
     }
     
+    public static function getRandomHex($hardpredictableData = '') {
+        
+        return md5(uniqid( microtime() . mt_rand(),true) . $GLOBALS['POOL']->config->magicKey.$hardpredictableData);
+    }
+    
 
     public static function getMultiRandsXML($num=1, $min=0, $max=1000) {
         $rands = array();
-        mt_srand();
         for($i=0;$i<$num;$i++) {
             $rand = mt_rand($min, $max);
             $rand = ($rand < $min) ? $min : $rand;

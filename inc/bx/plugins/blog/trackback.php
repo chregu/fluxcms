@@ -176,7 +176,7 @@ class bx_plugins_blog_trackback {
         $emailBody .= "Edit URI:\n ".  BX_WEBROOT.'admin/?edit=/forms/blogcomments/?id='.$lastID ."\n";
         
         if ($GLOBALS['POOL']->config->lastdbversion >= 5266) {
-            $hash = md5($lastID . rand().microtime(true));
+            $hash = bx_helpers_int::getRandomHex(md5($commentRejected.$lastID));
             $hashPrefix = "a";
             $query = 'update '.$tablePrefix.'blogcomments set comment_hash = ' . $GLOBALS['POOL']->db->quote($hashPrefix . $hash) . ' where id = ' . $lastID; 
             $GLOBALS['POOL']->dbwrite->query($query);

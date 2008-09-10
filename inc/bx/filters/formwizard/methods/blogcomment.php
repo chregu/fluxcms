@@ -206,7 +206,7 @@ if (isset($fields['comment_remember'])) {
             print ("Comment rejected. Looks like you're trying to spam the world....");
             die();
         }
-        $comment_notification_hash = md5($fields['email'] . rand().microtime(true));
+        $comment_notification_hash = bx_helpers_int::getRandomHex(var_export($fields,true));
         $db = $GLOBALS['POOL']->dbwrite;
         if (!isset($fields['comment_notification'])) {
             $fields['comment_notification'] = 0;
@@ -240,7 +240,7 @@ if (isset($fields['comment_remember'])) {
                 }
                 // insert hash
                 if ($GLOBALS['POOL']->config->lastdbversion >= 5266) {
-                    $hash = md5($lastID . rand().microtime(true));
+                    $hash = bx_helpers_int::getRandomHex(var_export($fields,true));
                     $query = 'update '.$blogTablePrefix.'blogcomments set comment_hash = ' . $GLOBALS['POOL']->db->quote($hashPrefix . $hash) . ' where id = ' . $lastID; 
                     $GLOBALS['POOL']->dbwrite->query($query);
                     $fields['accepturi'] .= " ".BX_WEBROOT.'admin/webinc/approval/?hash='.$hashPrefix.$hash;  

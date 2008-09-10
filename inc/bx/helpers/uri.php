@@ -39,9 +39,9 @@ class bx_helpers_uri {
         
         if ($random) {
             if ($q) {
-                $q .= '&st='.rand(1,1000);
+                $q .= '&st='.mt_rand(1,1000);
             } else {
-                $q = 'st='.rand(1,1000);
+                $q = 'st='.mt_rand(1,1000);
             }
         }
         if ($q) {

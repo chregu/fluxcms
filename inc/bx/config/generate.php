@@ -407,8 +407,8 @@ class bx_config_generate {
         } else {
             fwrite($fd,'$bx_config->cacheDBOptions = true;'."\n");
         }
-        
-        fwrite($fd,'$bx_config->magicKey = "'.md5(time() . rand(0,1000000)).'";'."\n");
+        //FIXME add some non predictable string here.
+        fwrite($fd,'$bx_config->magicKey = "'.md5(uniqid(microtime() . mt_rand(),true)).'";'."\n");
         fclose($fd);
     }
     static function replaceConstants($input) {

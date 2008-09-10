@@ -105,7 +105,7 @@ class bx_editors_ooo extends bx_editor implements bxIeditor {
             include_once("Archive/Zip.php");
             $ar = new Archive_Zip($data["uploadfile"]["tmp_name"]);
             
-            $tmpfname=BX_TEMP_DIR."/ODT".md5(time() . rand());
+            $tmpfname=BX_TEMP_DIR."/ODT".bx_helpers_int::getRandomHex($path);
             mkdir($tmpfname);
             $ar->extract(array("add_path" => $tmpfname));
                                 
@@ -132,7 +132,7 @@ class bx_editors_ooo extends bx_editor implements bxIeditor {
             
             
             $dir = BX_LIBS_DIR."editors/ooo/skeleton";
-            $todir = BX_TEMP_DIR."/SKELETON".md5(time() . rand());
+            $todir = BX_TEMP_DIR."/SKELETON".bx_helpers_int::getRandomHex($id);
             bx_helpers_file::cpdir($dir,$todir);
        
             
@@ -150,7 +150,7 @@ class bx_editors_ooo extends bx_editor implements bxIeditor {
             
             $proc->transformToUri($dom,$todir."/content.xml");
             
-            $filename=BX_TEMP_DIR."/ODT".md5(time() . rand()).".odt";
+            $filename=BX_TEMP_DIR."/ODT".bx_helpers_int::getRandomHex($todir);
             chdir($todir);
             exec("zip -r ".$filename." * ");
             chdir($curdir);

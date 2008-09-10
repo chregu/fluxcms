@@ -23,8 +23,6 @@ class bx_plugins_blog_handlecomment {
     );
     
  function handlePost ($path,$id, $data)  {
-     
-      
             
         //add some more data and clean some others
         $data['remote_ip'] = $_SERVER['REMOTE_ADDR'];
@@ -132,7 +130,6 @@ class bx_plugins_blog_handlecomment {
         // clean up comment
         $data['comments'] = self::cleanUpComment($data['comments']);
         
-        
         //deleteIt == true => Rejected comment
         $deleteIt = false;
         
@@ -212,8 +209,8 @@ class bx_plugins_blog_handlecomment {
         } else {
             $xblcheck = '';
         }
-        $comment_notification_hash = md5($data['email'] . rand().microtime(true));
-        $comment_hash = md5($_SERVER['REMOTE_ADDR'] . rand().microtime(true));
+        $comment_notification_hash = bx_helpers_int::getRandomHex($data['email']); 
+        $comment_hash = bx_helpers_int::getRandomHex(md5($commentRejected)); 
         if (!$deleteIt) {  
             
                 include_once(BX_LIBS_DIR.'plugins/blog/akismet2.php');
@@ -390,13 +387,12 @@ class bx_plugins_blog_handlecomment {
                     ) {
                         bx_notificationmanager::sendToDefault($emailTo,$emailSubject, $emailBody,$emailFrom);
                 }
-                
                 if(!$commentRejected) {
                     bx_plugins_blog_commentsnotification::sendNotificationMails($lastID,$row['id'],$parts['coll']->uri);
                     header ('Location: '. bx_helpers_uri::getLocationUri($row["post_uri"]) . '.html?sent='.time().'#comment'.$lastID);
                 } else {
                     //put it in the db;
-                    $query = 'update '.$blogTablePrefix.'blogcomments set comment_rejectreason = ' . $GLOBALS['POOL']->db->quote(htmlspecialchars($commentRejected)) . ' where id = ' . $lastID; 
+                    $query = 'update '.$blogTablePrefix.'blogcomments set comment_rejectreason = ' . $GLOBALS['POOL']->db->quote(htmlspecialchars($commentRejected)) . ' where id = ' . $lastID;
                     $res = $GLOBALS['POOL']->dbwrite->query($query);
                     if ($deleteIt) {
                         print ("Comment rejected. Looks like blogspam.");
@@ -445,7 +441,6 @@ class bx_plugins_blog_handlecomment {
     }
     
     static function _replaceTextFields(&$subject, $textfields) {
-        //var_dump($textfields); asdf();
         foreach($textfields as $field => $value) {
             $patterns[] = '/\{'.$field.'\}/';
             $replacements[] = $value;
