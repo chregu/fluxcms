@@ -1,6 +1,6 @@
-	/*
+/*
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2004 Bitflux GmbH                                      |
+// | Copyright (c) 2004-2008 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | Licensed under the Apache License, Version 2.0 (the "License");      |
 // | you may not use this file except in compliance with the License.     |
@@ -12,7 +12,7 @@
 // | implied. See the License for the specific language governing         |
 // | permissions and limitations under the License.                       |
 // +----------------------------------------------------------------------+
-// | Author: Bitflux GmbH <devel@bitflux.ch>                              |
+// | Author: Liip AG                                                      |
 // +----------------------------------------------------------------------+
 
 */
@@ -209,4 +209,14 @@ function previewSubmit(test) {
 
 
     return false;
+}
+
+function prepareCommentSubmit() {
+	var sub = document.getElementById('bx_plugins_blog_all');
+	var hid = document.getElementById('bx_plugins_hidden_submit_replacement');
+	sub.name = "foo";
+	sub.disabled = true;
+	sub.value = "Sending ...";
+	hid.name = "bx[plugins][blog][_all]";
+	return true;
 }

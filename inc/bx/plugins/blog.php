@@ -1031,7 +1031,7 @@ if(MDB2::isError($res)){
             $xml .= '<p name="commentNotice" style="color:red;"><i18n:text>Moderated Comment</i18n:text></p>';
             
         }
-            $xml .= '<form name="bx_foo" action="'.$posturipath.'#commentform" method="post">
+            $xml .= '<form name="bx_foo" action="'.$posturipath.'#commentform" onsubmit="return prepareCommentSubmit();" method="post">
                <table class="form" border="0" cellspacing="0" cellpadding="0" id="commentform">
                <tr>
                <td valign="top"><i18n:text i18n:key="blogCommentName">Name</i18n:text>*</td>
@@ -1131,6 +1131,7 @@ if(MDB2::isError($res)){
                 $xml .= '<tr>
                 <td></td>
                 <td><br /><input type="submit" i18n:attr="value" id="bx_plugins_blog_all" name="bx[plugins][blog][_all]" value="Send" class="formbutton" />
+                <input type="hidden" id="bx_plugins_hidden_submit_replacement" name="h" value="Send"/> 
                 <input onclick="javascript:previewSubmit(this.parentNode);" type="button" i18n:attr="value"  value="Preview" class="formbutton" />
                 
                 </td>
