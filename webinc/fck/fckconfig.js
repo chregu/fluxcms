@@ -170,7 +170,8 @@ FCKConfig.FirefoxSpellChecker	= true ;
 
 FCKConfig.MaxUndoLevels = 15 ;
 
-FCKConfig.DisableObjectResizing = false ;
+// FCKConfig.DisableObjectResizing = false ;
+FCKConfig.DisableObjectResizing = true ;
 FCKConfig.DisableFFTableHandles = true ;
 
 FCKConfig.LinkDlgHideTarget		= false ;
