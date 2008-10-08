@@ -74,7 +74,10 @@ class bx_notifications_mail extends bx_notification {
         $cs = strtoupper($options['charset']);   
         //make correct 7bit header for the subject
         $subject = preg_replace('~([\xA0-\xFF])~e', '"=?$cs?Q?=" . strtoupper(dechex(ord("$1"))) . "?="', $subject);
-
+        if ($GLOBALS['POOL']->config->logMails == 'true') {
+            file_put_contents(BX_DATA_DIR.'/mail.log',"****\nDate: ". date("c")."\nTo: " . $to . "\n"."Subject: " . $subject . "\n"."Headers:\n" . $headers . "\n"."Message: " . $message . "\n",FILE_APPEND);
+        }
+        
         return mail($to, $subject, $message, $headers);
     }
 

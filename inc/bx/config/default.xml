@@ -1,3 +1,4 @@
+
 <config>
 
     <constants>
@@ -141,5 +142,6 @@
              <item key="emulate_prepared">true</item>
                 
         </dboptions>
+        <logMails>false</logMails>
        </options>
 </config>

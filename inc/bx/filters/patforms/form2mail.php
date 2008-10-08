@@ -38,12 +38,9 @@ class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
 
         if(!empty($params['emailTo'])) {   
             $n = bx_notificationmanager::getInstance("mail");
-            $n->send($params['emailTo'],$emailSubject, $emailBody, $from, null,$options);
-            return TRUE;
+            return $n->send($params['emailTo'],$emailSubject, $emailBody, $from, null,$options);
         }
         return FALSE;
     }
     
 }
-
-?>
