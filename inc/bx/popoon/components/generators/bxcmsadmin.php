@@ -1,3 +1,4 @@
+
 <?php
 // +----------------------------------------------------------------------+
 // | popoon                                                               |
@@ -40,7 +41,7 @@ class popoon_components_generators_bxcmsadmin extends popoon_components_generato
     *
     *  This method will be called in the start element with the attributes from this element
     *
-    *  As we just call the parent init method, it's not really needed, 
+    *  As we just call the parent init method, it's not really needed,
     *   it's just here for reference
     *
     *  @param $attribs array    associative array with element attributes
@@ -49,8 +50,8 @@ class popoon_components_generators_bxcmsadmin extends popoon_components_generato
     function init($attribs)
     {
         parent::init($attribs);
-    }    
-    
+    }
+
     /**
     * generates an xml-DomDocument out of the xml-file
     *
@@ -62,10 +63,9 @@ class popoon_components_generators_bxcmsadmin extends popoon_components_generato
         $collection = $this->getParameterDefault("collection");
         $xml = new DomDocument();
         $xml = $collection->getContentById($this->getParameterDefault("id"));
-    
     }
 
-    
+
     /* CACHING STUFF */
 
     /**
@@ -81,7 +81,7 @@ class popoon_components_generators_bxcmsadmin extends popoon_components_generato
         return($this->generateKeyDefault($attribs, $keyBefore));
     }
 
-    /** Generate validityObject  
+    /** Generate validityObject
      *
      * This is common to all "readers", you'll find the same code there.
      * I'm thinking about making a method in the class component named generateValidityFile() or alike

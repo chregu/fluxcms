@@ -41,7 +41,7 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
     }
 
     function act() {
-        
+
         $mode = "admin";
         // prepend /admin/ to fulluri so getCollection is able to find the correct configuration files
         $fulluri = '/admin/' . $this->getAttrib("uri");
@@ -49,11 +49,11 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
         $collection = $parts['coll'] ;
         $filename = $parts['name'];
         $filename = preg_replace("#^/#","",$filename);
-         
+
         if ($parts['number']) {
             $filename = sprintf("%s_%d", $filename, $parts['number']);
         }
-        
+
         $ext = $parts['ext'];
 
          /*
@@ -62,9 +62,9 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
                 }
             }
         */
-        
+
         define('BX_WEBROOT_LANG' ,BX_WEBROOT);
-        
+
         if($collection === FALSE) {
             print "not found in admin";
             return array();
@@ -74,13 +74,13 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
             //FIXME: to be implemented...
             if ($filename == "") {
                 $plugins = $collection->getPluginMapByRequest("/",$ext);
-                
-                
+
+
             } else {
                 $plugins = $collection->getPluginMapByRequest($filename,$ext);
             }
             $retcode = 0;
-			
+
 			if (isset($_POST['bx']) && isset($_POST['bx']['plugins'])){
                 foreach($plugins as $id => $plugin) {
                    if (isset($_POST['bx']['plugins'][$plugin['plugin']->name]) && isset($_POST['bx']['plugins'][$plugin['plugin']->name]['_all'])) {
@@ -96,13 +96,13 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
                                  unset ($data['bx']);
                              }
                          }
-                    	     
+
                          $retcode = $plugin['plugin']->handlePost($collection->uri,$id,$data);
                     } else if (isset($_POST['bx']['plugins'][$plugin['plugin']->name])) {
                         $data = bx_helpers_globals::stripMagicQuotes($_POST['bx']['plugins'][$plugin['plugin']->name]);
-                        
+
                         $retcode = $plugin['plugin']->handlePost($collection->uri,$id,$data);
-                    
+
                     }
                 }
             }
@@ -110,9 +110,9 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
                     $p->handlePOST($this->uri,$p['id'], $_POST['bx']['plugins'][$p->name]);
                 }
             }*/
-            
-            
-            
+
+
+
             if ($ext) {
                 $id = "/$filename.$ext";
             } else {
@@ -134,7 +134,7 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
             "locale" => $GLOBALS['POOL']->config->getAdminLocale(),
             "returnPostCode" => $retcode
             );
-            
+
 
             foreach ($collection->getAllProperties(BX_PROPERTY_PIPELINE_NAMESPACE) as $p) {
                 $a[$p['name']] = $p['value'];
