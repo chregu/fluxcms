@@ -2,14 +2,14 @@
 
 class bx_helpers_debug {
     static public $incFiles;
-    
+
     static function dump_backtrace($full = false) {
-        
-        
+
+
         $bt = array_reverse(debug_backtrace());
         array_pop($bt);
-        
-        
+
+
         ?>
         <font size='1' xmlns='http://www.w3.org/1999/xhtml'><table border='1' cellspacing='0'>
         <tr><th bgcolor='#7777dd' colspan='3'>Call Stack</th></tr>
@@ -36,21 +36,21 @@ class bx_helpers_debug {
                 } else {
                     print $arg;
                 }
-               
+
             }
-            
-            
+
+
             print ")</td><td bgcolor='#ddddff'>".$call['file']."<b>:</b>".$call['line']."</td></tr>";
-            
-        }  
+
+        }
         print "</table></font><br/>";
     }
-    
+
     static function log_memory_usage() {
         $rep =  40 - strlen($_SERVER['REQUEST_URI']);
         if ($rep < 0)  { $rep = 1;}
         if (function_exists("xdebug_memory_usage")) {
-            
+
             error_log($_SERVER['REQUEST_URI'] .str_repeat(" ", $rep ). " use: " . round(xdebug_memory_usage()/1024/1024,2) ." MB" .
             " peak: " . round(xdebug_peak_memory_usage()/1024/1024,2) ." MB");
         } else if(function_exists('memory_get_usage')){
@@ -59,23 +59,23 @@ class bx_helpers_debug {
             }
         }
     }
-    
+
     static function dump_incFiles($sort = false) {
         if ($sort) {
             asort(self::$incFiles);
         }
-        var_dump(self::$incFiles);   
+        var_dump(self::$incFiles);
     }
-    
+
     static function dump_errorlog($var,$start=0) {
-        
+
         $bt = debug_backtrace();
         $str = "BX_DUMP: " . str_replace(BX_PROJECT_DIR,"",$bt[$start]['file']) ."[" . $bt[$start]['line'] ."]:";
         $str .= $bt[$start+1]['class'].$bt[$start+1]['type'].$bt[$start+1]['function'];
         $str .= " var: " . var_export($var,true);
         error_log($str);
-    }   
-    
+    }
+
     static function webdump($var,$start=0) {
         $bt = debug_backtrace();
         print "<pre>";
@@ -84,4 +84,10 @@ class bx_helpers_debug {
         print var_dump($var);
         print "</pre>";
     }
+
+ public static function fire() {
+         $args = func_get_args();
+         $instance = FirePHP::getInstance(true);
+         call_user_func_array(array($instance, 'fb'), $args);
+     }
 }
