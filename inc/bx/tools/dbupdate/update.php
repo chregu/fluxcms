@@ -30,7 +30,7 @@ if (MDB2::isError($res)) {
     // if no such table, create it
     if ($res->code == -18) {
         $lastVersion = 3779;
-        
+
     } else {
         printError($res);
     }
@@ -44,11 +44,11 @@ if (MDB2::isError($res)) {
         }
         doQuery("insert into ".$tablePrefix."options (name, value) VALUES ('lastdbversion', $lastVersion)");
     }
-    
+
 }
 /** add user_gid into users table **/
 if ($lastVersion < 3780) {
-  addCol('users','user_gid','int',"'1'");  
+  addCol('users','user_gid','int',"'1'");
   addCol('bloglinks','rel','varchar(40)',"''",false);
   updateLastVersion(3780);
 }
@@ -65,19 +65,19 @@ if ($lastVersion < 3839) {
     if (MDB2::isError($res)) {
         if ($res->code == -5) {
             print $tablePrefix."options already exists, moving forward \n";
-            
+
         } else {
             printError($res);
         }
     }
     doQuery("insert into ".$tablePrefix."options (name, value) VALUES ('lastdbversion', $lastVersion)");
     updateLastVersion(3839);
-        
-    
+
+
 }
 
 if ($lastVersion < 3991) {
-     addCol('users','user_tmphash','varchar(32)',"''");  
+     addCol('users','user_tmphash','varchar(32)',"''");
      updateLastVersion(3991);
 }
 
@@ -92,7 +92,7 @@ if ($lastVersion < 4210) {
 }
 
 if ($lastVersion < 4218) {
-    
+
     $res = doQueryTable("CREATE TABLE `".$tablePrefix."properties2tags` (
     `id` int(11) NOT NULL auto_increment,
     `path` varchar(255) NOT NULL default '',
@@ -101,7 +101,7 @@ if ($lastVersion < 4218) {
     KEY `path` (`path`),
     KEY `tag_id` (`tag_id`)
     )","properties2tags");
-    
+
     $res = doQueryTable("CREATE TABLE `".$tablePrefix."tags` (
     `id` int(11) NOT NULL auto_increment,
     `tag` varchar(255) NOT NULL default '',
@@ -141,26 +141,26 @@ if ($lastVersion < 4328) {
 
 if ($lastVersion < 4534) {
     addCol('blogcomments','comment_rejectreason','TEXT');
-    updateLastVersion(4534);  
+    updateLastVersion(4534);
 }
 
 if ($lastVersion < 4841) {
     doQuery("ALTER TABLE `{tablePrefix}options` CHANGE `value` `value` TEXT NULL ",false);
-    updateLastVersion(4841);  
+    updateLastVersion(4841);
 }
 
 
 if ($lastVersion < 5084) {
     addCol('blogposts','post_lang','CHAR(2)');
-    updateLastVersion(5084);  
+    updateLastVersion(5084);
 }
 
 
 if ($lastVersion < 5163) {
- doQuery("ALTER TABLE `{tablePrefix}bloglinks` CHANGE `rel` `rel` VARCHAR( 200 )  NULL",false); 
+ doQuery("ALTER TABLE `{tablePrefix}bloglinks` CHANGE `rel` `rel` VARCHAR( 200 )  NULL",false);
  doQuery("ALTER TABLE `{tablePrefix}bloglinks` CHANGE `bloglinkscategories` `bloglinkscategories` INT( 11 ) NULL DEFAULT '0'",false);
  doQuery("ALTER TABLE `{tablePrefix}bloglinks` CHANGE `rang` `rang` INT( 11 ) DEFAULT '0'",false);
-  updateLastVersion(5163);  
+  updateLastVersion(5163);
 }
 if ($lastVersion < 5266) {
     addCol('blogcomments','comment_hash','VARCHAR( 33 ) NULL');
@@ -179,7 +179,7 @@ if ($lastVersion < 5283) {
 }
 
 if ($lastVersion < 5349) {
-    doQuery("ALTER TABLE `{tablePrefix}blogposts` CHANGE `id` `id` INT( 10 ) NOT NULL AUTO_INCREMENT",false); 
+    doQuery("ALTER TABLE `{tablePrefix}blogposts` CHANGE `id` `id` INT( 10 ) NOT NULL AUTO_INCREMENT",false);
     updateLastVersion(5349);
 }
 
@@ -189,7 +189,7 @@ if ($lastVersion < 5390) {
 }
 
 if ($lastVersion < 5522) {
-    doQuery("update  `{tablePrefix}blogposts` set post_comment_mode = 99 where post_comment_mode = ". $GLOBALS['POOL']->config->blogDefaultPostCommentMode,false); 
+    doQuery("update  `{tablePrefix}blogposts` set post_comment_mode = 99 where post_comment_mode = ". $GLOBALS['POOL']->config->blogDefaultPostCommentMode,false);
     updateLastVersion(5522);
 }
 
@@ -214,8 +214,8 @@ if ($lastVersion < 5812) {
     addCol('bloglinks','rss_link', "varchar(200) NULL");
     updateLastVersion(5812);
 }
-  
-  
+
+
 if ($lastVersion < 5849) {
   doQuery("ALTER TABLE `{tablePrefix}blogposts` DROP `post_category`, DROP `post_karma`;", false);
   addCol('blogposts','post_guid_version',"TINYINT DEFAULT '2' NOT NULL");
@@ -275,13 +275,13 @@ if ($lastVersion < 6595) {
 }
 if ($lastVersion < 6705) {
 
-        doQuery("ALTER TABLE `{tablePrefix}blogposts` ADD INDEX ( `post_status` )",false); 
+        doQuery("ALTER TABLE `{tablePrefix}blogposts` ADD INDEX ( `post_status` )",false);
         doQuery("ALTER TABLE `{tablePrefix}blogposts` ADD INDEX ( `blog_id` ) ",false);
         updateLastVersion(6705);
 }
 
 if ($lastVersion < 6760) {
-    doQuery("ALTER TABLE `{tablePrefix}blogcomments` ADD INDEX ( `comment_status` )",false); 
+    doQuery("ALTER TABLE `{tablePrefix}blogcomments` ADD INDEX ( `comment_status` )",false);
     updateLastVersion(6760);
 }
 if ($lastVersion < 6991) {
@@ -311,7 +311,7 @@ if ($lastVersion < 7312) {
     doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'del.icio.us', '<delicious link=\"tag/freeflux/\"/>', 0, 2, 1);",false);
     doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'login', '<login/>', 2, 4, 1);",false);
     doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'archive', '<archive/>', 2, 2, 1);",false);
-    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'categories', '<categories/>', 1, 0, 1);",false);     
+    doQuery("INSERT INTO `{tablePrefix}sidebar` ( `name`, `content`, `sidebar`, `position`,  `isxml`) VALUES ( 'categories', '<categories/>', 1, 0, 1);",false);
       updateLastVersion(7312);
 }
 
@@ -382,9 +382,9 @@ if ($lastVersion < 8633) {
 
 
 if ($lastVersion < 8823) {
-    
+
     doQuery("UPDATE {$tablePrefix}blogposts  LEFT JOIN {$tablePrefix}blogposts2categories ON {$tablePrefix}blogposts.id= {$tablePrefix}blogposts2categories.blogposts_id SET {$tablePrefix}blogposts.post_status = 4 WHERE {$tablePrefix}blogposts2categories.blogposts_id IS NULL",false);
-     updateLastVersion(8823);
+    updateLastVersion(8823);
 
 }
 
@@ -399,7 +399,7 @@ CREATE TABLE `".$tablePrefix."history_diff` (
   KEY diff_path (diff_path),
   KEY diff_timestamp (diff_timestamp)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;", false);
-	
+
 	updateLastVersion(9242);
 }
 
@@ -423,12 +423,12 @@ function doQueryTable($query,$tableName) {
     if (MDB2::isError($res)) {
         if ($res->code == -5) {
             print $tablePrefix.$tableName ." already exists, moving forward \n";
-            
+
         } else {
             printError($res);
         }
     }
-    
+
 }
 
 function doQuery($query,$fatal=true) {
@@ -457,7 +457,7 @@ function printError($res, $fatal = true) {
 function updateLastVersion($version) {
     $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
     $query = "update  ".$tablePrefix."options set value = $version where name = 'lastdbversion'";
-    
+
     doQuery($query);
 }
 
@@ -468,7 +468,7 @@ function addCol($table,$name,$type,$default = null,$fatal = true) {
         $query .= " DEFAULT $default";
     }
     $res = doQuery($query, false);
-    
+
     if (MDB2::isError($res)) {
         if ($res->code == -1) {
             print "  '$name' already exists in '".$tablePrefix."$table' (non fatal) \n\n";
