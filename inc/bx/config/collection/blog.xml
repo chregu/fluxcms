@@ -4,7 +4,7 @@
 
  <variable name="blogid" value="1"/>
  <variable name="postsperpage" value="10"/>
- 
+ <variable name="blogxsl" value="blog.xsl"/>
  
  <plugins inGetChildren="false">
         <extension type="xml"/>
@@ -41,7 +41,7 @@
     
     <plugins>
         <extension type="html"/>
-        <parameter type="pipeline" name="xslt" value="blog.xsl"/>
+        <parameter type="pipeline" name="xslt" value="$blogxsl"/>
         <plugin type="blog">
             <parameter name="blogid" value="$blogid"/>
         </plugin>
@@ -139,7 +139,7 @@
    <!-- catch all -->
     <plugins>
         
-        <parameter type="pipeline" name="xslt" value="blog.xsl"/>
+        <parameter type="pipeline" name="xslt" value="$blogxsl"/>
         <plugin type="blog">
             <parameter name="blogid" value="$blogid"/>
         </plugin>
