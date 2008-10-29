@@ -29,11 +29,9 @@ CREATE TABLE `##bxcms_##_sequences_seq` (
 -- Dumping data for table `##bxcms_##_sequences_seq`
 --
 
-LOCK TABLES `##bxcms_##_sequences_seq` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##_sequences_seq` DISABLE KEYS */;
 INSERT INTO `##bxcms_##_sequences_seq` (`sequence`) VALUES (13);
 /*!40000 ALTER TABLE `##bxcms_##_sequences_seq` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##blogcategories`
@@ -62,13 +60,11 @@ CREATE TABLE `##bxcms_##blogcategories` (
 -- Dumping data for table `##bxcms_##blogcategories`
 --
 
-LOCK TABLES `##bxcms_##blogcategories` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##blogcategories` DISABLE KEYS */;
 INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `blog_id`, `status`) VALUES (1,'All','root',1,6,'root',0,'root','2005-04-08 13:07:35',1,1);
 INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `blog_id`, `status`) VALUES (3,'Moblog Pictures','moblog',4,5,'moblog',1,'Moblog Pictures','2005-04-08 13:07:35',1,1);
 INSERT INTO `##bxcms_##blogcategories` (`id`, `name`, `uri`, `l`, `r`, `fulluri`, `parentid`, `fullname`, `changed`, `blog_id`, `status`) VALUES (7,'General','general',2,3,'general',1,'General','2005-04-08 13:07:35',1,1);
 /*!40000 ALTER TABLE `##bxcms_##blogcategories` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##blogcomments`
@@ -103,10 +99,8 @@ CREATE TABLE `##bxcms_##blogcomments` (
 -- Dumping data for table `##bxcms_##blogcomments`
 --
 
-LOCK TABLES `##bxcms_##blogcomments` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##blogcomments` DISABLE KEYS */;
 /*!40000 ALTER TABLE `##bxcms_##blogcomments` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##bloglinks`
@@ -133,14 +127,12 @@ CREATE TABLE `##bxcms_##bloglinks` (
 -- Dumping data for table `##bxcms_##bloglinks`
 --
 
-LOCK TABLES `##bxcms_##bloglinks` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##bloglinks` DISABLE KEYS */;
 INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (5,'Freeflux.net','http://freeflux.net','','',4,'2005-04-08 13:05:55',1,NULL,1,NULL);
 INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (6,'Liip AG','http://www.liip.ch/','','',4,'2005-04-08 13:06:09',2,NULL,1,NULL);
 INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (7,'netzwirt.ch','http://www.netzwirt.ch/','','',4,'2005-04-08 15:06:10',3,NULL,1,NULL);
 INSERT INTO `##bxcms_##bloglinks` (`id`, `text`, `link`, `rss_link`, `rel`, `bloglinkscategories`, `changed`, `rang`, `description`, `blog_id`, `date`) VALUES (8,'monorom.com','http://www.monorom.com/','','',4,'2005-04-08 15:06:10',4,NULL,1,NULL);
 /*!40000 ALTER TABLE `##bxcms_##bloglinks` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##bloglinkscategories`
@@ -160,11 +152,9 @@ CREATE TABLE `##bxcms_##bloglinkscategories` (
 -- Dumping data for table `##bxcms_##bloglinkscategories`
 --
 
-LOCK TABLES `##bxcms_##bloglinkscategories` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##bloglinkscategories` DISABLE KEYS */;
 INSERT INTO `##bxcms_##bloglinkscategories` (`id`, `name`, `changed`, `blog_id`, `rang`) VALUES (4,'Supported by','2005-04-08 14:05:38',1,1);
 /*!40000 ALTER TABLE `##bxcms_##bloglinkscategories` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##blogposts`
@@ -201,11 +191,9 @@ CREATE TABLE `##bxcms_##blogposts` (
 -- Dumping data for table `##bxcms_##blogposts`
 --
 
-LOCK TABLES `##bxcms_##blogposts` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##blogposts` DISABLE KEYS */;
 INSERT INTO `##bxcms_##blogposts` (`id`, `post_author`, `post_date`, `post_expires`, `post_content`, `post_content_extended`, `post_content_summary`, `post_title`, `post_uri`, `changed`, `blog_id`, `post_comment_mode`, `post_status`, `post_lang`, `post_info`, `post_guid_version`, `post_author_id`) VALUES (8,'test',date_sub(now(), INTERVAL 1 DAY),'0000-00-00 00:00:00','<p>Welcome to Flux CMS and its blog plugin.</p>\n\n<p>You can edit and posts in the admin section, if you click on the blog collection on the left side.</p>\n<p>Links and Categories can be managed via the Quicklinks dropdown on the top-right in the admin.</p>\n<p>If you have any questions, look at the <a href=\"http://docs.flux-cms.org/en/user/blog/\">blog documentation</a>,  ask on the <a href=\"http://forum.freeflux.net/\">Forum</a> or on our <a href=\"http://wiki.flux-cms.org/Support\">Mailinglist</a>.\n\n</p><p>But now, have fun ;) </p>','','','Your first Post','your-first-post',now(),1,99,1,NULL,NULL,1,0);
 /*!40000 ALTER TABLE `##bxcms_##blogposts` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##blogposts2categories`
@@ -225,11 +213,9 @@ CREATE TABLE `##bxcms_##blogposts2categories` (
 -- Dumping data for table `##bxcms_##blogposts2categories`
 --
 
-LOCK TABLES `##bxcms_##blogposts2categories` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##blogposts2categories` DISABLE KEYS */;
 INSERT INTO `##bxcms_##blogposts2categories` (`id`, `blogposts_id`, `blogcategories_id`) VALUES (9,8,7);
 /*!40000 ALTER TABLE `##bxcms_##blogposts2categories` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##comments`
@@ -265,10 +251,8 @@ CREATE TABLE `##bxcms_##comments` (
 -- Dumping data for table `##bxcms_##comments`
 --
 
-LOCK TABLES `##bxcms_##comments` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##comments` DISABLE KEYS */;
 /*!40000 ALTER TABLE `##bxcms_##comments` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##history_diff`
@@ -289,10 +273,8 @@ CREATE TABLE `##bxcms_##history_diff` (
 -- Dumping data for table `##bxcms_##history_diff`
 --
 
-LOCK TABLES `##bxcms_##history_diff` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##history_diff` DISABLE KEYS */;
 /*!40000 ALTER TABLE `##bxcms_##history_diff` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##locks`
@@ -317,10 +299,8 @@ CREATE TABLE `##bxcms_##locks` (
 -- Dumping data for table `##bxcms_##locks`
 --
 
-LOCK TABLES `##bxcms_##locks` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##locks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `##bxcms_##locks` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##openid_profiles`
@@ -348,11 +328,6 @@ CREATE TABLE `##bxcms_##openid_profiles` (
 -- Dumping data for table `##bxcms_##openid_profiles`
 --
 
-LOCK TABLES `##bxcms_##openid_profiles` WRITE;
-/*!40000 ALTER TABLE `##bxcms_##openid_profiles` DISABLE KEYS */;
-/*!40000 ALTER TABLE `##bxcms_##openid_profiles` ENABLE KEYS */;
-UNLOCK TABLES;
-
 --
 -- Table structure for table `##bxcms_##openid_uri`
 --
@@ -368,11 +343,6 @@ CREATE TABLE `##bxcms_##openid_uri` (
 --
 -- Dumping data for table `##bxcms_##openid_uri`
 --
-
-LOCK TABLES `##bxcms_##openid_uri` WRITE;
-/*!40000 ALTER TABLE `##bxcms_##openid_uri` DISABLE KEYS */;
-/*!40000 ALTER TABLE `##bxcms_##openid_uri` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##options`
@@ -391,7 +361,6 @@ CREATE TABLE `##bxcms_##options` (
 -- Dumping data for table `##bxcms_##options`
 --
 
-LOCK TABLES `##bxcms_##options` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##options` DISABLE KEYS */;
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitename','',0,1);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('blogname','',0,2);
@@ -402,7 +371,6 @@ INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('defa
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('sitedescription','',0,7);
 INSERT INTO `##bxcms_##options` (`name`, `value`, `isarray`, `id`) VALUES ('lastdbversion','10852',0,8);
 /*!40000 ALTER TABLE `##bxcms_##options` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##properties`
@@ -426,7 +394,6 @@ CREATE TABLE `##bxcms_##properties` (
 -- Dumping data for table `##bxcms_##properties`
 --
 
-LOCK TABLES `##bxcms_##properties` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##properties` DISABLE KEYS */;
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/index.de.xhtml','mimetype','bx:','text/html',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/index.de.xhtml','output-mimetype','bx:','text/html',NULL,NULL);
@@ -504,7 +471,6 @@ INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`,
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.de.xhtml','output-mimetype','bx:','text/html',NULL,NULL);
 INSERT INTO `##bxcms_##properties` (`path`, `name`, `ns`, `value`, `value_date`, `value_int`) VALUES ('/about/index.de.xhtml','parent-uri','bx:','/about/',NULL,NULL);
 /*!40000 ALTER TABLE `##bxcms_##properties` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##properties2tags`
@@ -524,11 +490,9 @@ CREATE TABLE `##bxcms_##properties2tags` (
 -- Dumping data for table `##bxcms_##properties2tags`
 --
 
-LOCK TABLES `##bxcms_##properties2tags` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##properties2tags` DISABLE KEYS */;
 INSERT INTO `##bxcms_##properties2tags` (`id`, `path`, `tag_id`) VALUES (12,'/blog/title-6fe0a6.html',11);
 /*!40000 ALTER TABLE `##bxcms_##properties2tags` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##sidebar`
@@ -550,7 +514,6 @@ CREATE TABLE `##bxcms_##sidebar` (
 -- Dumping data for table `##bxcms_##sidebar`
 --
 
-LOCK TABLES `##bxcms_##sidebar` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##sidebar` DISABLE KEYS */;
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (1,'links','<bloglinks/>',2,1,'2006-06-24 23:18:55',1);
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (2,'buttons','<buttons/>',2,3,'2006-06-24 23:18:55',1);
@@ -564,7 +527,6 @@ INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`,
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (10,'latest_comments','<h3 class=\"blog\">Latest Comments</h3>\n<latest_comments/>',0,0,'2006-06-24 23:18:55',1);
 INSERT INTO `##bxcms_##sidebar` (`id`, `name`, `content`, `sidebar`, `position`, `changed`, `isxml`) VALUES (11,'externalFeed','<externalFeed \n   title=\"Flux CMS DevBlog\" \n   rss=\"http://devblog.flux-cms.org/rss.xml\" \n   url=\"http://devblog.flux-cms.org/\"\n/>',0,3,'2007-03-16 12:44:51',1);
 /*!40000 ALTER TABLE `##bxcms_##sidebar` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##tags`
@@ -582,11 +544,9 @@ CREATE TABLE `##bxcms_##tags` (
 -- Dumping data for table `##bxcms_##tags`
 --
 
-LOCK TABLES `##bxcms_##tags` WRITE;
 /*!40000 ALTER TABLE `##bxcms_##tags` DISABLE KEYS */;
 INSERT INTO `##bxcms_##tags` (`id`, `tag`) VALUES (11,'');
 /*!40000 ALTER TABLE `##bxcms_##tags` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##userauthservices`
@@ -604,11 +564,6 @@ CREATE TABLE `##bxcms_##userauthservices` (
 --
 -- Dumping data for table `##bxcms_##userauthservices`
 --
-
-LOCK TABLES `##bxcms_##userauthservices` WRITE;
-/*!40000 ALTER TABLE `##bxcms_##userauthservices` DISABLE KEYS */;
-/*!40000 ALTER TABLE `##bxcms_##userauthservices` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `##bxcms_##users`
