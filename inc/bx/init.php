@@ -55,7 +55,7 @@ class bx_init {
 
         $bx_config->staticFileCache = false;
 
-        ini_set('include_path',BX_INCLUDE_DIR.PATH_SEPARATOR.ini_get('include_path'));
+        ini_set('include_path',BX_INCLUDE_DIR.PATH_SEPARATOR.BX_LOCAL_INCLUDE_DIR.PATH_SEPARATOR.ini_get('include_path'));
         ini_set('session.cookie_httponly',true);
         //for staging, will be improved later
         bx_errorhandler::getInstance();
