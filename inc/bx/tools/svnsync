@@ -54,6 +54,6 @@ done
 
 if [ -n "$modifiedDirs" ]; then 
     echo "commiting all changes..."
-    $svncmd ci -m 'automatic repository sync' $modifiedDirs
+    $svncmd ci --username=liipbot -m 'automatic repository sync' $modifiedDirs
 fi
 
