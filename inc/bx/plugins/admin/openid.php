@@ -347,8 +347,10 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $xml .= '<form action="" method="post" class="personaform" name="personaForm">
         <select name="profiles" onchange="submit();">';
         // Ausgewähltes oder DEFAULT Profile anzeigen
-        
         while ($profiles_row = $profiles_res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+            foreach($profiles_row as $k => $v) {
+                $profiles_row[$k] = htmlspecialchars(strip_tags($v));
+            }
             
             if(isset($data['profiles']) && $data['UserProfileForm'] == 1 && $data['profiles'] == $profiles_row['id']) {
                 if($profiles_row['standard'] == 'on') {
@@ -389,6 +391,10 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $default_profile_res = $GLOBALS['POOL']->db->query($default_profile_query);
         
         $default_profile_row = $default_profile_res->fetchRow(MDB2_FETCHMODE_ASSOC);
+        
+        foreach($default_profile_row as $k => $v) {
+            $default_profile_row[$k] = htmlspecialchars(strip_tags($v));
+        }
         //Profile Edit/New Formular
         $xml .= '<h3>Personas</h3>';
         $xml .= '<form action="" method="post">';
@@ -507,7 +513,6 @@ class bx_plugins_admin_openid extends bx_plugins_admin implements bxIplugin  {
         $xml .= '</table>';
         $xml .= '</form>';
         $xml .= '</div>';
-        
         return $xml;
     }
     
