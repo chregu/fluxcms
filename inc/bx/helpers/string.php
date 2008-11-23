@@ -408,6 +408,10 @@ class bx_helpers_string {
             )*$%xs', $string);
     }
 
+    public static function isISO88591($str) {
+        return preg_match('/^([\x09\x0A\x0D\x20-\x7E\xA0-\xFF])*$/', $str);
+    }
+
     static function transformFromContentTypeToUTF8($str) {
 
         if (isset($_SERVER['CONTENT_TYPE']) && preg_match('#charset=([^/s^;]+)#', $_SERVER['CONTENT_TYPE'], $matches)) {
