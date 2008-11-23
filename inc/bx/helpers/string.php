@@ -7,7 +7,7 @@ class bx_helpers_string {
 
         if (strlen($inStr) > $length) {
             $length -= strlen($etc);
-            if (! $breakWords) {
+            if (!$breakWords) {
                 $inStr = preg_replace('/\s+?(\S+)?$/', '', substr($inStr, 0, $length + 1));
             }
 
@@ -42,7 +42,7 @@ class bx_helpers_string {
         $dom = new DOMDocument();
         $dom->appendChild($dom->createElement($rootNodeName));
 
-        if (! empty($string)) {
+        if (!empty($string)) {
             $exploded = explode($separator, $string);
             foreach ($exploded as $element) {
                 $child = $dom->createElement($childNodeName);
@@ -66,7 +66,7 @@ class bx_helpers_string {
      * @access public
      */
     static function utf2entities($source, $force = false) {
-        if (! $force && $GLOBALS['POOL']->config->dbIsUtf8) {
+        if (!$force && $GLOBALS['POOL']->config->dbIsUtf8) {
             return $source;
         }
         // array used to figure what number to decrement from character order value
@@ -153,7 +153,7 @@ class bx_helpers_string {
 
     static function array2query($params) {
         $str = '';
-        if (! empty($params)) {
+        if (!empty($params)) {
             foreach ($params as $key => $value) {
                 $str .= (strlen($str) < 1) ? '' : '&';
                 $str .= $key . '=' . rawurlencode($value);
@@ -166,11 +166,11 @@ class bx_helpers_string {
         $title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
 
         $title = trim($title);
-        if (! $title) {
+        if (!$title) {
             $title = "none";
         }
         $newValue = $title;
-        if (! $preserveDots) {
+        if (!$preserveDots) {
             $newValue = str_replace(".", "-", $newValue);
         }
         $newValue = str_replace("@", "-at-", $newValue);
@@ -191,19 +191,19 @@ class bx_helpers_string {
         $newValue = strtolower($newValue);
         $newValue = preg_replace("/[^a-z0-9\.\-\_\/]/", "-", $newValue);
 
-        if (! $preserveDots) {
+        if (!$preserveDots) {
             $newValue = preg_replace("/_([0-9]+)$/u", "-$1", $newValue);
         } else {
             $newValue = preg_replace("/_([0-9]+)\./u", "-$1.", $newValue);
         }
 
-        if (! $preserveSlashes) {
+        if (!$preserveSlashes) {
             $newValue = preg_replace("/\//u", "-$1", $newValue);
         }
 
         $newValue = preg_replace("/-{2,}/u", "-", $newValue);
         $newValue = trim($newValue, "-");
-        if (! $newValue) {
+        if (!$newValue) {
             $newValue = "none";
         }
         return $newValue;
@@ -280,7 +280,7 @@ class bx_helpers_string {
      * @access public
      */
     static function asciiTable($data, $tableDef) {
-        if (empty($data) || ! is_array($data)) {
+        if (empty($data) || !is_array($data)) {
             return '';
         }
 
@@ -357,7 +357,7 @@ class bx_helpers_string {
 
         if (class_exists("tidy")) {
             $tidy = new tidy();
-            if (! $tidy) {
+            if (!$tidy) {
                 return $string;
             }
         } else {
