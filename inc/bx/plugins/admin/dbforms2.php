@@ -21,7 +21,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
     private static $instance = array();
 
     public static function getInstance($mode) {
-        if (! self::$instance) {
+        if (!self::$instance) {
             self::$instance = new bx_plugins_admin_dbforms2($mode);
         }
         return self::$instance;
@@ -44,7 +44,9 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
 
         $perm = bx_permm::getInstance();
         $urlParts = explode('/', $id);
-        if (! $perm->isAllowed('/dbforms2/', array('admin_dbforms2-back-' . $urlParts[1]))) {
+        if (!$perm->isAllowed('/dbforms2/', array(
+                'admin_dbforms2-back-' . $urlParts[1]
+        ))) {
             throw new BxPageNotAllowedException();
         }
 
@@ -60,7 +62,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
 
         // check if the request belongs to a subform
         $subFormName = $this->getSubFormNameById($id);
-        if (! empty($subFormName)) {
+        if (!empty($subFormName)) {
             $form = $mainForm->getSubFormByName($subFormName);
         }
 
@@ -68,7 +70,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
 
         if ($mode == 'data') {
             $rawpost = file_get_contents('php://input');
-            if (! empty($rawpost)) {
+            if (!empty($rawpost)) {
                 $db = $GLOBALS['POOL']->dbwrite;
 
                 //if there's no encoding in the xml, convert it from the HTTP headers to UTF-8
@@ -76,9 +78,9 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 $rawpost = bx_helpers_string::fixXMLEncodingFromHTTP($rawpost);
                 // create a new DOM document out of the posted string
                 $xmlData = new DOMDocument();
-                if (! $xmlData->loadXML($rawpost)) {
+                if (!$xmlData->loadXML($rawpost)) {
                     $d = iconv("UTF-8", "UTF-8//IGNORE", $rawpost);
-                    if (! $xmlData->loadXML($d)) {
+                    if (!$xmlData->loadXML($d)) {
                         bx_helpers_debug::dump_errorlog($rawpost);
                         return $dom;
                     }
@@ -114,7 +116,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                             $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
 
                             $insertid = $xmlData->documentElement->getAttribute('insertid');
-                            if (! empty($insertid)) {
+                            if (!empty($insertid)) {
                                 $form->currentID = $insertid;
                             } else {
                                 $form->currentID = $db->nextID($form->tablePrefix . '_sequences');
@@ -199,7 +201,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 $xslfile = BX_LIBS_DIR . 'dbforms2/xsl/dbforms2.xsl';
 
                 // check for userspace form-xsl in local include dir
-                if (isset($form->attributes['xsl']) && ! empty($form->attributes['xsl'])) {
+                if (isset($form->attributes['xsl']) && !empty($form->attributes['xsl'])) {
                     $userxslf = BX_LOCAL_INCLUDE_DIR . "dbforms2/xsl/" . $form->attributes['xsl'];
                     if (file_exists($userxslf)) {
                         $xslfile = $userxslf;
@@ -211,7 +213,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
             } else
                 if ($mode == 'chooser') {
 
-                    if (! $form->chooser instanceof bx_dbforms2_liveselect) {
+                    if (!$form->chooser instanceof bx_dbforms2_liveselect) {
                         throw new Exception('No chooser has been defined for this form.');
                     }
 
@@ -245,13 +247,20 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                         $field = $form->getFieldByName($fieldName);
 
                         if ($field instanceof bx_dbforms2_fields_listview_12n) {
-                            $query = $field->getSelectQuery(array('thatid' => $thatid));
+                            $query = $field->getSelectQuery(array(
+                                    'thatid' => $thatid
+                            ));
                         } else
                             if ($field instanceof bx_dbforms2_fields_listview_n21) {
-                                $query = $field->getSelectQuery(array('thisid' => $thisid));
+                                $query = $field->getSelectQuery(array(
+                                        'thisid' => $thisid
+                                ));
                             } else
                                 if ($field instanceof bx_dbforms2_fields_listview_n2m) {
-                                    $query = $field->getSelectQuery(array('thatid' => $thatid, 'thisid' => $thisid));
+                                    $query = $field->getSelectQuery(array(
+                                            'thatid' => $thatid,
+                                            'thisid' => $thisid
+                                    ));
                                 } else
                                     if ($field instanceof bx_dbforms2_fields_listview) {
                                         $query = $field->getSelectQuery();
@@ -333,7 +342,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
      */
     protected function getSubFormNameById($id) {
         $elements = explode('/', substr($id, 1));
-        if (isset($elements[1]) && $elements[1] === 'subform' && ! empty($elements[2])) {
+        if (isset($elements[1]) && $elements[1] === 'subform' && !empty($elements[2])) {
             return $elements[2];
         }
     }
@@ -348,12 +357,18 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
     protected function getDisplayModeByID($id) {
         $mode = 'form';
         $elements = explode('/', substr($id, 1));
-        if (! empty($elements[1])) {
+        if (!empty($elements[1])) {
             if ($elements[1] == 'subform' && sizeof($elements > 3)) {
                 $elements = array_slice($elements, 2, 2);
             }
 
-            if (in_array($elements[1], array('data', 'chooser', 'listview', 'liveselect', 'upload'))) {
+            if (in_array($elements[1], array(
+                    'data',
+                    'chooser',
+                    'listview',
+                    'liveselect',
+                    'upload'
+            ))) {
                 $mode = $elements[1];
             }
 
