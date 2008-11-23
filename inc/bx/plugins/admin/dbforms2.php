@@ -78,11 +78,23 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 $rawpost = bx_helpers_string::fixXMLEncodingFromHTTP($rawpost);
                 // create a new DOM document out of the posted string
                 $xmlData = new DOMDocument();
+                // if it can't load the data, fall back to some "alternatives"
                 if (!$xmlData->loadXML($rawpost)) {
-                    $d = iconv("UTF-8", "UTF-8//IGNORE", $rawpost);
-                    if (!$xmlData->loadXML($d)) {
-                        bx_helpers_debug::dump_errorlog($rawpost);
-                        return $dom;
+                    // first try to convert from ISO-8859-1 to UTF-8 if it's ISO
+                    // Needed for some braindead Browsers like Firefox 3.0.4 -> http://liip.to/bugzilla431701
+                    $loadsuccess = false;
+                    if (bx_helpers_string::isISO88591($rawpost) && !bx_helpers_string::isUtf8($rawpost)) {
+                        $d = iconv("ISO-8859-1", "UTF-8//IGNORE", $rawpost);
+                        $loadsuccess = $xmlData->loadXML($d);
+                    }
+                    // if still no success with ISO-8859-1 conversion
+                    // do it on the hard way
+                    if (!$loadsuccess) {
+                        $d = iconv("UTF-8", "UTF-8//IGNORE", $rawpost);
+                        if (!$xmlData->loadXML($d)) {
+                            bx_helpers_debug::dump_errorlog($rawpost);
+                            return $dom;
+                        }
                     }
                 }
 
