@@ -1,27 +1,27 @@
 <?php
 class bx_helpers_string {
-    
+
     static function truncate($inStr, $length = 100, $breakWords = false, $etc = '...') {
         if ($length == 0)
         return '';
-        
+
         if (strlen($inStr) > $length) {
             $length -= strlen($etc);
             if (!$breakWords) {
                 $inStr = preg_replace('/\s+?(\S+)?$/', '', substr($inStr, 0, $length + 1));
             }
-            
+
             return substr($inStr, 0, $length)." $etc";
         } else
         return $inStr;
     }
- 
+
     static function truncate_strip($inStr, $length = 100, $breakWords = false, $etc = '...') {
         $inStr = strip_tags($inStr);
         $inStr = bx_helpers_string::truncate($inStr, $length, $breakWords , $etc);
         return $inStr;
     }
-    
+
     static function nl2property_hegu($text) {
         $text = $text[0]->ownerDocument->saveXML($text[0]);
         $text = preg_replace(array('#<[\/]*meta_other>#', "/^([^:\n]*):(.*)$/m"), array('', "<name>\$1</name><value>\$2</value>"), $text);
@@ -30,11 +30,11 @@ class bx_helpers_string {
         $xml->loadXML($text);
         return $xml;
     }
-    
+
     static function explodeToNode($separator, $string, $childNodeName='child', $rootNodeName='root') {
         $dom = new DOMDocument();
         $dom->appendChild($dom->createElement($rootNodeName));
-        
+
         if(!empty($string)) {
             $exploded = explode($separator, $string);
             foreach($exploded as $element) {
@@ -46,7 +46,7 @@ class bx_helpers_string {
         }
         return $dom;
     }
-    
+
     /**
     * takes a string of utf-8 encoded characters and converts it to a string of unicode entities
     * each unicode entitiy has the form &#nnnnn; n={0..9} and can be displayed by utf-8 supporting
@@ -68,7 +68,7 @@ class bx_helpers_string {
         $decrement[3] = 224;
         $decrement[2] = 192;
         $decrement[1] = 0;
-        
+
         // the number of bits to shift each charNum by
         $shift[1][0] = 0;
         $shift[2][0] = 6;
@@ -80,7 +80,7 @@ class bx_helpers_string {
         $shift[4][1] = 12;
         $shift[4][2] = 6;
         $shift[4][3] = 0;
-        
+
         $pos = 0;
         $len = strlen ($source);
         $encodedString = '';
@@ -88,7 +88,7 @@ class bx_helpers_string {
             $thisLetter = substr ($source, $pos, 1);
             $asciiPos = ord ($thisLetter);
             $asciiRep = $asciiPos >> 4;
-            
+
             if ($asciiPos < 128) {
                 $pos += 1;
                 $thisLen = 1;
@@ -111,9 +111,9 @@ class bx_helpers_string {
                 $thisLen = 3;
                 $pos += 3;
             }
-            
+
             // process the string representing the letter to a unicode entity
-            
+
             if ($thisLen == 1) {
                 $encodedLetter =$thisLetter;
             } else {
@@ -129,7 +129,7 @@ class bx_helpers_string {
                         $charNum = intval ($thisCharOrd - 128);
                         $decimalCode += ($charNum << $shift[$thisLen][$thisPos]);
                     }
-                    
+
                     $thisPos++;
                 }
                 if ($decimalCode < 65529) {
@@ -139,12 +139,12 @@ class bx_helpers_string {
                 }
             }
             $encodedString .= $encodedLetter;
-            
+
         }
         return $encodedString;
     }
 
-    
+
     static function array2query ($params) {
         $str = '';
         if(!empty($params)) {
@@ -155,13 +155,13 @@ class bx_helpers_string {
         }
         return ($str);
     }
-    
+
     static function makeUri ($title, $preserveDots = false,$preserveSlashes = false) {
         $title = html_entity_decode($title,ENT_QUOTES,'UTF-8');
-        
+
         $title = trim($title);
         if (!$title) {
-            $title = "none";   
+            $title = "none";
         }
         $newValue= $title;
         if (!$preserveDots) {
@@ -178,24 +178,24 @@ class bx_helpers_string {
         $newValue= preg_replace("/[ùú]/u","u",$newValue);
         $newValue= preg_replace("/[òó]/u","o",$newValue);
         $newValue= preg_replace("/[ß]/u","ss",$newValue);
-        
+
         $newValue= preg_replace("/[\n\r]+/u","",$newValue);
-        
+
         //removing everything else
         $newValue = strtolower($newValue);
         $newValue = preg_replace("/[^a-z0-9\.\-\_\/]/","-",$newValue);
-        
-        
+
+
         if (!$preserveDots) {
             $newValue= preg_replace("/_([0-9]+)$/u","-$1",$newValue);
         } else {
             $newValue= preg_replace("/_([0-9]+)\./u","-$1.",$newValue);
         }
-        
+
         if (!$preserveSlashes) {
             $newValue= preg_replace("/\//u","-$1",$newValue);
         }
-        
+
         $newValue= preg_replace("/-{2,}/u","-",$newValue);
         $newValue = trim($newValue,"-");
         if (!$newValue) {
@@ -203,13 +203,13 @@ class bx_helpers_string {
         }
         return $newValue;
     }
-    
+
     /* urify is a simple version of the above.
        The reason for having 2 versions is, that the above is not easy to do in XSLT only and
        I don't want to change makeUri 'cause of BC.
-       
+
        in XSLT, the function is the following:
-       
+
         <func:function name="bxf:urify">
             <xsl:param name="text"/>
             <func:result select="translate($text,'ABCDEFGHIJKLMNOPQRSTUVWXYZ&#x20;&#x9;&#xA;&#xD;ÄäÜüÖöÏïçÊèÉéÊêÀàÂâÔô_;:\.!,?+$£*ç%&amp;/()=','abcdefghijklmnopqrstuvwxyz----aauuooiiceeeeeeaaaaoo')"/>
@@ -223,8 +223,8 @@ class bx_helpers_string {
         $newValue= preg_replace("/[ÊèÉéÊ]/u","e",$newValue);
         $newValue= preg_replace("/[Ïï]/u","i",$newValue);
         $newValue= preg_replace("/[ç]/u","c",$newValue);
-        return str_replace(" ","-",$newValue);        
-    }        
+        return str_replace(" ","-",$newValue);
+    }
 
     /**
     * replaces all occurrences of the keys of $textfields in $subject.
@@ -242,7 +242,7 @@ class bx_helpers_string {
         $subject = preg_replace($patterns, $replacements, $subject);
         return $subject;
     }
-    
+
     /**
     * tidily prints the given fields into a string
     *
@@ -264,13 +264,13 @@ class bx_helpers_string {
         }
         return $out;
     }
-    
+
     /**
     * Takes a data array and generates a simple ASCII table out of it according
     * to the given array of definitions.
     *
     * @param array $data Array of arrays containing the data
-    * @param array $tableDef Array of array containing the header and column definitions 
+    * @param array $tableDef Array of array containing the header and column definitions
     * @return string Formatted ASCII table
     * @access public
     */
@@ -278,12 +278,12 @@ class bx_helpers_string {
         if(empty($data) || !is_array($data)) {
             return '';
         }
-        
+
         $columnFormats = array();
         $out = '';
         $sep = '';
         $header = '';
-        
+
         foreach($tableDef as $i => $column) {
             $cHeading = $column[0];
             $cWidth = $column[1];
@@ -291,20 +291,20 @@ class bx_helpers_string {
             if(isset($column[2]) && strtolower($column[2]) === 'r') {
                 $cOrientation = '';
             }
-            
+
             // resize column if needed
             if($cWidth < strlen($cHeading)) {
                 $cWidth = strlen($cHeading);
             }
             $header.= '|'.sprintf(" %-{$cWidth}.{$cWidth}s ", $column[0]);
             $sep.= '+'.str_repeat('-', $cWidth+2);
-            
-            // save column format for later use 
+
+            // save column format for later use
             $columnFormats[$i] = " %{$cOrientation}{$cWidth}.{$cWidth}s ";
         }
         $header.= '|';
         $sep.= '+';
-        
+
         foreach($data as $row => $columns) {
             foreach($columns as $i => $column) {
                 $out.= '|'.sprintf($columnFormats[$i], $column);
@@ -318,10 +318,10 @@ class bx_helpers_string {
             return '';
         }
     }
-    
+
     /**
     * strips all newlines (\r and \n) from the given string (utf8 save),
-    * shortens repeating whitespaces to one character and strips ws from 
+    * shortens repeating whitespaces to one character and strips ws from
     * the beginning and the end.
     *
     * @param string $in string to trim
@@ -334,7 +334,7 @@ class bx_helpers_string {
         $in = preg_replace('/[\r\n]*/u', '', $in);
         return $in;
     }
-    
+
     static function tidyfy ($string) {
         $tidyOptions = array(
         "output-xhtml" => true,
@@ -350,7 +350,7 @@ class bx_helpers_string {
         "numeric-entities" => true,
         "drop-proprietary-attributes" => true
         );
-        
+
         if (class_exists("tidy")) {
             $tidy = new tidy();
             if(!$tidy) {
@@ -359,37 +359,37 @@ class bx_helpers_string {
         } else {
             return $string;
         }
-        
+
         // this preg escapes all not allowed tags...
         $tidy->parseString($string,$tidyOptions,"utf8");
         $tidy->cleanRepair();
         return (string) $tidy;
     }
-    
+
     static function makeLinksClickable($text) {
         //$res=preg_replace("/((http|ftp)+(s)?:(\/\/)([\w]+(.[\w]+))([\w\-\.,@?^=%&:;\/~\+#]*[\w\-\@?^=%&:;\/~\+#])?)/i", "<a href=\"\\0\">\\0</a>", $text);
         //$res = preg_replace( "#([\s\(\.\:]|\A)(http[s]?:\/\/[^\s^>^<^\)]*)#m", "$1<a href=\"$2\">$2</a>", $text);
         $res = preg_replace( "#([\s\(\.\:]|\A)(http[s]?:\/\/[^\s^>^<^\)]*[^\s^>^<^\)^\.^\,])#m", "$1<a href=\"$2\">$2</a>", $text);
-        
+
         return $res;
     }
-    
+
      static function removeDoubleSlashes($str) {
         return preg_replace("#\/{2,}#","/",$str);
     }
-    
+
      static function spacesToPlus($str) {
         return str_replace(' ', '+', $str);
     }
-    
-    
+
+
     static function escapeJSValue($str) {
          return str_replace(
                  array("'", "\n"),
                  array("\\'", "\\n"),
                  $str);
      }
-    
+
       public static function isUtf8($string) {
         // From http://w3.org/International/questions/qa-forms-utf-8.html
         return preg_match('%^(?:
@@ -403,9 +403,9 @@ class bx_helpers_string {
             |  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
             )*$%xs', $string);
     }
-    
+
     static function transformFromContentTypeToUTF8($str) {
-        
+
         if (isset($_SERVER['CONTENT_TYPE']) && preg_match('#charset=([^/s^;]+)#',$_SERVER['CONTENT_TYPE'],$matches)) {
             if ($matches[1] == 'UTF-8') {
                 return $str;
@@ -414,17 +414,17 @@ class bx_helpers_string {
                 return utf8_encode($str);
             }
             return iconv($matches[1],"UTF-8",$str);
-        } 
+        }
         //if no charset, then return as it came
         return $str;
     }
-    
+
     static function fixXMLEncodingFromHTTP($xml) {
         if (!preg_match("#<?xml[^>]+encoding=#",$xml)) {
-            return bx_helpers_string::transformFromContentTypeToUTF8($xml);   
+            return bx_helpers_string::transformFromContentTypeToUTF8($xml);
         }
         return $xml;
     }
-     
+
 }
 
