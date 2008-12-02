@@ -557,7 +557,7 @@ $fd = fopen ($this->endImgFile,"w");
       if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
           $lastMod304 =  strtotime($_SERVER["HTTP_IF_MODIFIED_SINCE"]);
           if ($lastMod304 >= $this->lastModified) {
-                header("Not Modified",true,304);
+                header("HTTP/1.1 304 Not Modified",true,304);
                 exit;
           }
       }
