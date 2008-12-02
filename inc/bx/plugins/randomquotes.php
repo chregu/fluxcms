@@ -70,7 +70,7 @@ class bx_plugins_randomquotes extends bx_plugin implements bxIplugin {
 
     }
 
-    protected function construct($mode) {
+    protected function __construct($mode) {
         $this->tablePrefix = $GLOBALS[POOL]->config->getTablePrefix();
         $this->db = $GLOBALS[POOL]->db;
         $this->mode = $mode;
@@ -153,9 +153,13 @@ class bx_plugins_randomquotes extends bx_plugin implements bxIplugin {
             $query = "SELECT * FROM " . $this->tablePrefix . $this->randomquotesTable . " AS quotes ORDER BY rand() LIMIT 0,1";
 
         }
-
         $res = $this->db->query($query);
-        $dom = $db2xml->getXMLObject($res);
+        if ($res instanceof MDB2_Error) {
+            $dom = new DOMDocument();
+            $dom->loadXML("<randomquotes><quote>This is the default random quote, when your DB isn't working</quote><author>the system</author></randomquotes>");
+        } else {
+            $dom = $db2xml->getXMLObject($res);
+        }
 
         return $dom;
 
