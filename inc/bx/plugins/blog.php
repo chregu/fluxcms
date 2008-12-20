@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | Flux CMS                                                                |     
+// | Flux CMS                                                                |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2001-2007 Liip AG                                      |
 // +----------------------------------------------------------------------+
@@ -30,7 +30,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
     static protected $tree = null;
     protected $newCommentError = false;
     protected $commentData = null;
-    
+
 
     /*** magic methods and functions ***/
 
@@ -54,7 +54,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 */        $this->mode = $mode;
         $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
     }
-    
+
     public function getPermissionList() {
         return array(    "blog-back-post",
                         "blog-back-options",
@@ -63,7 +63,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                         "blog-back-blogroll",
                         "blog-back-categories",
                         "blog-back-private",
-                        "admin_dbforms2-back-blogcomments");    
+                        "admin_dbforms2-back-blogcomments");
     }
 
     /**
@@ -109,16 +109,16 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         }
         $this->setJavaScriptSource('webinc/js/livesearch.js');
         $this->setJavaScriptSource('webinc/js/openId.js');
-        
+
         $blogid = $this->getParameter($path,"blogid");
         if (!$blogid) {$blogid = 1;}
         $maxposts_param = $this->getParameter($path,'maxposts');
-        if ($maxposts_param ) { 
+        if ($maxposts_param ) {
             $maxPosts = $maxposts_param;
         } else {
             $maxPosts = 10;
         }
-        
+
         $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
         if ($perm->isAllowed($path.$id,array('ishashed','isuser'))) {
             $this->singlePostPerm = 7;
@@ -132,7 +132,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $this->overviewPerm = 1;
         }
         $this->checkExpiry = $GLOBALS['POOL']->config->getConfProperty('blogPostsCheckExpiry');
-         
+
         if (strpos($id,"plugin=") === 0) {
             $plugin = substr($id,7);
             if ($pos = strpos($plugin,"(")) {
@@ -184,20 +184,23 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if ($mode == "rss") {
         $sidebar = false;
             $id = "index";
+            // send SUP id
+            header("X-SUP-ID: http://friendfeed.com/api/public-sup.json#".bx_streams_blog::getSUPid());
+
         }
-        
+
         $query = "SELECT DISTINCT ".$tablePrefix."blogposts.id ";
-        
+
         if (!empty($_GET['qmode'])) {
             if (preg_match('#.*[a-z0-9]$#',$_GET['qmode'])) {
                 $plugin = "bx_plugins_blog_qmode_".$_GET['qmode'];
                 $query .=  call_user_func(array($plugin,"getQueryFields"), $path, $id, $this, $tablePrefix);
             }
-            
+
         }
-        
+
         $query .= "from ".$tablePrefix."blogposts ";
-        
+
         $archivepath = "";
         $archivewhere = "";
         $total = 0;
@@ -205,12 +208,12 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         $bloglanguage = $GLOBALS['POOL']->config->blogShowOnlyOneLanguage;
         $lang = $GLOBALS['POOL']->config->getOutputLanguage();
         if (!empty($_GET['qmode'])) {
-            
+
             if (preg_match('#.*[a-z0-9]$#',$_GET['qmode'])) {
                 $plugin = "bx_plugins_blog_qmode_".$_GET['qmode'];
                 $query .=  call_user_func(array($plugin,"getQueryWhere"), $path, $id, $this, $tablePrefix);
             }
-            
+
         } else if (isset($_GET['q']) && !(strpos($_SERVER['REQUEST_URI'], '/search/') === 0)) {
             $cat = "";
 
@@ -220,7 +223,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $tablePrefix."blogposts.post_status & ".$this->overviewPerm;
             $query .= " and blog_id = ".$blogid;
             $query .= " and post_date < '".$gmnow."' ";
-            $doComments = false; 
+            $doComments = false;
             $total = $GLOBALS['POOL']->db->query($query)->fetchOne(0);
             if($_GET['q']) {
                 $totalRes = $GLOBALS['POOL']->db->query($query);
@@ -232,36 +235,36 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $query .= " order by post_date desc limit ".$startEntry . "," . $maxPosts;
         } else if ($id == "index" ) {
             // category...
-            if (strpos($cat,"archive") === 0) {                           
+            if (strpos($cat,"archive") === 0) {
                 $archivepath = $cat;
                 $cat = substr($cat,8);
                 if (preg_match("#^([0-9]{4})#",$cat,$matches)) {
-                    
+
                     $archivewhere = " and YEAR(post_date) = " . $matches[1];
                     $cat = substr($cat,5);
-                    
+
                     if (preg_match("#^([0-9]{2})#",$cat,$matches)) {
-                        
+
                         $archivewhere .= " and MONTH(post_date) = ". $matches[1];
                         $cat = substr($cat,3);
-                        
+
                         if (preg_match("#^([0-9]{2})#",$cat,$matches)) {
                             $archivewhere .= " and DAYOFMONTH(post_date) = ". $matches[1];
                             $cat = substr($cat,3);
                         }
                     }
                     $archivewhere .= " and ".$tablePrefix."blogposts.blog_id = ". $blogid;
-                    
+
                     //remove real cat, if exists
                     $archivepath = preg_replace('#'.$cat.'$#','',$archivepath);
                 }
                 else if (strpos($cat,"author") === 0) {
                     $author = substr($cat,7);
                     $archivewhere .= " and post_author= ". $GLOBALS['POOL']->db->quote($author);
-                    $cat = false;   
+                    $cat = false;
                 } else if (strpos($cat,"id") === 0) {
                     $id = (int) substr($cat,3);
-                    
+
                     $newuri = $this->getNewPermaLink($id,$path,true);
                     if ($newuri) {
                         header("Location: ". BX_WEBROOT_W.$path.$newuri,true,301 );
@@ -274,7 +277,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     $tres = $GLOBALS['POOL']->db->query($tquery);
                 if (MDB2::isError($tres)) {
                     throw new PopoonDBException($tres);
-                }                    
+                }
                     $uris = array();
                     while ($trow = $tres->fetchRow(MDB2_FETCHMODE_ASSOC)) {
                         $uri = preg_replace("#^".$path."#","",$trow['path']);
@@ -285,7 +288,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     } else {
                         $archivewhere .= " and 1 = 2";
                     }
-                    
+
                     $cat = false;
                 } else {
                     //FIXME that's somehow ugly, but prevents same content on different urls...
@@ -307,7 +310,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where ".$tablePrefix."blogcategories.status = 1  and ".$tablePrefix."blogcategories.l >=
                 ".$lrow['l'] . " and  ".$tablePrefix."blogcategories.r <= ".$lrow['r'];
             } else if (!$cat ) {
-                $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where ((".$tablePrefix."blogcategories.l >= 1 and ".$tablePrefix."blogcategories.status=1) or ".$tablePrefix."blogcategories.status is null) 
+                $leftjoin= " left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id left join ".$tablePrefix."blogcategories on ".$tablePrefix."blogposts2categories.blogcategories_id = ".$tablePrefix."blogcategories.id where ((".$tablePrefix."blogcategories.l >= 1 and ".$tablePrefix."blogcategories.status=1) or ".$tablePrefix."blogcategories.status is null)
                 ";
             } else if ($cat == '_all') {
                 $leftjoin = "";
@@ -317,22 +320,22 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             } else {
                 throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
-            
+
             if ($archivewhere || $leftjoin) {
-                $archivewhere .= ' and ';  
+                $archivewhere .= ' and ';
             } else {
                 $archivewhere = ' where ';
             }
             $archivewhere .= $tablePrefix.'blogposts.id > 0 and ' . $tablePrefix.'blogposts.post_status & ' . $this->overviewPerm ;
             $archivewhere .= ' and '.$tablePrefix.'blogposts.blog_id = '.$blogid;
-            
+
             if ($this->overviewPerm != 7) {
                 if ($bloglanguage == 'true') {
                     $archivewhere .= ' and ('.$tablePrefix.'blogposts.post_lang = "'.$lang.'" or '.$tablePrefix.'blogposts.post_lang = "")';
                 }
-                
+
                 $archivewhere .= " and post_date < '".$gmnow."'";
-                
+
                 $catAllOnly = $GLOBALS['POOL']->config->getConfProperty('blogPostsExpireCatAllOnly');
                 if ($cat == "" || $catAllOnly == "false") {
                     $archivewhere .= " AND (";
@@ -341,30 +344,30 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                 }
             }
             $res = $GLOBALS['POOL']->db->query("select count(*) as c from ".$tablePrefix."blogposts $leftjoin  $archivewhere group by ".$tablePrefix."blogposts.id ");
-            
+
             if (MDB2::isError($res)) {
                 throw new PopoonDBException($res);
             }
-            
+
             $total = $res->numRows();
             $query .= $leftjoin . $archivewhere . ' ';
-            
+
             if(isset($GLOBALS['POOL']->config->blogEditOwnOnly)) {
                 $blogEditOwnOnly = $GLOBALS['POOL']->config->blogEditOwnOnly;
             } else {
                 $blogEditOwnOnly = 0;
             }
-            
+
             if($blogEditOwnOnly == 1 && isset($_SESSION['_authsession']['data']['id']) && $_SESSION['_authsession']['data']['user_gid'] != 1) {
                 $query .= 'and (post_author_id = '.$_SESSION['_authsession']['data']['id'].' )';
             }
-            
+
             $query .= 'order by post_date DESC limit '.$startEntry . ','.$maxPosts;
         } else {
 
             if (strpos($id,"_id") === 0 ) {
                 $query .= " where ".$tablePrefix."blogposts.id = ".substr($id,3);
-                $query .= ' and '.$tablePrefix.'blogposts.post_status & ' . $this->singlePostPerm ; 
+                $query .= ' and '.$tablePrefix.'blogposts.post_status & ' . $this->singlePostPerm ;
             } else {
                 if (strpos ($cat , 'archive') === 0 && strlen($cat) < 18)  {
                     $newuri = $this->getNewPermaLink($id,$path);
@@ -374,12 +377,12 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
                     }
                 }
                 $query .= " where post_uri = '$id'  ";
-                
+
                 $query .= ' and '.$tablePrefix.'blogposts.post_status & ' . $this->singlePostPerm ;
             }
             $doComments = true;
         }
-        
+
         $res = $GLOBALS['POOL']->db->query($query);
         if (MDB2::isError($res)) {
             throw new PopoonDBException($res);
@@ -388,7 +391,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         if ($cat) {
             $_r = $GLOBALS['POOL']->db->prepare("select fullname from ".$tablePrefix."blogcategories where fulluri = ?",array('text'),array('text'));
             $_r = $_r->execute( array($cat));
-            
+
             if (MDB2::isError($_r)) {
                 throw new PopoonDBException($_r);
             }
@@ -397,15 +400,15 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         }
         $xml .= '</title></head>';
         $xml .= '<body';
-        
-        
+
+
         if (!($cat || $archivepath || $startEntry > 0 ) ) {
                 $xml .= " blog:isStartPage='true'";
         }
         $xml .= '>';
         if ($res->numRows() > 0 ) {
             $xml .= $this->getBlogPosts($res, $path, $doComments );
-            
+
             if (!$doComments || ($doComments == 2 && $total >0)) {
                 $end =   (($startEntry + $maxPosts) > $total) ? $total : $startEntry + $maxPosts;
                 $xml .= '<div class="blog_pager" blog:start="'.($startEntry + 1).'" blog:end="'.$end.'" blog:total="'.$total.'">';
@@ -436,11 +439,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
         } else {
             throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
         }
-        
+
         $xml .= '</body></html>';
         $dom = new DomDocument();
         $dom->recover = true;
-        
+
         if (!@$dom->loadXML($xml)) {
             //if it didn't work loading, try with replacing ampersand
             //FIXME: DIRTY HACK, works only in special cases..
@@ -450,11 +453,11 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
             $dom->loadXML($xml);
         }
        if ($sidebar && $dom->documentElement) {
-            $this->getSidebarData($dom->documentElement);    
+            $this->getSidebarData($dom->documentElement);
     }
         return $dom;
     }
-    
+
 
     public function getNewPermaLink($uri, $path, $isId = false) {
         $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
@@ -467,12 +470,12 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
        }   else {
             $query .= "post_uri = ". $db->quote($uri);
        }
-       
+
        $res = $db->query($query);
 if(MDB2::isError($res)){
 	throw new PopoonDBException($res);
 }
-       if ( !$res ){  
+       if ( !$res ){
            return false;
        } else {
            $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
@@ -481,11 +484,11 @@ if(MDB2::isError($res)){
 
    }
     protected function getBlogPostData($id,$path,$doComments = false) {
-        
-        
+
+
         $blogid = $this->getParameter($path,"blogid");
         $blograting = $this->getParameter($path,"blograting");
-        
+
         if (!$blogid) {$blogid = 1;};
         if (self::$timezone === NULL) {
                self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
@@ -503,9 +506,9 @@ if(MDB2::isError($res)){
         blogposts.post_content,
         blogposts.post_content_extended,
         blogposts.post_info,
-        blogposts.post_status, 
+        blogposts.post_status,
         blogposts.post_guid_version,
-        
+
         unix_timestamp(blogposts.changed) as lastmodified,
         DATE_FORMAT(DATE_ADD(blogposts.post_date, INTERVAL '. self::$timezone .' SECOND), "%d.%m.%Y %H:%i") as post_date,
         unix_timestamp(blogposts.post_date) as unixtime,
@@ -517,7 +520,7 @@ if(MDB2::isError($res)){
         unix_timestamp(max(blogcomments.changed)) as comment_lastmodified
         from '.$tablePrefix.'blogposts as blogposts left join '.$tablePrefix.'blogcomments as blogcomments on blogposts.id = blogcomments.comment_posts_id
         and blogcomments.comment_status = 1';
-        
+
         if(isset($blogid)) {
             $query .= ' where blogposts.id = "'.$id.'" and blogposts.blog_id = "'.$blogid.'" group by blogposts.id ';
         } else {
@@ -529,14 +532,14 @@ if(MDB2::isError($res)){
         }
         while($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $this->lastModified = max($this->lastModified, $row['lastmodified'], $row['comment_lastmodified']);
-            
-            
-            
+
+
+
             $xml .= '<div class="entry" ';
-            
+
             $xml .= ' id = "entry'.$row['id'].'"';
             $xml .= ' blog:blog_id="'.$row['blog_id'].'" ' ;
-            
+
             if($blograting == 'true') {
                 $rating = bx_plugins_blog_rating::getRatingById($row['id']);
                 if($rating) {
@@ -545,8 +548,8 @@ if(MDB2::isError($res)){
                     $xml .= ' blog:rating="0" blog:myrating="0" ';
                 }
             }
-            
-            
+
+
             if(isset($row['post_lang'])) {
                     $xml .= ' blog:blog_lang="'.$row['post_lang'].'" ' ;
             }
@@ -567,23 +570,23 @@ if(MDB2::isError($res)){
                 } else {
                     $xml .= ' blog:post_trackbacks_allowed="1" ';
                 }
-                
+
                 $commentsAllowed = true;
             } else  {
                 $xml .= ' blog:post_comment_allowed="0" ';
                 $xml .= ' blog:post_trackbacks_allowed="0" ';
                 $commentsAllowed = false;
             }
-            
-            
+
+
             if (isset($row['comment_count'])) {
                 $xml .= ' blog:comment_count = "'.$row['comment_count'].'"';
             }
-            
+
             $xml .= '>';
             $xml .= '<h2 class="post_title">'.$row['post_title'].'</h2>';
             // get categories
-            if (! ($catrows = $GLOBALS['POOL']->cache->get("plugins_blog_post_categories_".$id))) { 
+            if (! ($catrows = $GLOBALS['POOL']->cache->get("plugins_blog_post_categories_".$id))) {
                 $catres = $GLOBALS['POOL']->db->query("select ".$tablePrefix."blogcategories.id , fullname, fulluri from ".$tablePrefix."blogcategories
                 left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogcategories.id = ".$tablePrefix."blogposts2categories.blogcategories_id where ".$tablePrefix."blogposts2categories.blogposts_id = $id and ".$tablePrefix."blogcategories.blog_id = ".$blogid." and ".$tablePrefix."blogcategories.status=1");
                 if (MDB2::isError($catres)) {
@@ -601,23 +604,23 @@ if(MDB2::isError($res)){
             // author
             $post_author_fullname =  bx_helpers_users::getFullnameByUsername($row['post_author']);
             if ($post_author_fullname) {
-                
+
                 $xml .= '<span class="post_author"><a href="'.BX_WEBROOT_W.$path.'archive/author/'.$row['post_author'].'/">'.$post_author_fullname.'</a></span>';
             } else {
                 $xml .= '<span class="post_author"><a href="'.BX_WEBROOT_W.$path.'archive/author/'.$row['post_author'].'/">'.$row['post_author'].'</a></span>';
             }
-            
+
             //post date
             $xml .= '<span class="post_date">'. $this->getClickableDate($row['post_date'], $path) .' ' . self::$timezoneString . '</span>';
             $xml .= '</div>';
             $xml .= '<div class="post_content">';
-            
-            
+
+
             $xml .= $row['post_content'];
-            
-            
-            $xml .= '</div>';   
-            
+
+
+            $xml .= '</div>';
+
             if($doComments){
                 $xml .= '<a name="post_content_extended"/><div class="post_content_extended">';
 
@@ -660,18 +663,18 @@ if(MDB2::isError($res)){
 
             $xml .= '<div class="post_links">';
             $posturipath = BX_WEBROOT_LANG.substr($path,1).'archive/'.date('Y',$row['unixtime']).'/'.date('m',$row['unixtime']).'/'.date('d',$row['unixtime']).'/'.$row['post_uri'].'.html';
-            
+
             if(!$doComments){
                 if(trim(($row['post_content_extended']))){
                     $xml .= '<span class="post_more"><a class="post_more" href="'.$posturipath.'#post_content_extended"><i18n:text>Read whole post</i18n:text></a></span>';
                 }
             }
-            
+
 
             $xml .= '<span class="post_comments_count"><a href="'.$posturipath.'#comments">'.$row['comment_count'].'</a></span> ';
             $xml .= '<span class="post_uri"><a href="'.$posturipath.'" rel="bookmark">Permalink</a></span>';
-            
-            
+
+
             //BLOG MAP PLUGIN - is only true if the blog_map subplugin is enabled
             if($this->getParameter($path,"blog_map") ==  true) {
                 //Show this post on the map
@@ -681,15 +684,15 @@ if(MDB2::isError($res)){
                     throw new PopoonDBException($mres);
                 }
                 $mrow = $mres->fetchRow(MDB2_FETCHMODE_ASSOC);
-                
+
                 if($mrow['post_info'] != "") {
                     $xml .= '<span class="post_uri"><a href="'.BX_WEBROOT_W.$path.'map/?id='.$row['id'].'">Show this post on the map</a></span>';
                 }
-            }                                                                                                                    
-            
-            
+            }
+
+
             $xml .= '</div>';
-            
+
             //get comments
             // don't do it if doComments = 2 (for extended POsts only..)
             if ($doComments && $doComments !== 2) {
@@ -727,7 +730,7 @@ if(MDB2::isError($res)){
             $xml .= '</div>';
 
         }
-            
+
         return $xml;
     }
 
@@ -791,7 +794,7 @@ if(MDB2::isError($res)){
                 $sxml .= '>';
                 $sxml .= '<a name="comment'.$row['id'].'"/>';
                 $sxml .= '<div class="comment_meta_data">';
-                
+
                 $sxml .= '<span class="comment_author_email">'.$row['comment_author_email'].'</span>';
                 $sxml .= '<span class="comment_author">';
                 if ($row['comment_author_url']) {
@@ -807,7 +810,7 @@ if(MDB2::isError($res)){
                 if($row['openid'] == 1) {
                     $sxml .= '<img class="openid" src="'.BX_WEBROOT.'webinc/images/openid.gif"/>';
                 }
-                
+
                 $sxml .= '<span class="comment_type">'.$row['comment_type'].'</span>';
                 $sxml .= '</div>';
                 $sxml .= '<div class="comment_content">';
@@ -821,7 +824,7 @@ if(MDB2::isError($res)){
                     $d->recover = false;
                 }
                 $xml .= $sxml;
-                
+
             }
             $xml .= '</div>';
 
@@ -837,22 +840,22 @@ if(MDB2::isError($res)){
     }
 
     public function getResourceById($path, $id, $mock = false) {
-        
-        
+
+
         $pathid = $path.$id;
         if (!isset($this->res[$pathid])) {
-            
+
             if ($row = $GLOBALS['POOL']->cache->get("plugins_blog_path_".$pathid)) {
-                
+
             } else {
                 $id = str_replace(".html","",$id);
-                
+
                 $tablePrefix = $this->tablePrefix.$this->getParameter($path,"tableprefix");
                 $db = $GLOBALS['POOL']->db;
                 if (self::$timezone === NULL) {
                     self::$timezone = bx_helpers_config::getTimezoneAsSeconds();
                 }
-                
+
                 $query = "SELECT id, post_title, concat(DATE_FORMAT(blogposts.post_date,'%Y/%m/%H/'),
                 blogposts.post_uri) as permalink,
                 blogposts.post_status as status,
@@ -878,7 +881,7 @@ if(MDB2::isError($res)){
             } else {
                 $this->res[$pathid] = null;
             }
-            
+
         }
         return $this->res[$pathid];
     }
@@ -926,7 +929,7 @@ if(MDB2::isError($res)){
         // print_r(self::$tree);
         return self::$tree;
     }
-    
+
     public function getOverviewSections($path,$mainOverview) {
         $perm = bx_permm::getInstance();
 
@@ -940,7 +943,7 @@ if(MDB2::isError($res)){
         if($perm->isAllowed('/blog/',array('blog-back-post'))) {
              $dom->addLink("Make new Blog Entry",'edit'.$path."newpost.xml");
              $dom->addLink("Blog Posts Overview / Latest Comments",'edit'.$path);
-        }    
+        }
 
         $dom->addTab("Edit Categories/Links");
         if($perm->isAllowed($path,array('blog-back-categories'))) {
@@ -952,12 +955,12 @@ if(MDB2::isError($res)){
         if($perm->isAllowed('/dbforms2/',array('admin_dbforms2-back-blogcomments'))) {
             $dom->addLink("Edit Comments",'dbforms2/blogcomments/');
         }
-        
+
          if($perm->isAllowed($path,array('blog-back-sidebars'))) {
             $dom->addLink("Edit Sidebars",'edit'.$path.'sub/sidebar/');
         }
-        
-        
+
+
         //if (!$mainOverview) {
             $dom->addTab("RSS");
             $dom->addLink("RSS Feed",BX_WEBROOT_W.$path."rss.xml");
@@ -973,13 +976,13 @@ if(MDB2::isError($res)){
             $dom->addLink("Flux CMS Bookmarklet","javascript:%20var%20baseUrl%20=%20'".BX_WEBROOT."admin/edit/blog/newpost.xml?';%20var%20url=baseUrl;var%20title=document.title;%20url=url%20+%20'link_title='%20+%20encodeURIComponent(title);%20var%20currentUrl=document.location.href;%20url=url%20+%20'&link_href='%20+%20encodeURIComponent(currentUrl);%20var%20selectedText;%20selectedText=getSelection();%20if%20(selectedText%20!=%20'')%20url=url%20+%20'&text='%20+%20encodeURIComponent(selectedText);var win = window.open(null, '', 'width=700,height=500,scrollbars,resizable,location,toolbar');win.location.href=url;win.focus();"
             ,"Drag'n'drop to your bookmarks for immediate posting from your browser");
         }
-            
+
         //}
         return $dom;
     }
-    
-    protected function getCommentForm($emailBodyID = '', $posturipath, $imgid = null, $isCaptcha) {        
-        
+
+    protected function getCommentForm($emailBodyID = '', $posturipath, $imgid = null, $isCaptcha) {
+
         $remember = null;
         $data = $this->commentData;
         if($data == null) {
@@ -988,10 +991,10 @@ if(MDB2::isError($res)){
             $data['email'] = null;
             $data['comments'] = null;
         }
-        
+
         //get TablePrefix
         $tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix();
-        
+
         if(!empty($_SESSION['flux_openid_url']) || !empty($_COOKIE['openid_enabled'])) {
             $query = "select comment_author, comment_author_email, comment_author_url from ".$tablePrefix."blogcomments where comment_author_url = ".$GLOBALS['POOL']->db->quote($_SESSION['flux_openid_url'])." or  comment_author_url = ".$GLOBALS['POOL']->db->quote($_COOKIE['openid_enabled'])." order by id DESC LIMIT 1";
             $res = $GLOBALS['POOL']->db->query($query);
@@ -1017,19 +1020,19 @@ if(MDB2::isError($res)){
                 }
                 $data['openid_url'] = BX_WEBROOT;
             }   else {
-                $remember = null;                                                        
+                $remember = null;
             }
         }
-        
-          
+
+
         $xml = '<div class="comments_new">';
-         
-         
+
+
         if ($this->newCommentError) {
             $xml .= '<p name="commentNotice" style="color:red;">'.$this->newCommentError.'</p>';
         } else if (!empty($_GET['mod'])) {
             $xml .= '<p name="commentNotice" style="color:red;"><i18n:text>Moderated Comment</i18n:text></p>';
-            
+
         }
             $xml .= '<form name="bx_foo" action="'.$posturipath.'#commentform" onsubmit="return prepareCommentSubmit();" method="post">
                <table class="form" border="0" cellspacing="0" cellpadding="0" id="commentform">
@@ -1041,7 +1044,7 @@ if(MDB2::isError($res)){
                <td><input class="formgenerell" type="text" name="email" id="email" value="'.$data['email'].'"/></td>
                </tr>
                 <tr><td valign="top" width="90" class="formurl">For Spammers Only</td><td valign="middle" class="formurl"><input type="text" name="url" value="" class="formurl" /></td></tr>
-             
+
                <tr>
                <td valign="top"><i18n:text i18n:key="blogCommentURL">URL</i18n:text></td>
                <td>
@@ -1057,7 +1060,7 @@ if(MDB2::isError($res)){
                     }
                $xml .= '</td>
                </tr>';
-               
+
                if(isset($_COOKIE['openid_enabled']) && $_COOKIE['openid_enabled']) {
                     if(isset($_SESSION['flux_openid_url']) && $_SESSION['flux_openid_url']) {
                         //continue();
@@ -1072,16 +1075,16 @@ if(MDB2::isError($res)){
                 }
                if(isset($immediate) && $immediate == true) {
                    $xml .= '<iframe id="foo"  style="display: none;"/>';
-                   
+
                    $process_url = BX_WEBROOT.'inc/bx/php/openid/finish_auth.php';
                    $trust_root = BX_WEBROOT;
                    $store_path = BX_TEMP_DIR."_php_consumer_test";
-                   
+
                    require_once "Auth/OpenID/Consumer.php";
-                   
+
                    require_once "Auth/OpenID/FileStore.php";
                    $store = new Auth_OpenID_FileStore($store_path);
-                   
+
                    $consumer = new Auth_OpenID_Consumer($store, null,true);
 
                    // Begin the OpenID authentication process.
@@ -1095,7 +1098,7 @@ if(MDB2::isError($res)){
                    // the token for this authentication so we can verify the response.
                    $_SESSION['openid_token'] = $info->token;
                    $redirect_url = $consumer->constructRedirect($info, $process_url, $trust_root);
-                   
+
                    $xml .= '<tr><td></td><td><iframe src="'.$redirect_url.'" style="display: block; height:35px;" /></td></tr>';
                }
                $xml .= '<tr>
@@ -1111,7 +1114,7 @@ if(MDB2::isError($res)){
                        $xml .= '<tr><td colspan="2" valign="top"><input type="checkbox" name="remember"/>';
                  }
                   $xml .= ' <i18n:text i18n:key="blogCommentRemember">Remember me (needs cookies)</i18n:text></td></tr>';
-                  
+
                 if($isCaptcha == 1) {
                     $xml .= '<tr>
                     <td colspan="2"><br/><i18n:text i18n:key="blogCommentCaptcha">Anti-Spam check, please copy the letters to the input field</i18n:text></td>
@@ -1127,13 +1130,13 @@ if(MDB2::isError($res)){
                     </tr>
                     ';
                 }
-                
+
                 $xml .= '<tr>
                 <td></td>
                 <td><br /><input type="submit" i18n:attr="value" id="bx_plugins_blog_all" name="bx[plugins][blog][_all]" value="Send" class="formbutton" />
-                <input type="hidden" id="bx_plugins_hidden_submit_replacement" name="h" value="Send"/> 
+                <input type="hidden" id="bx_plugins_hidden_submit_replacement" name="h" value="Send"/>
                 <input onclick="javascript:previewSubmit(this.parentNode);" type="button" i18n:attr="value"  value="Preview" class="formbutton" />
-                
+
                 </td>
                 </tr>
                </table>
@@ -1142,23 +1145,23 @@ if(MDB2::isError($res)){
                ';
         $this->setJavaScriptSource('webinc/js/prototype.lite.js');
         $this->setJavaScriptSource('webinc/js/moo.ajax.js');
-        
+
         return $xml;
     }
-    
+
     public function handlePublicPost($path,$id, $data) {
-        
+
         if (!empty($data['email'])) {
             $data['email'] = htmlspecialchars(strip_tags($data['email'] ));
         }
         if (!empty($data['name'])) {
             $data['name'] = htmlspecialchars(strip_tags($data['name']));
-        } 
-        
+        }
+
         if (!empty($data['openid_url'])) {
             $data['openid_url'] = htmlspecialchars(strip_tags($data['openid_url']));
         }
-        
+
         $error = bx_plugins_blog_handlecomment::handlePost($path,$id,$data);
         $this->commentData = $data;
         if ($error) {
@@ -1167,12 +1170,12 @@ if(MDB2::isError($res)){
             $this->newCommentError = false;
         }
     }
-    
-        
+
+
     protected function getSidebarData($root) {
         $query = "SELECT sidebar, name, content, isxml FROM ".$this->tablePrefix."sidebar AS sidebar WHERE sidebar != '0' order by sidebar,position";
         $res = $GLOBALS['POOL']->db->query($query);
-    if(MDB2::isError($res)){ 
+    if(MDB2::isError($res)){
     throw new PopoonDBException($res);
 }
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
@@ -1192,30 +1195,30 @@ if(MDB2::isError($res)){
             }
             $s->setAttribute('isxml',$row['isxml']);
         }
-        
-        
-        
-        
+
+
+
+
     }
-    
-    
-    
+
+
+
     private function getClickableDate($post_date, $blogpath){
-        
+
         // FIXME: should actually take this directly from the db instead of splitting it here like this
         $datetime = explode(" ", $post_date);
         $date = explode(".", $datetime[0]);
-        
+
         $year = '<a href="' . BX_WEBROOT_W . $blogpath . 'archive/'. $date[2] . '/">' . $date[2] . '</a>';
         $month= '<a href="'.BX_WEBROOT_W. $blogpath.'archive/'.$date[2] . '/' . $date[1] . '/">' . $date[1] . '</a>';
         $day  = '<a href="'.BX_WEBROOT_W. $blogpath.'archive/'.$date[2] . '/' . $date[1] . '/' . $date[0] .'/">' . $date[0] . '</a>';
-        
+
         return $day.'.'.$month.'.'.$year.' ' . $datetime[1];
-        
+
     }
-    
-    
-    
+
+
+
 }
 
 
