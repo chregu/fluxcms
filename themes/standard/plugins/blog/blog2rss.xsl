@@ -6,6 +6,7 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:php="http://php.net/xsl"
   xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
 xmlns:georss="http://www.georss.org/georss" 
+xmlns:media="http://search.yahoo.com/mrss"
  >
 
     <xsl:output method="xml" indent="yes" omit-xml-declaration="no"/>
@@ -153,6 +154,14 @@ xmlns:georss="http://www.georss.org/georss"
                             <geo:lat><xsl:value-of select="$plazes/blog:plazelat"/></geo:lat>
                             <geo:long><xsl:value-of select="$plazes/blog:plazelon"/></geo:long>
                        </xsl:if>
+                        
+                        <xsl:for-each select="xhtml:div[@class='post_content']//xhtml:img">
+                            <!-- FIXME, produce a real thumbnail.. -->
+                            <media:group>
+                                <media:thumbnail url="{@src}" width="100"/>
+                            </media:group>
+                        </xsl:for-each>
+                        
                     </item>
                 </xsl:for-each>
 
