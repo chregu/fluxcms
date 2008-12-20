@@ -156,9 +156,8 @@ xmlns:media="http://search.yahoo.com/mrss"
                        </xsl:if>
                         
                         <xsl:for-each select="xhtml:div[@class='post_content']//xhtml:img">
-                            <!-- FIXME, produce a real thumbnail.. -->
                             <media:group>
-                                <media:thumbnail url="{@src}" width="100"/>
+                                <media:thumbnail url="{php:functionString('preg_replace','#dynimages/[0-9]+/#','dynimages/100/',@src)}" width="100"/>
                             </media:group>
                         </xsl:for-each>
                         
