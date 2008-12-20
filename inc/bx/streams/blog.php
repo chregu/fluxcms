@@ -459,8 +459,8 @@ class bx_streams_blog extends bx_streams_buffer {
         $supid = self::getSUPid();
 
         $ch = curl_init("http://friendfeed.com/api/public-sup-ping?supid=".$supid."&url=".$url."rss.xml");
-        error_log("http://friendfeed.com/api/public-sup-ping?supid=".$supid."&url=".$url."rss.xml");
         curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
         curl_exec($ch);
         curl_close($ch);
