@@ -66,7 +66,8 @@ xmlns:media="http://search.yahoo.com/mrss"
                 <geo:lat><xsl:value-of select="substring-before($ICBM,',')"/></geo:lat>
                 <geo:long><xsl:value-of select="normalize-space(substring-after($ICBM,','))"/></geo:long>
      </xsl:if>  
-                
+<atom:link rel="http://api.friendfeed.com/2008/03#sup" xmlns:atom="http://www.w3.org/2005/Atom" type="application/json" href="http://friendfeed.com/api/public-sup.json#{php:functionString('bx_streams_blog::getSupId')}"/>
+        
                 <xsl:for-each select="/bx/plugin[@name='blog']/xhtml:html/xhtml:body/xhtml:div[@class = 'entry']">
                     <item>
 
