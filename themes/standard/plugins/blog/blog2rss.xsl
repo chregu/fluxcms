@@ -6,7 +6,6 @@ xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:blog="http://bitflux.org/doctypes/blog" xmlns:php="http://php.net/xsl"
   xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
 xmlns:georss="http://www.georss.org/georss" 
-xmlns:media="http://search.yahoo.com/mrss"
  >
 
     <xsl:output method="xml" indent="yes" omit-xml-declaration="no"/>
@@ -66,8 +65,7 @@ xmlns:media="http://search.yahoo.com/mrss"
                 <geo:lat><xsl:value-of select="substring-before($ICBM,',')"/></geo:lat>
                 <geo:long><xsl:value-of select="normalize-space(substring-after($ICBM,','))"/></geo:long>
      </xsl:if>  
-<atom:link rel="http://api.friendfeed.com/2008/03#sup" xmlns:atom="http://www.w3.org/2005/Atom" type="application/json" href="http://friendfeed.com/api/public-sup.json#{php:functionString('bx_streams_blog::getSupId')}"/>
-        
+                
                 <xsl:for-each select="/bx/plugin[@name='blog']/xhtml:html/xhtml:body/xhtml:div[@class = 'entry']">
                     <item>
 
@@ -155,13 +153,6 @@ xmlns:media="http://search.yahoo.com/mrss"
                             <geo:lat><xsl:value-of select="$plazes/blog:plazelat"/></geo:lat>
                             <geo:long><xsl:value-of select="$plazes/blog:plazelon"/></geo:long>
                        </xsl:if>
-                        
-                        <xsl:for-each select="xhtml:div[@class='post_content']//xhtml:img">
-                            <media:group>
-                                <media:thumbnail url="{php:functionString('preg_replace','#dynimages/[0-9]+/#','dynimages/100/',@src)}" width="100"/>
-                            </media:group>
-                        </xsl:for-each>
-                        
                     </item>
                 </xsl:for-each>
 
