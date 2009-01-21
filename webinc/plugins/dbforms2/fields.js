@@ -63,7 +63,11 @@ function dbforms2_field(DOMNode) {
     }
     
     this.focus = function() {
-        this.DOMNode.focus();
+        try {
+            this.DOMNode.focus();
+        } catch (e) {
+            //if we can't set the focus, we don't care
+        }
     }
     
     this.onChange = function() {
