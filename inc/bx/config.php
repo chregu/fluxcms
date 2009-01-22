@@ -163,12 +163,16 @@ class bx_config extends popoon_classes_config {
         }
     }
     
-    public function getTablePrefix($withStaging = true) {
-        if (isset($this->dsn['tableprefix'])) {
+    public function getTablePrefix($withStaging = true, $configKey=null) {
+        if (null === $configKey) {
+            $configKey="tableprefix";
+        }
+        
+        if (isset($this->dsn[$configKey])) {
 //            if (!$withStaging || BX_STAGE == '') {
-                return $this->dsn['tableprefix'];
+                return $this->dsn[$configKey];
  /*           } else {
-                return $this->dsn['tableprefix']. BX_STAGE.'__';
+                return $this->dsn['t    ableprefix']. BX_STAGE.'__';
             }*/
         } else {
             return "";
