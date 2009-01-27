@@ -308,6 +308,11 @@ DlgTableCellSpace	: "Ruangan Antara Sel",
 DlgTableCellPad		: "Tambahan Ruang Sel",
 DlgTableCaption		: "Keterangan",
 DlgTableSummary		: "Summary",	//MISSING
+DlgTableHeaders		: "Headers",	//MISSING
+DlgTableHeadersNone		: "None",	//MISSING
+DlgTableHeadersColumn	: "First column",	//MISSING
+DlgTableHeadersRow		: "First Row",	//MISSING
+DlgTableHeadersBoth		: "Both",	//MISSING
 
 // Table Cell Dialog
 DlgCellTitle		: "Ciri-ciri Sel",

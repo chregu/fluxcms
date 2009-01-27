@@ -31,14 +31,13 @@
 
 var dialog	= window.parent ;
 var oEditor = dialog.InnerDialogLoaded() ;
-var dialogArguments = dialog.Args() ;
 
-// Gets the document DOM
-var oDOM = oEditor.FCK.EditorDocument ;
+var FCKDomTools = oEditor.FCKDomTools ;
 
 // Gets the table if there is one selected.
 var table ;
 var e = dialog.Selection.GetSelectedElement() ;
+var hasColumnHeaders ;
 
 if ( ( !e && document.location.search.substr(1) == 'Parent' ) || ( e && e.tagName != 'TABLE' ) )
 	e = oEditor.FCKSelection.MoveToAncestorNode( 'TABLE' ) ;
@@ -87,6 +86,36 @@ window.onload = function()
 
 		var eCaption = oEditor.FCKDomTools.GetFirstChild( table, 'CAPTION' ) ;
 		if ( eCaption ) document.getElementById('txtCaption').value = eCaption.innerHTML ;
+		
+		hasColumnHeaders = true ;
+		// Check if all the first cells in every row are TH
+		for (var row=0; row<table.rows.length; row++)
+		{
+			// If just one cell isn't a TH then it isn't a header column
+			if ( table.rows[row].cells[0].nodeName != 'TH' )
+			{
+				hasColumnHeaders = false ;
+				
+				break;
+			}
+		}
+
+		// Check if the table contains <thead>
+		if ((table.tHead !== null) ) 
+		{
+			if (hasColumnHeaders)
+				GetE('selHeaders').value = 'both' ;
+			else
+				GetE('selHeaders').value = 'row' ;
+		}
+		else
+		{
+			if (hasColumnHeaders)
+				GetE('selHeaders').value = 'col' ;
+			else
+				GetE('selHeaders').value = '' ;
+		}
+
 
 		document.getElementById('txtRows').disabled    = true ;
 		document.getElementById('txtColumns').disabled = true ;
@@ -104,8 +133,9 @@ function Ok()
 {
 	var bExists = ( table != null ) ;
 
+	var oDoc = oEditor.FCK.EditorDocument ; 
 	if ( ! bExists )
-		table = oEditor.FCK.EditorDocument.createElement( "TABLE" ) ;
+		table = oDoc.createElement( "TABLE" ) ;
 
 	// Removes the Width and Height styles
 	if ( bExists && table.style.width )		table.style.width = null ; //.removeAttribute("width") ;
@@ -129,7 +159,7 @@ function Ok()
 	{
 		if ( !eCaption )
 		{
-			eCaption = oEditor.FCK.EditorDocument.createElement( 'CAPTION' ) ;
+			eCaption = oDoc.createElement( 'CAPTION' ) ;
 			table.insertBefore( eCaption, table.firstChild ) ;
 		}
 
@@ -145,17 +175,128 @@ function Ok()
 			eCaption.parentNode.removeChild( eCaption ) ;
 	}
 
+	var headers = GetE('selHeaders').value ;
+	if ( bExists )
+	{
+		// Should we make a <thead>?
+		if ( table.tHead==null && (headers=='row' || headers=='both') )
+		{
+			var oThead = table.createTHead() ;
+			var tbody = FCKDomTools.GetFirstChild( table, 'TBODY' ) ;
+			var theRow= FCKDomTools.GetFirstChild( tbody, 'TR' ) ;
+
+			//now change TD to TH:
+			for (var i = 0; i<theRow.childNodes.length ; i++) 
+			{
+				var th = RenameNode(theRow.childNodes[i], 'TH') ;
+				if (th != null) 
+					th.scope='col' ;
+			}
+			oThead.appendChild( theRow ) ;
+		}
+
+		if ( table.tHead!==null && !(headers=='row' || headers=='both') )
+		{
+			// Move the row out of the THead and put it in the TBody:
+			var tHead = table.tHead ;
+			var tbody = FCKDomTools.GetFirstChild( table, 'TBODY' ) ;
+
+			var previousFirstRow = tbody.firstChild ;
+			while ( tHead.firstChild ) 
+			{
+				var theRow = tHead.firstChild ;
+				for (var i = 0; i < theRow.childNodes.length ; i++ ) 
+				{
+					var newCell = RenameNode( theRow.childNodes[i], 'TD' ) ;
+					if ( newCell != null ) 
+						newCell.removeAttribute( 'scope' ) ;
+				}
+				tbody.insertBefore( theRow, previousFirstRow ) ;
+			}
+			table.removeChild( tHead ) ;
+		}
+
+		// Should we make all first cells in a row TH?
+		if ( (!hasColumnHeaders)  && (headers=='col' || headers=='both') )
+		{
+			for( var row=0 ; row < table.rows.length ; row++ )
+			{
+				var newCell = RenameNode(table.rows[row].cells[0], 'TH') ;
+				if ( newCell != null ) 
+					newCell.scope = 'row' ;
+			}
+		}
+
+		// Should we make all first TH-cells in a row make TD? If 'yes' we do it the other way round :-)
+		if ( (hasColumnHeaders)  && !(headers=='col' || headers=='both') )
+		{
+			for( var row=0 ; row < table.rows.length ; row++ )
+			{
+				var oRow = table.rows[row] ;
+				if ( oRow.parentNode.nodeName == 'TBODY' )
+				{
+					var newCell = RenameNode(oRow.cells[0], 'TD') ;
+					if (newCell != null) 
+						newCell.removeAttribute( 'scope' ) ;
+				}
+			}
+		}
+	}
+
 	if (! bExists)
 	{
-		var iRows = document.getElementById('txtRows').value ;
-		var iCols = document.getElementById('txtColumns').value ;
+		var iRows = GetE('txtRows').value ;
+		var iCols = GetE('txtColumns').value ;
 
-		for ( var r = 0 ; r < iRows ; r++ )
+		var startRow = 0 ;
+		// Should we make a <thead> ?
+		if (headers=='row' || headers=='both')
 		{
+			startRow++ ;
+			var oThead = table.createTHead() ;
 			var oRow = table.insertRow(-1) ;
+			oThead.appendChild(oRow);
+			
 			for ( var c = 0 ; c < iCols ; c++ )
 			{
-				var oCell = oRow.insertCell(-1) ;
+				var oThcell = oDoc.createElement( 'TH' ) ; 
+				oThcell.scope = 'col' ;
+				oRow.appendChild( oThcell ) ;
+				if ( oEditor.FCKBrowserInfo.IsGeckoLike )
+					oEditor.FCKTools.AppendBogusBr( oThcell ) ;
+			}
+		}
+
+		// Opera automatically creates a tbody when a thead has been added
+		var oTbody = FCKDomTools.GetFirstChild( table, 'TBODY' ) ;
+		if ( !oTbody )
+		{
+			// make TBODY if it doesn't exist
+			oTbody = oDoc.createElement( 'TBODY' ) ; 
+			table.appendChild( oTbody ) ;
+		}
+		for ( var r = startRow ; r < iRows; r++ ) 
+		{
+			var oRow = oDoc.createElement( 'TR' ) ;
+			oTbody.appendChild(oRow) ;
+
+			var startCol = 0 ;
+			// Is the first column a header?
+			if (headers=='col' || headers=='both')
+			{
+				var oThcell = oDoc.createElement( 'TH' ) ;
+				oThcell.scope = 'row' ;
+				oRow.appendChild( oThcell ) ;
+				if ( oEditor.FCKBrowserInfo.IsGeckoLike )
+					oEditor.FCKTools.AppendBogusBr( oThcell ) ;
+
+				startCol++ ;
+			}
+			for ( var c = startCol ; c < iCols ; c++ )
+			{
+				// IE will leave the TH at the end of the row if we use now oRow.insertCell(-1) 
+				var oCell = oDoc.createElement( 'TD' ) ;
+				oRow.appendChild( oCell ) ;
 				if ( oEditor.FCKBrowserInfo.IsGeckoLike )
 					oEditor.FCKTools.AppendBogusBr( oCell ) ;
 			}
@@ -178,7 +319,7 @@ function Ok()
 				<table cellspacing="1" cellpadding="1" width="100%" border="0">
 					<tr>
 						<td valign="top">
-							<table cellspacing="0" cellpadding="0" border="0">
+							<table cellspacing="1" cellpadding="0" border="0">
 								<tr>
 									<td>
 										<span fcklang="DlgTableRows">Rows</span>:</td>
@@ -194,10 +335,15 @@ function Ok()
 											onkeypress="return IsDigit(event);" /></td>
 								</tr>
 								<tr>
+									<td><span fcklang="DlgTableHeaders">Headers</span>:</td>
 									<td>
-										&nbsp;</td>
-									<td>
-										&nbsp;</td>
+										&nbsp;<select id="selHeaders">
+											<option fcklang="DlgTableHeadersNone" value="">None</option>
+											<option fcklang="DlgTableHeadersRow" value="row">First row</option>
+											<option fcklang="DlgTableHeadersColumn" value="col">First column</option>
+											<option fcklang="DlgTableHeadersBoth" value="both">Both</option>
+										</select>
+									</td>
 								</tr>
 								<tr>
 									<td>
@@ -244,12 +390,7 @@ function Ok()
 										&nbsp;<span fcklang="DlgTableWidthPx">pixels</span></td>
 								</tr>
 								<tr>
-									<td>
-										&nbsp;</td>
-									<td>
-										&nbsp;</td>
-									<td>
-										&nbsp;</td>
+									<td colspan="3">&nbsp;</td>
 								</tr>
 								<tr>
 									<td nowrap="nowrap">

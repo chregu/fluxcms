@@ -308,6 +308,11 @@ DlgTableCellSpace	: "Celleafstand",
 DlgTableCellPad		: "Cellemargen",
 DlgTableCaption		: "Titel",
 DlgTableSummary		: "Resume",
+DlgTableHeaders		: "Headers",	//MISSING
+DlgTableHeadersNone		: "None",	//MISSING
+DlgTableHeadersColumn	: "First column",	//MISSING
+DlgTableHeadersRow		: "First Row",	//MISSING
+DlgTableHeadersBoth		: "Both",	//MISSING
 
 // Table Cell Dialog
 DlgCellTitle		: "Egenskaber for celle",

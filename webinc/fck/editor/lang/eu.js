@@ -309,6 +309,11 @@ DlgTableCellSpace	: "Gelaxka arteko tartea",
 DlgTableCellPad		: "Gelaxken betegarria",
 DlgTableCaption		: "Epigrafea",
 DlgTableSummary		: "Laburpena",
+DlgTableHeaders		: "Headers",	//MISSING
+DlgTableHeadersNone		: "None",	//MISSING
+DlgTableHeadersColumn	: "First column",	//MISSING
+DlgTableHeadersRow		: "First Row",	//MISSING
+DlgTableHeadersBoth		: "Both",	//MISSING
 
 // Table Cell Dialog
 DlgCellTitle		: "Gelaxken Ezaugarriak",

@@ -308,6 +308,11 @@ DlgTableCellSpace	: "Solujen väli",
 DlgTableCellPad		: "Solujen sisennys",
 DlgTableCaption		: "Otsikko",
 DlgTableSummary		: "Yhteenveto",
+DlgTableHeaders		: "Headers",	//MISSING
+DlgTableHeadersNone		: "None",	//MISSING
+DlgTableHeadersColumn	: "First column",	//MISSING
+DlgTableHeadersRow		: "First Row",	//MISSING
+DlgTableHeadersBoth		: "Both",	//MISSING
 
 // Table Cell Dialog
 DlgCellTitle		: "Solun ominaisuudet",

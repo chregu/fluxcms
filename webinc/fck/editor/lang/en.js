@@ -308,6 +308,11 @@ DlgTableCellSpace	: "Cell spacing",
 DlgTableCellPad		: "Cell padding",
 DlgTableCaption		: "Caption",
 DlgTableSummary		: "Summary",
+DlgTableHeaders		: "Headers",
+DlgTableHeadersNone		: "None",
+DlgTableHeadersColumn	: "First column",
+DlgTableHeadersRow		: "First Row",
+DlgTableHeadersBoth		: "Both",
 
 // Table Cell Dialog
 DlgCellTitle		: "Cell Properties",

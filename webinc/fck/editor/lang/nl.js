@@ -308,6 +308,11 @@ DlgTableCellSpace	: "Afstand tussen cellen",
 DlgTableCellPad		: "Afstand vanaf rand cel",
 DlgTableCaption		: "Naam",
 DlgTableSummary		: "Samenvatting",
+DlgTableHeaders		: "Headers",	//MISSING
+DlgTableHeadersNone		: "None",	//MISSING
+DlgTableHeadersColumn	: "First column",	//MISSING
+DlgTableHeadersRow		: "First Row",	//MISSING
+DlgTableHeadersBoth		: "Both",	//MISSING
 
 // Table Cell Dialog
 DlgCellTitle		: "Eigenschappen cel",
