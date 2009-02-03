@@ -629,7 +629,7 @@ if(MDB2::isError($res)){
              $tags = bx_metaindex::getTagsById($path.$row['post_uri'].'.html');
 
             if (count($tags) > 0) {
-                $xml .= '<div class="post_tags">Tags:';
+                $xml .= '<div class="post_tags">Tags: ';
                 foreach ( $tags as $tag) {
                     $xml .= '<span class="post_tag"><a rel="tag" href="'.BX_WEBROOT_W.$path.'archive/tag/'.$tag.'/">'.$tag.'</a></span> ';
                 }
