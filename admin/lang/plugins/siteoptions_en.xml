@@ -26,4 +26,5 @@
     <message key="help_image_allowed_sizes">Allowed image sizes for dynamic resizing</message>
     <message key="Blog Default Editor">We highly recommend the WYSIWYG (what you see is what you get) editor, if you're not familiar with HTML. It also has more features than the Source Editor. The WYSIWYG Editor automatically falls back to the Source Editor, if your browser doesn't support it.</message>
 <message key="help_blogWeblogsPing">Which services to ping.</message>
+<message key="help_blogShowOnlyOneLanguage">Should only blogposts in the selected language be shown? No = All posts in all languages are always shown. Not relevant if you only blog in one language.</message> 
 </catalogue>

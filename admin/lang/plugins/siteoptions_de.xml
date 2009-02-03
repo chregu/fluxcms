@@ -52,4 +52,7 @@
     <message key="help_image_allowed_sizes">Erlaubte Bildgrössen für das dynamische Generieren von Bildern</message>
 <message key="Blog Default Editor">Wir empfehlen den WYSIWYG (what you see is what you get) Editor. Dieser hat auch mehr Möglichkeiten, als der Source Editor. Sollte Ihr Browser den WYSIWYG Modus nicht unterstützen, wird automatisch der Source Editor benutzt.</message>    
 <message key="help_blogWeblogsPing">Welche Ping Services aufgerufen werden sollen.</message>  
+<message key="help_blogShowOnlyOneLanguage">Sollen nur Blogposts in der ausgewählten Sprache angezeigt werden? No = Alle Blogposts in allen Sprachen werden angezeigt. Nicht relevant, wenn man nur in einer Sprache bloggt.</message>
+
+
 </catalogue>

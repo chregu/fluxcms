@@ -138,6 +138,12 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
         $this->addOption("outputLanguages","text",$dom,array("help"=>$i18n->translate("help_outputlanguages")));
         $this->addOption("defaultLanguage","text",$dom,array("help"=>$i18n->translate("help_defaultlanguage")));
         
+        $this->addSelectOption("blogShowOnlyOneLanguage",array(
+        'false' => "No",
+           'true' => "Yes")
+           , $dom,array("help"=>$i18n->translate("help_blogShowOnlyOneLanguage")));
+       
+        
         $this->addSelectOption("blogDefaultEditor",array(
            'wyswiyg' => "WYSIWYG Editor - Firefox and IE/Windows only (FCKEditor)",
            'source' => "Source Editor - works with any Browser (textarea style)"),
