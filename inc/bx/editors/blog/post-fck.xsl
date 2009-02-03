@@ -337,7 +337,7 @@
                         <xsl:variable name="postLang" select="/atom:entry/atom:lang"/>
                         <select id="lang" name="bx[plugins][admin_edit][lang]">
                             <option value="">
-                                None
+                                All
                             </option>
                         <xsl:for-each select="$langsAvail/langs/entry">
                             <xsl:variable name="lang" select="."/>
