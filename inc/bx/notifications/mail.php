@@ -55,10 +55,15 @@ class bx_notifications_mail extends bx_notification {
         }
 
         if (!empty($options['bcc'])) {
-        	$headers .= "Bcc: ". $options['bcc'].PHP_EOL;
-        } 
+            $headers .= "Bcc: ". $options['bcc'].PHP_EOL;
+        }
         
-        $headers .= "Content-Type: text/plain; charset=\"".$options['charset']."\"".PHP_EOL."Content-Transfer-Encoding: 8bit".PHP_EOL;
+        if (isset($options['content-type'])) {
+            $headers .= "Content-Type: ".$options['content-type'] .";";
+        } else {
+            $headers .= "Content-Type: text/plain;";
+        }
+        $headers .= " charset=\"".$options['charset']."\"".PHP_EOL."Content-Transfer-Encoding: 8bit".PHP_EOL;        
         // recode utf8 strings
         if ($options['charset'] != "UTF-8") {
          if (function_exists("iconv")) {
