@@ -3,7 +3,10 @@
 
     <constants>
         <!-- change http:// to http(s):// if you want to use a mixed https/http environment -->
-        <constant name="BX_WEBROOT">http://{$_SERVER['HTTP_HOST']}/</constant>
+        <constant name="BX_WEBROOT">http://{$_SERVER['HTTP_HOST']}/E:/var/www/kofmehl/</constant>
+        <constant name="BX_PROJECT_DIR">auto</constant>
+        <!-- <constant name="BX_OPEN_BASEDIR">{BX_PROJECT_DIR}_hosts/{BX_STAGE}/</constant>-->
+        <constant name="BX_OPEN_BASEDIR">{BX_PROJECT_DIR}</constant>
     </constants>
 <!-- set cacheDBOptions to false, if you don't want to write the options from the DB to
         tmp/config.inc.php.post (needed, when you serve more than one site from the 
@@ -11,13 +14,14 @@
     <options cacheDBOptions="true">
 
     
-    <theme allowFromDB="true">3-cols</theme>
+    <theme allowFromDB="true">3-cols-2008</theme>
     <themeCss allowFromDB="true">main.css</themeCss>
     <sitename allowFromDB="true">Flux CMS Demo</sitename>
     <sitedescription allowFromDB="true">This is my Flux CMS Site</sitedescription>
     
-    
-    <!-- The Blog can have a different name than the site, if not set, sitename is taken -->     
+    <!-- Versioing Support -->
+    <!-- <versioning>diff</versioning> -->
+	<!-- The Blog can have a different name than the site, if not set, sitename is taken -->     
     <blogname allowFromDB="true"></blogname>
     <!-- you can have a description for the Blog RSS , if not set sitedescription is taken -->        
     <blogdescription allowFromDB="true"></blogdescription>        
@@ -36,7 +40,12 @@
     
     <!-- even if comments are allowed, only allow trackbacks for a month -->
     <blogTrackbacksTimeLimit>true</blogTrackbacksTimeLimit>
-            
+    
+    <!-- Only admin with gid = 1 can edit all blogposts. 
+         Admins with gid > 1 can only edit their own blogposts.
+         Requires SimplePerm activated.
+     -->
+     <blogEditOwnOnly>0</blogEditOwnOnly>        
         
     <openIdEnabled allowFromDB="true">false</openIdEnabled>
     
@@ -132,6 +141,11 @@
        <noOutsideConnections>false</noOutsideConnections>
        <allowHTTPAuthentication>true</allowHTTPAuthentication>
         
+       <!-- if you want to log all Mails sent by the CMS, set this to true 
+           you can find the logfile in data/mail.log
+           
+       -->
+        <logMails>false</logMails>
     </options>
     
     <connections>
@@ -261,4 +275,12 @@
         <include>{BX_PROJECT_DIR}conf/include.php</include>
         
     </files>
+   
+    <!-- for staging in 2.0 
+    <staging>
+        <stage>live</stage>
+        <stage>edit</stage>
+   </staging>
+    -->
+   
 </config>
