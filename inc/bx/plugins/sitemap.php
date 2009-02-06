@@ -22,7 +22,6 @@ Class bx_plugins_sitemap extends bx_plugin {
 	$cache = bx_helpers_simplecache::getInstance();
 	$dom = new DOMDocument();
 	if (($xml = $cache->simpleCacheCheck('sitemap', 'plugins', null, 'plain', $expires)) === false) {
-            var_dump($xml);
 	    $sn  = $dom->createElement('sitemap');
             $this->getSitemapTree("/", $dom, $sn);
             $dom->appendChild($sn);
