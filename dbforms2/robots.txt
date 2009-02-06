@@ -1,6 +1,0 @@
-User-agent: *
-Disallow: /stats/
-Disallow: /webalizer/
-Disallow: /admin/
-Disallow: /mo/
-
