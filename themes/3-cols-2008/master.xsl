@@ -4,7 +4,7 @@
         xmlns="http://www.w3.org/1999/xhtml" 
         xmlns:forms="http://bitflux.org/forms" 
 	xmlns:php="http://php.net/xsl"
-     xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
+        xmlns:i18n="http://apache.org/cocoon/i18n/2.1"
 	exclude-result-prefixes="xhtml forms php i18n"
 	
 	>
