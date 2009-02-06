@@ -1,3 +1,0 @@
-#this prevents disallowed access. Normally, this should be catched by mod_rewrite, but if this fails, hopefully this here kicks in
-
-deny from all
