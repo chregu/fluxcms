@@ -2,8 +2,7 @@
 
 Class bx_plugins_sitemap extends bx_plugin {
 
-     
-     static private $instance = array();
+    static private $instance = array();
      
     public static function getInstance($mode) {
         if (!isset(bx_plugins_sitemap::$instance[$mode])) {
@@ -14,17 +13,26 @@ Class bx_plugins_sitemap extends bx_plugin {
     } 
 
     protected function __construct() {
-        return true;
+	return true;
     }
-    
+   
     
     public function getContentById($path, $id) {
-        $dom = new domDocument();
-        $sn  = $dom->createElement('sitemap');
-        $this->getSitemapTree("/", $dom, $sn);
-        $dom->appendChild($sn);
-        return $dom;
-        
+	$expires = (int) $this->getParameter($path, 'cache');
+	$cache = bx_helpers_simplecache::getInstance();
+	$dom = new DOMDocument();
+	if (($xml = $cache->simpleCacheCheck('sitemap', 'plugins', null, 'plain', $expires)) === false) {
+            var_dump($xml);
+	    $sn  = $dom->createElement('sitemap');
+            $this->getSitemapTree("/", $dom, $sn);
+            $dom->appendChild($sn);
+	    $cache->simpleCacheWrite('sitemap', 'plugins', null, $dom->saveXML(), 'plain');
+	} else {
+	    $dom->loadXML($xml);
+	}		
+
+    	return $dom;    
+	        
     } 
     
     public function getContent() {
