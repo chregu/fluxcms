@@ -1,0 +1,15 @@
+//.  Konfiguration ............................................................
+[fckconfig.js]
+
+FCKConfig.ToolbarSets[] add menu button ['SMSymbol']
+
+FCKConfig.Plugins.Add('smsymbol', 'en,de');
+FCKConfig.smsymbol_width = 704;
+FCKConfig.smsymbol_height = 480;
+
+//. Parameter .................................................................
+[FCKConfig.smsymbol_width]
+	Fensterbreite (Pixel)
+
+[FCKConfig.smsymbol_height]
+	Fensterhöhe (Pixel)
