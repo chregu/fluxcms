@@ -9,7 +9,8 @@ class bx_tree {
     private $showPreview = false;
     private $recursive = false;
     private $levelOpen = null;
-    private $baseUri = "";
+    private $levelOpenStart = 0;
+	private $baseUri = "";
     private $childUris= array();
     private $perm = "";
     private $properties = array();
@@ -136,8 +137,9 @@ class bx_tree {
                     $nextnode = $newnode; 
                 } else if ($mt == "httpd/unix-directory" && $this->levelOpen && $level < $this->levelOpen) {
 		    //$this->insertChildren($entry,$el->appendChild($this->dom->createElement("items")),$level + 1);
-            
-		    $this->insertChildren($entry,$el->appendChild($this->dom->createElement("items")), $level + 1);
+					if ($level > $this->levelOpenStart) {
+						$this->insertChildren($entry,$el->appendChild($this->dom->createElement("items")), $level + 1);
+					}
 	        }
             }
         }
@@ -251,6 +253,12 @@ class bx_tree {
     public function  setLevelOpen($lo = null) {
         if ($lo) {
             $this->levelOpen = $lo;
+        }
+    }
+	
+	public function setLevelOpenStart($lo = null) {
+        if ($lo) {
+            $this->levelOpenStart = $lo;
         }
     }
     

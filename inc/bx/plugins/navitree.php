@@ -25,6 +25,10 @@ class bx_plugins_navitree extends bx_plugin {
           $tree->setLevelOpen($lo);
       }
       
+      if ($lo = $this->getParameter($path,"levelOpenStart")) {
+          $tree->setLevelOpenStart($lo);
+      }
+      
       $tree->setMimeTypes(array("text/html"));
       //$tree->setProperties(array("navi"));
       return $tree->getXml();
