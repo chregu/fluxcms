@@ -62,7 +62,7 @@ class bx_plugins_gallery_file {
                             
                         if ($options['mode'] != 'image' && $options['descriptionInOverview']) {
                             
-                            $description = bx_resourcemanager::getProperty("/".$options['path'],"description",'bx:'.$lang);
+                            $description = bx_resourcemanager::getProperty("/".$options['path'].$name,"description",'bx:'.$lang);
                             if ($description) {
                                 $node->appendChild($this->dom->createTextNode(html_entity_decode($description,ENT_COMPAT,"UTF-8")));
                             }
