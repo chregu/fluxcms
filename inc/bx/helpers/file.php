@@ -75,15 +75,21 @@ class bx_helpers_file {
      */
     static function rmdir($dir, $deleteitself = true) {
         $all = glob($dir.'/*');
+        if ($all === false) {
+            $all = array();
+        }
         $hidden = glob($dir.'/.*');
-        $objs = array_merge($all, $hidden);        
+        if (is_array($hidden)) {
+            $objs = array_merge($all, $hidden);        
+        } else {
+            $objs = $all;
+        }
         if(sizeof($objs) > 0) {
             foreach($objs as $obj) {
                 if($obj != $dir.'/.' AND $obj != $dir.'/..') {
                     if(file_exists($obj) AND !is_writable($obj)) {
                         chmod($obj, 0666); 
                     }
-                   
                     if (is_dir($obj)) {
                         bx_helpers_file::rmdir($obj);
                     } else {
