@@ -58,6 +58,9 @@ class bx_config_generate {
                 if ($attr->name == 'allowFromDB') {
                     continue;
                 }
+                if ($attr->name == 'copy') {
+                    continue;
+                }
                 $attrs[] = '@'.$attr->name . ' = "'.$attr->value .'"';
             }
             $newpath = "/".$parent->localName;
