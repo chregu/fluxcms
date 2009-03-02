@@ -331,7 +331,7 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
             if ($this->overviewPerm != 7) {
                 if ($bloglanguage == 'true') {
-                    $archivewhere .= ' and ('.$tablePrefix.'blogposts.post_lang = "'.$lang.'" or '.$tablePrefix.'blogposts.post_lang = "")';
+                    $archivewhere .= ' and ('.$tablePrefix.'blogposts.post_lang = "'.$lang.'" or '.$tablePrefix.'blogposts.post_lang = "" or '.$tablePrefix.'blogposts.post_lang is NULL)';
                 }
 
                 $archivewhere .= " and post_date < '".$gmnow."'";
