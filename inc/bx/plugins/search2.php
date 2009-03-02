@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | Bx                                                                   |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2005 Liip AG                                           |
+// | Copyright (c) 2005 Bitflux GmbH                                      |
 // +----------------------------------------------------------------------+
 // | This program is free software; you can redistribute it and/or        |
 // | modify it under the terms of the GNU General Public License (GPL)    |
@@ -11,7 +11,7 @@
 // | of the License, or (at your option) any later version.               |
 // | The GPL can be found at http://www.gnu.org/licenses/gpl.html         |
 // +----------------------------------------------------------------------+
-// | Author: Liip AG      <devel@liip.ch>                              |
+// | Author: Bitflux GmbH <devel@bitflux.ch>                              |
 // +----------------------------------------------------------------------+
 
 /** 
@@ -122,9 +122,14 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         if ($q  || $tag) {
             
              
-            $pages = $this->getPages(bx_helpers_globals::stripMagicQuotes($q), $tag);
-        
-            
+    	    $options = array ('searchStart' => 0 , 'searchNumber' => 10,
+        	'lang' => $GLOBALS['POOL']->config->getOutputLanguage()
+    	    );        
+	    $options['pathRestrictions'] = $this->getParameter($path,"pathRestrictions");
+	    $options['excludePath'] = $this->getParameter($path,"excludePath");
+	    
+            $pages = $this->getPages(bx_helpers_globals::stripMagicQuotes($q),$tag,$options);
+	                
             foreach($pages as $key => $results) {
                 if ($results) {
                     $res = $root->appendChild($dom->createElement("results"));
@@ -142,20 +147,13 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
                     }
                 }
             }
-        
-            $root->appendChild($dom->createElement('query', $q));
-            $root->appendChild($dom->createElement('tag', $tag));
-        
         }
         
         return $dom;
     }
     
-    protected function getPages($search,$tag) {
+    protected function getPages($search,$tag,$options) {
         $pages =  array();
-        $options = array ('searchStart' => 0 , 'searchNumber' => 10,
-         'lang' => $GLOBALS['POOL']->config->getOutputLanguage()
-        );
         $p['fulltext'] = $this->getFulltextPages($search,$tag,$options);
         return $p;
     }
@@ -166,19 +164,41 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
         } else {
             $pathRestriction = null;
         }
-        /*$excludePath = $options['excludePath'];
-        */
+        
+	$excludePath = $options['excludePath'];
+        
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;
-        $query = "select  properties.path, properties.value, sum(MATCH (value) AGAINST (". $db->quote($search) ." IN BOOLEAN MODE)) as cnt
-        from ".$tablePrefix."properties as properties  where 1 = 1 ";
+        
+	// exclude liste
+	$query = "SELECT properties.path, _helper.value
+	
+	FROM ".$tablePrefix."properties AS properties, ".$tablePrefix."properties AS _helper
+	
+	WHERE _helper.path = properties.path
+	AND properties.name = 'mimetype'
+	AND properties.value = 'httpd/unix-directory'
+	AND _helper.name = 'display-order'
+	AND _helper.value = 0";
+	
+
+	$exclude = '';
+        $res = $db->query($query);                                                                                                                                                                                   
+
+	while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+            $id = $row['path'];
+	    $exclude .=  " AND properties.path NOT LIKE('$id%') ";    
+	}
+	
+	$query = "select  properties.path, properties.value, sum(MATCH (properties.value) AGAINST (". $db->quote($search) ." IN BOOLEAN MODE)) as cnt
+        from ".$tablePrefix."properties as properties, ".$tablePrefix."properties as _helper  WHERE _helper.path = properties.path AND _helper.name = 'display-order' AND _helper.value > 0 ";
         
         if ($search) {
-            $query .= " and MATCH (value) AGAINST (" . $db->quote($search) ." IN BOOLEAN MODE) ";
+            $query .= " and MATCH (properties.value) AGAINST (" . $db->quote($search) ." IN BOOLEAN MODE) ";
         }
-        /*if ($excludePath) {
-            $query .= " and properties.path != ".$db->quote($excludePath) ." ";
-        }*/
+        if ($excludePath) {
+            $query .= " and properties.path NOT LIKE('".$excludePath."%') ";
+        }
         if ($pathRestriction) {
             $query .= " and (properties.path like ".$db->quote($pathRestriction ."%") .") ";
         }
@@ -192,8 +212,9 @@ class bx_plugins_search2 extends bx_plugin implements bxIplugin {
             
         }
             
-        
-        $query .= "and name = 'fulltext' group by properties.path order by cnt DESC LIMIT ".$options['searchStart'].",".$options['searchNumber'];
+        $query .= $exclude;
+        $query .= "and properties.name = 'fulltext' group by properties.path order by cnt DESC LIMIT ".$options['searchStart'].",".$options['searchNumber'];
+	
         $res = $db->query($query);
         $ids = array();
         
