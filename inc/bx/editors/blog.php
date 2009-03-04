@@ -60,6 +60,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
         if(($subEditor = $this->getSubEditorNameById($id)) !== FALSE) {
             return $this->getSubEditorInstance($subEditor)->handlePOST($path, $id, $data);
         }
+        
         // delete selected comments
         if(!empty($data['deletecomments'])) {
             
@@ -77,6 +78,7 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 header("Location: ./newpost.xml");
                 die();
             } else {
+                
                 if(!empty($data['newcategory']) && $_POST['store'] != 1) {
                     $dbwrite = $GLOBALS['POOL']->dbwrite;
                     $tableprefix = $GLOBALS['POOL']->config->getTablePrefix();
@@ -186,18 +188,19 @@ class bx_editors_blog extends bx_editor implements bxIeditor {
                 
                 fwrite($fd, '</entry>');
                 fclose($fd);
-				if ( "/".$data['uri'].".html" != $id) {
-					
+                if ( "/".$data['uri'].".html" != $id) {
 					if (!empty($_POST['store']) ) {
-						// send ok...
+                        // send ok...
 					} else if (empty($_POST['ajax'])  && empty($_GET['ajax'])) {
-						header("Location: ".$data['uri'] .".html");
-					} else  {
-					    if (file_exists(BX_DATA_DIR."".$colluri."storage.xml")) {
+                        header("Location: ".$data['uri'] .".html");
+					    die();
+                    } else  {
+                        if (file_exists(BX_DATA_DIR."".$colluri."storage.xml")) {
 					        unlink(BX_DATA_DIR."".$colluri."storage.xml");
 					    }
-					    header("Location: ".$data['uri'] .".html?ajax=1");
-				    }
+                        header("Location: ".$data['uri'] .".html?ajax=1");
+				        die();
+                    }
                 }
             }
         }
