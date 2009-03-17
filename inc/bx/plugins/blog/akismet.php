@@ -119,6 +119,7 @@ class Akismet
         $http_request .= "Content-Type: application/x-www-form-urlencoded; charset=utf-8\r\n";
         $http_request .= "Content-Length: " . strlen($request) . "\r\n";
         $http_request .= "User-Agent: Akismet PHP5 Class " . $this->version . " | Akismet/1.11\r\n";
+        $http_request .= "Connection: Close\r\n";
         $http_request .= "\r\n";
         $http_request .= $request;
         $socketWriteRead = new SocketWriteRead($host, $this->apiPort, $http_request);
