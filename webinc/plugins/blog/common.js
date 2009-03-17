@@ -112,7 +112,6 @@ function blogPost(draft) {
     }
     catch(e)
     {
-        alert(e);
         return true;
     }
     new ajax (uri, {
@@ -453,7 +452,6 @@ function storeContent() {
         }
         catch(e)
         {
-            alert(e);
             return true;
         }
         
