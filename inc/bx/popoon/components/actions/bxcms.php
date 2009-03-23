@@ -72,21 +72,29 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             if (strpos($fulluri,"/__") !== false) {
                  throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
-            $mo = false;
 
-            if ( ( $mo =strpos($fulluri,'/mo/') === 0) || (isset($_COOKIE['isMobile']) && $_COOKIE['isMobile'] == "true") ) {
+            $mo = (strpos($fulluri, '/mo/') === 0);
+            if ($GLOBALS['POOL']->config->mobileMode == 'true') {
+                if ($mo || (isset($_COOKIE['isMobile']) && $_COOKIE['isMobile'] == "true")) {
+                    if (isset($_GET['isMobile']) && $_GET['isMobile'] == "false") {
+                        setcookie("isMobile", false, 0, "/");
+                    } else {
+                        setcookie("isMobile", "true", time() + 60 * 60 * 24 * 30 * 6, "/");
+                        $GLOBALS['POOL']->config->theme = "mobile";
+                        $GLOBALS['POOL']->config->themeCss = "main.css";
+                    }
+                    if ($mo) {
+                        $fulluri = substr($fulluri, 3);
+                    }
 
-                if (isset($_GET['isMobile']) && $_GET['isMobile'] == "false") {
-                    setcookie("isMobile", false, 0, "/");
-                } else {
-                    setcookie("isMobile", "true", time()+60*60*24*30*6,"/");
-                    $GLOBALS['POOL']->config->theme = "mobile";
-                    $GLOBALS['POOL']->config->themeCss = "main.css";
                 }
-                if ($mo) {
-                    $fulluri = substr($fulluri,3);
-                }
+            } else  if ($mo) {
+                    //redirect to without $mo, if mobileMode is not enabled
+                    $fulluri = substr($fulluri, 3);
+                    header("Location: $fulluri", 301);
+                    die();
             }
+
             if (strpos($fulluri, ".") === false) {
                 //if no / at the end of fulluri and no . in filename, we assume, it's a subcollection
                 // and do redirect here

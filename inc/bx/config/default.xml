@@ -100,6 +100,7 @@
             
             <xslt_allowed_phpfunctions>__all__</xslt_allowed_phpfunctions>
             <themeCss allowFromDB="true">main.css</themeCss>
+            <mobileMode>false</mobileMode>
             <i18nAdminSrc>{BX_PROJECT_DIR}/admin/lang/master</i18nAdminSrc>
             <blogDefaultPostCommentMode allowFromDB="true">1</blogDefaultPostCommentMode>
             <blogDefaultEditor allowFromDB="true">wysiwyg</blogDefaultEditor>
