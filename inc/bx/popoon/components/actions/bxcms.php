@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | popoon                                                               |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2007 Liip AG                                      |
+// | Copyright (c) 2001-2009 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | Licensed under the Apache License, Version 2.0 (the "License");      |
 // | you may not use this file except in compliance with the License.     |
@@ -14,7 +14,7 @@
 // | implied. See the License for the specific language governing         |
 // | permissions and limitations under the License.                       |
 // +----------------------------------------------------------------------+
-// | Author: Christian Stocker <chregu@liip.ch>                        |
+// | Author: Christian Stocker <chregu@liip.ch>                           |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -27,7 +27,7 @@
 */
 
 class popoon_components_actions_bxcms extends popoon_components_action {
-    
+
     /**
     * Constructor
     *
@@ -35,20 +35,20 @@ class popoon_components_actions_bxcms extends popoon_components_action {
     function __construct(&$sitemap) {
         parent::__construct($sitemap);
     }
-    
+
     function init($attribs) {
         parent::init($attribs);
     }
-    
+
     function act() {
         // set YADIS Header
         $this->sitemap->setHeader("X-XRDS-Location", BX_WEBROOT . "admin/openid/xrds.xml");
-        
+
         // set X-PoweredBy
         if ($this->getParameterDefault("noPoweredBy") != "true") {
             $this->sitemap->setHeader("X-CMS-Powered-By", "Flux CMS " . BXCMS_VERSION.'/'.BXCMS_BUILD_DATE ." <http://flux-cms.org>");
         }
-        
+
 
         // check for an id...
         $mode = "output";
@@ -56,26 +56,26 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             $this->sitemap->options->popoonmap["admin"] = true;
         }
 
-        
+
         if ($id = $this->getParameterDefault("id")) {
             $parts =  bx_collections::getCollectionAndFileParts($id, $mode);
             $fulluri = $parts['coll']->getRequestById($parts['rawname']);
             $lang = $GLOBALS['POOL']->config->getOutputLanguage();
         } else {
-        
+
             $fulluri = "/".$this->getAttrib("uri");
-            
+
             /* using _ as start of a (virtual)collection is not allowed for external requests
-             * only for internal for example in bx_streams_blog 
+             * only for internal for example in bx_streams_blog
              *   $xml = $p->getContentById("/","_all/index");
              */
             if (strpos($fulluri,"/__") !== false) {
                  throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
             $mo = false;
-	    
+
             if ( ( $mo =strpos($fulluri,'/mo/') === 0) || (isset($_COOKIE['isMobile']) && $_COOKIE['isMobile'] == "true") ) {
-                
+
                 if (isset($_GET['isMobile']) && $_GET['isMobile'] == "false") {
                     setcookie("isMobile", false, 0, "/");
                 } else {
@@ -94,9 +94,9 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                     header("Location: ".BX_WEBROOT.preg_replace("#^/#","",$fulluri)."/");
                     die();
                 }
-                $fulluri .= "index.html";   
+                $fulluri .= "index.html";
             }
-            
+
             list($fulluri, $lang) = bx_collections::getLanguage($fulluri);
             $GLOBALS['POOL']->config->setOutputLanguage($lang);
 
@@ -106,30 +106,30 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 parse_str(str_replace('$_$',"/",$_gets),$vars);
                 foreach($vars as $key => $value) {
                     if (!isset($_REQUEST[$key])) {
-                        
+
                         $_REQUEST[$key] = $value;
                         $_GET[$key] = $value;
                     }
                 }
                 $fulluri = substr($fulluri,0,$pos);
             }
-           
-            
+
+
         }
-        
+
         $parts = bx_collections::getCollectionAndFileParts($fulluri, $mode);
         $collection = $parts['coll'] ;
         if (!$collection) {
             throw new Exception ("No collection object found");
         }
-        
+
         if($GLOBALS['POOL']->config->advancedRedirect == 'true'){
             /*
             * userdir
             */
             $userdir = bx_resourcemanager::getFirstPropertyAndPath($fulluri,'redirect');
             if( $userdir !== NULL && $userdir['property'] == '{userdir}' ){
-                
+
                 $user = bx_helpers_perm::getUsername();
                 if($user != ''){
                     $fulluri = str_replace($userdir['path'], '', $fulluri);
@@ -137,14 +137,14 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                     $parts = bx_collections::getCollectionAndFileParts($fulluri, $mode);
                     $collection = $parts['coll'];
                 }
-            } 
+            }
         }
-        /* 	Check for redirect 
+        /* 	Check for redirect
         * 	Old "normal" redirect ;)
-        */    
+        */
 	$redirect = $collection->getProperty('redirect');
         if ( $redirect !== NULL && ($parts['rawname'] == 'index.html') && $redirect != '{userdir}' ) {
-            
+
             // absolute path
             if (strpos($redirect, '/') === 0) {
                 $fulluri = $redirect;
@@ -160,15 +160,15 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             $collection = $parts['coll'];
         }
 
-        
+
         $filename = $parts['name'];
         $ext = $parts['ext'];
         $fileNumber = $parts['number'];
-        $GLOBALS['POOL']->config->currentFileNumber = $fileNumber; 
-        
+        $GLOBALS['POOL']->config->currentFileNumber = $fileNumber;
+
         if(!isset($_GET["admin"]) && ($collection === FALSE || !$collection->resourceExistsByRequest($filename,$ext) )) {
-           
-           
+
+
            throw new BxPageNotFoundException($this->getAttrib("uri"));
         } else {
             //call postHandles...
@@ -180,7 +180,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             }
             $retcode = 0;
             if (isset($_POST['bx']) && isset($_POST['bx']['plugins'])){
-            	
+
             	foreach($plugins as $id => $plugin) {
                 	if (isset($_POST['bx']['plugins'][$plugin['plugin']->name]) && isset($_POST['bx']['plugins'][$plugin['plugin']->name]['_all'])) {
                          $data = bx_helpers_globals::stripMagicQuotes($_POST);
@@ -195,17 +195,17 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                                  unset ($data['bx']);
                              }
                          }
-                    	     
+
                          $retcode = $plugin['plugin']->handlePublicPost($collection->uri,$id,$data);
                     } else if (isset($_POST['bx']['plugins'][$plugin['plugin']->name])) {
                         $data = bx_helpers_globals::stripMagicQuotes($_POST['bx']['plugins'][$plugin['plugin']->name]);
-                        
+
                         $retcode = $plugin['plugin']->handlePublicPost($collection->uri,$id,$data);
-                    
+
                     }
                 }
             }
-            
+
             if ($mo) {
                 $webrootLang = BX_WEBROOT.'mo/';
             } else {
@@ -215,7 +215,8 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 $webrootLang .= $lang."/";
             }
             define('BX_WEBROOT_LANG' ,$webrootLang);
-            
+            define('BX_WEBROOT_LANG_W', substr(BX_WEBROOT_LANG,0,-1));
+
             if ($GLOBALS['POOL']->config->dynamicHttpExpires == "true") {
                 $expires = bx_resourcemanager::getFirstProperty($collection->uri,"expires");
                 if ($expires === NULL) {
@@ -226,7 +227,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             }
             $GLOBALS['POOL']->config->expires = $expires;
             $a =  array(
-                
+
                 "collection" => $collection,
                 "collectionUri" => $collection->uri,
                 "filename" => $filename,
@@ -238,7 +239,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 'webrootLang' => BX_WEBROOT_LANG,
                 'fileNumber' => $fileNumber
             );
-                         
+
             $a = array_merge($a,$collection->getPipelineParametersByRequest($filename,$ext));
             $a = array_merge($a,$collection->getPipelineProperties());
             //Do we need that?
@@ -249,8 +250,8 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             if (!isset($a['xslt'])) {
                 @session_start();
                 if (!($_SESSION['_authsession']['registered'] && isset($_GET['XML']) && $_GET['XML'] == 1)) {
-                
-                    throw new Exception ("No xslt provided. Either this URL should only be accessed internally and therefore correct, 
+
+                    throw new Exception ("No xslt provided. Either this URL should only be accessed internally and therefore correct,
                 or the sysadmin made a mistake");
                 }
             }

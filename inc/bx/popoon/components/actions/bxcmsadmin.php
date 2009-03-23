@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | popoon                                                               |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2001-2007 Liip AG                                      |
+// | Copyright (c) 2001-2009 Liip AG                                      |
 // +----------------------------------------------------------------------+
 // | Licensed under the Apache License, Version 2.0 (the "License");      |
 // | you may not use this file except in compliance with the License.     |
@@ -14,7 +14,7 @@
 // | implied. See the License for the specific language governing         |
 // | permissions and limitations under the License.                       |
 // +----------------------------------------------------------------------+
-// | Author: Christian Stocker <chregu@liip.ch>                        |
+// | Author: Christian Stocker <chregu@liip.ch>                           |
 // +----------------------------------------------------------------------+
 //
 // $Id: bxcms.php 1053 2004-04-08 14:56:51Z philipp $
@@ -64,6 +64,7 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
         */
 
         define('BX_WEBROOT_LANG' ,BX_WEBROOT);
+        define('BX_WEBROOT_LANG_W', substr(BX_WEBROOT_LANG,0,-1));
 
         if($collection === FALSE) {
             print "not found in admin";
@@ -139,6 +140,8 @@ class popoon_components_actions_bxcmsadmin extends popoon_components_action {
             foreach ($collection->getAllProperties(BX_PROPERTY_PIPELINE_NAMESPACE) as $p) {
                 $a[$p['name']] = $p['value'];
             }
+
+
             foreach( $collection->getSubCollection("/$filename.$ext", 'output')->getAllProperties(BX_PROPERTY_PIPELINE_NAMESPACE) as $p) {
                 $a[$p['name']] = $p['value'];
             }
