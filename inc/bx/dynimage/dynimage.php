@@ -22,13 +22,15 @@
  * @category 
  * @author Liip AG      <contact@liip.ch>
  */
+header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Datum in der Vergangenheit
 class bx_dynimage_dynimage {
     
     protected $config = NULL;
     protected $driver = array();
     protected $validator = array();
     protected $filters = array();
-    protected $doCache = TRUE;
+    protected $doCache = false;
     
     public function __construct($request) {
         $this->request = $request;
