@@ -1,24 +1,24 @@
 <?php
 
 class bx_helpers_uri {
-    
+
     private static $uri = null;
-     
+
     static function escapeUriAndSlashes($uri) {
         $uri = str_replace("/",'$_$',$uri);
         $uri = urlencode($uri);
         return $uri;
     }
-    
+
     static function translateUri($uri) {
-        $host = (defined('BX_WEBROOT')) ? BX_WEBROOT : $_SERVER['HTTP_HOST']; 
+        $host = (defined('BX_WEBROOT')) ? BX_WEBROOT : $_SERVER['HTTP_HOST'];
         preg_match("#\.(\w{2}\.(\w{3,}))$#", $uri, $matches);
         if (isset($matches[1]) && !empty($matches[1]) && strpos($uri, $host) !== FALSE) {
             $uri = sprintf("%s%s", str_replace($matches[1], "", $uri), $matches[2]);
-        } 
+        }
 
-        return $uri; 
-    }    
+        return $uri;
+    }
 
     static function getLocationUri($filename) {
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") {
@@ -28,15 +28,15 @@ class bx_helpers_uri {
         }
         return $uri.'://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['REQUEST_URI'])."/".$filename;
     }
-    
+
     static function getRequestUri($q = '',$random = false) {
-        
+
          if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") {
             $uri = 'https';
         } else {
             $uri = 'http';
         }
-        
+
         if ($random) {
             if ($q) {
                 $q .= '&st='.mt_rand(1,1000);
@@ -50,18 +50,18 @@ class bx_helpers_uri {
             } else {
                 $q = '&'.$q;
             }
-        } 
+        }
         return $uri.'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$q;
     }
-    
-  
+
+
 
     static function getUriPart($uri, $part) {
         $parts = parse_url($uri);
         if (isset($parts[$part])) {
             return $parts[$part];
         }
-    
+
         return null;
     }
 
@@ -86,7 +86,7 @@ class bx_helpers_uri {
                 }
             }
         }
-       
+
         return $colluri;
     }
 
@@ -99,7 +99,21 @@ class bx_helpers_uri {
             }
         }
         $level = sizeof($cleanParts);
-        
+
         return ($filename!=null && $filename!='index') ? $level+1:$level;
+    }
+
+    static function defineWebrootLang($lang, $mo = false) {
+        if (!defined('BX_WEBROOT_LANG')) {
+            if ($mo) {
+                $webrootLang = BX_WEBROOT.'mo/';
+            } else {
+                $webrootLang = BX_WEBROOT;
+            }
+            if ($lang != BX_DEFAULT_LANGUAGE) {
+                $webrootLang .= $lang."/";
+            }
+            define('BX_WEBROOT_LANG' ,$webrootLang);
+        }
     }
 }

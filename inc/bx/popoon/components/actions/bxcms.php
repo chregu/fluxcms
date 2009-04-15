@@ -214,15 +214,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 }
             }
 
-            if ($mo) {
-                $webrootLang = BX_WEBROOT.'mo/';
-            } else {
-                $webrootLang = BX_WEBROOT;
-            }
-            if ($lang != BX_DEFAULT_LANGUAGE) {
-                $webrootLang .= $lang."/";
-            }
-            define('BX_WEBROOT_LANG' ,$webrootLang);
+            bx_helpers_uri::defineWebrootLang($lang);
             define('BX_WEBROOT_LANG_W', substr(BX_WEBROOT_LANG,0,-1));
 
             if ($GLOBALS['POOL']->config->dynamicHttpExpires == "true") {

@@ -485,7 +485,9 @@ if(MDB2::isError($res)){
    }
     protected function getBlogPostData($id,$path,$doComments = false) {
 
-
+        if (!defined('BX_WEBROOT_LANG')) {
+              bx_helpers_uri::defineWebrootLang($lang);
+        }
         $blogid = $this->getParameter($path,"blogid");
         $blograting = $this->getParameter($path,"blograting");
 
