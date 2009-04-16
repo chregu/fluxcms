@@ -283,7 +283,7 @@
         <meta name="DC.title" content="{$dctitle}"/>
         <xsl:text>
 </xsl:text>
-
+        
 <xsl:call-template name="html_head_feeds"/>
 <xsl:call-template name="html_head_microsummary"/> 
 
@@ -295,7 +295,9 @@
             <xsl:text>
 </xsl:text>
         </xsl:if>
-
+        <xsl:call-template name="html_head_revcanonical"/>
+        <xsl:text>
+        </xsl:text>
         <script type="text/javascript">
     var liveSearchRoot = '<xsl:value-of select="$webroot"/>';
     var liveSearchParams = 'blogid=<xsl:value-of select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:blog_id"/>&amp;root=<xsl:value-of select="$webrootW"/>
@@ -552,10 +554,17 @@
         <xsl:text>
 </xsl:text>
     </xsl:template>
+   
+    <xsl:template name="html_head_revcanonical">
+        <xsl:if test="$singlePost = 'true'">
+            <link rev="canonical" type="text/html" href="{$blogroot}p{substring-after(/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@id,'entry')}."/>
+        </xsl:if>
+    </xsl:template>
     
       <xsl:template name="html_head_cocomment">
      <xsl:value-of select="$collectionUri"/>';
 <xsl:if test="$singlePost = 'true'">
+   
 <xsl:variable name="entry" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div"/>
                 <xsl:if test="$entry/@blog:post_comment_allowed='1'">
 
