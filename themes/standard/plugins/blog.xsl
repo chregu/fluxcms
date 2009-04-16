@@ -557,7 +557,7 @@
    
     <xsl:template name="html_head_revcanonical">
         <xsl:if test="$singlePost = 'true'">
-            <link rev="canonical" type="text/html" href="{$blogroot}p{substring-after(/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@id,'entry')}."/>
+            <link rev="canonical" type="text/html" href="{$blogroot}p{substring-after(/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@id,'entry')}.h"/>
         </xsl:if>
     </xsl:template>
     
