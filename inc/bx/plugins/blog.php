@@ -364,10 +364,15 @@ class bx_plugins_blog extends bx_plugin implements bxIplugin {
 
             $query .= 'order by post_date DESC limit '.$startEntry . ','.$maxPosts;
         } else {
-
-            if (strpos($id,"_id") === 0 ) {
+            if (strpos($id,"_id") === 0) {
                 $query .= " where ".$tablePrefix."blogposts.id = ".substr($id,3);
                 $query .= ' and '.$tablePrefix.'blogposts.post_status & ' . $this->singlePostPerm ;
+            } else if  ($cat == '' && preg_match("#p([0-9]+)#",$id,$matches)) {
+                $newuri = $this->getNewPermaLink($matches[1],$path,true);
+                if ($newuri) {
+                    header("Location: " . BX_WEBROOT_W . $path . $newuri, true, 301);
+                    die();
+                }
             } else {
                 if (strpos ($cat , 'archive') === 0 && strlen($cat) < 18)  {
                     $newuri = $this->getNewPermaLink($id,$path);
