@@ -7,14 +7,17 @@ abstract class bx_streams_buffer {
     protected $position = 0;
     protected $parameters = array();
     protected $originalPath = null;
-    
+
     function __construct() {
     }
-    
+
     function stream_open ($path, $mode, $options, &$opened_path) {
+        //for some strange reason, error_reporting level is set to 0 here, set it to the standard level
+        error_reporting(bx_errorhandler::$standardLevel);
+        print error_reporting();
         $this->originalPath = $path;
         $this->mode = substr($mode,0,1);
-        //parse_url can't handle scheme:/// 
+        //parse_url can't handle scheme:///
         $path = str_replace(":///","://",$path);
         $url = parse_url($path);
         if (isset($url['query'])) {
@@ -27,17 +30,17 @@ abstract class bx_streams_buffer {
                     }
                 }
             }
-                    
+
             //strip query strings from path
             $path = str_replace("?".$url['query'],"",$path);
         }
-        
+
         $this->path  = str_replace($url['scheme'].":/","",$path);
         /* "fix" for windows
             not sure anymore, why we needed to distinct between
             windows and the rest
             If it breaks something investigate later
-            
+
         if (stripos(PHP_OS,"Win") === 0) {
             $this->path  = str_replace($url['scheme']."://","",$path);
         } else {
@@ -62,7 +65,7 @@ abstract class bx_streams_buffer {
          $this->parameters[$name] = $value;
     }
 
-    
+
     function stream_eof() {
         return ($this->position >= strlen($this->html));
     }

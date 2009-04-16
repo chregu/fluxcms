@@ -3,6 +3,8 @@
 class bx_errorhandler {
 
     static private $instance = null;
+    public static $standardLevel = E_ALL;
+
     //pear classes do shite with strict...
     //sitemap.php also at the moment...
     public $excludePath = null;
@@ -16,7 +18,9 @@ class bx_errorhandler {
 
     private function __construct() {
         $this->excludePath = array("Cache","Date", "Config","Text","Image","MDB2","PEAR","Log","log.php","HTTP".DIRECTORY_SEPARATOR."WebDAV","Auth","sitemap.php","HTTP".DIRECTORY_SEPARATOR."Request","HTTP".DIRECTORY_SEPARATOR."Client", "Net","patForms","patError","XML","Auth".DIRECTORY_SEPARATOR."OpenID","Services".DIRECTORY_SEPARATOR."Yadis");
-        set_error_handler(array($this,"error"), error_reporting());
+        self::$standardLevel = error_reporting();
+        set_error_handler(array($this,"error"),self::$standardLevel);
+
     }
 
     public function error($errno, $errstr, $errfile, $errline, $ctx) {
@@ -51,7 +55,7 @@ class bx_errorhandler {
                 if ($doReport) {
                     $this->addReport("Deprecated",$errno,$errstr,$errfile,$errline,$ctx);
                 }
-                
+
                 break;
                 case E_USER_ERROR:
                 echo "<b>USER_ERROR</b> [$errno] $errstr<br />\n";
