@@ -14,7 +14,6 @@ abstract class bx_streams_buffer {
     function stream_open ($path, $mode, $options, &$opened_path) {
         //for some strange reason, error_reporting level is set to 0 here, set it to the standard level
         error_reporting(bx_errorhandler::$standardLevel);
-        print error_reporting();
         $this->originalPath = $path;
         $this->mode = substr($mode,0,1);
         //parse_url can't handle scheme:///
