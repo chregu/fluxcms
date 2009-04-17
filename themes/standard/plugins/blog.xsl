@@ -21,13 +21,13 @@
 
     <xsl:variable name="blogname" select="php:functionString('bx_helpers_config::getOption','blogname')"/>
     <xsl:variable name="blogroot" select="concat(substring($webroot,1,string-length($webroot)-1),$collectionUri)"/>
-
+    <xsl:variable name="entries" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']"/>
 
 
     <xsl:output encoding="utf-8" method="xml"/>
     <xsl:variable name="singlePost">
         <xsl:choose>
-            <xsl:when test="count(/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']) &lt;=1">true</xsl:when>
+            <xsl:when test="count($entries) &lt;=1">true</xsl:when>
             <xsl:otherwise>false</xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
@@ -300,7 +300,7 @@
         </xsl:text>
         <script type="text/javascript">
     var liveSearchRoot = '<xsl:value-of select="$webroot"/>';
-    var liveSearchParams = 'blogid=<xsl:value-of select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:blog_id"/>&amp;root=<xsl:value-of select="$webrootW"/>
+    var liveSearchParams = 'blogid=<xsl:value-of select="$entries/@blog:blog_id"/>&amp;root=<xsl:value-of select="$webrootW"/>
    <xsl:call-template name="html_head_cocomment"/>
         </script>
         
@@ -447,7 +447,7 @@
      
 
     <xsl:template name="blogSinglePost">
-        <xsl:for-each select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']">
+        <xsl:for-each select="$entries">
             <xsl:apply-templates select="." mode="xhtml"/>
 
             <xsl:if test="@blog:post_trackbacks_allowed = 1">
@@ -470,7 +470,7 @@
     <xsl:template name="blogOverview">
 
 
-        <xsl:for-each select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']">
+        <xsl:for-each select="$entries">
             <xsl:apply-templates select="." mode="xhtml"/>
             <xsl:if test="position() = 1">
                 <div id="googleAd"/>
@@ -523,7 +523,7 @@
         <xsl:value-of select="$dctitle"/>
         <xsl:choose>
             <xsl:when test="$singlePost = 'true'">
-         ::   <xsl:value-of select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/xhtml:h2"/>
+         ::   <xsl:value-of select="$entries/xhtml:h2"/>
             </xsl:when>
 
             <xsl:otherwise>
@@ -557,7 +557,7 @@
    
     <xsl:template name="html_head_revcanonical">
         <xsl:if test="$singlePost = 'true'">
-            <link rev="canonical" type="text/html" href="{$blogroot}p{substring-after(/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@id,'entry')}.h"/>
+            <link rev="canonical" type="text/html" href="{$blogroot}{substring-after($entries/@id,'entry')}.h"/>
         </xsl:if>
     </xsl:template>
     
@@ -644,7 +644,7 @@ var commentButtonName      = "bx_plugins_blog_all";
     </xsl:template>
 
     <xsl:template match="xhtml:div[@id = 'captcha']" mode="xhtml">
-        <xsl:variable name="date" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:post_date_iso"/>
+        <xsl:variable name="date" select="$entries/@blog:post_date_iso"/>
         <xsl:variable name="days" select="php:functionString('bx_helpers_config::getBlogCaptchaAfterDays')"/>
         <xsl:variable name="captcha" select="php:functionString('bx_helpers_captcha::isCaptcha', $days, $date)"/>
         <xsl:choose>
@@ -658,7 +658,7 @@ var commentButtonName      = "bx_plugins_blog_all";
     </xsl:template>
 
     <xsl:template match="xhtml:div[@id = 'captchaTitle']" mode="xhtml">
-        <xsl:variable name="date" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div[@class='entry']/@blog:post_date_iso"/>
+        <xsl:variable name="date" select="$entries/@blog:post_date_iso"/>
         <xsl:variable name="days" select="php:functionString('bx_helpers_config::getBlogCaptchaAfterDays')"/>
         <xsl:variable name="captcha" select="php:functionString('bx_helpers_captcha::isCaptcha', $days, $date)"/>
         <xsl:choose>
