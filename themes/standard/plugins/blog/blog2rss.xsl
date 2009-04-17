@@ -21,7 +21,8 @@ xmlns:media="http://search.yahoo.com/mrss/"
     <xsl:variable name="sitedescription" select="php:functionString('bx_helpers_config::getOption','sitedescription')"/>
     <xsl:variable name="ICBM" select="php:functionString('bx_helpers_config::getOption','ICBM')"/>
 <xsl:variable name="ah" select="php:functionString('bx_helpers_globals::GET','ah')"/>
-
+    <xsl:variable name="shorturl" select="php:functionString('bx_helpers_globals::GET','shorturl','false')"/>
+    
 
     <xsl:template match="/">
         <rss version="2.0" xmlns:blogChannel="http://backend.userland.com/blogChannelModule">
@@ -82,6 +83,9 @@ xmlns:media="http://search.yahoo.com/mrss/"
                         <link>
 			
                             <xsl:choose>
+                                <xsl:when test="$shorturl = 'true'">
+                                    <xsl:call-template name="shorturl"/>
+                                </xsl:when>
                                 <xsl:when test="not(contains( xhtml:div[@class='post_links']/xhtml:span[@class='post_uri']/xhtml:a/@href,'http://'))">
                                     <xsl:value-of select="concat($blogroot, 'archive/',xhtml:div[@class='post_links']/xhtml:span[@class='post_uri']/xhtml:a/@href)"/>
                                 </xsl:when>
@@ -177,6 +181,9 @@ xmlns:media="http://search.yahoo.com/mrss/"
         
     </xsl:template>
     
+    <xsl:template name="shorturl">
+        <xsl:value-of select="concat($blogroot, substring-after(@id,'entry'),'.h')"/>
+    </xsl:template>
     <xsl:template match="*" mode="xhtml">&lt;<xsl:value-of select="local-name()"/>
         <xsl:apply-templates select="@*" mode="xhtml"/>&gt;<xsl:apply-templates mode="xhtml"/>&lt;/<xsl:value-of select="local-name()"/>&gt;</xsl:template>
 
