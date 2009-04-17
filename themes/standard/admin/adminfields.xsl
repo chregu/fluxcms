@@ -124,7 +124,28 @@
             <xsl:if test="@textBefore">
                 <xsl:value-of select="@textBefore"/>
             </xsl:if>
-            <textarea name="bx[plugins][{$pluginName}][{@name}]" cols="40">
+            <textarea name="bx[plugins][{$pluginName}][{@name}]">
+                <xsl:attribute name="cols">
+                    <xsl:choose>
+                        <xsl:when test="@cols"><xsl:value-of select="@cols" /></xsl:when>
+                        <xsl:otherwise>40</xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <xsl:if test="@rows">
+                    <xsl:attribute name="rows">
+                        <xsl:value-of select="@rows"/>
+                    </xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@disabled">
+                    <xsl:attribute name="disabled">
+                        <xsl:value-of select="@disabled"/>
+                    </xsl:attribute>
+                </xsl:if>
+                <xsl:if test="@readonly">
+                    <xsl:attribute name="readonly">
+                        <xsl:value-of select="@readonly"/>
+                    </xsl:attribute>
+                </xsl:if>
                 <xsl:if test="@size">
                     <xsl:attribute name="size">
                         <xsl:value-of select="@size"/>
