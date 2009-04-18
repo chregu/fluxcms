@@ -431,7 +431,7 @@
 
     <xsl:template match="xhtml:span[@class = 'post_comments_count']" mode="xhtml">
         <xsl:variable name="entry" select="../.."/>
-        <xsl:if test="$entry[@blog:post_comment_allowed = 1 or @blog:comment_count &gt; 0]">
+        <xsl:if test="$entries[@blog:post_comment_allowed = 1 or @blog:comment_count &gt; 0]">
             <a href="{xhtml:a/@href}"><i18n:text i18n:key="blogComments">Comments</i18n:text> (<xsl:value-of select="."/>)</a>
         </xsl:if>
     </xsl:template>
@@ -557,7 +557,7 @@
    
     <xsl:template name="html_head_revcanonical">
         <xsl:if test="$singlePost = 'true'">
-            <link rev="canonical" type="text/html" href="{$blogroot}{substring-after($entries/@id,'entry')}.h"/>
+            <link rev="canonical" type="text/html" href="{$webroot}.{php:functionString('bx_helpers_shorturl::getCode',concat($collectionUri,'archive/',$entries/@blog:post_uri,'.html'))}"/>
         </xsl:if>
     </xsl:template>
     
@@ -565,15 +565,14 @@
      <xsl:value-of select="$collectionUri"/>';
 <xsl:if test="$singlePost = 'true'">
    
-<xsl:variable name="entry" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div"/>
-                <xsl:if test="$entry/@blog:post_comment_allowed='1'">
+                <xsl:if test="$entries/@blog:post_comment_allowed='1'">
 
 /* cocomment elements*/
 var blogTool               = "Flux CMS";
 var blogURL                = "<xsl:value-of select="$blogroot"/>";
 var blogTitle              = "<xsl:value-of select="$dctitle"/>";
-var postURL                = "<xsl:value-of select="$blogroot"/>archive/<xsl:value-of select="$entry/@blog:post_uri"/>.html";
-var postTitle  = "<xsl:value-of select="$entry/xhtml:h2/text()"/>";
+var postURL                = "<xsl:value-of select="$blogroot"/>archive/<xsl:value-of select="$entries/@blog:post_uri"/>.html";
+var postTitle  = "<xsl:value-of select="$entries/xhtml:h2/text()"/>";
 var commentAuthorFieldName = "name";
 var commentAuthorLoggedIn  = false;
 
@@ -679,7 +678,7 @@ var commentButtonName      = "bx_plugins_blog_all";
     <xsl:choose>
             <xsl:when test="$singlePost = 'true'">
 <xsl:variable name="entry" select="/bx/plugin[@name = 'blog']/xhtml:html/xhtml:body/xhtml:div/xhtml:div[@class='post_content']"/>
-<meta name="description" content="{translate(substring($entry,0,160),'&#10;','')}"/>
+<meta name="description" content="{translate(substring($entries,0,160),'&#10;','')}"/>
 </xsl:when>
 
 </xsl:choose>

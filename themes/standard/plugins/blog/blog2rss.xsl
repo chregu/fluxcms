@@ -20,7 +20,7 @@ xmlns:media="http://search.yahoo.com/mrss/"
     <xsl:variable name="sitename" select="php:functionString('bx_helpers_config::getOption','sitename')"/>
     <xsl:variable name="sitedescription" select="php:functionString('bx_helpers_config::getOption','sitedescription')"/>
     <xsl:variable name="ICBM" select="php:functionString('bx_helpers_config::getOption','ICBM')"/>
-<xsl:variable name="ah" select="php:functionString('bx_helpers_globals::GET','ah')"/>
+    <xsl:variable name="ah" select="php:functionString('bx_helpers_globals::GET','ah')"/>
     <xsl:variable name="shorturl" select="php:functionString('bx_helpers_globals::GET','shorturl','false')"/>
     
 
@@ -182,7 +182,7 @@ xmlns:media="http://search.yahoo.com/mrss/"
     </xsl:template>
     
     <xsl:template name="shorturl">
-        <xsl:value-of select="concat($blogroot, substring-after(@id,'entry'),'.h')"/>
+        <xsl:value-of select="concat($webroot,'.',php:functionString('bx_helpers_shorturl::getCode',concat($collectionUri,'archive/',@blog:post_uri,'.html')))"/>
     </xsl:template>
     <xsl:template match="*" mode="xhtml">&lt;<xsl:value-of select="local-name()"/>
         <xsl:apply-templates select="@*" mode="xhtml"/>&gt;<xsl:apply-templates mode="xhtml"/>&lt;/<xsl:value-of select="local-name()"/>&gt;</xsl:template>
