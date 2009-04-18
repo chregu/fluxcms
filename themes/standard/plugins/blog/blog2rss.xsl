@@ -160,7 +160,7 @@ xmlns:media="http://search.yahoo.com/mrss/"
                             <geo:long><xsl:value-of select="$plazes/blog:plazelon"/></geo:long>
                        </xsl:if>
                         
-                        <xsl:for-each select="xhtml:div[@class='post_content']//xhtml:img[starts-with(@href,'http')]">
+                        <xsl:for-each select="xhtml:div[@class='post_content']//xhtml:img[starts-with(@src,'http')]">
                                 <media:content url="{@src}" >
                                 <media:thumbnail url="{php:functionString('preg_replace','#dynimages/[0-9]+/#','dynimages/100/',@src)}" width="100"/>
 				</media:content>
