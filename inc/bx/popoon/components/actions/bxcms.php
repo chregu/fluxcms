@@ -56,7 +56,6 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             $this->sitemap->options->popoonmap["admin"] = true;
         }
 
-
         if ($id = $this->getParameterDefault("id")) {
             $parts =  bx_collections::getCollectionAndFileParts($id, $mode);
             $fulluri = $parts['coll']->getRequestById($parts['rawname']);
@@ -64,6 +63,18 @@ class popoon_components_actions_bxcms extends popoon_components_action {
         } else {
 
             $fulluri = "/".$this->getAttrib("uri");
+
+            //shorturl if it starts with a .
+            if (substr($fulluri,0,2) == '/.') {
+
+                bx_helpers_shorturl::getCode('/foo/bar');
+                $sh = new bx_helpers_shorturl();
+                $url = $sh->getUrlFromCode(substr($fulluri,2));
+                if ($url) {
+                   header("Location: ".BX_WEBROOT."$url", 301);
+                    die();
+                }
+            }
 
             /* using _ as start of a (virtual)collection is not allowed for external requests
              * only for internal for example in bx_streams_blog
@@ -150,7 +161,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
         /* 	Check for redirect
         * 	Old "normal" redirect ;)
         */
-	$redirect = $collection->getProperty('redirect');
+	    $redirect = $collection->getProperty('redirect');
         if ( $redirect !== NULL && ($parts['rawname'] == 'index.html') && $redirect != '{userdir}' ) {
 
             // absolute path

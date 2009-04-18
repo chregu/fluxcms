@@ -408,6 +408,12 @@ if ($lastVersion < 10145) {
     updateLastVersion(10145);
 }
 
+
+if ($lastVersion < 11299) {
+    doQuery("ALTER TABLE `{tablePrefix}properties` ADD INDEX  `value-index`  (`value`(100)); ",false);
+    updateLastVersion(11299);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");
