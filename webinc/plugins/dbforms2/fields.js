@@ -249,7 +249,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
         var oFCKeditor = new FCKeditor(this.id);
         oFCKeditor.BasePath	= fckBasePath;
 
-        if(DOMNode.hasAttribute('height') && DOMNode.getAttribute('height') !== '' && DOMNode.getAttribute('height') !== '0') {
+        if(DOMNode.hasAttribute && DOMNode.hasAttribute('height') && DOMNode.getAttribute('height') !== '' && DOMNode.getAttribute('height') !== '0') {
             this.height = DOMNode.getAttribute('height');
         }
         
