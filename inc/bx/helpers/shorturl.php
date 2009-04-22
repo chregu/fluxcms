@@ -9,10 +9,11 @@ class bx_helpers_shorturl {
 
     public function __construct() {
         $this->db = $GLOBALS['POOL']->db;
+        $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
     }
 
     public function codeExists($code) {
-        $query = "SELECT path from fluxcms_properties where ns = 'to:' and value = " . $this->db->quote($code);
+        $query = "SELECT path from ".$this->tablePrefix."properties where ns = 'to:' and value = " . $this->db->quote($code);
         if ($this->db->query($query)->numRows() > 0) {
             return true;
         }
@@ -21,7 +22,7 @@ class bx_helpers_shorturl {
 
    public function getUrlFromCode($code) {
 
-        $query = "SELECT path from fluxcms_properties where ns = 'to:' and  value = :code";
+        $query = "SELECT path from ".$this->tablePrefix."properties where ns = 'to:' and  value = :code";
         $stm = $this->db->prepare($query);
         $f = $stm->execute(array(
                 ":code" => $code
@@ -82,7 +83,7 @@ class bx_helpers_shorturl {
 
 
     protected function getCodeFromDB($url) {
-        $query = "SELECT value FROM fluxcms_properties where ns = 'to:' and path = :url";
+        $query = "SELECT value FROM ".$this->tablePrefix."properties where ns = 'to:' and path = :url";
         $stm = $this->db->prepare($query);
 
         $res = $stm->execute(array(
@@ -97,7 +98,7 @@ class bx_helpers_shorturl {
             $code = $this->getNextCode();
         }
 
-        $query = 'INSERT INTO fluxcms_properties (path,ns,name,value) VALUES (:path, :ns,"auto",:code)';
+        $query = 'INSERT INTO '.$this->tablePrefix.'properties (path,ns,name,value) VALUES (:path, :ns,"auto",:code)';
 
         $stm = $GLOBALS['POOL']->dbwrite->prepare($query);
         if (!$stm->execute(array(
@@ -113,6 +114,6 @@ class bx_helpers_shorturl {
     }
 
     protected function nextId() {
-        return $GLOBALS['POOL']->dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix()."_shorturl");
+        return $GLOBALS['POOL']->dbwrite->nextID($this->tablePrefix."_shorturl");
     }
 }
