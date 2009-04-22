@@ -44,9 +44,9 @@ class bx_plugins_basket extends bx_plugin {
     
     
     public function isRealResource($path, $id) {
-        return true;
+        return false;
     }
-
+    
 
     public function getContentById($path, $id) {
         $this->path = $path;
@@ -85,20 +85,22 @@ class bx_plugins_basket extends bx_plugin {
                     if ($e) {
                         $e->setAttribute('idfield', $idfield);
                         
-                        if ($opts && sizeof($opts) > 0) {
-                            bx_helpers_xml::array2Dom($opts, $domdoc, $e);
-                        } 
-                        
                         if (method_exists($this->baskethandler, 'getItemInfo')) {
                             $dbprms = $this->baskethandler->getItemInfo($idfield, $this->basketname);
-                            bx_helpers_xml::array2Dom($dbprms, $domdoc, $e);
+                            if (is_array($dbprms)) {
+                                $opts = array_merge($opts, $dbprms);
+                            }
                         }
+                        
+                        if (!empty($opts)) {
+                            bx_helpers_xml::array2Dom($opts, $domdoc, $e);
+                        } 
                     }
                     
                     $domdoc->documentElement->appendChild($e);
                 }
-		
-
+	
+		if (isset($this->storage[$this->basketname]['user'])) {	
 		foreach($this->storage[$this->basketname]['user'] as $idfield => $opts) {
 			 //var_export($idfield.":   ".$opts."<br/>");
                     $u = $domdoc->createElement('user');
@@ -116,8 +118,10 @@ class bx_plugins_basket extends bx_plugin {
                     
                     $domdoc->documentElement->appendChild($u);
                 }
+		}
 		
 		//Shippingadresse
+		if (isset($this->storage[$this->basketname]['shipping'])) {
 		foreach($this->storage[$this->basketname]['shipping'] as $idfield => $opts) {
 			 //var_export($idfield.":   ".$opts."<br/>");
                     $u = $domdoc->createElement('shipping');
@@ -134,9 +138,10 @@ class bx_plugins_basket extends bx_plugin {
                     
                     $domdoc->documentElement->appendChild($u);
                 }
-		
+		}
 		
 		//Billsadresse
+		if (isset($this->storage[$this->basketname]['bill'])) {
 		foreach($this->storage[$this->basketname]['bill'] as $idfield => $opts) {
 			 //var_export($idfield.":   ".$opts."<br/>");
                     $u = $domdoc->createElement('bill');
@@ -153,8 +158,9 @@ class bx_plugins_basket extends bx_plugin {
                     
                     $domdoc->documentElement->appendChild($u);
                 }
-		
+		}
 //		
+		if (isset($this->storage[$this->basketname]['costs'])) {
 		foreach($this->storage[$this->basketname]['costs'] as $idfield => $opts) {
                     $u = $domdoc->createElement('costs');
                     if ($u) {
@@ -170,6 +176,7 @@ class bx_plugins_basket extends bx_plugin {
                     
                     $domdoc->documentElement->appendChild($u);
                 }
+		}
             }
             
             /*FIXME: Not really what we want ;) */
