@@ -73,7 +73,7 @@ FCKConfig.ToolbarSets["Default2"] = [
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
-	['Image','Table','SpecialChar'],
+	['Image','Flash','Table','SpecialChar'],
 	'/',
 	['Style','FontFormat'],
 	['TextColor','BGColor'],
@@ -97,7 +97,7 @@ FCKConfig.ToolbarSets["fluxfck"] = [
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
 	['Link','Unlink','Anchor'],
-	['Image','Table','SpecialChar'],
+	['Image','Flash','Table','SpecialChar'],
 	'/',
 	['Style','FontFormat'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
@@ -141,6 +141,9 @@ FCKConfig.ImageDlgHideAdvanced	= false ;
 FCKConfig.LinkBrowser = true ;
 FCKConfig.LinkBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=files&amp;Connector=connectors/php/connector.php' ;
 
+FCKConfig.FlashBrowser = true ;
+FCKConfig.FlashBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=files&amp;Connector=connectors/php/connector.php' ;
+
 //FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Connector=connectors/asp/connector.asp' ;
 
 //FCKConfig.LinkBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Connector=connectors/asp/connector.asp&amp;ServerPath=/CustomFiles/' ;
@@ -160,6 +163,9 @@ FCKConfig.LinkBrowserWindowHeight	= 600 ;	// 70%
 
 FCKConfig.ImageBrowser = true ;
 FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=files&amp;Connector=connectors/php/connector.php' ;
+
+FCKConfig.FlashBrowser = true ;
+FCKConfig.FlashBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=files&amp;Connector=connectors/php/connector.php' ;
 
 // ASP.Net		// FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&amp;Connector=connectors/aspx/connector.aspx' ;
 // ColdFusion	// FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&amp;Connector=connectors/cfm/connector.cfm' ;
