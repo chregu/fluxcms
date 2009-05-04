@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2008 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2009 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -307,7 +307,8 @@ function CopyAttributes( oSource, oDest, oSkipAttributes )
 		}
 	}
 	// The style:
-	oDest.style.cssText = oSource.style.cssText ;
+	if ( oSource.style.cssText !== '' )
+		oDest.style.cssText = oSource.style.cssText ;
 }
 
 /**
@@ -322,7 +323,7 @@ function RenameNode( oNode , newTag )
 	// does any browser currently support it in order to test?
 
 	// Only rename element nodes.
-	if ( oNode.nodeType != 1 ) 
+	if ( oNode.nodeType != 1 )
 		return null ;
 
 	// If it's already correct exit here.
