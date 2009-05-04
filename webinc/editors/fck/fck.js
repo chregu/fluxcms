@@ -141,7 +141,6 @@ saveContent = function() {
     liveSaveSetStatus("Parsing the document...");
     var oEditor = FCKeditorAPI.GetInstance("fluxfck") ;
     var xml = oEditor.GetXHTML(true);
-    console.log(xml);
     var request = new XMLHttpRequest();
 
     // we don't like named entities
