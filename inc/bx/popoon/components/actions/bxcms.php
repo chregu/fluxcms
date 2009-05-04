@@ -120,7 +120,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             $GLOBALS['POOL']->config->setOutputLanguage($lang);
 
             //comma to GET parameter...
-            if (($pos = strpos($fulluri,",")) !== false) {
+           if (($pos = strpos($fulluri,",")) !== false && !isset($_GET['nocomma']) && !$_GET['nocomma']) {
                 $_gets = str_replace(",","&",substr($fulluri,$pos + 1));
                 parse_str(str_replace('$_$',"/",$_gets),$vars);
                 foreach($vars as $key => $value) {
@@ -135,7 +135,6 @@ class popoon_components_actions_bxcms extends popoon_components_action {
 
 
         }
-
         $parts = bx_collections::getCollectionAndFileParts($fulluri, $mode);
         $collection = $parts['coll'] ;
         if (!$collection) {
@@ -178,8 +177,6 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             $parts = bx_collections::getCollectionAndFileParts($fulluri, $mode);
             $collection = $parts['coll'];
         }
-
-
         $filename = $parts['name'];
         $ext = $parts['ext'];
         $fileNumber = $parts['number'];
