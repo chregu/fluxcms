@@ -149,8 +149,16 @@ chmod 777 $PROJECT_NAME
 mkdir -p $PROJECT_NAME/div/db
 $wgetcmd -O $PROJECT_NAME/div/db/bxcms.sql http://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/div/db/bxcms.sql
 
-$svncmd co https://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/themes/3-cols/ $PROJECT_NAME/themes/$PROJECT_NAME
-find $PROJECT_NAME/themes/$PROJECT_NAME -name ".svn" -exec rm -rf {} \;
+# add forms and dbforms2 directory necessary for some admin forms
+$svncmd export https://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/forms $PROJECT_NAME/forms
+$svncmd add $PROJECT_NAME/forms
+
+$svncmd export https://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/dbforms2 $PROJECT_NAME/dbforms2
+$svncmd add $PROJECT_NAME/dbforms2
+
+$svncmd ci -m "\"forms and dbforms2 folder add by newclient.sh\"" $PROJECT_NAME/forms $PROJECT_NAME/dbforms2
+
+$svncmd export https://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/themes/3-cols/ $PROJECT_NAME/themes/$PROJECT_NAME
 
 $svncmd add $PROJECT_NAME/themes
 $svncmd ci -m "\"project theme added by newclient.sh\"" $PROJECT_NAME/themes
