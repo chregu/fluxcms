@@ -373,6 +373,11 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
     
     this.e_onMouseUpImage = function(event) {
         //this.DOMNode.focus();
+        if(this.chooser.results.hidden) {
+            this.chooser.results.show();
+        } else {
+            this.chooser.results.hide();
+        }
         event.preventDefault();
     }
     
