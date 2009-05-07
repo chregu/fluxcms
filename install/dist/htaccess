@@ -129,8 +129,9 @@ ErrorDocument 404 /index.php?path=/__notfound/
 #ExpiresByType image/gif "access plus 3 days"
 #ExpiresByType image/jpeg "access plus 3 days"
 #ExpiresByType image/png "access plus 3 days" 
+#ExpiresByType image/x-icon "access plus 3 days" 
 
 #SetOutputFilter DEFLATE
 #FileETag none
 
-#SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|pdf)$ no-gzip dont-vary
+#SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|pdf|ico)$ no-gzip dont-vary
