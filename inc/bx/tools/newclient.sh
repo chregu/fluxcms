@@ -20,6 +20,7 @@ wgetcmd=`which wget`
 #svncmd="echo svn"   # uncomment this line for debugging
 
 BRANCH_STABLE="branches/1_5"
+BRANCH_STABLE="trunk"
 BARNCH_TRUNK="trunk"
 
 SVN_EXTERNALS_LOCALINC="localinc        https://svn.liip.ch/repos/liip/localinc/trunk
