@@ -1,7 +1,7 @@
 <?php
 /**
  * handles the categores
- * 
+ *
  * @todo: documentation
  * */
 class bx_plugins_blog_categories {
@@ -13,7 +13,7 @@ class bx_plugins_blog_categories {
         $blogid =  $p->getParameter($colluri,"blogid");
         $bloglanguage = $GLOBALS['POOL']->config->blogShowOnlyOneLanguage;
 		$lang = $GLOBALS['POOL']->config->getOutputLanguage();
-        
+
         if (!$blogid) {
             $blogid = 1;
         }
@@ -29,24 +29,24 @@ class bx_plugins_blog_categories {
                 $overviewPerm = 1;
             }
            $query = "select id,parentid from ".$tablePrefix."blogcategories as blogcategories where status = 1 and blog_id = ".$blogid;
-           
+
            $res = $GLOBALS['POOL']->db->query($query);
 	   if(MDB2::isError($res)){
                throw new PopoonDBException($res);
 	   }
 
            $allcats = $res->fetchAll($query,true);
-           $query =  "select blogcategories.id,count(*), 
+           $query =  "select blogcategories.id,count(*),
            blogcategories.parentid
-           from ".$tablePrefix."blogcategories as blogcategories    
-           left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts2categories.blogcategories_id = blogcategories.id 
+           from ".$tablePrefix."blogcategories as blogcategories
+           left join ".$tablePrefix."blogposts2categories on ".$tablePrefix."blogposts2categories.blogcategories_id = blogcategories.id
            left join ".$tablePrefix."blogposts  on ".$tablePrefix."blogposts.id = ".$tablePrefix."blogposts2categories.blogposts_id
            where  ".$tablePrefix."blogposts.id > 0 and " . $tablePrefix."blogposts.post_status & " . $overviewPerm;
            $query .= " and  blogcategories.blog_id = ".$blogid;
            if ($bloglanguage == 'true') {
                $q .= ' and (blogposts.post_lang = "'.$lang.'" or blogposts.post_lang = "")';
            }
-           
+
            $query .= " group by ".$tablePrefix."blogposts2categories.blogcategories_id order by l desc";
            $res = $GLOBALS['POOL']->db->query($query);
 
@@ -60,10 +60,10 @@ class bx_plugins_blog_categories {
                }
                else if ($value[1] > 0 && isset($catCount[$value[1]])) {
                    $catCount[$value[1]][0] += $value[0];
-               } 
+               }
            }
-           
-           
+
+
        } else {
            $catCount = false;
        }
@@ -74,11 +74,11 @@ class bx_plugins_blog_categories {
            $res = $GLOBALS['POOL']->db->query($query);
            if(MDB2::isError($res)){
                throw new PopoonDBException($res);
-           }           
+           }
            $rows = $res->fetchAll(MDB2_FETCHMODE_ASSOC);
            $GLOBALS['POOL']->cache->set("plugins_blog_categories_tree_".$blogid,$rows,null,"table_blogcategories");
-       } 
-       
+       }
+
        if (isset($params[0])) {
            $lastslash = strrpos($params[0],"/");
            $cat = substr($params[0],0,$lastslash);
@@ -89,12 +89,12 @@ class bx_plugins_blog_categories {
        $dom = new DomDocument();
        $parent = $dom;
        foreach($rows as $row) {
-            
-            // Skip categories containing no-, or only posts without sufficient perms. 
+
+            // Skip categories containing no-, or only posts without sufficient perms.
             if (!isset($catCount[$row['id']]) || $catCount[$row['id']][0] <= 0) {
                 continue;
             }
-            
+
             if ($row['status'] != 1) {continue;}
             if ($row['level'] == 1 ) {
                 $roottitle = $row['name'];
@@ -122,9 +122,9 @@ class bx_plugins_blog_categories {
                 } else {
                     $coll->setAttribute("count", 0);
                 }
-                
+
             }
-            
+
             if (strpos($cat,$row['fulluri']) === 0 ||
                 ($cat === "" && $row['fulluri'] === "root")) {
                 $coll->setAttribute("selected","selected");
@@ -161,7 +161,7 @@ class bx_plugins_blog_categories {
         for ($i = 2; $i < $oldlevel;$i++) {
             $parent = $parent->parentNode->parentNode;
         }
-        
+
         $parent->insertBefore($coll,$parent->firstChild);
         return $dom;
     }
