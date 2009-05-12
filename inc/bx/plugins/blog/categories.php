@@ -101,7 +101,7 @@ class bx_plugins_blog_categories {
         foreach ($rows as $row) {
 
             // Skip categories containing no-, or only posts without sufficient perms.
-            if (!isset($catCount[$row['id']]) || $catCount[$row['id']][0] <= 0) {
+            if ($catCount && (!isset($catCount[$row['id']]) || $catCount[$row['id']][0] <= 0)) {
                 continue;
             }
 
