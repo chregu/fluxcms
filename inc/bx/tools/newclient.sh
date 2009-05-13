@@ -168,7 +168,10 @@ $svncmd add $PROJECT_NAME/forms
 $svncmd export https://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/dbforms2 $PROJECT_NAME/dbforms2
 $svncmd add $PROJECT_NAME/dbforms2
 
-$svncmd ci -m "\"forms and dbforms2 folder add by newclient.sh\"" $PROJECT_NAME/forms $PROJECT_NAME/dbforms2
+$svncmd export https://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/dbforms2 $PROJECT_NAME/structure
+$svncmd add $PROJECT_NAME/structure
+
+$svncmd ci -m "\"forms and dbforms2 folder add by newclient.sh\"" $PROJECT_NAME/forms $PROJECT_NAME/structure $PROJECT_NAME/dbforms2
 
 $svncmd export https://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/themes/3-cols/ $PROJECT_NAME/themes/$PROJECT_NAME
 
