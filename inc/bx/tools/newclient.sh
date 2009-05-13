@@ -71,6 +71,10 @@ install         https://svn.liip.ch/repos/public/fluxcms/$BRANCH/install
 SVN_EXTERNALS_THEMES="standard https://svn.liip.ch/repos/public/fluxcms/$BRANCH/themes/standard
 "
 
+SVN_IGNORE="tmp
+dynimages
+"
+
 # -- read project name ----
 PROMPT="Project Name "
 prompt
@@ -131,6 +135,10 @@ MESSAGE="SVN Externals"
 message
 echo "$SVN_EXTERNALS"
 
+MESSAGE="SVN Ignore"
+message
+echo "$SVN_IGNORE"
+
 echo -e "\nPress <Enter> to continue or <Ctrl>+<C> to abort."
 read
 
@@ -142,6 +150,9 @@ $svncmd co $TARGET_URL $PROJECT_NAME
 echo  "$SVN_EXTERNALS" > ._svnexternals
 $svncmd propset "svn:externals" -F ._svnexternals $PROJECT_NAME
 rm ._svnexternals
+echo  "$SVN_IGNORE" > ._svnignore
+$svncmd propset "svn:ignore" -F ._svnignore $PROJECT_NAME
+rm ._svnignore
 
 $svncmd ci -m "\"Default properties added by newclient.sh\"" $PROJECT_NAME
 $wgetcmd -O $PROJECT_NAME/index.php http://svn.liip.ch/repos/public/fluxcms_demo/$BRANCH/index.php
