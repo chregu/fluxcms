@@ -139,7 +139,7 @@
        <adminDeleteTmp>true</adminDeleteTmp>
         
        <noOutsideConnections>false</noOutsideConnections>
-       <allowHTTPAuthentication>true</allowHTTPAuthentication>
+       <allowHTTPAuthentication>false</allowHTTPAuthentication>
         
        <!-- if you want to log all Mails sent by the CMS, set this to true 
            you can find the logfile in data/mail.log
