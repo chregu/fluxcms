@@ -54,7 +54,7 @@
         <script type="text/javascript" src="{$webroot}webinc/editors/fck/fck.js">
             <xsl:text> </xsl:text>
         </script>
-        <script type="text/javascript" src="{$webroot}webinc/js/sarissa.js">
+        <script type="text/javascript" src="{$webroot}webinc/js/sarissa_0.9.9.4.js">
             <xsl:text> </xsl:text>
         </script>
         <script type="text/javascript" src="{$webroot}webinc/js/bx/helpers.js">
@@ -63,7 +63,7 @@
         <script type="text/javascript">
             var fckBasePath	= "<xsl:value-of select="$webroot"/>webinc/fck/";
             var bx_webroot = "<xsl:value-of select="$webroot"/>";
-            var contentURI = null;
+            var contentURI = '<xsl:value-of select="$contentUri"/>?editor=fck&amp;template=<xsl:value-of select="$template"/>'; ;
         </script>
     </xsl:template>
  
@@ -72,7 +72,7 @@
             <xsl:for-each select="@*">
                 <xsl:copy/>
             </xsl:for-each>
-            <xsl:attribute name="onload">contentURI = '<xsl:value-of select="$contentUri"/>?editor=fck&amp;template=<xsl:value-of select="$template"/>'; </xsl:attribute>
+         
             <xsl:apply-templates/>
         </xsl:copy>
         <form>
