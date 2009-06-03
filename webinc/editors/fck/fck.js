@@ -56,7 +56,7 @@ loadContent = function() {
     function loadContent_callback() {
         if(request.readyState == 4) {
             if(request.responseText != null) {
-                if (request.responseXML && request.responseXML.documentElement != null) {
+                if (request.responseXML && !Sarissa._SARISSA_IS_IE) {
                     var contentDOM = request.responseXML;
                 } else { 
                     var contentDOM = Sarissa.getDomDocument();
