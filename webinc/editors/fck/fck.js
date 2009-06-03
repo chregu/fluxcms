@@ -56,7 +56,7 @@ loadContent = function() {
     function loadContent_callback() {
         if(request.readyState == 4) {
             if(request.responseText != null) {
-                if (request.responseXML) {
+                if (request.responseXML && request.responseXML.documentElement != null) {
                     var contentDOM = request.responseXML;
                 } else { 
                     var contentDOM = Sarissa.getDomDocument();
@@ -66,7 +66,6 @@ loadContent = function() {
                     xml = xml.replace(/<\?xml[^>]+>/, "");
                     // <!DOCTYPE ... >
                     xml = xml.replace(/<\![^>]+>/, "");
-                    
                     contentDOM = (new DOMParser()).parseFromString(xml, "text/xml");
                     //alert(contentDOM.parseError);
                 }
