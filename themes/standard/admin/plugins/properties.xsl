@@ -23,7 +23,11 @@
                 </title>
                 <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/formedit.css"/>
                 <link rel="stylesheet" type="text/css" href="{$webroot}themes/standard/admin/css/admin.css"/>
-
+                <script type="text/javascript">
+                    bx_webroot = '<xsl:value-of select="$webroot"/>';
+                </script>
+                <script type="text/javascript" src="{$webroot}webinc/js/filebrowser.js"></script>
+                
                 <xsl:if test="//plugin[@name='admin_properties']/properties/@updateTree">
                     <script type="text/javascript">
             window.parent.navi.Navitree.reload('<xsl:value-of select="substring($path,1,string-length($path)-1)"/>');
@@ -106,6 +110,27 @@
         </xsl:if>
     </xsl:template>
 
+
+    <xsl:template match="*[@type='fileupload']" mode="propertyfields">
+        <tr>
+            <td>
+                <div class="blackH5" title="{concat(../@namespace, ':', ../@name)}">
+                    <xsl:choose>
+                        <xsl:when test="../@niceName">
+                            <xsl:value-of select="../@niceName"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat(../@namespace, ':', ../@name)"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </div>
+            </td>
+            <td class="blackH5">
+                <input type="text" onclick="bx_openFileBrowser(this)" name="bx[plugins][{../../../@name}][{../../@path}][{../@fieldname}]" size="{@size}" maxlength="{@maxLength}" value="{../@value}" />
+            </td>
+        </tr>
+    </xsl:template>
+    
     <xsl:template match="*[@type='datetime']" mode="propertyfields">
         <tr>
             <td>
