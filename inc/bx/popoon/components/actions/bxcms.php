@@ -71,7 +71,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 $sh = new bx_helpers_shorturl();
                 $url = $sh->getUrlFromCode(substr($fulluri,2));
                 if ($url) {
-                   header("Location: ".BX_WEBROOT."$url", 301);
+                   header("Location: ".BX_WEBROOT."$url", true, 301);
                     die();
                 }
             }
@@ -102,7 +102,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             } else  if ($mo) {
                     //redirect to without $mo, if mobileMode is not enabled
                     $fulluri = substr($fulluri, 3);
-                    header("Location: $fulluri", 301);
+                    header("Location: $fulluri", true, 301);
                     die();
             }
 
@@ -110,7 +110,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 //if no / at the end of fulluri and no . in filename, we assume, it's a subcollection
                 // and do redirect here
                 if (substr($fulluri,-1) != "/") {
-                    header("Location: ".BX_WEBROOT.preg_replace("#^/#","",$fulluri)."/");
+                    header("Location: ".BX_WEBROOT.preg_replace("#^/#","",$fulluri)."/", true, 301);
                     die();
                 }
                 $fulluri .= "index.html";
