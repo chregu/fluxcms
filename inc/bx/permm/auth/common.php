@@ -218,6 +218,18 @@ abstract class bx_permm_auth_common {
         }
     }
 
+    /**
+     * wrapper function for Auth modules setAuth() method
+     *
+     * @param string $username
+     * @return void
+     */
+    public function setAuth($username) {
+        // make sure this really is an instance of the Auth module
+        if($this->authObj instanceof Auth) {
+            $this->authObj->setAuth($username);
+        }
+    }
 
 }
 

@@ -69,6 +69,19 @@ Class bx_permm {
         return $this->authObj->getAuth();
     }
     
+    /**
+    * Wrapper function for Auth modules setAuth() method
+    *
+    * @param    string  $username
+    * @return   void
+    * @access   public
+    */
+    public function setAuth($username) {
+        if (!$this->authObj) {
+            $this->getAuth();
+        }
+        $this->authObj->setAuth($username);
+    }
     
     /**
     * Wrapper function for Auth module's logout() method
