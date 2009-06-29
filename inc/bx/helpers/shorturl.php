@@ -13,7 +13,7 @@ class bx_helpers_shorturl {
     }
 
     public function codeExists($code) {
-        $query = "SELECT path from ".$this->tablePrefix."properties where ns = 'to:' and value = " . $this->db->quote($code);
+        $query = "SELECT path from ".$this->tablePrefix."properties where ns = 'to:' and value = BINARY " . $this->db->quote($code);
         if ($this->db->query($query)->numRows() > 0) {
             return true;
         }
@@ -22,7 +22,7 @@ class bx_helpers_shorturl {
 
    public function getUrlFromCode($code) {
 
-        $query = "SELECT path from ".$this->tablePrefix."properties where ns = 'to:' and  value = :code";
+        $query = "SELECT path from ".$this->tablePrefix."properties where ns = 'to:' and  value = BINARY :code";
         $stm = $this->db->prepare($query);
         $f = $stm->execute(array(
                 ":code" => $code
