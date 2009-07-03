@@ -241,6 +241,7 @@ class bx_helpers_string {
      */
     function replaceTextFields($subject, $textfields) {
         foreach ($textfields as $field => $value) {
+            $field = str_replace('/','\/',$field);
             $patterns[] = '/\{' . $field . '\}/';
             $replacements[] = $value;
         }
