@@ -28,6 +28,15 @@
                 </script>
                 <script type="text/javascript" src="{$webroot}webinc/js/filebrowser.js"></script>
                 
+                <script type="text/javascript">
+                    <xsl:comment>
+                    function bx_properties_openFileBrowser(id) {
+                        var obj = document.getElementById(id);
+                        bx_openFileBrowser(obj); 
+                    }
+                   </xsl:comment>
+                </script>
+                
                 <xsl:if test="//plugin[@name='admin_properties']/properties/@updateTree">
                     <script type="text/javascript">
             window.parent.navi.Navitree.reload('<xsl:value-of select="substring($path,1,string-length($path)-1)"/>');
@@ -126,7 +135,11 @@
                 </div>
             </td>
             <td class="blackH5">
-                <input type="text" onclick="bx_openFileBrowser(this)" name="bx[plugins][{../../../@name}][{../../@path}][{../@fieldname}]" size="{@size}" maxlength="{@maxLength}" value="{../@value}" />
+                <xsl:variable name="fName">
+                    <xsl:value-of select="concat('bx[plugins][',../../../@name,'][',../../@path,'][',../@fieldname,']')"/>
+                </xsl:variable>
+                <input type="text" id="{../@fieldname}" name="{$fName}" size="{@size}" maxlength="{@maxLength}" value="{../@value}" />
+                <input type="button" onclick="bx_properties_openFileBrowser('{../@fieldname}')" value="..." />
             </td>
         </tr>
     </xsl:template>
