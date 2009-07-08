@@ -1,26 +1,35 @@
 <?php
 
 class bx_helpers_globals {
-    
-    
+
+
     static function GET($name,$default = "") {
         if (isset($_GET[$name])) {
             return popoon_classes_externalinput::basicClean($_GET[$name]);
         } else {
             return $default;
         }
-        
+
     }
-    
-        static function COOKIE($name,$default = "") {
+
+    static function COOKIE($name,$default = "") {
         if (isset($_COOKIE[$name])) {
             return popoon_classes_externalinput::basicClean($_COOKIE[$name]);
         } else {
             return $default;
         }
-        
+
     }
-    
+
+    static function SESSION($name,$default = "") {
+        if (isset($_SESSION[$name])) {
+            return popoon_classes_externalinput::basicClean($_SESSION[$name]);
+        } else {
+            return $default;
+        }
+
+    }
+
     static function stripMagicQuotes($in) {
         if (!get_magic_quotes_gpc()) {
             return $in;
@@ -34,16 +43,16 @@ class bx_helpers_globals {
         }
         return $in;
     }
-    
+
     static function isSessionCookieSet() {
-      if (isset($_COOKIE[session_name()])) {
-          return "true";
-      } else if (isset($_COOKIE["fluxcms_login"])) {
-        return "true";   
-      } else {
-          return "false";
-      }
-      
+        if (isset($_COOKIE[session_name()])) {
+            return "true";
+        } else if (isset($_COOKIE["fluxcms_login"])) {
+            return "true";
+        } else {
+            return "false";
+        }
+
     }
 
     /**
@@ -55,4 +64,4 @@ class bx_helpers_globals {
         return $GLOBALS['POOL'];
     }
 }
-        
+
