@@ -114,7 +114,7 @@ abstract class bx_permm_auth_common {
         @session_start();
         if (!$this->authObj->checkAuth() && $this->authObj->showLogin) {
             $this->authObj->login();
-            session_regenerate_id(false);
+            session_regenerate_id(true);
         }
 
     }
