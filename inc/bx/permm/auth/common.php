@@ -1,15 +1,15 @@
 <?php
 
 abstract class bx_permm_auth_common {
-    
+
     /**
      * the auth module object
-     * 
+     *
      * @access   protected
      * @var      object
      */
     protected $authObj = null;
-    
+
     /**
      * db dsn
      *
@@ -17,7 +17,7 @@ abstract class bx_permm_auth_common {
      * @var      array
      */
     protected $dsn = array();
-    
+
     /**
      * auth table
      *
@@ -25,7 +25,7 @@ abstract class bx_permm_auth_common {
      * @var     string
      */
     protected $auth_table = 'users';
-    
+
     /**
      * auth table username column
      *
@@ -33,7 +33,7 @@ abstract class bx_permm_auth_common {
      * @var     string
      */
     protected $auth_usernamecol = 'login';
-    
+
     /**
      * auth table password tolumn
      *
@@ -41,51 +41,53 @@ abstract class bx_permm_auth_common {
      * @var     string
      */
     protected $auth_passwordcol = 'password';
-    
+
     protected $specialencoding = '';
-    protected $auth_gidcol = 'user_gid'; 
+    protected $auth_gidcol = 'user_gid';
     protected $auth_gupicol = 'user_gupi';
     protected $auth_emailcol = 'user_email';
     protected $auth_dbfields = 'user_adminlang, user_gid, user_email';
     protected $auth_sessname = '_authsession';
-    
+
     protected $auth_idcol = 'id';
     /**
-     * auth password crypt method 
+     * auth password crypt method
      *
      * @access  protected
      * @var     string
      */
     protected $auth_crypttype = 'md5';
-    
-     
+
+
     protected function __construct($options) {
         if (is_array($options)) {
-            
-            
+
+
             if (!empty($options['auth_overwriteDbfields']) && $options['auth_overwriteDbfields'] == 'true') {
-                //$options['auth_dbfields'] = 
+                //$options['auth_dbfields'] =
             } else if (!empty($options['auth_dbfields']) && trim($options['auth_dbfields']) != '' ) {
                 $options['auth_dbfields'] .= "," .$this->auth_dbfields;
-                
+
             } else {
                 $options['auth_dbfields'] = $this->auth_dbfields;
             }
-            
-            
+
+
             foreach ($options as $name => $value) {
                 if (isset($this->$name)) {
                     $this->$name = $value;
                 }
             }
-            
+
         }
-        
+
+
+
     }
-    
-    
+
+
     /**
-     * Wrapper function for the auth object - 
+     * Wrapper function for the auth object -
      * interface to the permm object,
      * to start authentication process
      *
@@ -112,11 +114,12 @@ abstract class bx_permm_auth_common {
         @session_start();
         if (!$this->authObj->checkAuth() && $this->authObj->showLogin) {
             $this->authObj->login();
+            session_regenerate_id(false);
         }
 
     }
-    
-    
+
+
     protected function specialEncode(&$prm) {
         if (isset($this->specialencoding) && !empty($this->specialencoding)) {
             $m = "specialEncode".ucfirst($this->specialencoding);
@@ -125,15 +128,15 @@ abstract class bx_permm_auth_common {
             }
         }
     }
-    
+
     protected function specialEncodeEntities(&$prm) {
         $prm = bx_helpers_string::utf2entities($prm);
         return $prm;
     }
-    
+
     /**
-     * Wrapper function for the auth object - 
-     * interface to the permm object 
+     * Wrapper function for the auth object -
+     * interface to the permm object
      * to check authenticated user
      *
      * @access   public
@@ -141,11 +144,11 @@ abstract class bx_permm_auth_common {
      */
     public function getAuth() {
         return $this->authObj->getAuth();
-    
-    }
-    
 
-    
+    }
+
+
+
 
     /**
     * Wrapper function for auth object's logout() method
@@ -157,34 +160,34 @@ abstract class bx_permm_auth_common {
         if (method_exists($this->authObj, "logout")) {
             $this->authObj->logout();
         }
-    
+
         return NULL;
     }
-    
+
     /**
      * Wrapper function for the auth object -
      * interface to the permm object
-     * to get information about current 
+     * to get information about current
      * authentication status
      *
      */
     public function getStatus() {
         return $this->authObj->getStatus();
     }
-    
+
     public function getUsername() {
         return $this->authObj->getUsername();
     }
-    
+
     public function getUserGid() {
-        return @$_SESSION[$this->auth_sessname]['data'][$this->auth_gidcol];    
+        return @$_SESSION[$this->auth_sessname]['data'][$this->auth_gidcol];
     }
-    
+
     public function getUserId() {
         @session_start();
         return $this->authObj->getUserId();
     }
-    
+
     protected function MDB2Constructor($options,$pearcontainer = 'MDB2',$additionalOpts = array()) {
           $opts = array(
             'dsn'           => $this->dsn,
@@ -196,7 +199,7 @@ abstract class bx_permm_auth_common {
             'db_fields'     => $this->auth_dbfields,
             'cryptType'     => $this->auth_crypttype,
             );
-        
+
         if (empty($options['auth_prependTablePrefix']) || $options['auth_prependTablePrefix'] == 'true') {
           $opts['table'] =  $GLOBALS['POOL']->config->getTablePrefix().$this->auth_table;
         } else {
@@ -207,7 +210,7 @@ abstract class bx_permm_auth_common {
                 $opts[$key] = $options[$key];
             }
         }
-        
+
         // if someone tries to "login" via http_auth, let them do that :)
         if ((!empty($_GET['httpauth'])) | (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && $GLOBALS['POOL']->config->allowHTTPAuthentication == "true") ) {
             $opts['mode'] = '0644';
@@ -236,7 +239,7 @@ abstract class bx_permm_auth_common {
 
 /**
  * BX Function for Loginscreen
- * does nothing since loginscreen is 
+ * does nothing since loginscreen is
  * handled via sitemap
  *
  */
