@@ -49,6 +49,7 @@ abstract class bx_permm_auth_common {
     protected $auth_dbfields = 'user_adminlang, user_gid, user_email';
     protected $auth_sessname = '_authsession';
 
+    protected $advancedsecurity = false;
     protected $auth_idcol = 'id';
     /**
      * auth password crypt method
@@ -59,33 +60,46 @@ abstract class bx_permm_auth_common {
     protected $auth_crypttype = 'md5';
 
 
-    protected function __construct($options) {
+    protected function __construct($options = null) {
         if (is_array($options)) {
 
 
-            if (!empty($options['auth_overwriteDbfields']) && $options['auth_overwriteDbfields'] == 'true') {
-                //$options['auth_dbfields'] =
-            } else if (!empty($options['auth_dbfields']) && trim($options['auth_dbfields']) != '' ) {
-                $options['auth_dbfields'] .= "," .$this->auth_dbfields;
-
-            } else {
-                $options['auth_dbfields'] = $this->auth_dbfields;
-            }
-
-
-            foreach ($options as $name => $value) {
-                if (isset($this->$name)) {
-                    $this->$name = $value;
-                }
-            }
-
+            $this->initOptions($options);
         }
-
-
-
     }
 
+    protected function initOptions($options) {
 
+        if (!empty($options['auth_overwriteDbfields']) && $options['auth_overwriteDbfields'] == 'true') {
+            //$options['auth_dbfields'] =
+        } else if (!empty($options['auth_dbfields']) && trim($options['auth_dbfields']) != '') {
+            $options['auth_dbfields'] .= "," . $this->auth_dbfields;
+
+        } else {
+            $options['auth_dbfields'] = $this->auth_dbfields;
+        }
+
+        if (!empty($options['adv_useragentcheck']) && $options['adv_useragentcheck'] == 'true') {
+            $this->advancedsecurity = array();
+            $this->advancedsecurity[AUTH_ADV_USERAGENT] = true;
+        }
+
+        if (!empty($options['adv_ipcheck']) && $options['adv_ipcheck'] == 'true') {
+            if (!is_array($this->advancedsecurity)) {
+                $this->advancedsecurity = array();
+            }
+            $this->advancedsecurity[AUTH_ADV_IPCHECK] = true;
+        }
+
+        $options['advancedsecurity'] = $this->advancedsecurity;
+        foreach ($options as $name => $value) {
+            if (isset($this->$name)) {
+                $this->$name = $value;
+            }
+        }
+        return $options;
+
+    }
     /**
      * Wrapper function for the auth object -
      * interface to the permm object,
