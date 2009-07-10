@@ -73,6 +73,9 @@
                 <auth_usernamecol>user_login</auth_usernamecol>
                 <auth_passwordcol>user_pass</auth_passwordcol>
                 <cryptType>md5</cryptType>
+                <adv_ipcheck>false</adv_ipcheck>
+                <adv_useragentcheck>true</adv_useragentcheck>
+                
                 <dsn copy="auth_dsn"/>
             </authModule>
             <permModule>
