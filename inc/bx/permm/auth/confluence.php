@@ -23,17 +23,21 @@
      */
 
 require_once 'Auth/Auth.php';
-require_once("bx/permm/auth/pearcontainer/confluence.php");
+require_once ("bx/permm/auth/pearcontainer/confluence.php");
 
-Class bx_permm_auth_confluence extends bx_permm_auth_pearauth {
+class bx_permm_auth_confluence extends bx_permm_auth_pearauth {
 
     public function __construct($options = array()) {
         parent::__construct();
         $options = $this->initOptions($options);
-        $this->MDB2Constructor($options,'confluence',array('advancedsecurity','wsdlurl','allowedGroup','allowedSpace'));
+        $this->MDB2Constructor($options, 'confluence', array(
+                'advancedsecurity',
+                'wsdlurl',
+                'allowedGroup',
+                'allowedSpace'
+        ));
 
     }
 }
-
 
 ?>
