@@ -1,25 +1,35 @@
 <?php
-//
-// +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
-// +----------------------------------------------------------------------+
-// |                                                                      |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.02 of the PHP license,      |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Author: Lorenzo Alberton <l.alberton@quipo.it>                       |
-// +----------------------------------------------------------------------+
-//
-// $Id$
-//
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4 foldmethod=marker: */
 
+/**
+ * Storage driver for use against PEAR MDB2
+ *
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 3.01 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/3_01.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category   Authentication
+ * @package    Auth
+ * @author     Lorenzo Alberton <l.alberton@quipo.it>
+ * @author     Adam Ashley <aashley@php.net>
+ * @copyright  2001-2006 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
+ * @version    CVS: $Id$
+ * @link       http://pear.php.net/package/Auth
+ * @since      File available since Release 1.3.0
+ */
+
+/**
+ * Include Auth_Container base class
+ */
 require_once 'Auth/Container.php';
+/**
+ * Include PEAR MDB2 package
+ */
 require_once 'MDB2.php';
 
 /**
@@ -28,12 +38,20 @@ require_once 'MDB2.php';
  * This storage driver can use all databases which are supported
  * by the PEAR MDB2 abstraction layer to fetch login data.
  *
- * @author   Lorenzo Alberton <l.alberton@quipo.it>
- * @package  Auth
- * @version  $Revision: 1.2 $
+ * @category   Authentication
+ * @package    Auth
+ * @author     Lorenzo Alberton <l.alberton@quipo.it>
+ * @author     Adam Ashley <aashley@php.net>
+ * @copyright  2001-2006 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
+ * @version    Release: 1.6.1  File: $Revision: 1.24 $
+ * @link       http://pear.php.net/package/Auth
+ * @since      Class available since Release 1.3.0
  */
 class Auth_Container_MDB2 extends Auth_Container
 {
+
+    // {{{ properties
 
     /**
      * Additional options for the storage container
@@ -54,7 +72,8 @@ class Auth_Container_MDB2 extends Auth_Container
      */
     var $activeUser = '';
 
-    // {{{ Constructor
+    // }}}
+    // {{{ Auth_Container_MDB2() [constructor]
 
     /**
      * Constructor of the container class
@@ -90,9 +109,10 @@ class Auth_Container_MDB2 extends Auth_Container
      */
     function _connect($dsn)
     {
+        $this->log('Auth_Container_MDB2::_connect() called.', AUTH_LOG_DEBUG);
         if (is_string($dsn) || is_array($dsn)) {
-            $this->db =& MDB2::connect($dsn);
-        } elseif (is_a($dsn, 'MDB2_Driver_Common')) {
+            $this->db =& MDB2::connect($dsn, $this->options['db_options']);
+        } elseif (is_subclass_of($dsn, 'MDB2_Driver_Common')) {
             $this->db = $dsn;
         } elseif (is_object($dsn) && MDB2::isError($dsn)) {
             return PEAR::raiseError($dsn->getMessage(), $dsn->code);
@@ -109,6 +129,33 @@ class Auth_Container_MDB2 extends Auth_Container
         if (MDB2::isError($this->db) || PEAR::isError($this->db)) {
             return PEAR::raiseError($this->db->getMessage(), $this->db->code);
         }
+
+        if ($this->options['auto_quote']) {
+            if (strpos('.', $this->options['table']) === false) {
+                $this->options['final_table'] = $this->db->quoteIdentifier($this->options['table'], true);
+            } else {
+                $t = explode('.', $this->options['table']);
+                for ($i = 0, $count = count($t); $i < $count; $i++)
+                    $t[$i] = $this->db->quoteIdentifier($t[$i], true);
+                $this->options['final_table'] = implode('.', $t);
+            }
+            $this->options['final_usernamecol'] = $this->db->quoteIdentifier($this->options['usernamecol'], true);
+            $this->options['final_passwordcol'] = $this->db->quoteIdentifier($this->options['passwordcol'], true);
+            /**
+             * Added by Flux CMS
+             */
+            $this->options['final_idcol'] = $this->db->quoteIdentifier($this->options['idcol'], true);
+        } else {
+            $this->options['final_table'] = $this->options['table'];
+            $this->options['final_usernamecol'] = $this->options['usernamecol'];
+            $this->options['final_passwordcol'] = $this->options['passwordcol'];
+            /**
+             * Added by Flux CMS
+             */
+            $this->options['final_idcol'] = $this->options['idcol'];
+
+        }
+
         return true;
     }
 
@@ -126,6 +173,9 @@ class Auth_Container_MDB2 extends Auth_Container
      */
     function _prepare()
     {
+        if (is_subclass_of($this->db, 'MDB2_Driver_Common')) {
+            return true;
+        }
         return $this->_connect($this->options['dsn']);
     }
 
@@ -146,11 +196,12 @@ class Auth_Container_MDB2 extends Auth_Container
      */
     function query($query)
     {
+        $this->log('Auth_Container_MDB2::query() called.', AUTH_LOG_DEBUG);
         $err = $this->_prepare();
         if ($err !== true) {
             return $err;
         }
-        return $this->db->query($query);
+        return $this->db->exec($query);
     }
 
     // }}}
@@ -167,10 +218,16 @@ class Auth_Container_MDB2 extends Auth_Container
         $this->options['table']       = 'auth';
         $this->options['usernamecol'] = 'username';
         $this->options['passwordcol'] = 'password';
+        /**
+         * Added by Flux CMS
+         */
         $this->options['idcol'] = 'id';
         $this->options['dsn']         = '';
         $this->options['db_fields']   = '';
         $this->options['cryptType']   = 'md5';
+        $this->options['db_options']  = array();
+        $this->options['db_where']    = '';
+        $this->options['auto_quote']  = true;
     }
 
     // }}}
@@ -189,14 +246,43 @@ class Auth_Container_MDB2 extends Auth_Container
                 $this->options[$key] = $value;
             }
         }
+    }
 
-        // Include additional fields if they exist
-        if (!empty($this->options['db_fields'])) {
+    // }}}
+    // {{{ _quoteDBFields()
+
+    /**
+     * Quote the db_fields option to avoid the possibility of SQL injection.
+     *
+     * @access private
+     * @return string A properly quoted string that can be concatenated into a
+     * SELECT clause.
+     */
+    function _quoteDBFields()
+    {
+        if (isset($this->options['db_fields'])) {
             if (is_array($this->options['db_fields'])) {
-                $this->options['db_fields'] = join($this->options['db_fields'], ', ');
+                if ($this->options['auto_quote']) {
+                    $fields = array();
+                    foreach ($this->options['db_fields'] as $field) {
+                        $fields[] = $this->db->quoteIdentifier($field, true);
+                    }
+                    return implode(', ', $fields);
+                } else {
+                    return implode(', ', $this->options['db_fields']);
+                }
+            } else {
+                if (strlen($this->options['db_fields']) > 0) {
+                    if ($this->options['auto_quote']) {
+                        return $this->db->quoteIdentifier($this->options['db_fields'], true);
+                    } else {
+                        return $this->options['db_fields'];
+                    }
+                }
             }
-            $this->options['db_fields'] = ', ' . $this->options['db_fields'];
         }
+
+        return '';
     }
 
     // }}}
@@ -213,28 +299,51 @@ class Auth_Container_MDB2 extends Auth_Container
      *
      * @param   string Username
      * @param   string Password
+     * @param   boolean If true password is secured using a md5 hash
+     *                  the frontend and auth are responsible for making sure the container supports
+     *                  challenge response password authentication
      * @return  mixed  Error object or boolean
      */
-    function fetchData($username, $password)
+    function fetchData($username, $password, $isChallengeResponse=false)
     {
+        $this->log('Auth_Container_MDB2::fetchData() called.', AUTH_LOG_DEBUG);
         // Prepare for a database query
         $err = $this->_prepare();
         if ($err !== true) {
             return PEAR::raiseError($err->getMessage(), $err->getCode());
         }
 
-        // Find if db_fileds contains a *, i so assume all col are selected
-        if (strstr($this->options['db_fields'], '*')) {
+        //Check if db_fields contains a *, if so assume all columns are selected
+        if (is_string($this->options['db_fields'])
+            && strstr($this->options['db_fields'], '*')) {
             $sql_from = '*';
         } else {
-            $sql_from = $this->options['idcol'] . ', ' . $this->options['usernamecol'] . ', '. $this->options['passwordcol'] . $this->options['db_fields'];
+            $sql_from = $this->options['final_usernamecol'].
+                ", ".$this->options['final_passwordcol'].
+            /**
+             * Added by Flux CMS
+             */
+                ", ".$this->options['final_idcol'];
+
+            if (strlen($fields = $this->_quoteDBFields()) > 0) {
+                $sql_from .= ', '.$fields;
+            }
         }
         $query = sprintf("SELECT %s FROM %s WHERE %s = %s",
                          $sql_from,
-                         $this->options['table'],
-                         $this->options['usernamecol'],
+                         $this->options['final_table'],
+                         $this->options['final_usernamecol'],
                          $this->db->quote($username, 'text')
                          );
+
+        // check if there is an optional parameter db_where
+        if ($this->options['db_where'] != '') {
+            // there is one, so add it to the query
+            $query .= " AND ".$this->options['db_where'];
+        }
+
+        $this->log('Running SQL against MDB2: '.$query, AUTH_LOG_DEBUG);
+
         $res = $this->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
         if (MDB2::isError($res) || PEAR::isError($res)) {
             return PEAR::raiseError($res->getMessage(), $res->getCode());
@@ -243,25 +352,35 @@ class Auth_Container_MDB2 extends Auth_Container
             $this->activeUser = '';
             return false;
         }
-       
-       if ($this->verifyPassword(trim($password, "\r\n"),
-                                  trim($res[$this->options['passwordcol']], "\r\n"),
-                                  $this->options['cryptType'],$username)) {
+
+        // Perform trimming here before the hashing
+        $password = trim($password, "\r\n");
+        $res[$this->options['passwordcol']] = trim($res[$this->options['passwordcol']], "\r\n");
+        // If using Challenge Response md5 the pass with the secret
+        if ($isChallengeResponse) {
+            $res[$this->options['passwordcol']] =
+                md5($res[$this->options['passwordcol']].$this->_auth_obj->session['loginchallenege']);
+            // UGLY cannot avoid without modifying verifyPassword
+            if ($this->options['cryptType'] == 'md5') {
+                $res[$this->options['passwordcol']] = md5($res[$this->options['passwordcol']]);
+            }
+        }
+        if ($this->verifyPassword($password,
+                                  $res[$this->options['passwordcol']],
+                                  $this->options['cryptType'])) {
             // Store additional field values in the session
             foreach ($res as $key => $value) {
                 if ($key == $this->options['passwordcol'] ||
                     $key == $this->options['usernamecol']) {
                     continue;
                 }
+
+                $this->log('Storing additional field: '.$key, AUTH_LOG_DEBUG);
+
                 // Use reference to the auth object if exists
                 // This is because the auth session variable can change so a static call to setAuthData does not make sense
-                if (isset($this->_auth_obj) && is_object($this->_auth_obj)) {
-                    $this->_auth_obj->setAuthData($key, $value);
-                } else {
-                    Auth::setAuthData($key, $value);
-                }
+                $this->_auth_obj->setAuthData($key, $value);
             }
-
             return true;
         }
 
@@ -273,10 +392,14 @@ class Auth_Container_MDB2 extends Auth_Container
     // {{{ listUsers()
 
     /**
-     * @return array
+     * Returns a list of users from the container
+     *
+     * @return mixed array|PEAR_Error
+     * @access public
      */
     function listUsers()
     {
+        $this->log('Auth_Container_MDB2::listUsers() called.', AUTH_LOG_DEBUG);
         $err = $this->_prepare();
         if ($err !== true) {
             return PEAR::raiseError($err->getMessage(), $err->getCode());
@@ -284,17 +407,31 @@ class Auth_Container_MDB2 extends Auth_Container
 
         $retVal = array();
 
-        // Find if db_fileds contains a *, i so assume all col are selected
-        if (strstr($this->options['db_fields'], '*')) {
+        //Check if db_fields contains a *, if so assume all columns are selected
+        if (   is_string($this->options['db_fields'])
+            && strstr($this->options['db_fields'], '*')) {
             $sql_from = '*';
         } else {
-            $sql_from = $this->options['db_fields'];
+            $sql_from = $this->options['final_usernamecol'].
+                ", ".$this->options['final_passwordcol'];
+
+            if (strlen($fields = $this->_quoteDBFields()) > 0) {
+                $sql_from .= ', '.$fields;
+            }
         }
 
         $query = sprintf('SELECT %s FROM %s',
                          $sql_from,
-                         $this->options['table']
+                         $this->options['final_table']
                          );
+
+        // check if there is an optional parameter db_where
+        if ($this->options['db_where'] != '') {
+            // there is one, so add it to the query
+            $query .= " WHERE ".$this->options['db_where'];
+        }
+
+        $this->log('Running SQL against MDB2: '.$query, AUTH_LOG_DEBUG);
 
         $res = $this->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
         if (MDB2::isError($res)) {
@@ -305,6 +442,7 @@ class Auth_Container_MDB2 extends Auth_Container
                 $retVal[] = $user;
             }
         }
+        $this->log('Found '.count($retVal).' users.', AUTH_LOG_DEBUG);
         return $retVal;
     }
 
@@ -323,6 +461,13 @@ class Auth_Container_MDB2 extends Auth_Container
      */
     function addUser($username, $password, $additional = "")
     {
+        $this->log('Auth_Container_MDB2::addUser() called.', AUTH_LOG_DEBUG);
+
+        // Prepare for a database query
+        $err = $this->_prepare();
+        if ($err !== true) {
+            return PEAR::raiseError($err->getMessage(), $err->getCode());
+        }
 
         if (isset($this->options['cryptType']) && $this->options['cryptType'] == 'none') {
             $cryptFunction = 'strval';
@@ -332,25 +477,33 @@ class Auth_Container_MDB2 extends Auth_Container
             $cryptFunction = 'md5';
         }
 
+        $password = $cryptFunction($password);
+
         $additional_key   = '';
         $additional_value = '';
 
         if (is_array($additional)) {
             foreach ($additional as $key => $value) {
-                $additional_key   .= ', ' . $key;
+                if ($this->options['auto_quote']) {
+                    $additional_key   .= ', ' . $this->db->quoteIdentifier($key, true);
+                } else {
+                    $additional_key   .= ', ' . $key;
+                }
                 $additional_value .= ', ' . $this->db->quote($value, 'text');
             }
         }
 
         $query = sprintf("INSERT INTO %s (%s, %s%s) VALUES (%s, %s%s)",
-                         $this->options['table'],
-                         $this->options['usernamecol'],
-                         $this->options['passwordcol'],
+                         $this->options['final_table'],
+                         $this->options['final_usernamecol'],
+                         $this->options['final_passwordcol'],
                          $additional_key,
                          $this->db->quote($username, 'text'),
-                         $this->db->quote($cryptFunction($password), 'text'),
+                         $this->db->quote($password, 'text'),
                          $additional_value
                          );
+
+        $this->log('Running SQL against MDB2: '.$query, AUTH_LOG_DEBUG);
 
         $res = $this->query($query);
 
@@ -373,11 +526,26 @@ class Auth_Container_MDB2 extends Auth_Container
      */
     function removeUser($username)
     {
+        $this->log('Auth_Container_MDB2::removeUser() called.', AUTH_LOG_DEBUG);
+        // Prepare for a database query
+        $err = $this->_prepare();
+        if ($err !== true) {
+            return PEAR::raiseError($err->getMessage(), $err->getCode());
+        }
+
         $query = sprintf("DELETE FROM %s WHERE %s = %s",
-                         $this->options['table'],
-                         $this->options['usernamecol'],
+                         $this->options['final_table'],
+                         $this->options['final_usernamecol'],
                          $this->db->quote($username, 'text')
                          );
+
+        // check if there is an optional parameter db_where
+        if ($this->options['db_where'] != '') {
+            // there is one, so add it to the query
+            $query .= " AND ".$this->options['db_where'];
+        }
+
+        $this->log('Running SQL against MDB2: '.$query, AUTH_LOG_DEBUG);
 
         $res = $this->query($query);
 
@@ -393,11 +561,18 @@ class Auth_Container_MDB2 extends Auth_Container
     /**
      * Change password for user in the storage container
      *
-    * @param string Username
-     * @param string The new password
+     * @param string Username
+     * @param string The new password (plain text)
      */
     function changePassword($username, $password)
     {
+        $this->log('Auth_Container_MDB2::changePassword() called.', AUTH_LOG_DEBUG);
+        // Prepare for a database query
+        $err = $this->_prepare();
+        if ($err !== true) {
+            return PEAR::raiseError($err->getMessage(), $err->getCode());
+        }
+
         if (isset($this->options['cryptType']) && $this->options['cryptType'] == 'none') {
             $cryptFunction = 'strval';
         } elseif (isset($this->options['cryptType']) && function_exists($this->options['cryptType'])) {
@@ -406,13 +581,23 @@ class Auth_Container_MDB2 extends Auth_Container
             $cryptFunction = 'md5';
         }
 
+        $password = $cryptFunction($password);
+
         $query = sprintf("UPDATE %s SET %s = %s WHERE %s = %s",
-                         $this->options['table'],
-                         $this->options['passwordcol'],
+                         $this->options['final_table'],
+                         $this->options['final_passwordcol'],
                          $this->db->quote($password, 'text'),
-                         $this->options['usernamecol'],
+                         $this->options['final_usernamecol'],
                          $this->db->quote($username, 'text')
                          );
+
+        // check if there is an optional parameter db_where
+        if ($this->options['db_where'] != '') {
+            // there is one, so add it to the query
+            $query .= " AND ".$this->options['db_where'];
+        }
+
+        $this->log('Running SQL against MDB2: '.$query, AUTH_LOG_DEBUG);
 
         $res = $this->query($query);
 
@@ -421,16 +606,33 @@ class Auth_Container_MDB2 extends Auth_Container
         }
         return true;
     }
-    
-    function verifyPassword($password1, $password2, $cryptType = "md5", $username = '')
+
+    // }}}
+    // {{{ supportsChallengeResponse()
+
+    /**
+     * Determine if this container supports
+     * password authentication with challenge response
+     *
+     * @return bool
+     * @access public
+     */
+    function supportsChallengeResponse()
     {
-         
-        if ($cryptType!='md5') {
-            return parent::verifyPassword($password1, $password2, $cryptType);    
-        } else {
-            return (md5($password1) == $password2 || $password1 == md5($username.$password2) );
-        } 
-        
+        return in_array($this->options['cryptType'], array('md5', 'none', ''));
+    }
+
+    // }}}
+    // {{{ getCryptType()
+
+    /**
+     * Returns the selected crypt type for this container
+     *
+     * @return string Function used to crypt the password
+     */
+    function getCryptType()
+    {
+        return $this->options['cryptType'];
     }
 
     // }}}
