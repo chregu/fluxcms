@@ -57,6 +57,7 @@ class bx_init {
 
         ini_set('include_path',BX_INCLUDE_DIR.PATH_SEPARATOR.BX_LOCAL_INCLUDE_DIR.PATH_SEPARATOR.ini_get('include_path'));
         ini_set('session.cookie_httponly',true);
+        ini_set('session.use_only_cookies',true);
         //for staging, will be improved later
         bx_errorhandler::getInstance();
 
