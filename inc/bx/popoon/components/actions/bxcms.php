@@ -42,7 +42,9 @@ class popoon_components_actions_bxcms extends popoon_components_action {
 
     function act() {
         // set YADIS Header
-        $this->sitemap->setHeader("X-XRDS-Location", BX_WEBROOT . "admin/openid/xrds.xml");
+        if ($this->getParameterDefault("noAdminDisclosure") != "true") {
+            $this->sitemap->setHeader("X-XRDS-Location", BX_WEBROOT . "admin/openid/xrds.xml");
+        }
 
         // set X-PoweredBy
         if ($this->getParameterDefault("noPoweredBy") != "true") {
