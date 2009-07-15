@@ -64,6 +64,15 @@ class bx_helpers_sql {
         return "INSERT INTO ".$tablePrefix.$table." ($qfields) VALUES ($qvalues)";
     }
     
+    
+    static public function nextSequence() {
+        
+        $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
+        $dbwrite = $GLOBALS['POOL']->dbwrite;
+        $id = $dbwrite->nextID($tablePrefix."_sequences");
+        return $id;
+    }
+    
     static public function getDeleteQuery($table, $id) {
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         

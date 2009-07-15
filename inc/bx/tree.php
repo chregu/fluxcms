@@ -187,6 +187,11 @@ class bx_tree {
         $el->setAttribute('mimetype',$mt); 
         //$el->setAttribute('id',$entry->getId());
         
+        $uid = $entry->getProperty("unique-id");
+        if($uid) {
+            $el->setAttribute('uid',$uid);
+        }
+        
         if ($mt == "httpd/unix-directory") {
             if ($this->showUri) {
                 $el->appendChild($this->dom->createElement('uri', $entry->getLocalName()));

@@ -33,6 +33,7 @@
             <property id="mimetype"/>
             <property id="output-mimetype"/>
             <property id="parent-uri"/>
+            <property id="unique-id"/>
           
         </category>
         
@@ -93,6 +94,7 @@
             <property id="mimetype"/>
             <property id="output-mimetype"/>
             <property id="parent-uri"/>
+            <property id="unique-id"/>
 
             <property id="display-order"/>
             <property id="redirect"/>
@@ -193,11 +195,17 @@
             <metadata type="text_textfield"/>
             <validate type="nonempty"/>
         </property>
-
+¨
         <property id="read" name="read" ns="bx:">
             <metadata type="text_textfield"/>
             <validate type="nonempty"/>
         </property>
+        
+        <property id="unique-id" name="unique-id" ns="bx:">
+            <metadata type="text_readonly"/>
+            <validate type="nonempty"/>
+        </property>
+        
           <property id="read_navi" name="read_navi" ns="bx:">
             <metadata type="text_textfield"/>
             <validate type="nonempty"/>

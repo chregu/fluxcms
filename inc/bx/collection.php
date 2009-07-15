@@ -82,6 +82,7 @@ class bx_collection implements bxIresource {
         $this->setProperty("parent-uri",$parentUri);
         $this->setProperty("display-name",$name, BX_PROPERTY_DEFAULT_NAMESPACE.BX_DEFAULT_LANGUAGE);
         $this->setProperty("display-order",0);
+        $this->setProperty("unique-id", bx_helpers_sql::nextSequence() );
         return true;
     }
 
