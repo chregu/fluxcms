@@ -47,12 +47,7 @@ if (isset($_POST['username']) && !isset($_POST['password'])) {
     
     $query = "select user_email, id from ".$tablePrefix."users where user_login = ". $db->quote($name);
     $row = $db->queryRow($query,null,MDB2_FETCHMODE_ASSOC);
-    if(!$row) {
-        print "<tr><td>There's no email adress for that user available (or user is not in our database)</td></tr>";
-        print "</table>";
-        print "<p>If you don't know your username or did not provide a valid email adress, we can't recover your password and you have to get in touch with your system administrator</p>";
-   
-    } else {
+    if($row) {
         $email = $row['user_email'];
         $id = $row['id'];
         $hash = bx_helpers_int::getRandomHex(var_export($row,true));
@@ -75,10 +70,9 @@ Have fun';
 		$res = $db->query($query);
 	}
         mail($email,"Revocer password for ". BX_WEBROOT, $body);
-        print "<tr><td>Mail sent. Check your mailbox</td></tr>";
-        print "</table>";
-        
     }
+    print "<tr><td>If you have provided a valid username, we have sent you an email with further instructions. Check your mailbox</td></tr>";
+    print "</table>";
     
     
 } else if (!isset($_REQUEST['hash']) || empty($_REQUEST['hash'])) {
