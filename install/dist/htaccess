@@ -87,6 +87,7 @@ RewriteCond     %{REQUEST_URI}  !^/*##DIR##admin/form/
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##admin/webinc/
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##favicon
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##webinc/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##weblocal/
 RewriteCond     %{REQUEST_URI}  !^/*##DIR##inc/bx/php/.*\.php
 
 RewriteRule ^/*(.+)$ ./index.php?path=$1 [QSA]
