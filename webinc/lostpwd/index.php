@@ -3,7 +3,7 @@
 /* NASTY CODE: should be an admin plugin... */
 
 include_once("../../inc/bx/init.php");
-bx_init::start('conf/config.xml', "../../..");
+bx_init::start('conf/config.xml', "../..");
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -61,7 +61,7 @@ if (isset($_POST['username']) && !isset($_POST['password'])) {
 Your password can now be reset.
 Please go to:
         
-'.BX_WEBROOT.'webinc/lostpw/?hash='.$hash. '
+'.BX_WEBROOT.'webinc/lostpwd/?hash='.$hash. '
 
 and retype a new password.
 
