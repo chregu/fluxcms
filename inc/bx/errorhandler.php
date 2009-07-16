@@ -85,16 +85,16 @@ class bx_errorhandler {
     }
     public function getHtml() {
 
-        $html = "<div class='error'><hr/><div class='errorTitle'>BXCMSNG Errors:</div>";
-        foreach($this->reports as $report) {
-            $html .= "<div class='errorReport'><b>".$report['level']."</b>";
-            $html .= "[".$report['no']."] ".$report['str']. ' in '. $report['file'] . ' at line ' .$report['line']. ".</div>\n";
-
-            /*if ($report['ctx']) {
-                $html .= "Context: <br/><div class='errorContext'><pre>".htmlentities(var_export($report['ctx'],true))."</pre></div>\n";
-            }*/
+        if (ini_get('display_errors') ) {
+            $html = "<div class='error'><hr/><div class='errorTitle'>BXCMSNG Errors:</div>";
+            foreach($this->reports as $report) {
+                $html .= "<div class='errorReport'><b>".$report['level']."</b>";
+                $html .= "[".$report['no']."] ".$report['str']. ' in '. $report['file'] . ' at line ' .$report['line']. ".</div>\n";
+            }
+            return $html ."</div>";
+        } else {
+            return "";
         }
-        return $html ."</div>";
     }
 
     public function hasErrors() {
