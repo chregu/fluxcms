@@ -67,6 +67,13 @@ class popoon_components_actions_bxcmsauth extends popoon_components_action {
             if (preg_match("#logout#", $fulluri) || isset($_GET['logout'])) {
                 $permObj->logout();
                 if (isset($_GET['back']) && $_GET['back']) {
+                    if (bx_config::getConfProperty('noexternallogoutredirects') == true) {
+                        $b = $_GET['back'];
+                        if (strpos($b, 'http') === 0 && strpos($b, BX_WEBROOT) !== 0) {
+                            header('Location: ' . BX_WEBROOT);
+                            die;
+                        }
+                    }
                     header('Location: ' . $_GET['back']);
                     die();
                 }
