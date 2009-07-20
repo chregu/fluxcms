@@ -10,7 +10,7 @@ class bx_init {
 
     static $tmpdir = "./tmp/";
     static $bxdir = "./inc/bx/";
-    static $lastdbversion = 8823;
+    static $lastdbversion = 11784;
     static $configCachedFile = '' ;
 
 

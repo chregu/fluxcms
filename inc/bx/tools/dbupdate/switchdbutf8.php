@@ -2,14 +2,17 @@
 
 chdir(dirname(__FILE__));
 
-include_once("../../../../inc/bx/init.php");
-bx_init::start('conf/config.xml', "../../../..");
+//include_once("../../../../inc/bx/init.php");
+//bx_init::start('conf/config.xml', "../../../..");
 
 $db = $GLOBALS['POOL']->db;
 
 
 $db->query("ALTER DATABASE `".$db->database_name."` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
-foreach ($db->queryCol("show tables ") as $tbl) {
+
+$prefix = $GLOBALS['POOL']->config->getTablePrefix();
+
+foreach ($db->queryCol("show tables like '$prefix%'") as $tbl) {
     
     $query = "ALTER TABLE `".$tbl."` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
     $db->query($query);

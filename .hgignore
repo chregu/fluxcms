@@ -7,5 +7,6 @@ syntax: regexp
 ^conf
 ^inc/popoon
 ^tmp
-^data
 ^themes/3-cols
+^sitemap
+^data

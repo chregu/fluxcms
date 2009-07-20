@@ -414,6 +414,11 @@ if ($lastVersion < 11299) {
     updateLastVersion(11299);
 }
 
+if ($lastVersion < 11784) {
+    include("switchdbutf8.php");
+    updateLastVersion(11784);
+}
+
 // delete config files
 @unlink(BX_TEMP_DIR."/config.inc.php");
 @unlink(BX_TEMP_DIR."/config.inc.php.post");

@@ -242,51 +242,63 @@ class bx_config_generate {
             fwrite ($fd, '$'."bx_config['".$type."'] = ");
             fwrite($fd,var_export($bxc[$type], true).";\n");
         }
-        //general options
+            //general options
+
 
         //try to get options from db
+
 
         // we have to fiddle with the include path here...
         // it's an assumption, that MDB2 is 2 levels above here...
         // FIXME: if that's not the case for some
-         $optionsFromDB = array();
-         $cacheDBOptions = ($sxe->options['cacheDBOptions'] != 'false');
-         $optionsMergeArray = array();
-        if ($cacheDBOptions) {
-            $oldinc = ini_get("include_path");
-            ini_set("include_path",realpath(dirname(__FILE__)."/../../"));
-            @include_once("MDB2.php");
-            $db = @MDB2::connect($dsn);
-            if (@MDB2::isError($db)) {
-                print $db->getMessage();
-                print "<br/>";
-                die ("no DB connection possible. please check your permissions");
-            }
-            @$db->query("set names 'utf8'");
-            $res = @$db->query("select * from ".$dsn['tableprefix']."options");
+        $optionsFromDB = array();
+        $cacheDBOptions = (((string) $sxe->options['cacheDBOptions']) != 'false');
+        $optionsMergeArray = array();
+        fwrite($fd, '//Line: ' . __LINE__ . "\n");
 
+        $oldinc = ini_get("include_path");
+        ini_set("include_path", realpath(dirname(__FILE__) . "/../../"));
+        @include_once ("MDB2.php");
+        $db = @MDB2::connect($dsn);
+        if (@MDB2::isError($db)) {
+            print $db->getMessage();
+            print "<br/>";
+            die("no DB connection possible. please check your permissions");
+        }
+        @$db->query("set names 'utf8'");
+        $notAllowedDBOptions = array();
+        if ($cacheDBOptions) {
             if (!@MDB2::isError($res)) {
-                while ($row = @$res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-                    //only use them, if they have a value
-                    if ($row['value']) {
-                        if ($row['isarray']) {
-                            $optionsFromDB[$row['name']]  = explode(";",html_entity_decode($row['value'],ENT_COMPAT,'UTF-8'));
-                        } else {
-                            $optionsFromDB[$row['name']] = html_entity_decode($row['value'],ENT_COMPAT,'UTF-8');
+
+                $res = @$db->query("select * from " . $dsn['tableprefix'] . "options");
+
+                if (!@MDB2::isError($res)) {
+                    while ($row = @$res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
+                        //only use them, if they have a value
+                        if ($row['value']) {
+                            if ($row['isarray']) {
+                                $optionsFromDB[$row['name']] = explode(";", html_entity_decode($row['value'], ENT_COMPAT, 'UTF-8'));
+                            } else {
+                                $optionsFromDB[$row['name']] = html_entity_decode($row['value'], ENT_COMPAT, 'UTF-8');
+                            }
                         }
                     }
+
+                } else {
+                    fwrite($fd, '//Line: ' . __LINE__ . "\n");
+                    fwrite($fd, "/*\n");
+                    fwrite($fd, "DB ERROR" . $res->getMessage());
+                    fwrite($fd, "\n*/\n");
                 }
-                include("popoon/pool.php");
-                include("bx/helpers/debug.php");
-
-                fwrite ($fd,'$bx_config->dbIsFourOne = ' . var_export(@popoon_pool::isMysqlFourOne($dsn,$db),true) . ";\n");
-                fwrite ($fd,'$bx_config->dbIsUtf8 = ' . var_export((@popoon_pool::isMysqlFourOne($dsn,$db) && @popoon_pool::isMysqlUTF8($dsn,$db)),true) . ";\n");
             }
-
-            ini_set("include_path",$oldinc);
-        } else {
-            $notAllowedDBOptions = array();
         }
+        include ("popoon/pool.php");
+        include ("bx/helpers/debug.php");
+
+        fwrite($fd, '$bx_config->dbIsFourOne = ' . var_export(@popoon_pool::isMysqlFourOne($dsn, $db), true) . ";\n");
+        fwrite ($fd,'$bx_config->dbIsUtf8 = ' . var_export((@popoon_pool::isMysqlFourOne($dsn,$db) && @popoon_pool::isMysqlUTF8($dsn,$db)),true) . ";\n");
+
+        ini_set("include_path", $oldinc);
 
         foreach($sxe->options->children() as $child) {
             $childName = dom_import_simplexml($child)->localName ;
