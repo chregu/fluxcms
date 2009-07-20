@@ -52,9 +52,16 @@ class bx_dbforms2_fields_query_distinct extends bx_dbforms2_field {
      *  @return type descr
      */
     private function _getValues() {
+        
+        print_r($this->attributes);
+        
         $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
         $db = $GLOBALS['POOL']->db;     
-        $query = 'select distinct('. $this->name. ') as _idfield from '. $tablePrefix.$this->parentForm->tableName .' ';
+        $query = 'SELECT distinct('. $this->name. ') as _idfield FROM ';
+        $query .=  $tablePrefix.$this->parentForm->tableName;
+        if($this->attributes['where'] != '' ) {
+            $query .= ' WHERE  '.$this->attributes['where'];
+        }
         $res = $db->query($query);
         $v = array('' => 'Please select...');
         if (!MDB2::isError($res)) {
@@ -78,7 +85,17 @@ class bx_dbforms2_fields_query_distinct extends bx_dbforms2_field {
         return $this->name;  
     }
     
-
+    /**
+     *  Returns an array containing all attributes which the field can handle.
+     *
+     *  @access public
+     *  @return array Field attributes
+     */
+    public function getConfigAttributes() {
+        $ret =  parent::getConfigAttributes();
+        $ret['where'] = 'string';
+        return $ret;
+    }
 
     
    
