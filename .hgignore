@@ -2,7 +2,10 @@ syntax:glob
 .svn
 .hgsvn
 *.orig
+*.rej
 syntax: regexp
 ^conf
 ^inc/popoon
 ^tmp
+^data
+^themes/3-cols
