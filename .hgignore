@@ -1,5 +1,8 @@
 syntax:glob
 .svn
 .hgsvn
-inc/popoon
-
+*.orig
+syntax: regexp
+^conf
+^inc/popoon
+^tmp
