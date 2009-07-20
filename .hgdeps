@@ -1,0 +1,3 @@
+[aliases]
+popoon cmd "svn co -r $rev https://svn.liip.ch/repos/public/popoon/trunk $dest"
+
