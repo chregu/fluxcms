@@ -16,7 +16,7 @@ class bx_init {
 
     static function start($configfile, $root = null,$configOptions = array()) {
         //start install, if no $configfile
-        if ($root ) {
+        if ($root) {
             define ('BX_INIT_ROOT',realpath($root).'/');
             self::$tmpdir = BX_INIT_ROOT.'tmp';
             self::$bxdir = BX_INIT_ROOT.'inc/bx';
@@ -91,6 +91,7 @@ class bx_init {
                 die();
             }
         }
+    //    print $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         if ($bx_config['defaultLanguage'] == 'auto') {
             $bx_config['defaultLanguage'] = popoon_helpers_lang::preferredBrowserLanguage($bx_config['outputLanguages']);
         }
