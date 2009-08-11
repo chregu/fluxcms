@@ -97,7 +97,7 @@ class bx_dbforms2_datasource_uid {
 
         
         $sql = "SELECT t2.value AS _id, t1.path as _title
-        FROM $table AS t1, $table AS t2 WHERE 
+        FROM $table, $table AS t1, $table AS t2 WHERE 
         $where
         t1.name='output-mimetype'
         AND t1.value='httpd/unix-directory' 

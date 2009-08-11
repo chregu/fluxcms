@@ -19,7 +19,7 @@
  * DOCUMENT_ME
  *
  * @package bx_dbforms2
- * @category 
+ * @category
  * @author Liip AG      <contact@liip.ch>
  */
 class bx_dbforms2_config {
@@ -35,13 +35,13 @@ class bx_dbforms2_config {
      *  @var xpath
      */
     protected $xpath = NULL;
-    
+
     /**
      *  Name of the currently loaded form
      *  @var name
      */
     protected $name = '';
-    
+
     /**
      *  constructor
      *
@@ -49,14 +49,14 @@ class bx_dbforms2_config {
      *  @access public
      */
     public function __construct($name = NULL) {
-        
+
         $this->dom = new DOMDocument();
         if(isset($name)) {
             $this->load($name);
         }
         $this->dom->xinclude();
     }
-    
+
     /**
      *  Loads a form configuration by its name. The default location for
      *  form configuration files is BX_PROJECT_DIR/dbforms2/formname.xml
@@ -64,14 +64,14 @@ class bx_dbforms2_config {
      *  @param  string $name Name of the form
      *  @access public
      *  @return boolean TRUE on success, FALSE otherwise
-     *                    
+     *
      */
     public function load($name) {
         $this->name = $name;
         $file = $this->getConfigFileByName($name);
         return $this->loadFromFile($file);
     }
-    
+
     /**
      *  Loads a form configuration from a file.
      *
@@ -84,7 +84,7 @@ class bx_dbforms2_config {
         if(!file_exists($file)) {
             throw new PopoonFileNotFoundException($file);
         }
-        
+
         if(@$this->dom->load($file)) {
             $this->xpath = new DOMXPath($this->dom);
             // register dbforms2 namespace
@@ -95,7 +95,7 @@ class bx_dbforms2_config {
         }
         return FALSE;
     }
-    
+
     /**
      *  Returns the name of the configuration file which corresponds to
      *  a form name.
@@ -108,7 +108,7 @@ class bx_dbforms2_config {
     public function getConfigFileByName($name) {
         return BX_PROJECT_DIR."dbforms2/$name.xml";
     }
-    
+
     /**
      *  Returns an array containing all fields of the current form.
      *
@@ -123,14 +123,14 @@ class bx_dbforms2_config {
         $fieldsNS = $this->xpath->query('dbform:field|dbform:group|dbform:nofield|dbform:form', $fieldsNode);
 
         foreach($fieldsNS as $field) {
-            
+
             switch($field->localName) {
                 case 'form';
-                    $name = $field->getAttribute('name');
-                    $form = $this->getForm($field);
-                    $fields[$name] = $form;
+                $name = $field->getAttribute('name');
+                $form = $this->getForm($field);
+                $fields[$name] = $form;
                 break;
-                
+
                 // field, nofield and group are subclasses of bx_dbforms2_field
                 case 'field':
                 case 'group':
@@ -144,15 +144,15 @@ class bx_dbforms2_config {
                     } else if($field->localName == 'nofield') {
                         $fieldInstance = $this->getNofieldInstance($type, $name);
                     }
-                    
+
                     if($fieldInstance instanceof bx_dbforms2_field) {
                         $fieldInstance->parentForm = $parentForm;
-                        
+
                         $attributeSet = $fieldInstance->getConfigAttributes();
                         $attributes = $this->getNodeAttributes($field, $attributeSet);
-                        
+
                         $fieldInstance->setAttributes($attributes);
-                        
+
                         // check if this field has values from the config file
                         if($fieldInstance->hasConfigValues()) {
                             $fieldInstance->setValues($this->getFieldValues($field));
@@ -160,21 +160,24 @@ class bx_dbforms2_config {
                         if(($default = $this->getDefaultFieldValue($field)) !== NULL) {
                             $fieldInstance->setDefaultValue($default);
                         }
-        
+
                         if($field->localName == 'field') {
                             // check if this field has a live select
                             $lsNS = $this->xpath->query('dbform:liveselect', $field);
                             if($lsNS->length > 0) {
                                 $lsNode = $lsNS->item(0);
-                                
+
                                 $type = $lsNode->getAttribute("type");
-                                
+
                                 if ($type == 'pagetree') {
                                     $liveSelect = new bx_dbforms2_liveselect_pagetree();
                                     $liveSelect->subtree = $lsNode->getAttribute('subtree');
+                                } else if ($type == 'uid') {
+                                    $liveSelect = new bx_dbforms2_liveselect_uid();
+                                    $liveSelect->subtree = $lsNode->getAttribute('subtree');
                                 } else {
                                     $liveSelect = new bx_dbforms2_liveselect();
-                                    
+
                                     $liveSelect->nameField = $lsNode->getAttribute('namefield');
                                     $liveSelect->whereFields = $lsNode->getAttribute('wherefields');
                                     $liveSelect->where = $lsNode->getAttribute('where');
@@ -184,40 +187,40 @@ class bx_dbforms2_config {
                                     $liveSelect->limit = $lsNode->getAttribute('limit');
                                     $liveSelect->setLeftJoin($lsNode->getAttribute('leftjoin'));
                                 }
-                                
+
                                 if(!$liveSelect->limit) {
                                     $liveSelect->limit  = 20;
                                 }
-                                    
+
                                 $liveSelect->getMatcher = $lsNode->getAttribute('getmatcher');
-                                
+
                                 $fieldInstance->liveSelect = $liveSelect;
                             }
                         } else if($field->localName == 'group') {
                             $fieldInstance->setFields($this->getFields($field, $parentForm));
-                        
+
                         } else if($field->localName == 'nofield') {
-                            $fieldInstance->setValue($field->getAttribute('value'));				
+                            $fieldInstance->setValue($field->getAttribute('value'));
                         }
-                        
+
                         $fields[$name] = $fieldInstance;
-                        
+
                     } else if($fieldInstance instanceof bx_dbforms2_form) {
                         $fields[$name] = $fieldInstance;
                     } else {
-                        throw new Exception("Cannot instanciate $name ($type)"); 
+                        throw new Exception("Cannot instanciate $name ($type)");
                     }
-                    
+
                 default:
-                break;
+                    break;
             }
-            
+
         }
-        
+
         return $fields;
-    
+
     }
-    
+
     /**
      *  Returns all values for the given field as an array.
      *
@@ -227,7 +230,7 @@ class bx_dbforms2_config {
      */
     protected function getFieldValues($fieldNode) {
         $values = array();
-        
+
         $valuesNS = $this->xpath->query('dbform:datasource', $fieldNode);
         foreach ($valuesNS as $valueNode) {
             $type = $valueNode->getAttribute("type");
@@ -235,26 +238,26 @@ class bx_dbforms2_config {
             $ds =  call_user_func(array( $className, 'getInstance'));
             $args = array();
             foreach ($valueNode->attributes as $attr) {
-                   $args[$attr->name] = $attr->value;
+                $args[$attr->name] = $attr->value;
             }
             if ($valueNode->firstChild) {
                 $childValue = $valueNode->firstChild->nodeValue;
             } else {
                 $childValue = null;
             }
-            
+
             $values = $ds->getValues($args,$childValue);
              
         }
-        
+
         $valuesNS = $this->xpath->query('dbform:value', $fieldNode);
         foreach ($valuesNS as $valueNode) {
             $values[$valueNode->getAttribute('name')] = $valueNode->textContent;
         }
-        
+
         return $values;
     }
-    
+
     /**
      *  Returns the default value for the given field.
      *
@@ -264,19 +267,19 @@ class bx_dbforms2_config {
      */
     protected function getDefaultFieldValue($fieldNode) {
         $fieldName = $fieldNode->getAttribute('name');
-        
+
         if($fieldNode->hasAttribute('default')) {
             return $this->replaceByRequestVar($fieldName, $fieldNode->getAttribute('default'));
         }
-            
+
         $valueNS = $fieldNode->getElementsByTagName('value');
-        
-        if($valueNS->length > 0)  
-            return $this->replaceByRequestVar($fieldName, $valueNS->item(0)->textContent);
-            
+
+        if($valueNS->length > 0)
+        return $this->replaceByRequestVar($fieldName, $valueNS->item(0)->textContent);
+
         return $this->replaceByRequestVar($fieldName, '');
     }
-    
+
     /**
      *  Replaces the given value by the request variable referenced in fieldName. If
      *  the request variable is NULL, the passed value will be returned.
@@ -290,7 +293,7 @@ class bx_dbforms2_config {
         if(isset($_REQUEST[$name])) {
             return $_REQUEST[$name];
         }
-        
+
         if ($value == '${userid}') {
             return bx_helpers_perm::getUserId();
         }
@@ -304,21 +307,21 @@ class bx_dbforms2_config {
      *  @return object Form object
      */
     public function getForm($formNode) {
-        
+
         $fieldsNS = $this->xpath->query("dbform:fields", $formNode);
         $fieldsNode = $fieldsNS->item(0);
 
         $form = new bx_dbforms2_form();
         $form->fields = $this->getFields($fieldsNode, $form);
         $form->chooser = $this->getChooser($formNode);
-        
+
         $formName = $formNode->getAttribute('name');
         if(!empty($formName)) {
             $form->name = $formName;
         } else {
             $form->name = $this->name;
         }
-        
+
         $form->tableName = $this->getTableName($formNode);
         $form->tablePrefix = $this->getTablePrefix($formNode);
         $form->title = $this->getFormTitle($fieldsNode);
@@ -332,18 +335,18 @@ class bx_dbforms2_config {
             $form->eventHandlers['php'][bx_dbforms2::EVENT_UPDATE_POST][] = $attributes['onsavephp'];
             unset($attributes['onsavephp']);
         }
-        
+
         $form->attributes = $attributes;
         if(!empty($form->attributes['thatidfield'])) {
             $fieldInstance = $this->getFieldInstance('hidden', $form->attributes['thatidfield']);
             $fieldInstance->parentForm = $form;
             $form->fields[] = $fieldInstance;
         }
-        
+
         $form->jsHrefs = $this->getJSHrefs();
         return $form;
     }
-    
+
     /**
      *  Returns the main form instance.
      *
@@ -354,8 +357,8 @@ class bx_dbforms2_config {
         $formNS = $this->xpath->query("/dbform:form");
         return $this->getForm($formNS->item(0));
     }
-    
-    
+
+
     /**
      *  Returns the chooser object for the given form node.
      *
@@ -364,7 +367,7 @@ class bx_dbforms2_config {
      *  @return object The chooser object of the given form.
      */
     public function getChooser($formNode) {
-        
+
         $chooserNS = $this->xpath->query("dbform:chooser", $formNode);
         $chooserNode = $chooserNS->item(0);
         if(!isset($chooserNode)) {
@@ -379,18 +382,18 @@ class bx_dbforms2_config {
         $chooser->limit = $chooserNode->getAttribute('limit');
 
         if(!$chooser->limit)
-            $chooser->limit = 20;
+        $chooser->limit = 20;
 
         $chooser->orderBy = $chooserNode->getAttribute('orderby');
-		$chooser->getMatcher = $chooserNode->getAttribute('getmatcher');
-		$chooser->notNullFields = $chooserNode->getAttribute('notnullfields');
+        $chooser->getMatcher = $chooserNode->getAttribute('getmatcher');
+        $chooser->notNullFields = $chooserNode->getAttribute('notnullfields');
         $chooser->tableName = $this->getTableName($formNode);
         $chooser->tablePrefix = $this->getTablePrefix($formNode);
-        
+
         $chooser->setLeftJoin($chooserNode->getAttribute('leftjoin'));
         return $chooser;
     }
-    
+
     /**
      *  Returns the title of a form.
      *
@@ -404,11 +407,11 @@ class bx_dbforms2_config {
             $fieldsNode = $fieldsNS->item(0);
         }
         if($fieldsNode && $fieldsNode->parentNode->hasAttribute('title'))
-            return $fieldsNode->parentNode->getAttribute('title');
-        
+        return $fieldsNode->parentNode->getAttribute('title');
+
         return '';
     }
-    
+
     /**
      *  Returns the table name of a form.
      *
@@ -419,14 +422,14 @@ class bx_dbforms2_config {
     protected function getTableName($formNode = NULL) {
         $fieldsNS = $this->xpath->query("dbform:fields", $formNode);
         $fieldsNode = $fieldsNS->item(0);
-        
+
         if($fieldsNode && $fieldsNode->hasAttribute('table')) {
             return $fieldsNode->getAttribute('table');
         }
-        
+
         return FALSE;
     }
-    
+
     /**
      *  Returns the table prefix of a form.
      *
@@ -437,13 +440,13 @@ class bx_dbforms2_config {
     protected function getTablePrefix($formNode = NULL) {
         $fieldsNS = $this->xpath->query("dbform:fields", $formNode);
         $fieldsNode = $fieldsNS->item(0);
-        
+
         if($fieldsNode && $fieldsNode->hasAttribute('tablePrefix')) {
             return $fieldsNode->getAttribute('tablePrefix');
         }
         return $GLOBALS['POOL']->config->getTablePrefix();
     }
-    
+
     /**
      *  Returns an instance of the given field type.
      *
@@ -456,7 +459,7 @@ class bx_dbforms2_config {
         $class = "bx_dbforms2_fields_$field";
         return new $class($name);
     }
-    
+
     /**
      *  Returns an instance of the given group type.
      *
@@ -469,7 +472,7 @@ class bx_dbforms2_config {
         $class = "bx_dbforms2_groups_$field";
         return new $class($name);
     }
-	
+
     /**
      *  Returns an instance of the given nofield type.
      *
@@ -482,7 +485,7 @@ class bx_dbforms2_config {
         $class = "bx_dbforms2_nofield_$field";
         return new $class($name);
     }
-    
+
     /**
      *  Returns an array with all attributes for the given field node and
      *  attribute set.
@@ -495,21 +498,21 @@ class bx_dbforms2_config {
     protected function getNodeAttributes($node, $attributeSet = NULL) {
         $attributes = array();
         foreach($attributeSet as $attribute => $type) {
-            
+
             $attributes[$attribute] = NULL;
             if($node->hasAttribute($attribute)) {
                 $value = $node->getAttribute($attribute);
-                
+
                 if($type === 'bool' || $type === 'boolean') {
                     $value = strtolower($value) === 'true' ? TRUE : FALSE;
-                } 
+                }
 
                 $attributes[$attribute] = $value;
             }
         }
         return $attributes;
     }
-    
+
     /**
      *  Returns an array containing all javascript hrefs defined for a form.
      *
@@ -518,7 +521,7 @@ class bx_dbforms2_config {
      */
     protected function getJSHrefs() {
         $hrefs = array();
-        
+
         $jsNS = $this->xpath->query("/dbform:form/dbform:javascript");
         foreach($jsNS as $jsNode) {
             if($jsNode->hasAttribute('src')) {
@@ -527,7 +530,7 @@ class bx_dbforms2_config {
         }
         return $hrefs;
     }
-    
+
     /**
      *  Returns all events handlers of the given type
      *
@@ -537,58 +540,58 @@ class bx_dbforms2_config {
      */
     protected function getEventHandlersByForm($node) {
         $ehandlers = array();
-        
+
         // <dbform:eventhandler event="insert_pre" type="php" handler="foo::bar"/>
-        
+
         $ehNS = $this->xpath->query("dbform:eventhandler", $node);
         foreach($ehNS as $ehNode) {
-            
+
             $type = $ehNode->getAttribute('type');
             $event = $ehNode->getAttribute('event');
             $handler = $ehNode->getAttribute('handler');
-            
+
             if(!empty($handler) && !empty($event)) {
-            
+
                 if(!isset($ehandlers[$type])) {
                     $ehandlers[$type] = array();
                 }
-                
+
                 switch($event) {
                     case 'select_pre':
                         $ehandlers[$type][bx_dbforms2::EVENT_SELECT_PRE][] = $handler;
-                    break;
+                        break;
                     case 'select_post':
                         $ehandlers[$type][bx_dbforms2::EVENT_SELECT_POST][] = $handler;
-                    break;
-    
+                        break;
+
                     case 'insert_pre':
                         $ehandlers[$type][bx_dbforms2::EVENT_INSERT_PRE][] = $handler;
-                    break;
+                        break;
                     case 'insert_post':
                         $ehandlers[$type][bx_dbforms2::EVENT_INSERT_POST][] = $handler;
-                    break;
-    
+                        break;
+
                     case 'update_pre':
                         $ehandlers[$type][bx_dbforms2::EVENT_UPDATE_PRE][] = $handler;
-                    break;
+                        break;
                     case 'update_post':
                         $ehandlers[$type][bx_dbforms2::EVENT_UPDATE_POST][] = $handler;
-                    break;
-    
+                        break;
+
                     case 'delete_pre':
                         $ehandlers[$type][bx_dbforms2::EVENT_DELETE_PRE][] = $handler;
-                    break;
+                        break;
                     case 'delete_post':
                         $ehandlers[$type][bx_dbforms2::EVENT_DELETE_POST][] = $handler;
-                    break;
+                        break;
                 }
             }
         }
 
         return $ehandlers;
     }
-    
-    
+
+
 }
 
 ?>
