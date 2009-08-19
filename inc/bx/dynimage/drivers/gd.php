@@ -45,7 +45,7 @@ class bx_dynimage_drivers_gd {
     public function saveImage($image, $filename, $imgType) {
         switch($imgType) {
             case IMAGETYPE_JPEG:
-                return imagejpeg($image, $filename);
+                return imagejpeg($image, $filename, 90);
             case IMAGETYPE_PNG:
                 return imagepng($image, $filename);
             case IMAGETYPE_GIF:
