@@ -107,7 +107,7 @@ class bx_notifications_mailsmtp extends bx_notification {
 
         $cs = strtoupper($options['charset']);   
         //make correct 7bit header for the subject
-        $subject = preg_replace('~([\xA0-\xFF])~e', '"=?$cs?Q?=" . strtoupper(dechex(ord("$1"))) . "?="', $subject);
+        $subject = '=?'.$cs.'?B?'.base64_encode($subject).'?=';
         if ($GLOBALS['POOL']->config->logMails == 'true') {
             foreach($headers as $key=>$row) {
                 $logHeaders .= "$key: $row".PHP_EOL;
