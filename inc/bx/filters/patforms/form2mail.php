@@ -20,6 +20,12 @@ class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
 
         $emailSubject = !empty($params['subjectTemplateKey']) ? $this->getText($params['subjectTemplateKey']) : '';
 
+        if (!$emailSubject) {
+            if ((!empty($params['subjectField']) && !empty($fields[$params['subjectField']]))) {
+                $emailSubject = $fields[$params['subjectField']];
+            }
+        }
+
         if (strpos($emailSubject, "\n") !== FALSE or strpos($emailSubject, "\r") !== FALSE) {
             return FALSE;
         }
