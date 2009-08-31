@@ -142,7 +142,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="http://www.popoon.org">
+                    <a href="http://liip.to/popoon">
                         <img src="{$webrootThemes}{$theme}/buttons/popoon.png" width="80" height="15" alt="Powered by Popoon" border="0"/>
                     </a>
                     
