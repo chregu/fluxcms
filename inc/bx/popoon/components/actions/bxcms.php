@@ -69,7 +69,6 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             //shorturl if it starts with a .
             if (substr($fulluri,0,2) == '/.') {
 
-                bx_helpers_shorturl::getCode('/foo/bar');
                 $sh = new bx_helpers_shorturl();
                 $url = $sh->getUrlFromCode(substr($fulluri,2));
                 if ($url) {
