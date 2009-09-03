@@ -42,6 +42,8 @@ if (MDB2::isError($res)) {
     throw new PopoonDBException($res);
 }
 
+$used = array();
+
 foreach($res as $row) {
     $path = $row['path'];
     
@@ -51,13 +53,21 @@ foreach($res as $row) {
     
     $id = $coll->getProperty('unique-id');
     if(!$id) {
-        $id = bx_helpers_sql::nextSequence() ;
+        $id = bx_helpers_sql::nextSequence();
         $coll->setProperty('unique-id', $id);
         echo " Generating uid -> ($id)";
     }
-    else {
+    else if(isset($used[$id])) {
+        echo "<br /><span style=\"color:red;\">Duplicate id !</span><br />";
+        $old = $id;
+        $id = bx_helpers_sql::nextSequence();
+        $coll->setProperty('unique-id', $id);
+        echo " Correcting uid ($old -> $id)";
+    }
+    else {      
         echo " has uid $id ";
     }
+    $used[$id] = $id;
     echo "<br>";
 }
 
