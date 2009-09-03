@@ -496,7 +496,7 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
         */
         new bx_collection($to, $this->mode, true);
         foreach (bx_resourcemanager::getAllProperties($this->uri) as $key => $value) {
-            if ($value['name'] != 'parent-uri') {
+            if ($value['name'] != 'parent-uri' AND $value['name'] != 'unique-id') {
                 bx_resourcemanager::setProperty($to,$value['name'],$value['value'],$value['namespace']);
             }
         }
