@@ -384,6 +384,7 @@ function dbforms2_liveselect_queryfield(DOMNode, chooser) {
     this._onKeyUpTimeout = function() {
         if(this.currentQuery != this.DOMNode.value) {
             this.currentQuery = this.DOMNode.value
+            this.chooser.currentPage = 0;
             this.chooser.query(this.currentQuery);
         }
     }
@@ -509,7 +510,8 @@ function dbforms2_liveselect_entry() {
     var title = '';
     var results = null;
     
-    this.e_onMouseDown = function() {
+    this.e_onMouseDown = function(e) {
+        e.preventDefault();
         this.results.chooser.onChoose(this);
     }
     
