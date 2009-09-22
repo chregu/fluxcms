@@ -102,6 +102,10 @@ class bx_plugins_file extends bx_plugin implements bxIplugin {
             foreach ($dir  as $file) {
 
                 $name = $file->getFileName();
+                if(!bx_helpers_string::isUtf8($name)) {
+                    $name = utf8_encode($name);
+                }
+                
                 if (strpos($name,".") === 0) {
                     continue;
                 }
