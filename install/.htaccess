@@ -1,4 +1,0 @@
-# need that to check if allowoverride is ok
-php_value include_path ".:/dummy/"
-
-
