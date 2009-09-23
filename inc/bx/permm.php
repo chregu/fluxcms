@@ -121,6 +121,10 @@ Class bx_permm {
         return $this->authObj->getUserGid();
     }
     
+    public function getStatus() {
+        return $this->authObj->getStatus();
+    }
+    
     public function isLoggedIn() {
         if ($this->getUsername()) {
             return true;
