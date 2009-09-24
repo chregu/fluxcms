@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+
+<properties>
+    <title>CMS Properties</title>
+    <text>
+        Some general info we need to know for the installation process. Currently, this is only the subdirectory, where the CMS is installed (empty if you installed the CMS in your DOCUMENT_ROOT).
+        </text>
+    <property name="dir.sub" value="php:subdir" canBeEmpty="true">Directory relative to DOCUMENT_ROOT</property> 
+        
+    <title>CMS Admin User</title>
+    <text>
+    This is the user for logging in into the admin of BxCMS later.
+    </text>
+    <property name="cms.user" value="admin" required="true">Login name of the CMS User</property> 
+    <property name="cms.password" value="" required="true">Password for the CMS User </property>
+    <title>MySQL Database and User Properties</title> 
+    <text>
+    These are the parameters for connection to your database in MySQL. 
+    </text>
+    <property name="database.name" value="bitflux_free">Name of the database for the cms</property>
+    <property name="database.user" value="free_bitflux_org">Name of the database user</property>
+    <property name="database.password" value="">Password of the database user </property>
+    <property name="database.host" value="localhost">Name of the database host</property>
+    <property name="database.prefix" value="bxcms_" canBeEmpty="true" >prefix for db tables</property>
+    
+    <title>MySQL  Root Properties</title>
+    <text>
+    These are the parameters for setting up the above database table [database.name] and the needed user.<br/>
+    If you already have created the database and the user, leave the [databaseRoot.User] field empty and the installation
+    routine will skip this part.
+    </text>
+    
+    <property name="databaseRoot.User" value="root">Name of the database admin </property>
+    <property name="databaseRoot.Password" value="yourpassword" canBeEmpty="true">Passwort of the database admin</property>
+
+</properties>
