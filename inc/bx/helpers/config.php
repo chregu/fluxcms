@@ -13,6 +13,10 @@ class bx_helpers_config {
         
     }
     
+    static function getOutputLang() {
+        return $GLOBALS['POOL']->config->getOutputLanguage();
+    }
+    
     static function getOption($option,$forceTouch = false) {
       
          return self::getProperty($option, $forceTouch);
