@@ -1,8 +1,0 @@
-<?xml version="1.0"?> 
- 
-<bxcms xmlns="http://bitflux.org/config"> 
-    <plugins> 
-        <parameter name="xslt" type="pipeline" value="../../../themes/tabaction/admin/mnetadmin.xsl"/> 
-        <plugin type="admin_mnetadmin" admin="true"></plugin> 
-    </plugins> 
- </bxcms> 
