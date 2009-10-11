@@ -149,7 +149,7 @@
                         </td>
                         <td></td>
                         
-                        <td rowspan="11" width="18%" valign="top" nowrap="nowrap">
+                        <td rowspan="13" width="18%" valign="top" nowrap="nowrap">
                                                     <div style="white-space: nowrap" class="scrollbox" id="categories">
                                                     <i18n:text>Categories:</i18n:text><br/>
                             <xsl:variable name="allcats" select="document(concat('blog://',$collectionUriOfId,'categories.xml'))"/>
