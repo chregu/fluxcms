@@ -234,6 +234,9 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             } else {
                 $expires = 10;
             }
+            
+            $GLOBALS['POOL']->config->uniqueId = bx_resourcemanager::getProperty($collection->uri,"unique-id");
+            
             $GLOBALS['POOL']->config->expires = $expires;
             $a =  array(
 
@@ -248,7 +251,6 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 'webrootLang' => BX_WEBROOT_LANG,
                 'fileNumber' => $fileNumber
             );
-
             $a = array_merge($a,$collection->getPipelineParametersByRequest($filename,$ext));
             $a = array_merge($a,$collection->getPipelineProperties());
             //Do we need that?

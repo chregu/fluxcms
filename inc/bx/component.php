@@ -84,7 +84,9 @@ class bx_component {
                 case "collUri":
                     return $this->getCurrentRequest('collUri');
                 case "id":
-                    return $this->getCurrentRequest('id');
+                    return $this->getCurrentRequest('id');                
+                case "uid":
+                    return $GLOBALS['POOL']->config->uniqueId;
                 case "filename":
                     $id = $this->getCurrentRequest('id');
                        
