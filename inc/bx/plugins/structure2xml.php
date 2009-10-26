@@ -39,7 +39,7 @@ class bx_plugins_structure2xml extends bx_plugin implements bxIplugin {
     }
     
     public function getIdByRequest ($path, $name = NULL, $ext = NULL) {
-        return "$name";
+        return 'structure2xml'.$name;
     } 
     
     public function getContentById($path, $id) {
