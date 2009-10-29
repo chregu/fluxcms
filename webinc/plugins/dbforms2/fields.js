@@ -236,9 +236,12 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
     var editorInstance = null;
     var valueSet = false;
     var height = 0;
+    var fckId = null;
 
     this.init = function(DOMNode) {
 		this.initField(DOMNode);
+        
+        this.fckId = this.form.name+'_'+this.id;
 
         this.lastValue = this.defaultValue;
 	
@@ -246,7 +249,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
         dbforms2_fckEditors[this.id]['context'] = this;
         dbforms2_fckEditors[this.id]['method'] = this.eFCK_OnComplete;
         
-        var oFCKeditor = new FCKeditor(this.id);
+        var oFCKeditor = new FCKeditor(this.fckId);
         oFCKeditor.BasePath	= fckBasePath;
 
         if(DOMNode.hasAttribute && DOMNode.hasAttribute('height') && DOMNode.getAttribute('height') !== '' && DOMNode.getAttribute('height') !== '0') {
@@ -281,7 +284,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
 	this.setValue = function(value) {
 		// Get the editor instance that we want to interact with.
 		if (typeof FCKeditorAPI  != "undefined") {
-			var oEditor = FCKeditorAPI.GetInstance(this.id) ;
+			var oEditor = FCKeditorAPI.GetInstance(this.fckId) ;
 
             // Set the editor contents (replace the actual one).
 			if (oEditor.SetHTML) {
@@ -302,7 +305,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
 	
 	this.getValue = function(value) {
 		// Get the editor instance that we want to interact with.
-		var oEditor = FCKeditorAPI.GetInstance(this.id) ;
+		var oEditor = FCKeditorAPI.GetInstance(this.fckId) ;
 		return oEditor.GetXHTML(true);
 	}
     
@@ -314,7 +317,7 @@ function dbforms2_field_text_wysiwyg(DOMNode) {
     
     this.hasChanged = function() {
 		if (typeof FCKeditorAPI  != "undefined") {
-            var oEditor = FCKeditorAPI.GetInstance(this.id);
+            var oEditor = FCKeditorAPI.GetInstance(this.fckId);
             var value = oEditor.GetXHTML(true);
             if(value != this.lastValue) {
                 return true;
