@@ -67,14 +67,6 @@ dbforms2.init = function(formConfig) {
     this.mainform.toolbar = new dbforms2_toolbar();
     this.mainform.initToolbar();
     this.mainform.toolbar.lockAllButtons();
-    
-    // set client-side event handlers
-    if(formConfig['onSaveJS']) {
-        this.mainform.eventHandlers['onSaveJS'] = formConfig['onSaveJS'];
-    }
-    if(formConfig['onLoadJS']) {
-        this.mainform.eventHandlers['onLoadJS'] = formConfig['onLoadJS'];
-    }
 
 	// check if an id has been passed via url and load the corresponding entry if so
     this.parseUrlParams();

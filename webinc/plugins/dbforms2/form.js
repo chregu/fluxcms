@@ -39,7 +39,14 @@ function dbforms2_form() {
         this.relationtype = formConfig['relationtype'];
         this.thisidfield = formConfig['thisidfield'];
         this.thatidfield = formConfig['thatidfield'];
-        
+
+        if(formConfig['onSaveJS']) {
+            this.eventHandlers['onSaveJS'] = formConfig['onSaveJS'];
+        }
+        if(formConfig['onLoadJS']) {
+            this.eventHandlers['onLoadJS'] = formConfig['onLoadJS'];
+        }
+
         var fieldID;
         var fields = formConfig['fields'];
         for(fieldID in fields) {
