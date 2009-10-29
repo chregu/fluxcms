@@ -59,6 +59,9 @@ class bx_dbforms2_fields_listview_12n extends bx_dbforms2_fields_listview {
             $query.= ' LEFT JOIN '.$this->replaceTablePrefix($this->attributes['leftjoin']);
         }
         $query.= ' WHERE '.$table.'.'.$this->attributes['thatidfield'].' = '.$GLOBALS['POOL']->db->quote($thatid);
+        if(!empty($this->attributes['where'])) {
+            $query.= ' AND '.$this->attributes['where'];
+        }
         $query.= ' ORDER BY '.$this->replaceTablePrefix($this->attributes['orderby']);
         return $query;
     }

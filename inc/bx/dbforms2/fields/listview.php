@@ -35,6 +35,7 @@ class bx_dbforms2_fields_listview extends bx_dbforms2_field {
         $ret['namefield'] = 'string';
         $ret['orderby'] = 'string';
         $ret['leftjoin'] = 'string';
+        $ret['where'] = 'string';
         return $ret;
     }
     
