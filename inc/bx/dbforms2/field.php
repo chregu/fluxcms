@@ -190,6 +190,7 @@ class bx_dbforms2_field {
             'descr' => 'string', 
             'isxml' => 'bool',
             'onkeyup' => 'string',
+            'onchange' => 'string',
             'nosql' => 'bool',
             'disabled' => 'bool',
         );
@@ -260,6 +261,10 @@ class bx_dbforms2_field {
         
         if(isset($this->attributes['onkeyup'])) {
             $ret['onkeyup'] = $this->attributes['onkeyup'];    
+        }
+
+        if(isset($this->attributes['onchange'])) {
+            $ret['onchange'] = $this->attributes['onchange'];    
         }
 
         if($this->attributes['disabled'] === TRUE) {
