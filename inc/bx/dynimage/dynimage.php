@@ -29,6 +29,8 @@ class bx_dynimage_dynimage {
     protected $validator = array();
     protected $filters = array();
     protected $doCache = true;
+    protected $outputContentType;
+    protected $additionalFileTypes = array('tif','tiff','pdf','psd', 'ps');
     
     public function __construct($request) {
         $this->request = $request;
@@ -45,6 +47,7 @@ class bx_dynimage_dynimage {
         
         $this->originalFilename = BX_PROJECT_DIR.bx_dynimage_request::getOriginalFilenameByRequest($this->request);
         $this->cacheFilename = BX_PROJECT_DIR.$this->getCacheFilenameByRequest($this->request);
+        $this->outputContentType = popoon_helpers_mimetypes::getFromFileLocation($this->cacheFilename);
 
         if(!$this->cacheFileIsValid() || !$this->doCache) {
             if(!is_readable($this->originalFilename))
@@ -55,14 +58,43 @@ class bx_dynimage_dynimage {
             // set the current working image to be nothing
             $currentImage = FALSE;
             
-            // get the size of the resulting image
-            $imgOriginalSize = array();
+            // try to get the size of the original image
             $imgSize = getimagesize($this->originalFilename);
-            $this->originalImageType = $imgSize[2];
+            
+            if($imgSize === FALSE || ($imgSize!==FALSE && !$this->driver->isImgTypeSupported($imgSize[2]))) {
+                
+                // check if we can convert the file using imagemagick
+                if(($convertedImageFileName = $this->preprocessImage())!==FALSE) {
+                    // overwrite original file name and reread original image size, type and output content type
+                    $imgSize = getimagesize($convertedImageFileName);
+                    $this->originalFilename = $convertedImageFileName;
+                    $this->outputContentType = 'image/jpeg';
+                    
+                    // preprocess converts to jpg
+                    $this->originalImageType = IMAGETYPE_JPEG;
+                    
+                    // create the working image;
+                    $currentImage = $this->driver->getImageByFilename($this->originalFilename, $this->originalImageType);
+                    
+                    // delete the temp file
+                    unlink($convertedImageFileName);
+                    
+                } else {
+                    die('unsupported file type');
+                }
+            } else {
+                // set original image type
+                $this->originalImageType = $imgSize[2];
+                $currentImage = $this->driver->getImageByFilename($this->originalFilename, $this->originalImageType);
+            }
+            
+            $imgOriginalSize = array();
             $imgOriginalSize['w'] = $imgSize[0];
             $imgOriginalSize['h'] = $imgSize[1];
+            
+            // get the size of the resulting image
             $imgEndSize = $this->filters[0]->getEndSize($imgOriginalSize);
-            $currentImage = $this->driver->getImageByFilename($this->originalFilename, $this->originalImageType);
+            
             
             foreach($this->filters as $filter) {
                 if($filter->getFormat() == $this->driver->getFormat()) {
@@ -75,7 +107,7 @@ class bx_dynimage_dynimage {
             $this->driver->saveImage($currentImage, $this->cacheFilename, $this->originalImageType);
         }
 
-        header('Content-type: '.popoon_helpers_mimetypes::getFromFileLocation($this->cacheFilename));
+        header('Content-type: '.$this->outputContentType);
         
         if($this->doCache) {
             header('Last-Modified: '.date('r', $this->lastModified));
@@ -94,7 +126,12 @@ class bx_dynimage_dynimage {
      
     protected function getCacheFilenameByRequest($request) {
         $p = bx_dynimage_request::getPartsByRequest($request);
-        return 'dynimages/'.$p['parameterstring'].$p['filename']; 
+        $cfName = 'dynimages/'.$p['parameterstring'].$p['filename'];
+        $info = pathinfo($cfName);
+        if(in_array($info['extension'], $this->additionalFileTypes)) {
+            $cfName.='.jpg';
+        }
+        return $cfName; 
     }
     
     protected function cacheFileIsValid() {
@@ -125,6 +162,37 @@ The requested URL '.$_SERVER['REQUEST_URI'].' was not found on this server.<P>
 
 </BODY></HTML>';
         die();   
+    }
+    
+    protected function preprocessImage() {
+     
+        $info = pathinfo($this->originalFilename);
+        
+        if(in_array($info['extension'], $this->additionalFileTypes)) {
+            $tmpfile = tempnam(BX_TEMP_DIR, 'dynimg_');
+            
+            $origFile = $this->originalFilename;
+            
+            if($info['extension']=='pdf' || $info['extension']=='ps') {
+                $origFile.= '[0]';
+            }
+            
+            $command = 'convert';
+            $command.= " ".escapeshellarg($origFile);
+            $command.= " jpg:".escapeshellarg($tmpfile);
+            
+            exec($command, $output, $exitcode);
+            if($exitcode===0) {
+                return $tmpfile;
+            } else {
+                return FALSE;
+            }
+            
+        } else {
+            return FALSE;
+        }
+        
+        
     }
     
     

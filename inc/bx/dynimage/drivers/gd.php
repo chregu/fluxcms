@@ -25,6 +25,9 @@
 class bx_dynimage_drivers_gd {
     
     public $name = 'gd';
+    protected $supportedImgTypes = array(
+        IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_PNG        
+    );
 
     public function getFormat() {
         return 'gd';
@@ -52,6 +55,10 @@ class bx_dynimage_drivers_gd {
                 return imagegif($image, $filename);
         }
         return FALSE;
+    }
+    
+    public function isImgTypeSupported($imgType) {
+        return in_array($imgType, $this->supportedImgTypes);
     }
     
 }
