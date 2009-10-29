@@ -28,15 +28,25 @@ class bx_dbforms2_fields_text extends bx_dbforms2_field {
         parent::__construct($name);
         $this->type = 'text';
         $this->XMLName = 'input';
+
+        $this->attributes['size'] = 80;
+        $this->attributes['maxlength'] = 255;
+    }
+    
+    public function getConfigAttributes() {
+        $ret =  parent::getConfigAttributes();
+        $ret['size'] = 'int';
+        $ret['maxlength'] = 'int';
+        
+        return $ret;
     }
     
     protected function getXMLAttributes() {
         return array(
-            'size' => 80,
-            'maxlength' => 255
+            'size' => $this->attributes['size'],
+            'maxlength' => $this->attributes['maxlength'],
         );
     }
     
 }
 
-?>
