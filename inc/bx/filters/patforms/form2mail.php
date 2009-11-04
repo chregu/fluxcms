@@ -4,6 +4,8 @@ class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
 
     public function submitFields($params, $fields) {
 
+        print_r($fileds);
+        
         $options = array();
         $options['charset'] = !empty($params['charset']) ? $params['charset'] : "UTF-8";
 
