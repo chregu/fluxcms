@@ -584,6 +584,13 @@ class bx_dbforms2_config {
                     case 'delete_post':
                         $ehandlers[$type][bx_dbforms2::EVENT_DELETE_POST][] = $handler;
                         break;
+
+                    case 'copy_pre':
+                        $ehandlers[$type][bx_dbforms2::EVENT_COPY_PRE][] = $handler;
+                    break;
+                    case 'copy_post':
+                        $ehandlers[$type][bx_dbforms2::EVENT_COPY_POST][] = $handler;
+                    break;
                 }
             }
         }

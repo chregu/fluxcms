@@ -5,6 +5,7 @@ function dbforms2_form() {
     this.name = '';
     this.currentID = 0;
     this.insertID = 0;
+    this.originalID = 0;
     this.idField = 'id';
     this.dataURI = '';
     this.formData = new dbforms2_formData();
@@ -459,6 +460,14 @@ function dbforms2_form() {
         if(this.currentID == 0 && this.insertID != 0) {
             xml.documentElement.setAttribute('insertid', this.insertID);
         }
+
+        
+        // pass original entry id to the server
+        if(this.parentForm == null && this.currentID == 0 && this.originalID != 0) {
+            dbforms2_log.log('OriginalID' + this.originalID  );
+            xml.documentElement.setAttribute('originalID', this.originalID);
+            this.originalID = 0;
+        }
         
         this.startTransportTimeout();
 		this.transport.saveXML(uri, xml);
@@ -473,10 +482,17 @@ function dbforms2_form() {
      *
      */
     this.saveFormDataAsNew = function() {
+        this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_SAVEASNEW_PRE);
+        
+        // keep current id to enable for recognition of a copied entry on the server side
+        this.originalID = this.currentID
+        
         // reset current id and then save => will create a new record
         this.currentID = 0;
         this.changed = true;
         this.saveFormData();
+        
+        this.callInternalEventHandlers(DBFORMS2_EVENT_FORM_SAVEASNEW_POST);
     }
     
     /**

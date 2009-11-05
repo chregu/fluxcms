@@ -35,6 +35,8 @@ class bx_dbforms2 {
     const EVENT_DELETE_PRE  = 7;
     const EVENT_DELETE_POST = 8;
 
+    const EVENT_COPY_PRE    = 9;
+    const EVENT_COPY_POST   = 10;
     
 }
 

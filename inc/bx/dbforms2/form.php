@@ -73,6 +73,12 @@ class bx_dbforms2_form {
     public $currentID = 0;
 
     /**
+     *  Id of the original entry if a entry is to be copied
+     *  @var originalID
+     */
+    public $originalID = 0;
+
+    /**
      *  Form attributes
      *  @var attributes
      */

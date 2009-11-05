@@ -101,7 +101,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                 // get values as an array
                 $values = bx_dbforms2_data::getValuesByXML($form, $xmlData);
                 $form->setValues($values);
-
+                
                 // set current form id
                 if (isset($values[$form->idField]) && $form->idField) {
                     $form->currentID = $values[$form->idField];
@@ -126,7 +126,7 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                         if ($form->currentID == 0) {
                             // create a new entry
                             $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
-
+                            
                             $insertid = $xmlData->documentElement->getAttribute('insertid');
                             if (!empty($insertid)) {
                                 $form->currentID = $insertid;
@@ -156,6 +156,14 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     // 0 means everthing went ok and as expected
                     $responseCode = 0;
                     $responseText = 'id = ' . $form->currentID;
+
+                    // check if this entry is being copied and call the correspondig
+                    // event handler if so
+                    $originalID = $xmlData->documentElement->getAttribute('originalID');
+                    if (!empty($originalID)) {
+                        $form->originalID = $originalID;
+                        $form->callEventHandlers(bx_dbforms2::EVENT_COPY_PRE);
+                    }
                 }
 
                 $dataDOM = NULL;
