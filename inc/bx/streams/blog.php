@@ -414,13 +414,13 @@ class bx_streams_blog extends bx_streams_buffer {
         /*$servicesExtended = array("http://rpc.pingomatic.com/","http://planet.freeflux.net/ping/");
         $servicesOld = array("http://rpc.technorati.com/rpc/ping");*/
 
-        $servicesExtended = bx_helpers_config::getProperty("blogWeblogsPing",true);
-        if (! is_array($servicesExtended)) {
-		 $servicesExtended = array( $servicesExtended);
-	}
+        $services = bx_helpers_config::getProperty("blogWeblogsPing",true);
+        if (! is_array($services)) {
+            $services = array( $services);
+        }
         if ($fixed =  trim(bx_helpers_config::getProperty("blogWeblogsPingFixed",true))) {
-            $servicesExtended[] = $fixed;
-            $servicesExtended = array_unique($servicesExtended);
+            $services[] = $fixed;
+            $services = array_unique($services);
         }
 
         $blogname = bx_helpers_config::getProperty("blogname");
@@ -428,45 +428,34 @@ class bx_streams_blog extends bx_streams_buffer {
             $blogname = bx_helpers_config::getProperty("sitename");
         }
         $url = BX_WEBROOT. substr(bx_collections::getCollectionUri($this->path),1);
-        include_once("XML/RPC.php");
-        $rpcName = new XML_RPC_Value($blogname, 'string');
-        $rpcUrl= new XML_RPC_VALUE($url,'string');
-        $rpcCheckUrl = new XML_RPC_VALUE($url,'string');
-        $rpcRssUrl= new XML_RPC_VALUE($url.'rss.xml','string');
-
-        $params = array($rpcName, $rpcUrl, $rpcCheckUrl, $rpcRssUrl);
-        $msg = new XML_RPC_Message('weblogUpdates.extendedPing', $params);
-        foreach ($servicesExtended as $host) {
-            $parts = parse_url($host);
-            $cli = new XML_RPC_Client($parts['path'], $parts['host']  );
-            $resp = $cli->send($msg, 5);
-
-            if (!$resp) {
-                error_log( 'WeblogsPing: Communication error: ' . $cli->errstr);
-                continue;
-            }
-            if (!$resp->faultCode()) {
-                error_log('WeblogsPing: Pinging to ' . $host . ' succeeded');
-                //return true;
-            } else {
-                error_log("WeblogsPing: Pinging $host didn't work :  " . $resp->faultCode() . " " . $resp->faultString());
-            }
-        }
-
-
-        //send SUP to friendfeed
-
-        $supid = self::getSUPid();
-
-        $ch = curl_init("http://friendfeed.com/api/public-sup-ping?supid=".$supid."&url=".$url."rss.xml");
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        curl_exec($ch);
-        curl_close($ch);
-
-
-
+        
+        
+        $noti = new lx_notifier();
+        
+        $checkurl = $url;
+        
+        $mainfeed = $url ."rss.xml";
+        
+        $topicurls = array(
+            $url . 'atom.xml',
+            $mainfeed
+        );
+        
+        $noti->addWeblogUpdates(array($mainfeed), $services, $url, $blogname, $checkurl );
+        
+        /*
+        $clouds = array('http://rpc.rsscloud.org:5337/rsscloud/ping');
+        $noti->addRssClouds($topicurls,$clouds);
+        */
+        
+        $hubs = array("http://pubsubhubbub.appspot.com");
+        $noti->addPubSubHubs($topicurls, $hubs);
+        
+        $supid = self::getSUPId();
+        $noti->addSup("http://friendfeed.com/api/public-sup-ping?supid=" . $supid . "&url=" . $mainfeed);
+        
+        $noti->notifyAll();
+        
         }
 
     }
@@ -820,6 +809,10 @@ class bx_streams_blog extends bx_streams_buffer {
     static function getSUPid() {
         return "flx-".substr(md5(str_replace("http://www.","http://",BX_WEBROOT)),0,10);
     }
+    
+    // maybe put this into a helper
+  
+
 }
 
 class bx_streams_blog_post {
