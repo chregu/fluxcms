@@ -189,11 +189,19 @@ class bx_collections {
                 
                     // reappend extension if it wasn't empty
                     //    $fulluri .= !empty($parts['ext']) ?  ".$parts[ext]" : '';
+                    $_SESSION['lang'] = $match[1];
                     return array($fulluri, $match[1]);
                 }
             } 
         }
-        
+        // no specific language has been requested. If browser language 
+        // detection is on and no language is set in the session, get the
+        // browser language.
+        if($GLOBALS['POOL']->config->getConfProperty('detectBrowserLanguage') == 'true' && !isset($_SESSION['lang'])) {
+            $browserLang = popoon_helpers_lang::preferredBrowserLanguage($GLOBALS['POOL']->config->outputLanguages);
+            $_SESSION['lang'] = $browserLang;
+        }
+
         return array($fulluri, BX_DEFAULT_LANGUAGE);
     }
         

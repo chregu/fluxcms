@@ -137,6 +137,7 @@ class bx_plugins_admin_siteoptions extends bx_plugins_admin implements bxIplugin
         
         $this->addOption("outputLanguages","text",$dom,array("help"=>$i18n->translate("help_outputlanguages")));
         $this->addOption("defaultLanguage","text",$dom,array("help"=>$i18n->translate("help_defaultlanguage")));
+        $this->addSelectOption("detectBrowserLanguage",array('false' => 'No', 'true' => 'Yes'),$dom,array("help"=>$i18n->translate("help_detectbrowserlanguage")));
         
         $this->addSelectOption("blogShowOnlyOneLanguage",array(
         'false' => "No",

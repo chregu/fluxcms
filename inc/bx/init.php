@@ -92,9 +92,9 @@ class bx_init {
             }
         }
     //    print $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        if ($bx_config['defaultLanguage'] == 'auto') {
+        if ($bx_config['defaultLanguage'] == 'auto') { // legacy code kept for bc compatibility 
             $bx_config['defaultLanguage'] = popoon_helpers_lang::preferredBrowserLanguage($bx_config['outputLanguages']);
-        }
+        } 
         if (!defined('BX_DEFAULT_LANGUAGE')) {
             define('BX_DEFAULT_LANGUAGE',$bx_config['defaultLanguage']);
         }

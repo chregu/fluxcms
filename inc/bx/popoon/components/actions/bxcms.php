@@ -117,7 +117,22 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 $fulluri .= "index.html";
             }
 
+            $req_fulluri = $fulluri;
             list($fulluri, $lang) = bx_collections::getLanguage($fulluri);
+            if(isset($_SESSION['lang']) && $_SESSION['lang'] != $lang) {
+                header("Location: /" . $_SESSION['lang'] . $fulluri, true, 301);
+                die();
+            }
+            // if the default language is requested specifically (if you change 
+            // from another language) redirect to the full uri without the language
+            // prefix. If this is a POST request don't redirect, otherwise some existing
+            // forms might break
+            if((strpos($req_fulluri, '/'.BX_DEFAULT_LANGUAGE.'/') === 0
+                || strpos($req_fulluri, BX_DEFAULT_LANGUAGE.'/') === 0)
+                && empty($_POST)) {
+                header("Location: " . $fulluri, true, 301);
+                die();
+            }
             $GLOBALS['POOL']->config->setOutputLanguage($lang);
 
             //comma to GET parameter...
