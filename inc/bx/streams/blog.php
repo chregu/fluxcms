@@ -4,111 +4,111 @@ class bx_streams_blog extends bx_streams_buffer {
 
     static $tablePrefixes = array();
 
-    static $adminPlugins = array("plazes","geoloc");
+    static $adminPlugins = array(
+            "plazes",
+            "geoloc"
+    );
 
     private $tidyOptions = array(
-    "output-xhtml" => true,
-    "show-body-only" => true,
+            "output-xhtml" => true,
+            "show-body-only" => true,
 
-    "clean" => true,
-    "wrap" => "350",
-    "indent" => true,
-    "indent-spaces" => 1,
-    "ascii-chars" => false,
-    "wrap-attributes" => false,
-    "alt-text" => "",
-    "doctype" => "loose",
-    "numeric-entities" => true,
-    "drop-proprietary-attributes" => true
+            "clean" => true,
+            "wrap" => "350",
+            "indent" => true,
+            "indent-spaces" => 1,
+            "ascii-chars" => false,
+            "wrap-attributes" => false,
+            "alt-text" => "",
+            "doctype" => "loose",
+            "numeric-entities" => true,
+            "drop-proprietary-attributes" => true
     );
 
     private $zeroDate = "0000-00-00 00:00:00";
 
     function contentOnRead($path) {
-        $parts =  bx_collections::getCollectionAndFileParts($path, "output");
-        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $parts = bx_collections::getCollectionAndFileParts($path, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index", "html");
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
-        $this->tablePrefix =  $GLOBALS['POOL']->config->getTablePrefix().$p->getParameter($colluri,"tableprefix");
+        $this->tablePrefix = $GLOBALS['POOL']->config->getTablePrefix() . $p->getParameter($colluri, "tableprefix");
 
-        if ($pos = strpos($parts["name"],"(")) {
-                $pos2 = strpos($parts["name"],")");
-                $params = substr($parts["name"],$pos+1, $pos2 - $pos - 1);
-                $parts["name"] = substr($parts["name"],0,$pos);
-                $params = explode(",",$params);
-       }
-        $pos = strpos($parts["name"],"/");
+        if ($pos = strpos($parts["name"], "(")) {
+            $pos2 = strpos($parts["name"], ")");
+            $params = substr($parts["name"], $pos + 1, $pos2 - $pos - 1);
+            $parts["name"] = substr($parts["name"], 0, $pos);
+            $params = explode(",", $params);
+        }
+        $pos = strpos($parts["name"], "/");
         $appendPostComments = FALSE;
         if ($parts['ext'] == "xml" && $pos === false) {
-             $section = $parts["name"];
-             $name = "";
-        }
-        else if ($pos > 0) {
-            $section = substr($parts["name"],0,$pos);
-            $name = substr($parts["name"],$pos+1,0);
+            $section = $parts["name"];
+            $name = "";
+        } else if ($pos > 0) {
+            $section = substr($parts["name"], 0, $pos);
+            $name = substr($parts["name"], $pos + 1, 0);
         } else {
             $section = "";
             $name = $parts["name"];
         }
-		switch ($section) {
-            case "categories":
+        switch ($section) {
+            case "categories" :
                 return $this->returnCategories();
 
-            case "entries":
+            case "entries" :
                 if (isset($params) && isset($params[0])) {
-                    $p->maxPosts= $params[0];
+                    $p->maxPosts = $params[0];
                 } else {
-                    $p->maxPosts= 10;
+                    $p->maxPosts = 10;
                 }
-                $xml = $p->getContentById("$colluri","_all/index");
+                $xml = $p->getContentById("$colluri", "_all/index");
                 $xsl = new DomDocument();
-                $xsl->load(BX_LIBS_DIR."/streams/blog/html2feed.xsl");
+                $xsl->load(BX_LIBS_DIR . "/streams/blog/html2feed.xsl");
             break;
-            case "entriesfull":
+            case "entriesfull" :
                 if (isset($params) && isset($params[0])) {
-                    $p->maxPosts= $params[0];
+                    $p->maxPosts = $params[0];
                 } else {
-                    $p->maxPosts= 10;
+                    $p->maxPosts = 10;
                 }
-                $xml = $p->getContentById("$colluri","_all/index");
+                $xml = $p->getContentById("$colluri", "_all/index");
                 $xsl = new DomDocument();
-                $xsl->load(BX_LIBS_DIR."/streams/blog/html2feedfull.xsl");
+                $xsl->load(BX_LIBS_DIR . "/streams/blog/html2feedfull.xsl");
             break;
-			case "storage":
-              return file_get_contents(BX_DATA_DIR.$colluri.'storage.xml');
-		      break;
+            case "storage" :
+                return file_get_contents(BX_DATA_DIR . $colluri . 'storage.xml');
+            break;
 
-			default:
+            default :
                 try {
-                    $xml = $p->getContentById("$colluri",$parts["name"]);
+                    $xml = $p->getContentById("$colluri", $parts["name"]);
                     $appendPostComments = TRUE;
                 } catch (BxPageNotFoundException $e) {
                     $xml = new DomDocument();
-                    $xml->load(BX_LIBS_DIR."/streams/blog/newentry.xml");
-					//FIXME: Abfrage nach storage.xml
-                    if(file_exists(BX_DATA_DIR."blog/storage.xml") && $section != 'storage') {
-						$filetime = date ("F d Y H:i:s.", filemtime(BX_DATA_DIR."blog/storage.xml"));
-						$fileString = file_get_contents(BX_DATA_DIR."blog/storage.xml");
+                    $xml->load(BX_LIBS_DIR . "/streams/blog/newentry.xml");
+                    //FIXME: Abfrage nach storage.xml
+                    if (file_exists(BX_DATA_DIR . "blog/storage.xml") && $section != 'storage') {
+                        $filetime = date("F d Y H:i:s.", filemtime(BX_DATA_DIR . "blog/storage.xml"));
+                        $fileString = file_get_contents(BX_DATA_DIR . "blog/storage.xml");
 
-						preg_match('#<title>(.*)</title>#', $fileString, $matches);
+                        preg_match('#<title>(.*)</title>#', $fileString, $matches);
 
-						$xml->documentElement->setAttribute("hasStorage", "true");
-						$xml->documentElement->setAttribute("storageDate", $filetime);
-						$xml->documentElement->setAttribute("storageTitle", $matches['1']);
-					}
+                        $xml->documentElement->setAttribute("hasStorage", "true");
+                        $xml->documentElement->setAttribute("storageDate", $filetime);
+                        $xml->documentElement->setAttribute("storageTitle", $matches['1']);
+                    }
 
-					$xp = new DomXPath($xml);
+                    $xp = new DomXPath($xml);
                     $res = $xp->query("/atom:entry/atom:author/atom:name/text()");
 
-                    if ($res->length > 0 ) {
+                    if ($res->length > 0) {
                         try {
                             $res->item(0)->data = bx_permm::getInstance()->getUsername();
-                        } catch(Exception $e) {
+                        } catch (Exception $e) {
                             $res->item(0)->data = '';
                         }
                     }
-
-
 
                     if (isset($_GET['link_title'])) {
                         $res = $xp->query("/atom:entry/atom:title");
@@ -120,17 +120,17 @@ class bx_streams_blog extends bx_streams_buffer {
                     }
                     if (isset($_GET['text'])) {
                         $res = $xp->query("/atom:entry/atom:content");
-                        $html = "<foo><blockquote>".nl2br(htmlspecialchars(bx_helpers_globals::stripMagicQuotes($_GET['text'])))."</blockquote>";
+                        $html = "<foo><blockquote>" . nl2br(htmlspecialchars(bx_helpers_globals::stripMagicQuotes($_GET['text']))) . "</blockquote>";
 
                         if (isset($_GET['link_href'])) {
-                            $html .= '<p>From <a href="'.htmlspecialchars(bx_helpers_globals::stripMagicQuotes($_GET['link_href'])).'">' .htmlspecialchars(bx_helpers_globals::stripMagicQuotes($_GET['link_title'])) .'</a></p>';
+                            $html .= '<p>From <a href="' . htmlspecialchars(bx_helpers_globals::stripMagicQuotes($_GET['link_href'])) . '">' . htmlspecialchars(bx_helpers_globals::stripMagicQuotes($_GET['link_title'])) . '</a></p>';
                         }
                         $html .= "</foo>";
 
                         $domi = new domdocument();
                         $domi->loadXML($html);
                         foreach ($domi->documentElement->childNodes as $node) {
-                            $res->item(0)->appendChild($xml->importNode($node,true));
+                            $res->item(0)->appendChild($xml->importNode($node, true));
 
                         }
 
@@ -138,53 +138,52 @@ class bx_streams_blog extends bx_streams_buffer {
                     return $xml->saveXML();
                 }
                 $xsl = new DomDocument();
-                $xsl->load(BX_LIBS_DIR."/streams/blog/html2xml.xsl");
+                $xsl->load(BX_LIBS_DIR . "/streams/blog/html2xml.xsl");
 
         }
 
         $proc = new XSltProcessor();
         $proc->importStylesheet($xsl);
-        $proc->setParameter("","webroot",BX_WEBROOT);
-		//FIXME Abfrage
-		if(file_exists(BX_DATA_DIR."blog/storage.xml") && $section != 'storage') {
-		$proc->setParameter("","hasStorage",'true');
-		}
-        $proc->setParameter("","colluri",$colluri);
+        $proc->setParameter("", "webroot", BX_WEBROOT);
+        //FIXME Abfrage
+        if (file_exists(BX_DATA_DIR . "blog/storage.xml") && $section != 'storage') {
+            $proc->setParameter("", "hasStorage", 'true');
+        }
+        $proc->setParameter("", "colluri", $colluri);
         $xml = $proc->transformToDoc($xml);
 
         // append latest comments to generated feed xml when we are in overview mode
-        if($section == 'entries') {
+        if ($section == 'entries') {
             $latestCommentsXML = $p->getContentByID("$colluri", 'plugin=comments(latest).xml');
             $latestCommentsNode = $xml->importNode($latestCommentsXML->documentElement, TRUE);
             $new = $xml->documentElement->appendChild($latestCommentsNode);
-           if ($new instanceof DOMElement) {
-                   $new->setAttribute("status","1");
+            if ($new instanceof DOMElement) {
+                $new->setAttribute("status", "1");
             }
             $latestCommentsXML = $p->getContentByID("$colluri", 'plugin=comments(latest,2).xml');
             $latestCommentsNode = $xml->importNode($latestCommentsXML->documentElement, TRUE);
             $new = $xml->documentElement->appendChild($latestCommentsNode);
-           if ($new instanceof DOMElement) {
-                   $new->setAttribute("status","2");
+            if ($new instanceof DOMElement) {
+                $new->setAttribute("status", "2");
             }
             $latestCommentsXML = $p->getContentByID("$colluri", 'plugin=comments(latest,3).xml');
             $latestCommentsNode = $xml->importNode($latestCommentsXML->documentElement, TRUE);
             $new = $xml->documentElement->appendChild($latestCommentsNode);
-           if ($new instanceof DOMElement) {
-               $new->setAttribute("status","3");
-           }
+            if ($new instanceof DOMElement) {
+                $new->setAttribute("status", "3");
+            }
 
-        } else if($appendPostComments === TRUE) {
+        } else if ($appendPostComments === TRUE) {
             // append all comments of a post when viewing an existing entry
             $idNS = $xml->documentElement->getElementsByTagName('id');
             $entryID = $idNS->item(0)->nodeValue;
 
-            $commentsXML = $p->getContentByID($colluri, 'plugin=comments('.$entryID.',0).xml');
+            $commentsXML = $p->getContentByID($colluri, 'plugin=comments(' . $entryID . ',0).xml');
             $commentsNode = $xml->importNode($commentsXML->documentElement, TRUE);
             $xml->documentElement->appendChild($commentsNode);
         }
         return $xml->saveXML();
     }
-
 
     function getAttrib($name) {
 
@@ -196,19 +195,19 @@ class bx_streams_blog extends bx_streams_buffer {
 
         if ($this->mode == 'w') {
 
-        $parts =  bx_collections::getCollectionAndFileParts($this->path, "output");
-        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
-        $p = $p['plugin'];
-        $colluri = $parts['coll']->uri;
-        $blogid =  $p->getParameter($colluri,"blogid");
+            $parts = bx_collections::getCollectionAndFileParts($this->path, "output");
+            $p = $parts['coll']->getFirstPluginMapByRequest("index", "html");
+            $p = $p['plugin'];
+            $colluri = $parts['coll']->uri;
+            $blogid = $p->getParameter($colluri, "blogid");
 
             $content = $this->html;
-            $content = preg_replace('/(\.\.\/+)+files/', BX_WEBROOT.'files', $content);
+            $content = preg_replace('/(\.\.\/+)+files/', BX_WEBROOT . 'files', $content);
             $this->dom = new DomDocument();
             if (!$this->dom->loadXML($content)) {
 
                 // try fixing html entities
-                $content = html_entity_decode(str_replace("&amp;","&amp;amp;",$content),ENT_NOQUOTES,"UTF-8");
+                $content = html_entity_decode(str_replace("&amp;", "&amp;amp;", $content), ENT_NOQUOTES, "UTF-8");
                 // and set evil recover to true (5.1 only)
                 $this->dom->recover = true;
                 if (!$this->dom->loadXML($content)) {
@@ -217,10 +216,10 @@ class bx_streams_blog extends bx_streams_buffer {
                 }
             }
             $this->xp = new domxpath($this->dom);
-            $this->xp->registerNamespace("atom","http://purl.org/atom/ns#");
-            $this->xp->registerNamespace("xhtml","http://www.w3.org/1999/xhtml");
-            $this->xp->registerNamespace("dc","http://purl.org/dc/elements/1.1/");
-            $id =$this->getElement("id");
+            $this->xp->registerNamespace("atom", "http://purl.org/atom/ns#");
+            $this->xp->registerNamespace("xhtml", "http://www.w3.org/1999/xhtml");
+            $this->xp->registerNamespace("dc", "http://purl.org/dc/elements/1.1/");
+            $id = $this->getElement("id");
             /*if ($this->path != '/'.$id.'.html') {
                 $this->deleteEntry(substr($path,1,-5));
             }*/
@@ -235,43 +234,43 @@ class bx_streams_blog extends bx_streams_buffer {
     }
 
     function deleteEntry($id) {
-        $query = "delete from ".$this->tablePrefix."blogposts where post_uri = '$id'";
+        $query = "delete from " . $this->tablePrefix . "blogposts where post_uri = '$id'";
         $GLOBALS['POOL']->dbwrite->query("$query");
     }
 
-    function fixDate($date, $defNow=true) {
+    function fixDate($date, $defNow = true) {
         if ((!$date || $date == "now()" || $date == $this->zeroDate)) {
-            return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : $this->zeroDate;
+            return ($defNow == true) ? gmdate("Y-m-d H:i:s", time()) : $this->zeroDate;
         }
 
-        if (strpos($date,"Z") === false && strpos($date,"+") === false && strpos($date,"-") === false) {
-            $date .="Z";
+        if (strpos($date, "Z") === false && strpos($date, "+") === false && strpos($date, "-") === false) {
+            $date .= "Z";
         }
 
-        $date =  preg_replace("/([0-9])T([0-9])/","$1 $2",$date);
-        $date =  preg_replace("/([\+\-][0-9]{2}):([0-9]{2})/","$1$2",$date);
+        $date = preg_replace("/([0-9])T([0-9])/", "$1 $2", $date);
+        $date = preg_replace("/([\+\-][0-9]{2}):([0-9]{2})/", "$1$2", $date);
         $date = strtotime($date);
 
         if ($date <= 0) {
-            return ($defNow == true) ? gmdate("Y-m-d H:i:s",time()) : $this->zeroDate;
+            return ($defNow == true) ? gmdate("Y-m-d H:i:s", time()) : $this->zeroDate;
         }
 
-        return  gmdate("Y-m-d H:i:s",$date);
+        return gmdate("Y-m-d H:i:s", $date);
     }
 
     function getPostObject() {
         //it's defined at the end of this file
         $post = new bx_streams_blog_post();
 
-		$post->title = $this->getElement("title",true);
-        $post->content = $this->getElement("content",true);
-        $post->content_extended = $this->getElement("content_extended",true);
-        $post->summary = $this->getElement("summary",true);
+        $post->title = $this->getElement("title", true);
+        $post->content = $this->getElement("content", true);
+        $post->content_extended = $this->getElement("content_extended", true);
+        $post->summary = $this->getElement("summary", true);
         $post->status = $this->getElement("status");
         $post->comment_mode = $this->getElement("comment_mode");
 
         if (!$post->comment_mode) {
-             $post->comment_mode = 99;
+            $post->comment_mode = 99;
         }
 
         $post->uri = $this->getElement("uri");
@@ -283,79 +282,82 @@ class bx_streams_blog extends bx_streams_buffer {
             $post->status = 1;
         }
         $post->date = $this->fixDate($this->getElement("created"));
-        $post->expires = $this->fixDate($this->getElement("expires"),false);
+        $post->expires = $this->fixDate($this->getElement("expires"), false);
         $post->lang = $this->getElement("lang", true);
-		$post->post_info = "";
+        $post->post_info = "";
         return $post;
     }
 
     function insertEntry($id = null) {
-        $parts =  bx_collections::getCollectionAndFileParts($this->path, "output");
-        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $parts = bx_collections::getCollectionAndFileParts($this->path, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index", "html");
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
-        $blogid =  $p->getParameter($colluri,"blogid");
+        $blogid = $p->getParameter($colluri, "blogid");
 
-        if($blogid == null) {
+        if ($blogid == null) {
             $blogid = 1;
         }
 
         $db = $GLOBALS['POOL']->db;
         $dbwrite = $GLOBALS['POOL']->dbwrite;
-		$post = $this->getPostObject();
-		if ($id) {
+        $post = $this->getPostObject();
+        if ($id) {
             //delete cache
-            $GLOBALS['POOL']->cache->flush("plugins_blog_id_".$id);
+            $GLOBALS['POOL']->cache->flush("plugins_blog_id_" . $id);
             $post->id = $id;
         } else {
-            $post->id = $dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix()."_sequences");
+            $post->id = $dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix() . "_sequences");
         }
         try {
             $post->author = bx_permm::getInstance()->getUsername();
         } catch (Exception $e) {
             $post->author = $this->getElement('author');
-            if(!$post->author ) {
+            if (!$post->author) {
                 $post->author = "unknown";
             }
         }
 
-		foreach (self::$adminPlugins as $plugin) {
-            $post = call_user_func(array("bx_plugins_blog_".$plugin,"onInsertNewPost"),$post);
+        foreach (self::$adminPlugins as $plugin) {
+            $post = call_user_func(array(
+                    "bx_plugins_blog_" . $plugin,
+                    "onInsertNewPost"
+            ), $post);
         }
-		$query = "insert into ".$this->tablePrefix."blogposts
+        $query = "insert into " . $this->tablePrefix . "blogposts
             (id, blog_id, post_author, post_date, post_expires, post_title, post_content, post_content_extended, post_uri, post_info, post_status, post_comment_mode, post_lang ";
 
-            if($blogEditOwnOnly == 1 && isset($_SESSION['_authsession']['data']['id'])) {
-                $query.= ", post_author_id ";
-            }
+        if ($blogEditOwnOnly == 1 && isset($_SESSION['_authsession']['data']['id'])) {
+            $query .= ", post_author_id ";
+        }
 
-            $query.= ") values
+        $query .= ") values
             ($post->id,
             $blogid,
-            ".$db->quote($post->author,'text').",
-            '".$post->date."',
-            '".$post->expires."',
-            ".$db->quote(bx_helpers_string::utf2entities($post->title),'text').",
-            ".$db->quote(bx_helpers_string::utf2entities($post->content),'text').",
-            ".$db->quote(bx_helpers_string::utf2entities($post->content_extended),'text').",
-            ".$db->quote($post->uri,'text').",
-            ".$db->quote(bx_helpers_string::utf2entities($post->getInfoString()),'text').",
-            ".$db->quote($post->status).",
-            ".$db->quote($post->comment_mode).",
-			".$db->quote($post->lang)." ";
+            " . $db->quote($post->author, 'text') . ",
+            '" . $post->date . "',
+            '" . $post->expires . "',
+            " . $db->quote(bx_helpers_string::utf2entities($post->title), 'text') . ",
+            " . $db->quote(bx_helpers_string::utf2entities($post->content), 'text') . ",
+            " . $db->quote(bx_helpers_string::utf2entities($post->content_extended), 'text') . ",
+            " . $db->quote($post->uri, 'text') . ",
+            " . $db->quote(bx_helpers_string::utf2entities($post->getInfoString()), 'text') . ",
+            " . $db->quote($post->status) . ",
+            " . $db->quote($post->comment_mode) . ",
+            " . $db->quote($post->lang) . " ";
 
-            if($blogEditOwnOnly == 1 && isset($_SESSION['_authsession']['data']['id'])) {
-                $query.= ",".$db->quote($_SESSION['_authsession']['data']['id']);
-            }
+        if ($blogEditOwnOnly == 1 && isset($_SESSION['_authsession']['data']['id'])) {
+            $query .= "," . $db->quote($_SESSION['_authsession']['data']['id']);
+        }
 
-            $query.= ")";
+        $query .= ")";
 
         $res = $dbwrite->query($query);
         if (MDB2::isError($res)) {
 
             if ($res->code == -5) {
                 //check if id really already exists or if we have another problem...
-                $query = "select id from ".$this->tablePrefix."blogposts where id = ".$post->id;
+                $query = "select id from " . $this->tablePrefix . "blogposts where id = " . $post->id;
                 $resid = $dbwrite->query($query);
                 if ($resid->numRows() > 0) {
                     //first set it to the max value of this table
@@ -364,15 +366,15 @@ class bx_streams_blog extends bx_streams_buffer {
                     if ($maxid > $post->id) {
                         //this is maybe mysql only... I don't know, how sequences are stored in other DBs
                         //shouldn't really matter as the while loop after it just takes longer otherwise
-                        $dbwrite->querywrite("update ".$this->tablePrefix."_sequences_seq set sequence = $maxid");
+                        $dbwrite->querywrite("update " . $this->tablePrefix . "_sequences_seq set sequence = $maxid");
                     }
                     //then loop through it, until we find an id, which fits
-                    while(MDB2::isError($res)) {
+                    while (MDB2::isError($res)) {
                         //use global tableprefix for sequences for that
-                        $post->id = $GLOBALS['POOL']->dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix()."_sequences");
-                         $query = "insert into ".$this->tablePrefix."blogposts
+                        $post->id = $GLOBALS['POOL']->dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix() . "_sequences");
+                        $query = "insert into " . $this->tablePrefix . "blogposts
                          (id, blog_id, post_author, post_date, post_title, post_content, post_uri) values
-                         ($post->id, $blogid, '".bx_permm::getInstance()->getUsername()."', '".$post->date."', ".$db->quote($post->title).",".$db->quote($post->content).",".$db->quote($post->uri).")";
+                         ($post->id, $blogid, '" . bx_permm::getInstance()->getUsername() . "', '" . $post->date . "', " . $db->quote($post->title) . "," . $db->quote($post->content) . "," . $db->quote($post->uri) . ")";
                         $res = $dbwrite->query($query);
                     }
                 }
@@ -387,75 +389,79 @@ class bx_streams_blog extends bx_streams_buffer {
             }
         }
 
-        $post->uri  = bx_collections::sanitizeUrl(dirname($this->path)).$post->uri.'.html';
-        if ($post->id > 0 ) {
-            bx_metaindex::setTags($post->uri,bx_metaindex::implodeTags($post->tags),true);
-            bx_resourcemanager::setProperty($post->uri,"subject",bx_metaindex::implodeTags($post->tags),'http://purl.org/dc/elements/1.1/');
-            bx_resourcemanager::setProperty($post->uri,"title",$post->title,'bx:');
-            bx_resourcemanager::setProperty($post->uri,"content",$post->content,'bx:');
-
+        $post->uri = bx_collections::sanitizeUrl(dirname($this->path)) . $post->uri . '.html';
+        if ($post->id > 0) {
+            bx_metaindex::setTags($post->uri, bx_metaindex::implodeTags($post->tags), true);
+            bx_resourcemanager::setProperty($post->uri, "subject", bx_metaindex::implodeTags($post->tags), 'http://purl.org/dc/elements/1.1/');
+            bx_resourcemanager::setProperty($post->uri, "title", $post->title, 'bx:');
+            bx_resourcemanager::setProperty($post->uri, "content", $post->content, 'bx:');
 
             $this->updateCategories($post->id);
 
             if ($post->status == 1) {
                 $this->weblogsPing();
             }
-            if($post->autodiscovery){
-                $this->getRemotePage($post->title,$post->content,$post->uri);
+            if ($post->autodiscovery) {
+                $this->getRemotePage($post->title, $post->content, $post->uri);
             }
-            $this->sendTrackbacks($post->trackbacks,$post->title,$post->content,$post->uri);
+            $this->sendTrackbacks($post->trackbacks, $post->title, $post->content, $post->uri);
         }
 
     }
 
     function weblogsPing() {
 
-        if ( $GLOBALS['POOL']->config->getConfProperty("noOutsideConnections") != "true") {
-        /*$servicesExtended = array("http://rpc.pingomatic.com/","http://planet.freeflux.net/ping/");
+        if ($GLOBALS['POOL']->config->getConfProperty("noOutsideConnections") != "true") {
+            /*$servicesExtended = array("http://rpc.pingomatic.com/","http://planet.freeflux.net/ping/");
         $servicesOld = array("http://rpc.technorati.com/rpc/ping");*/
 
-        $services = bx_helpers_config::getProperty("blogWeblogsPing",true);
-        if (! is_array($services)) {
-            $services = array( $services);
-        }
-        if ($fixed =  trim(bx_helpers_config::getProperty("blogWeblogsPingFixed",true))) {
-            $services[] = $fixed;
-            $services = array_unique($services);
-        }
+            $services = bx_helpers_config::getProperty("blogWeblogsPing", true);
+            if (!is_array($services)) {
+                $services = array(
+                        $services
+                );
+            }
+            if ($fixed = trim(bx_helpers_config::getProperty("blogWeblogsPingFixed", true))) {
+                $services[] = $fixed;
+                $services = array_unique($services);
+            }
 
-        $blogname = bx_helpers_config::getProperty("blogname");
-        if (!$blogname) {
-            $blogname = bx_helpers_config::getProperty("sitename");
-        }
-        $url = BX_WEBROOT. substr(bx_collections::getCollectionUri($this->path),1);
-        
-        
-        $noti = new lx_notifier();
-        
-        $checkurl = $url;
-        
-        $mainfeed = $url ."rss.xml";
-        
-        $topicurls = array(
-            $url . 'atom.xml',
-            $mainfeed
-        );
-        
-        $noti->addWeblogUpdates(array($mainfeed), $services, $url, $blogname, $checkurl );
-        
-        /*
+            $blogname = bx_helpers_config::getProperty("blogname");
+            if (!$blogname) {
+                $blogname = bx_helpers_config::getProperty("sitename");
+            }
+            $url = BX_WEBROOT . substr(bx_collections::getCollectionUri($this->path), 1);
+
+            $noti = new lx_notifier();
+
+            $checkurl = $url;
+
+            $mainfeed = $url . "rss.xml";
+
+            $topicurls = array(
+                    $url . 'atom.xml',
+                    $mainfeed
+            );
+
+            $noti->addWeblogUpdates(array(
+                    $mainfeed
+            ), $services, $url, $blogname, $checkurl);
+
+            /*
         $clouds = array('http://rpc.rsscloud.org:5337/rsscloud/ping');
         $noti->addRssClouds($topicurls,$clouds);
         */
-        
-        $hubs = array("http://pubsubhubbub.appspot.com");
-        $noti->addPubSubHubs($topicurls, $hubs);
-        
-        $supid = self::getSUPId();
-        $noti->addSup("http://friendfeed.com/api/public-sup-ping?supid=" . $supid . "&url=" . $mainfeed);
-        
-        $noti->notifyAll();
-        
+
+            $hubs = array(
+                    "http://pubsubhubbub.appspot.com"
+            );
+            $noti->addPubSubHubs($topicurls, $hubs);
+
+            $supid = self::getSUPId();
+            $noti->addSup("http://friendfeed.com/api/public-sup-ping?supid=" . $supid . "&url=" . $mainfeed);
+
+            $noti->notifyAll();
+
         }
 
     }
@@ -466,74 +472,70 @@ class bx_streams_blog extends bx_streams_buffer {
 
         $post->id = $id;
         //delete cache
-        $GLOBALS['POOL']->cache->flush("plugins_blog_id_".$id);
+        $GLOBALS['POOL']->cache->flush("plugins_blog_id_" . $id);
 
-        $row = $db->queryRow("select post_info, post_status from ".$this->tablePrefix."blogposts where id = $id", null, MDB2_FETCHMODE_ASSOC);
+        $row = $db->queryRow("select post_info, post_status from " . $this->tablePrefix . "blogposts where id = $id", null, MDB2_FETCHMODE_ASSOC);
         if (!is_array($row)) {
             $this->insertEntry($id);
         }
         if ($row['post_info']) {
             $post->info = new domdocument();
-            $post->info->loadXML('<info>'.$row['post_info'].'</info>');
+            $post->info->loadXML('<info>' . $row['post_info'] . '</info>');
         }
         $post->status_old = $row['post_status'];
 
         foreach (self::$adminPlugins as $plugin) {
 
-            $func = array("bx_plugins_blog_".$plugin,"onUpdatePost");
+            $func = array(
+                    "bx_plugins_blog_" . $plugin,
+                    "onUpdatePost"
+            );
             if (is_callable($func)) {
-                $post = call_user_func($func,$post);
+                $post = call_user_func($func, $post);
             }
         }
         if ($post->title == '') {
             $post->title = "No Title";
         }
-        $query = "update ".$this->tablePrefix."blogposts set post_title = ".$db->quote(bx_helpers_string::utf2entities($post->title)).",".
-        "post_content = ".$db->quote(bx_helpers_string::utf2entities($post->content)) .",".
-        "post_content_extended = ".$db->quote(bx_helpers_string::utf2entities($post->content_extended)) .",".
-        "post_content_summary = ".$db->quote(bx_helpers_string::utf2entities($post->summary)) .",".
-        "post_status = ". $db->quote($post->status) .",".
-        "post_expires = ".$db->quote($post->expires).",".
-        "post_comment_mode = ". $db->quote($post->comment_mode);
+        $query = "update " . $this->tablePrefix . "blogposts set post_title = " . $db->quote(bx_helpers_string::utf2entities($post->title)) . "," . "post_content = " . $db->quote(bx_helpers_string::utf2entities($post->content)) . "," . "post_content_extended = " . $db->quote(bx_helpers_string::utf2entities($post->content_extended)) . "," . "post_content_summary = " . $db->quote(bx_helpers_string::utf2entities($post->summary)) . "," . "post_status = " . $db->quote($post->status) . "," . "post_expires = " . $db->quote($post->expires) . "," . "post_comment_mode = " . $db->quote($post->comment_mode);
         if ($post->lang) {
-            $query .= ", post_lang = ".$db->quote($post->lang);
+            $query .= ", post_lang = " . $db->quote($post->lang);
         }
-		if ($post->date) {
-            $query .= ", post_date = ".$db->quote($post->date);
+        if ($post->date) {
+            $query .= ", post_date = " . $db->quote($post->date);
         }
         if ($post->uri) {
-            $query .= ", post_uri = ".$db->quote($post->uri);
+            $query .= ", post_uri = " . $db->quote($post->uri);
         } else {
             $post->uri = self::getUriById($post->id);
         }
         if ($post->info instanceof DomDocument) {
-            $query .= ", post_info = ".$db->quote(bx_helpers_string::utf2entities($post->getInfoString()),'text');
+            $query .= ", post_info = " . $db->quote(bx_helpers_string::utf2entities($post->getInfoString()), 'text');
         }
-        $query .= " where id = '".$post->id."'";
+        $query .= " where id = '" . $post->id . "'";
         $res = $db->query($query);
-        $post->uri  = bx_collections::sanitizeUrl(dirname($this->path)).$post->uri.'.html';
+        $post->uri = bx_collections::sanitizeUrl(dirname($this->path)) . $post->uri . '.html';
 
         if ($post->id > 0) {
-            if($post->autodiscovery){
-                $this->getRemotePage($post->title,$post->content,$post->uri);
+            if ($post->autodiscovery) {
+                $this->getRemotePage($post->title, $post->content, $post->uri);
             }
-            $this->sendTrackbacks($post->trackbacks,$post->title,$post->content,$post->uri);
-            bx_metaindex::setTags($post->uri, bx_metaindex::implodeTags($post->tags),true);
-            bx_resourcemanager::setProperty($post->uri,"subject",bx_metaindex::implodeTags($post->tags),'http://purl.org/dc/elements/1.1/');
+            $this->sendTrackbacks($post->trackbacks, $post->title, $post->content, $post->uri);
+            bx_metaindex::setTags($post->uri, bx_metaindex::implodeTags($post->tags), true);
+            bx_resourcemanager::setProperty($post->uri, "subject", bx_metaindex::implodeTags($post->tags), 'http://purl.org/dc/elements/1.1/');
             //update categories
-            bx_resourcemanager::setProperty($post->uri,"title",$post->title,'bx:');
-            bx_resourcemanager::setProperty($post->uri,"content",$post->content,'bx:');
+            bx_resourcemanager::setProperty($post->uri, "title", $post->title, 'bx:');
+            bx_resourcemanager::setProperty($post->uri, "content", $post->content, 'bx:');
             $this->updateCategories($post->id);
             if ($post->status == 1) { // && $post->status_old != 1) {
-                    $this->weblogsPing();
+                $this->weblogsPing();
             }
         }
 
     }
 
-
     function updateCategories($id) {
-        $this->xp->registerNamespace("sa-cat","http://sixapart.com/atom/category#");
+        $this->xp->registerNamespace("sa-cat", "http://sixapart.com/atom/category#");
         $res = $this->xp->query("/atom:entry/sa-cat:categories");
         if ($res->length > 0) {
             $res = $this->xp->query("/atom:entry/sa-cat:categories/dc:subject");
@@ -541,80 +543,79 @@ class bx_streams_blog extends bx_streams_buffer {
             //get category ids
             $cats = array();
 
-            foreach($res as $cat) {
+            foreach ($res as $cat) {
                 $cats[] = $cat->nodeValue;
             }
-            self::updateCategoriesDirect ($id , $cats, false, $this->tablePrefix);
+            self::updateCategoriesDirect($id, $cats, false, $this->tablePrefix);
         }
     }
 
-    static function deleteEntryDirect($id,$path) {
+    static function deleteEntryDirect($id, $path) {
         $tablePrefix = self::getTablePrefix($path);
-        $query = "select post_uri, blog_id from ".$tablePrefix."blogposts where id = '$id'";
+        $query = "select post_uri, blog_id from " . $tablePrefix . "blogposts where id = '$id'";
         $res = $GLOBALS['POOL']->db->query($query);
         $row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
-        $postPath = bx_helpers_string::removeDoubleSlashes($path.$row['post_uri'].'.html');
+        $postPath = bx_helpers_string::removeDoubleSlashes($path . $row['post_uri'] . '.html');
 
-        $query = "delete from ".$tablePrefix."properties where path = '$postPath'";
+        $query = "delete from " . $tablePrefix . "properties where path = '$postPath'";
         $GLOBALS['POOL']->dbwrite->query("$query");
-        $query = "delete from ".$tablePrefix."properties2tags where path = '$postPath'";
+        $query = "delete from " . $tablePrefix . "properties2tags where path = '$postPath'";
         $GLOBALS['POOL']->dbwrite->query("$query");
 
-        $query = "delete from ".$tablePrefix."blogposts where id = '$id' and blog_id = '".$row['blog_id']."'";
+        $query = "delete from " . $tablePrefix . "blogposts where id = '$id' and blog_id = '" . $row['blog_id'] . "'";
         $GLOBALS['POOL']->dbwrite->query("$query");
-        $query = "delete from ".$tablePrefix."blogposts2categories where blogposts_id = '$id'";
+        $query = "delete from " . $tablePrefix . "blogposts2categories where blogposts_id = '$id'";
         $GLOBALS['POOL']->dbwrite->query("$query");
-        $query = "delete from ".$tablePrefix."blogcomments where  comment_posts_id = '$id'";
+        $query = "delete from " . $tablePrefix . "blogcomments where  comment_posts_id = '$id'";
         $GLOBALS['POOL']->dbwrite->query("$query");
 
         return true;
     }
 
-    static function updateCategoriesDirect ($id , $cats, $isId= false , $tablePrefix = null) {
+    static function updateCategoriesDirect($id, $cats, $isId = false, $tablePrefix = null) {
         /*if (!$tablePrefix) {
             $tablePrefix = self::getTablePrefix($this->path);
         }*/
-        if(!$isId) {
+        if (!$isId) {
 
             if (count($cats) == 0) {
                 $ids = array();
             } else {
 
                 // if ($cat[0] == "__default") {
-                    // search for default cat
+                // search for default cat
                 // } else {
-                    //search in fullname
-                    $query = "select id from ".$tablePrefix."blogcategories  where fullname in ('".bx_helpers_string::utf2entities(implode("','",$cats))."')";
+                //search in fullname
+                $query = "select id from " . $tablePrefix . "blogcategories  where fullname in ('" . bx_helpers_string::utf2entities(implode("','", $cats)) . "')";
+                $res = $GLOBALS['POOL']->db->query($query);
+                $ids = $res->fetchCol();
+                // if no ids found, try with uri
+                if (count($ids) == 0) {
+                    $query = "select id from " . $tablePrefix . "blogcategories  where uri in ('" . bx_helpers_string::utf2entities(strtolower(implode("','", $cats))) . "')";
                     $res = $GLOBALS['POOL']->db->query($query);
                     $ids = $res->fetchCol();
-                    // if no ids found, try with uri
-                    if (count($ids) == 0) {
-                        $query = "select id from ".$tablePrefix."blogcategories  where uri in ('".bx_helpers_string::utf2entities(strtolower(implode("','",$cats)))."')";
-                        $res = $GLOBALS['POOL']->db->query($query);
-                        $ids = $res->fetchCol();
-                    }
-                    // if no ids found, try with enforced utf2entities
-                    if (count($ids) != count($cats)) {
-                        $query = "select id from ".$tablePrefix."blogcategories  where fullname in ('".bx_helpers_string::utf2entities(implode("','",$cats),true)."')";
-                        $res = $GLOBALS['POOL']->db->query($query);
-                        $ids = $res->fetchCol();
-                    }
-
+                }
+                // if no ids found, try with enforced utf2entities
+                if (count($ids) != count($cats)) {
+                    $query = "select id from " . $tablePrefix . "blogcategories  where fullname in ('" . bx_helpers_string::utf2entities(implode("','", $cats), true) . "')";
+                    $res = $GLOBALS['POOL']->db->query($query);
+                    $ids = $res->fetchCol();
+                }
 
                 // } // end else
                 // if still not found, and its $cats[0] contains  "moblog"... or __default
-                if (count($ids) == 0 && ($cats[0] == '__default' || strpos(strtolower($cats[0]),"moblog") !== false )) {
+                if (count($ids) == 0 && ($cats[0] == '__default' || strpos(strtolower($cats[0]), "moblog") !== false)) {
                     //search for a cat containing moblog as well in title or category
-                    $query = "select id from ".$tablePrefix."blogcategories  where fullname like '%moblog%' or uri like '%moblog%' LIMIT 1";
+                    $query = "select id from " . $tablePrefix . "blogcategories  where fullname like '%moblog%' or uri like '%moblog%' LIMIT 1";
                     $res = $GLOBALS['POOL']->db->query($query);
                     $ids = $res->fetchCol();
                 }
                 // if still not found, just take the default one
-                if (count($ids) == 0 ) {
+                if (count($ids) == 0) {
                     // take the default one, if there is one
                     //TODO
                     // otherwise the first one
-                    $query = "select id from ".$tablePrefix."blogcategories  where uri != 'root' order by l LIMIT 1";
+                    $query = "select id from " . $tablePrefix . "blogcategories  where uri != 'root' order by l LIMIT 1";
                     $res = $GLOBALS['POOL']->db->query($query);
                     $ids = $res->fetchCol();
                 }
@@ -624,38 +625,38 @@ class bx_streams_blog extends bx_streams_buffer {
         }
         //delete not choosen ids
         if (count($ids) > 0) {
-            $query = "delete from ".$tablePrefix."blogposts2categories where blogposts_id = $id and not( blogcategories_id in (".implode(",",$ids)."))";
+            $query = "delete from " . $tablePrefix . "blogposts2categories where blogposts_id = $id and not( blogcategories_id in (" . implode(",", $ids) . "))";
             $res = $GLOBALS['POOL']->dbwrite->query($query);
 
             //get old categories
 
-            $query = "select blogcategories_id from ".$tablePrefix."blogposts2categories where blogposts_id = $id and ( blogcategories_id in (".implode(",",$ids)."))";
+
+            $query = "select blogcategories_id from " . $tablePrefix . "blogposts2categories where blogposts_id = $id and ( blogcategories_id in (" . implode(",", $ids) . "))";
             $res = $GLOBALS['POOL']->dbwrite->query($query);
             $oldids = $res->fetchCol();
         } else {
-            $query = "delete from ".$tablePrefix."blogposts2categories where blogposts_id = $id ";
+            $query = "delete from " . $tablePrefix . "blogposts2categories where blogposts_id = $id ";
             $res = $GLOBALS['POOL']->dbwrite->query($query);
 
             $oldids = array();
         }
 
-
         // add new categories
         foreach ($ids as $value) {
-            if (!(in_array($value,$oldids))) {
-	        $seqid = $GLOBALS['POOL']->dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix()."_sequences");
+            if (!(in_array($value, $oldids))) {
+                $seqid = $GLOBALS['POOL']->dbwrite->nextID($GLOBALS['POOL']->config->getTablePrefix() . "_sequences");
 
-                $query = "insert into ".$tablePrefix."blogposts2categories (id, blogposts_id, blogcategories_id) VALUES ($seqid, $id, $value)";
+                $query = "insert into " . $tablePrefix . "blogposts2categories (id, blogposts_id, blogcategories_id) VALUES ($seqid, $id, $value)";
                 $res = $GLOBALS['POOL']->dbwrite->query($query);
             }
         }
     }
-    function getElement($element,$clean = false) {
+    function getElement($element, $clean = false) {
         $res = $this->xp->query("/atom:entry/atom:$element/*|/atom:entry/atom:$element/text()");
 
-		$xml = "";
-        foreach($res as $node) {
-			if ($node->nodeType == 1 && $node->getAttribute("keep") == "true") {
+        $xml = "";
+        foreach ($res as $node) {
+            if ($node->nodeType == 1 && $node->getAttribute("keep") == "true") {
                 return false;
             }
             $xml .= $this->dom->saveXML($node);
@@ -665,7 +666,7 @@ class bx_streams_blog extends bx_streams_buffer {
             // clean up comment
             if (class_exists('tidy')) {
                 $tidy = new tidy();
-                if(!$tidy) {
+                if (!$tidy) {
                     throw new Exception("Something went wrong with tidy initialisation. Maybe you didn't enable ext/tidy in your PHP installation. Either install it or remove the tidy transformer from your sitemap.xml");
                 }
             } else {
@@ -673,7 +674,7 @@ class bx_streams_blog extends bx_streams_buffer {
             }
 
             if ($tidy) {
-                $tidy->parseString($xml,$this->tidyOptions,"utf8");
+                $tidy->parseString($xml, $this->tidyOptions, "utf8");
                 $tidy->cleanRepair();
                 $xml = popoon_classes_externalinput::basicClean((string) $tidy);
                 // and tidy it again
@@ -684,25 +685,23 @@ class bx_streams_blog extends bx_streams_buffer {
         }
         return $xml;
 
-
     }
 
-
     function returnCategories() {
-        $parts =  bx_collections::getCollectionAndFileParts($this->path, "output");
-        $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
+        $parts = bx_collections::getCollectionAndFileParts($this->path, "output");
+        $p = $parts['coll']->getFirstPluginMapByRequest("index", "html");
         $p = $p['plugin'];
         $colluri = $parts['coll']->uri;
-        $blogid =  $p->getParameter($colluri,"blogid");
+        $blogid = $p->getParameter($colluri, "blogid");
         if (!$blogid) {
             $blogid = 1;
         }
 
-        $res = $GLOBALS['POOL']->db->query("select id, fullname from ".$this->tablePrefix."blogcategories where status = 1 and ".$this->tablePrefix."blogcategories.blog_id = $blogid order by fullname ");
+        $res = $GLOBALS['POOL']->db->query("select id, fullname from " . $this->tablePrefix . "blogcategories where status = 1 and " . $this->tablePrefix . "blogcategories.blog_id = $blogid order by fullname ");
         $xml = '<categories xmlns="http://sixapart.com/atom/category#"  xmlns:dc="http://purl.org/dc/elements/1.1/">';
 
         while ($row = $res->fetchRow(MDB2_FETCHMODE_ASSOC)) {
-            $xml .='<dc:subject xml:id="cat'.$row['id'].'">'.htmlspecialchars(html_entity_decode($row['fullname'],ENT_NOQUOTES,"UTF-8")).'</dc:subject>';
+            $xml .= '<dc:subject xml:id="cat' . $row['id'] . '">' . htmlspecialchars(html_entity_decode($row['fullname'], ENT_NOQUOTES, "UTF-8")) . '</dc:subject>';
         }
 
         $xml .= '</categories>';
@@ -712,18 +711,17 @@ class bx_streams_blog extends bx_streams_buffer {
     function contentOnWrite($content) {
     }
 
-    static function getIdByUri ($uri,$path) {
+    static function getIdByUri($uri, $path) {
         $tablePrefix = self::getTablePrefix($path);
-        $res = $GLOBALS['POOL']->db->query("select id from ".$tablePrefix."blogposts where post_uri = '".$uri."'");
+        $res = $GLOBALS['POOL']->db->query("select id from " . $tablePrefix . "blogposts where post_uri = '" . $uri . "'");
         return $res->fetchOne(0);
     }
 
-    static function getUriById ($id) {
-          $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
-        $res = $GLOBALS['POOL']->db->query("select post_uri from ".$tablePrefix."blogposts where id = '".$id."'");
+    static function getUriById($id) {
+        $tablePrefix = $GLOBALS['POOL']->config->getTablePrefix();
+        $res = $GLOBALS['POOL']->db->query("select post_uri from " . $tablePrefix . "blogposts where id = '" . $id . "'");
         return $res->fetchOne(0);
     }
-
 
     static function getUniqueUri($uri, $path) {
         $tablePrefix = self::getTablePrefix($path);
@@ -731,7 +729,7 @@ class bx_streams_blog extends bx_streams_buffer {
         if (trim($uri) == '') {
             $uri = 'none';
         }
-        $query = "select id from ".$tablePrefix."blogposts where post_uri = '$uri'";
+        $query = "select id from " . $tablePrefix . "blogposts where post_uri = '$uri'";
 
         $resid = $GLOBALS['POOL']->db->query($query);
         $newuri = $uri;
@@ -739,8 +737,8 @@ class bx_streams_blog extends bx_streams_buffer {
         while ($resid->numRows() > 0) {
 
             $z++;
-            $newuri = $uri . "-". $z;
-            $query = "select id from ".$tablePrefix."blogposts where post_uri = '$newuri'";
+            $newuri = $uri . "-" . $z;
+            $query = "select id from " . $tablePrefix . "blogposts where post_uri = '$newuri'";
             $resid = $GLOBALS['POOL']->db->query($query);
         }
         $uri = $newuri;
@@ -752,24 +750,24 @@ class bx_streams_blog extends bx_streams_buffer {
     static function getTablePrefix($path) {
         if (!isset($tablePrefixes['$path'])) {
 
-           $parts =  bx_collections::getCollectionAndFileParts($path, "output");
-           $p = $parts['coll']->getFirstPluginMapByRequest("index","html");
-           $p = $p['plugin'];
-           $tablePrefixes['$path'] = $GLOBALS['POOL']->config->getTablePrefix().$p->getParameter($parts['coll']->uri,"tableprefix");
+            $parts = bx_collections::getCollectionAndFileParts($path, "output");
+            $p = $parts['coll']->getFirstPluginMapByRequest("index", "html");
+            $p = $p['plugin'];
+            $tablePrefixes['$path'] = $GLOBALS['POOL']->config->getTablePrefix() . $p->getParameter($parts['coll']->uri, "tableprefix");
         }
         return $tablePrefixes['$path'];
     }
 
-    public function sendTrackbacks($trackbacks,$title,$content,$uri) {
-	    if ($trackbacks) {
-            foreach(split(" ",$trackbacks) as $trackback) {
+    public function sendTrackbacks($trackbacks, $title, $content, $uri) {
+        if ($trackbacks) {
+            foreach (split(" ", $trackbacks) as $trackback) {
                 $req = new HTTP_Request($trackback);
                 $req->setMethod(HTTP_REQUEST_METHOD_POST);
-                $req->addPostData("title", html_entity_decode(strip_tags($title),ENT_COMPAT,'UTF-8'));
-                $req->addPostData("excerpt", substr(html_entity_decode(strip_tags($content),ENT_COMPAT,'UTF-8'),0,200)." ...");
-                $uri = substr($uri,strrpos($uri,"/") );
-                $uri = str_replace("/","",$uri);
-                $uri = BX_WEBROOT_W.dirname($this->path).'/archive/'.$uri;
+                $req->addPostData("title", html_entity_decode(strip_tags($title), ENT_COMPAT, 'UTF-8'));
+                $req->addPostData("excerpt", substr(html_entity_decode(strip_tags($content), ENT_COMPAT, 'UTF-8'), 0, 200) . " ...");
+                $uri = substr($uri, strrpos($uri, "/"));
+                $uri = str_replace("/", "", $uri);
+                $uri = BX_WEBROOT_W . dirname($this->path) . '/archive/' . $uri;
 
                 $req->addPostData("url", $uri);
                 if ($GLOBALS['POOL']->config->blogname) {
@@ -787,79 +785,76 @@ class bx_streams_blog extends bx_streams_buffer {
         }
     }
 
-    public function getRemotePage($title,$content,$uri){
-        $dom = new DomDocument;
+    public function getRemotePage($title, $content, $uri) {
+        $dom = new DomDocument();
         $dom->loadHTML($content);
 
-        $domxpath= new DomXPath($dom);
+        $domxpath = new DomXPath($dom);
 
-        $results=$domxpath->query("//a");
-        foreach($results as $result)
-        {
+        $results = $domxpath->query("//a");
+        foreach ($results as $result) {
 
             $href = $result->getAttribute("href");
             $sc = popoon_helpers_simplecache::getInstance();
-            $page = $sc->simpleCacheHttpRead($href,1);
-            if (preg_match('#trackback:ping="([^"]+)"#',$page,$matches)) {
-                $this->sendTrackbacks($matches[1],$title,$content,$uri);
+            $page = $sc->simpleCacheHttpRead($href, 1);
+            if (preg_match('#trackback:ping="([^"]+)"#', $page, $matches)) {
+                $this->sendTrackbacks($matches[1], $title, $content, $uri);
             }
         }
     }
 
     static function getSUPid() {
-        return "flx-".substr(md5(str_replace("http://www.","http://",BX_WEBROOT)),0,10);
+        return "flx-" . substr(md5(str_replace("http://www.", "http://", BX_WEBROOT)), 0, 10);
     }
-    
-    // maybe put this into a helper
-  
+
+// maybe put this into a helper
+
 
 }
 
 class bx_streams_blog_post {
-       public $title = null;
-       public $content = null;
-       /*public $content_extended = null;
+    public $title = null;
+    public $content = null;
+    /*public $content_extended = null;
        public $summary = null;*/
-       public $uri = null;
-       public $tags = null;
-       public $trackbacks = null;
-       public $autodiscovery = null;
-       public $status = null;
-       public $date = null;
-       public $id = null;
-       public $info = null;
+    public $uri = null;
+    public $tags = null;
+    public $trackbacks = null;
+    public $autodiscovery = null;
+    public $status = null;
+    public $date = null;
+    public $id = null;
+    public $info = null;
 
+    public function getInfo() {
+        if (!$this->info) {
+            $this->info = new domdocument();
+            $this->info->appendChild($this->info->createElement("info"));
+        }
+        return $this->info;
+    }
+    public function appendInfoString($infoString) {
+        if ($infoString) {
+            $info = $this->getInfo();
+            $dom = new domdocument();
+            $dom->loadXML($infoString);
+            $info->documentElement->appendChild($info->importNode($dom->documentElement, true));
+        }
+    }
 
+    public function getInfoString() {
+        if (!$this->info) {
+            return "";
+        }
+        if (!$this->info->documentElement->hasChildNodes()) {
+            return "";
+        }
+        $xml = "";
+        foreach ($this->info->documentElement->childNodes as $child) {
+            $xml .= $this->info->saveXML($child);
+        }
+        return $xml;
 
-       public function getInfo() {
-           if (!$this->info) {
-                 $this->info = new domdocument();
-                 $this->info->appendChild($this->info->createElement("info"));
-           }
-           return $this->info;
-       }
-       public function appendInfoString($infoString) {
-           if ($infoString) {
-               $info = $this->getInfo();
-               $dom = new domdocument();
-               $dom->loadXML($infoString);
-               $info->documentElement->appendChild($info->importNode($dom->documentElement,true));
-           }
-       }
-
-       public function getInfoString() {
-           if (!$this->info) {
-               return "";
-           }
-           if (!$this->info->documentElement->hasChildNodes()) {
-               return "";
-           }
-           $xml = "";
-           foreach($this->info->documentElement->childNodes as $child) {
-               $xml .= $this->info->saveXML($child);
-           }
-           return $xml;
-
-       }
+    }
 }
 
