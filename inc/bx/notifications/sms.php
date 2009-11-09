@@ -45,6 +45,12 @@ class bx_notifications_sms extends bx_notification {
 
         $this->sms->setContent($message);
 
+        // 1 credit for ech sms, if sms is greater 
+        // than 160 chars
+        $credits = 1;
+        if(strlen($message) > 160) {
+            $credits = ceil($message/153);
+        }
         //check accounting
         //if key is set
         $key = $GLOBALS['POOL']->config->aspsms_accounting_key;
@@ -62,7 +68,7 @@ class bx_notifications_sms extends bx_notification {
             if(trim($key) != '') {
                 $c = count($to);
                 $nrs = implode(',', $to);
-                $this->accounting($c, $nrs, $key);
+                $this->accounting($c * $credits, $nrs, $key);
             }
         }
         return true;
