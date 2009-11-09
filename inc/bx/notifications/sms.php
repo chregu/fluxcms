@@ -49,7 +49,7 @@ class bx_notifications_sms extends bx_notification {
         // than 160 chars
         $credits = 1;
         if(strlen($message) > 160) {
-            $credits = ceil($message/153);
+            $credits = ceil(strlen($message)/153);
         }
         //check accounting
         //if key is set
