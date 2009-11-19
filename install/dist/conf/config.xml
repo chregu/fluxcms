@@ -73,7 +73,7 @@
          <item>en</item>
     </outputLanguages>
 
-
+    <languageCookies>true</languageCookies>
         
     <image_allowed_sizes allowFromDB="true"  mergeArray="true">
 	        <!-- 60 is needed for the kupu drawer -->
