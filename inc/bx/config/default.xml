@@ -101,6 +101,8 @@
                  <item>fr</item>
             </adminLanguages>
             
+            <languageCookies>false</languageCookies>
+            
             <xslt_allowed_phpfunctions>__all__</xslt_allowed_phpfunctions>
             <themeCss allowFromDB="true">main.css</themeCss>
             <mobileMode>false</mobileMode>
