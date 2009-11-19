@@ -104,22 +104,13 @@
                     <div id="banner">
 
                         <div id="metanavi">
-                                <xsl:for-each select="$langsAvail/langs/entry[not(.=$lang)]">
-                                <xsl:choose>
-                                    <xsl:when test="text() = $defaultLanguage">
-                                    <a href="{concat($webrootW,$collectionUri)}">
-                                       [ <xsl:value-of select="."/> ]&#160;
-                                    </a>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                    <a href="{concat($webroot,.,$collectionUri)}">
-                                      [  <xsl:value-of select="."/> ]
-                                    </a>
-                                    </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:for-each>
-                          
- 	                       </div>
+                            <xsl:for-each select="$langsAvail/langs/entry[not(.=$lang)]">
+                                <a href="{concat($webroot,.,$collectionUri)}">
+                                    [ <xsl:value-of select="." /> ]
+                                </a>
+                            </xsl:for-each>
+                        </div>
+                        
                         <h1>
                             <a href="{$webrootLang}">
                                 <xsl:value-of select="$sitename"/>
