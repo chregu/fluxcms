@@ -14,8 +14,8 @@ Class bx_permm_auth_pearauth extends bx_permm_auth_common {
     }
     // checks, if a password matches to the logged in user
     public function checkPassword($pass) {
-        $username =$this->getUsername();
-        return $this->authObj->storage->fetchData($username, $pass);
+        $username = $this->getUsername();
+        return $this->fetchData($username, $pass);
     }
 
 

@@ -192,6 +192,13 @@ abstract class bx_permm_auth_common {
     public function getUsername() {
         return $this->authObj->getUsername();
     }
+    
+    public function fetchData($username, $password, $isChallengeResponse=false) {
+        If(!is_object($this->authObj->storage)) {
+            $this->authObj->_loadStorage();
+        }
+        return $this->authObj->storage->fetchData($username, $password, $isChallengeResponse);
+    }
 
     public function getUserGid() {
         return @$_SESSION[$this->auth_sessname]['data'][$this->auth_gidcol];
