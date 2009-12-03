@@ -170,10 +170,7 @@ class bx_resourcemanager {
             return null;
         }
         
-        $path = dirname($path);
-        if (DIRECTORY_SEPARATOR == '\\') {
-            $path = strtr($path, '\\', '/');
-        }
+        $path = self::dirname($path);
         while ($path) {
          if ($path == '/') {
                $path = '';
@@ -185,7 +182,7 @@ class bx_resourcemanager {
           if ($path == '') {
               return NULL;
           }
-          $path = dirname($path);
+          $path = self::dirname($path);
         }
         return NULL;
     }
@@ -199,7 +196,7 @@ class bx_resourcemanager {
             return null;
         }
         
-        $path = dirname($path);
+        $path = self::dirname($path);
         while ($path) {
           $val = self::getProperty($path.'/',$name,$namespace);
           if ($val) {
@@ -208,7 +205,7 @@ class bx_resourcemanager {
           if ($path == '/') {
               return NULL;
           }
-          $path = dirname($path);
+          $path = self::dirname($path);
         }
         return NULL;
     }
@@ -277,6 +274,13 @@ class bx_resourcemanager {
         return TRUE;
     }
 
+	public static function dirname($path) {
+		$path = dirname($path);
+		if ($path == '\\') {
+            $path = '/';
+        }
+		return $path;
+	}
 }
 
 ?>
