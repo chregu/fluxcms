@@ -171,6 +171,9 @@ class bx_resourcemanager {
         }
         
         $path = dirname($path);
+        if (DIRECTORY_SEPARATOR == '\\') {
+            $path = strtr($path, '\\', '/');
+        }
         while ($path) {
          if ($path == '/') {
                $path = '';
