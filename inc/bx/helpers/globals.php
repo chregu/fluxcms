@@ -30,6 +30,15 @@ class bx_helpers_globals {
 
     }
 
+    static function POST($name,$default = "") {
+        if (isset($_POST[$name])) {
+            return popoon_classes_externalinput::basicClean($_POST[$name]);
+        } else {
+            return $default;
+        }
+
+    }
+
     static function stripMagicQuotes($in) {
         if (!get_magic_quotes_gpc()) {
             return $in;
