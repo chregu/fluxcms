@@ -225,9 +225,12 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                     $filename = $parts['name'];
                     $ext = $parts['ext'];
 
-                    //break on top
+                    // break on top
+                    // some installation do not have a /index.html
+                    // so lets redirect to root
                     if($count == 0) {
-                        break;
+                        header("Location: /");
+                        die();
                     }
                 }
 
