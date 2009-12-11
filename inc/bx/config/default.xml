@@ -149,5 +149,9 @@
                 
         </dboptions>
         <logMails>false</logMails>
+        
+        <searchCollectionRecursive>false</searchCollectionRecursive>
+        
+        
        </options>
 </config>

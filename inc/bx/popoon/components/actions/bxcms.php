@@ -20,18 +20,18 @@
 // $Id$
 
 /**
-*
-* @author   Christian Stocker <chregu@liip.ch>
-* @version  $Id$
-* @package  popoon
-*/
+ *
+ * @author   Christian Stocker <chregu@liip.ch>
+ * @version  $Id$
+ * @package  popoon
+ */
 
 class popoon_components_actions_bxcms extends popoon_components_action {
 
     /**
-    * Constructor
-    *
-    */
+     * Constructor
+     *
+     */
     function __construct(&$sitemap) {
         parent::__construct($sitemap);
     }
@@ -72,7 +72,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
                 $sh = new bx_helpers_shorturl();
                 $url = $sh->getUrlFromCode(substr($fulluri,2));
                 if ($url) {
-                   header("Location: ".BX_WEBROOT."$url", true, 301);
+                    header("Location: ".BX_WEBROOT."$url", true, 301);
                     die();
                 }
             }
@@ -82,7 +82,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
              *   $xml = $p->getContentById("/","_all/index");
              */
             if (strpos($fulluri,"/__") !== false) {
-                 throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
+                throw new BxPageNotFoundException(substr($_SERVER['REQUEST_URI'],1));
             }
 
             $mo = (strpos($fulluri, '/mo/') === 0);
@@ -101,10 +101,10 @@ class popoon_components_actions_bxcms extends popoon_components_action {
 
                 }
             } else  if ($mo) {
-                    //redirect to without $mo, if mobileMode is not enabled
-                    $fulluri = substr($fulluri, 3);
-                    header("Location: $fulluri", true, 301);
-                    die();
+                //redirect to without $mo, if mobileMode is not enabled
+                $fulluri = substr($fulluri, 3);
+                header("Location: $fulluri", true, 301);
+                die();
             }
 
             if (strpos($fulluri, ".") === false) {
@@ -119,19 +119,19 @@ class popoon_components_actions_bxcms extends popoon_components_action {
 
             $req_fulluri = $fulluri;
             list($fulluri, $lang) = bx_collections::getLanguage($fulluri);
-            
-            if($GLOBALS['POOL']->config->getConfProperty('languageCookies') == 'true') {                
+
+            if($GLOBALS['POOL']->config->getConfProperty('languageCookies') == 'true') {
                 if(isset($_SESSION['lang']) && $_SESSION['lang'] != $lang) {
                     header("Location: /" . $_SESSION['lang'] . $fulluri, true, 301);
                     die();
                 }
-                // if the default language is requested specifically (if you change 
+                // if the default language is requested specifically (if you change
                 // from another language) redirect to the full uri without the language
                 // prefix. If this is a POST request don't redirect, otherwise some existing
                 // forms might break
                 if((strpos($req_fulluri, '/'.BX_DEFAULT_LANGUAGE.'/') === 0
-                    || strpos($req_fulluri, BX_DEFAULT_LANGUAGE.'/') === 0)
-                    && empty($_POST)) {
+                || strpos($req_fulluri, BX_DEFAULT_LANGUAGE.'/') === 0)
+                && empty($_POST)) {
                     header("Location: " . $fulluri, true, 301);
                     die();
                 }
@@ -139,7 +139,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             $GLOBALS['POOL']->config->setOutputLanguage($lang);
 
             //comma to GET parameter...
-           if (($pos = strpos($fulluri,",")) !== false && !isset($_GET['nocomma']) && !$_GET['nocomma']) {
+            if (($pos = strpos($fulluri,",")) !== false && !isset($_GET['nocomma']) && !$_GET['nocomma']) {
                 $_gets = str_replace(",","&",substr($fulluri,$pos + 1));
                 parse_str(str_replace('$_$',"/",$_gets),$vars);
                 foreach($vars as $key => $value) {
@@ -162,8 +162,8 @@ class popoon_components_actions_bxcms extends popoon_components_action {
 
         if($GLOBALS['POOL']->config->advancedRedirect == 'true'){
             /*
-            * userdir
-            */
+             * userdir
+             */
             $userdir = bx_resourcemanager::getFirstPropertyAndPath($fulluri,'redirect');
             if( $userdir !== NULL && $userdir['property'] == '{userdir}' ){
 
@@ -177,9 +177,9 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             }
         }
         /* 	Check for redirect
-        * 	Old "normal" redirect ;)
-        */
-	    $redirect = $collection->getProperty('redirect');
+         * 	Old "normal" redirect ;)
+         */
+        $redirect = $collection->getProperty('redirect');
         if ( $redirect !== NULL && ($parts['rawname'] == 'index.html') && $redirect != '{userdir}' ) {
 
             // absolute path
@@ -203,8 +203,45 @@ class popoon_components_actions_bxcms extends popoon_components_action {
 
         if(!isset($_GET["admin"]) && ($collection === FALSE || !$collection->resourceExistsByRequest($filename,$ext) )) {
 
+            /*
+             * add <searchCollectionRecursive>true</searchCollectionRecursive>
+             * to config.xml to turn on recursive search for existing collections
+             */
+            if($GLOBALS['POOL']->config->searchCollectionRecursive == 'true'){
+                /**
+                 * lookuop recursive for an existing html collection
+                 */
+                while($collection === FALSE || !$collection->resourceExistsByRequest($filename,$ext) ) {
 
-           throw new BxPageNotFoundException($this->getAttrib("uri"));
+                    $tmp = explode('/',$fulluri);
+                    array_pop($tmp);
+                    $count = count($tmp);
+                    $fulluri = implode('/',$tmp);
+
+                    $checkuri = $fulluri.'/index.html';
+                    $parts = bx_collections::getCollectionAndFileParts($checkuri, $mode);
+
+                    $collection = $parts['coll'];
+                    $filename = $parts['name'];
+                    $ext = $parts['ext'];
+
+                    //break on top
+                    if($count == 0) {
+                        break;
+                    }
+                }
+
+                if($collection === FALSE || !$collection->resourceExistsByRequest($filename,$ext) ) {
+                    throw new BxPageNotFoundException($this->getAttrib("uri"));
+                }
+
+                $redirect = str_replace('index.html','',$checkuri);
+
+                header("Location: $redirect");
+                die();
+            }
+            throw new BxPageNotFoundException($this->getAttrib("uri"));
+
         } else {
             //call postHandles...
             //FIXME: to be implemented...
@@ -216,22 +253,22 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             $retcode = 0;
             if (isset($_POST['bx']) && isset($_POST['bx']['plugins'])){
 
-            	foreach($plugins as $id => $plugin) {
-                	if (isset($_POST['bx']['plugins'][$plugin['plugin']->name]) && isset($_POST['bx']['plugins'][$plugin['plugin']->name]['_all'])) {
-                         $data = bx_helpers_globals::stripMagicQuotes($_POST);
-                         foreach ($data['bx']['plugins'][$plugin['plugin']->name] as $name => $value) {
-                             $data[$name] = $value;
-                             unset ($data['bx']['plugins'][$plugin['plugin']->name][$name]);
-                         }
-                         unset($data['bx']['plugins'][$plugin['plugin']->name]);
-                         if (count($data['bx']['plugins']) == 0) {
-                             unset ($data['bx']['plugins']);
-                             if (count($data['bx']) == 0) {
-                                 unset ($data['bx']);
-                             }
-                         }
+                foreach($plugins as $id => $plugin) {
+                    if (isset($_POST['bx']['plugins'][$plugin['plugin']->name]) && isset($_POST['bx']['plugins'][$plugin['plugin']->name]['_all'])) {
+                        $data = bx_helpers_globals::stripMagicQuotes($_POST);
+                        foreach ($data['bx']['plugins'][$plugin['plugin']->name] as $name => $value) {
+                            $data[$name] = $value;
+                            unset ($data['bx']['plugins'][$plugin['plugin']->name][$name]);
+                        }
+                        unset($data['bx']['plugins'][$plugin['plugin']->name]);
+                        if (count($data['bx']['plugins']) == 0) {
+                            unset ($data['bx']['plugins']);
+                            if (count($data['bx']) == 0) {
+                                unset ($data['bx']);
+                            }
+                        }
 
-                         $retcode = $plugin['plugin']->handlePublicPost($collection->uri,$id,$data);
+                        $retcode = $plugin['plugin']->handlePublicPost($collection->uri,$id,$data);
                     } else if (isset($_POST['bx']['plugins'][$plugin['plugin']->name])) {
                         $data = bx_helpers_globals::stripMagicQuotes($_POST['bx']['plugins'][$plugin['plugin']->name]);
 
@@ -247,14 +284,14 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             if ($GLOBALS['POOL']->config->dynamicHttpExpires == "true") {
                 $expires = bx_resourcemanager::getFirstProperty($collection->uri,"expires");
                 if ($expires === NULL) {
-                        $expires = 10;
+                    $expires = 10;
                 }
             } else {
                 $expires = 10;
             }
-            
+
             $GLOBALS['POOL']->config->uniqueId = bx_resourcemanager::getProperty($collection->uri,"unique-id");
-            
+
             $GLOBALS['POOL']->config->expires = $expires;
             $a =  array(
 
@@ -274,7 +311,7 @@ class popoon_components_actions_bxcms extends popoon_components_action {
             //Do we need that?
             /*
             foreach( $collection->getFirstResource($filename,$ext)->getAllProperties(BX_PROPERTY_PIPELINE_NAMESPACE) as $p) {
-                $a[$p['name']] = $p['value'];
+            $a[$p['name']] = $p['value'];
             }*/
             if (!isset($a['xslt'])) {
                 @session_start();
