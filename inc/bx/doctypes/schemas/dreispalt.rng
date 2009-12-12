@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="http://www.w3.org/1999/xhtml"
+         xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:bx="http://bitflux.org/doctypes/bx" 
+         >
+
+
+
+<!-- include original XHTML transitional schema -->
+<include href="xhtml/xhtml-basic.rng">
+
+  <define name="html">
+    <element name="html">
+      <ref name="html.attlist"/>
+      <ref name="head"/>
+	<element name="body">
+		<element name="div">
+			  <ref name="div.attlist"/>
+			 <ref name="Block.model"/>
+		</element>
+		<element name="div">
+			  <ref name="div.attlist"/>
+			 <ref name="Block.model"/>
+		</element>
+		<element name="div">
+			  <ref name="div.attlist"/>
+			 <ref name="Block.model"/>
+		</element>
+	</element>
+    </element>
+  </define>
+
+
+</include>
+
+<define name="bordertop">
+<element name="bx:bordertop">
+    <ref name="Inline.model"/>
+    </element>
+</define>
+<define name="gruen">
+<element name="bx:gruen">
+    <ref name="Inline.model"/>
+    </element>
+</define>
+
+<define name="gruentitel">
+<element name="bx:gruentitel">
+    <ref name="Inline.model"/>
+    </element>
+</define>
+
+<define name="Block.class" combine="choice">
+  <choice>
+    <ref name="bordertop"/>
+    <ref name="gruen"/>
+    <ref name="gruentitel"/>
+    
+  </choice>
+</define>
+
+
+</grammar>

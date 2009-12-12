@@ -1,0 +1,300 @@
+#!/usr/local/bin/php5
+<?php
+
+$basedir = realpath(dirname(__FILE__)."/../");
+$conffile= sprintf("%s/conf/config.inc.php", $basedir);
+
+if (!file_exists($conffile)) {
+    print "conffile not found!\n";
+    exit(1);
+
+} else {
+    
+    include_once $conffile;
+    
+    $dbfile = sprintf("%sMDB2.php", BX_INCLUDE_DIR);
+    if (file_exists($dbfile)) {
+        include_once $dbfile;
+    }
+}
+
+
+function main() {
+    
+    $dir = getcwd();
+    $recursive = false;
+    $path = "";
+    $action="insert";
+    $interactive=false;
+    
+    $opts = getopt("hrio:d:p:a:l:");
+    
+    foreach($opts as $opt => $value) {
+        
+        switch($opt) {
+            case "d":
+            
+                if ($value !== "" && is_dir($value))  {
+                    $dir = $value;
+                }
+            
+            break;
+
+            case "r":
+                $recursive=true;
+            break;
+            
+            case "p":
+                
+                if (!empty($value)) {
+                    $path = $value;
+                }
+            
+            break;
+            
+            case "l":
+            
+                $langs = split(",", $value);
+                langs($langs);                 
+            
+            break;
+            
+            case "i":
+                
+                interactive(true);
+                     
+            break;
+
+            case "o":
+                if(!empty($value)) {
+                    outputfile(fopen($value, 'w'));
+                    
+                }
+            break;
+            
+            case "h":
+                
+                print "usage: fs2db -r -d <directory> -p <path> -a <action> -o <filename>\n";
+                print "-o   output sql queries to given filename\n";
+                print "-r   recursive\n";
+                print "-d   directory (directory to scan)\n";
+                print "-p   webpath to start (default /)\n";
+                print "-a   action (default is insert)\n";
+                print "-l   languages (eg. \"de,en\")\n";
+                print "-i   interactive (prompt for certain params)\n\n";
+                exit(0);
+            
+            break;
+	    }
+    
+    }
+    
+    rundir($dir, $path, $action, $recursive);
+
+}
+
+
+function rundir($dir, $path, $action, $recursive) {
+    
+    $ignore = array('jpg','jpeg','gif','png','txt','mine',);
+    
+    
+    if (is_dir($dir)) {
+        
+        $currdir = $dir; 
+        
+        if (($content = scandir($dir)) !== FALSE) {
+            
+            foreach($content as $i => $entry) {
+                if ($entry !== "." && $entry !== ".." && (strpos($entry, ".") !== (int) 0 )) {
+                    
+                    preg_match("#\.([a-z]{1,})$#", $entry, $matches);
+                    $ext = $matches[1];
+                    if (!in_array($ext, $ignore)) { 
+                        
+                        $file = sprintf("%s%s", $currdir, $entry);
+                        
+                        if (substr($path, -1) !== "/") {
+                            $newpath = sprintf("%s/%s", $path, $entry);
+                        } else {
+                            $newpath = sprintf("%s%s", $path, $entry);
+                        }
+                        
+                        if (is_dir($file) && $recursive==true) {
+                            rundir(sprintf("%s/", $file), $newpath, $action, $recursive); 
+                        }
+                        
+                        if (function_exists($action)) {
+                            $action($file, $newpath);
+                        }
+                    
+                    }
+                }
+            }
+        }
+    }
+    
+    return NULL;
+}
+
+
+function insert($file, $path) {
+     
+    if (($db = getdb()) !== FALSE) {
+    
+        $mimetype = getmimetype($file);
+        $parenturi= (dirname($path)!=="/")?sprintf("%s/", dirname($path)):"/";
+        
+        
+        
+        $opts = array('mimetype'        => array(array('ns' => "bx:", "value" => $mimetype)),
+                      'parent-uri'      => array(array('ns' => "bx:", "value" => $parenturi)),
+                      'output-mimetype' => array(array('ns' => "bx:", "value" => 'text/html'))
+                      );
+
+        if ($mimetype == "httpd/unix-directory") {
+            
+            if (substr($path, -1) !== "/") {
+                $path = sprintf("%s/", $path);
+            }
+            
+            $opts['display-name'] = array();
+            
+            foreach(langs() as $lang) {
+                
+                if (interactive()) {
+                    
+                    print "Enter display-name for ".$file." lang: ".$lang."\n";
+                    $displayname = trim(exec('read inp && echo $inp'));
+                    
+                    $langinfo = array('ns' => "bx:".$lang, "value" => $displayname); 
+                    array_push($opts['display-name'], $langinfo); 
+                    
+                    
+                }   
+            }
+
+            print "Enter display-order for ".$file."\n";
+            $displayorder = trim(exec('read inp && echo $inp'));
+            $info = array(array('ns' => 'bx:', 'value' => $displayorder));
+            $opts['display-order'] = $info;
+        
+        }
+        
+        if ($opts) {
+        
+            foreach($opts as $name => $entry) {
+                
+                if (is_array($entry)) {
+                    foreach($entry as $e => $values) {
+                        
+                        if (checkPropEntry($path, $name, $values['ns'])) {
+                    
+                            $query = sprintf("INSERT INTO properties VALUES('%s','%s','%s','%s');",
+                                             $path, $name, $values['ns'], $values['value']); 
+                
+                            if(outputfile()) {
+                                fwrite(outputfile(), "$query\n");
+                            } else {
+                            
+                                $res = $db->query($query);
+                                if (MDB2::isError($res)) {
+                                    echo "ERROR: insert for ".$file." failed\n";
+                                }
+                            }
+                        } 
+                    }
+                } 
+            }
+        } 
+    }
+}
+
+
+function checkPropEntry($path, $name, $ns) {
+    
+    if (($db = getdb()) !== FALSE) {
+    
+        $query = sprintf("SELECT value FROM properties WHERE path='%s' AND name='%s' AND ns='%s'",
+                         $path,$name,$ns); 
+        
+        $res = $db->query($query);
+        if ($res->numRows() > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
+
+
+function getmimetype($file) {
+
+    if (is_dir($file)) {
+        return "httpd/unix-directory";
+    
+    } else {
+        
+        preg_match("#\.([a-z]{1,})$#", $file, $matches);
+        switch($matches[1]) {
+            
+            case "xhtml":
+            case "html":
+            default:
+                return "text/html";
+            break;
+        
+        }
+    }
+}
+
+
+function getdb() {
+    
+    static $db;
+    if (!is_object($db)) {
+        
+        $db = MDB2::connect($GLOBALS['bx_config']['dsn']);
+        if (!MDB2::isError($db)) {
+            return $db;
+        } else {
+            return false;
+        }
+    }
+
+    return $db;
+}
+
+
+function langs($newlangs=array()) {
+    
+    static $langs = array('de','en');
+    if (sizeof($newlangs) > 0) {
+        $langs = $newlangs;
+    }
+
+    return $langs;
+
+}
+
+function interactive($interact=null) {
+    static $interactive=false;
+    if ($interact !== NULL) {
+        $interactive = $interact;
+    }
+
+    return $interactive;
+}
+
+function outputfile($file = null) {
+    static $outputfile = false;
+    if ($file !== NULL) {
+        $outputfile = $file;
+    }
+
+    return $outputfile;
+}
+
+main();
+
+?>

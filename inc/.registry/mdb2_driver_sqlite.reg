@@ -1,0 +1,106 @@
+a:18:{s:8:"provides";a:50:{s:33:"class;MDB2_Driver_Datatype_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:27:"MDB2_Driver_Datatype_sqlite";s:7:"extends";s:27:"MDB2_Driver_Datatype_Common";s:8:"explicit";b:1;}s:56:"function;MDB2_Driver_Datatype_sqlite::getTypeDeclaration";a:3:{s:4:"type";s:8:"function";s:4:"name";s:47:"MDB2_Driver_Datatype_sqlite::getTypeDeclaration";s:8:"explicit";b:1;}s:55:"function;MDB2_Driver_Datatype_sqlite::mapNativeDatatype";a:3:{s:4:"type";s:8:"function";s:4:"name";s:46:"MDB2_Driver_Datatype_sqlite::mapNativeDatatype";s:8:"explicit";b:1;}s:33:"class;MDB2_Driver_Function_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:27:"MDB2_Driver_Function_sqlite";s:7:"extends";s:27:"MDB2_Driver_Function_Common";s:8:"explicit";b:1;}s:41:"function;MDB2_Driver_Function_sqlite::now";a:3:{s:4:"type";s:8:"function";s:4:"name";s:32:"MDB2_Driver_Function_sqlite::now";s:8:"explicit";b:1;}s:47:"function;MDB2_Driver_Function_sqlite::substring";a:3:{s:4:"type";s:8:"function";s:4:"name";s:38:"MDB2_Driver_Function_sqlite::substring";s:8:"explicit";b:1;}s:32:"class;MDB2_Driver_Manager_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:26:"MDB2_Driver_Manager_sqlite";s:7:"extends";s:26:"MDB2_Driver_Manager_Common";s:8:"explicit";b:1;}s:51:"function;MDB2_Driver_Manager_sqlite::createDatabase";a:3:{s:4:"type";s:8:"function";s:4:"name";s:42:"MDB2_Driver_Manager_sqlite::createDatabase";s:8:"explicit";b:1;}s:49:"function;MDB2_Driver_Manager_sqlite::dropDatabase";a:3:{s:4:"type";s:8:"function";s:4:"name";s:40:"MDB2_Driver_Manager_sqlite::dropDatabase";s:8:"explicit";b:1;}s:47:"function;MDB2_Driver_Manager_sqlite::alterTable";a:3:{s:4:"type";s:8:"function";s:4:"name";s:38:"MDB2_Driver_Manager_sqlite::alterTable";s:8:"explicit";b:1;}s:50:"function;MDB2_Driver_Manager_sqlite::listDatabases";a:3:{s:4:"type";s:8:"function";s:4:"name";s:41:"MDB2_Driver_Manager_sqlite::listDatabases";s:8:"explicit";b:1;}s:46:"function;MDB2_Driver_Manager_sqlite::listUsers";a:3:{s:4:"type";s:8:"function";s:4:"name";s:37:"MDB2_Driver_Manager_sqlite::listUsers";s:8:"explicit";b:1;}s:47:"function;MDB2_Driver_Manager_sqlite::listTables";a:3:{s:4:"type";s:8:"function";s:4:"name";s:38:"MDB2_Driver_Manager_sqlite::listTables";s:8:"explicit";b:1;}s:52:"function;MDB2_Driver_Manager_sqlite::listTableFields";a:3:{s:4:"type";s:8:"function";s:4:"name";s:43:"MDB2_Driver_Manager_sqlite::listTableFields";s:8:"explicit";b:1;}s:48:"function;MDB2_Driver_Manager_sqlite::createIndex";a:3:{s:4:"type";s:8:"function";s:4:"name";s:39:"MDB2_Driver_Manager_sqlite::createIndex";s:8:"explicit";b:1;}s:46:"function;MDB2_Driver_Manager_sqlite::dropIndex";a:3:{s:4:"type";s:8:"function";s:4:"name";s:37:"MDB2_Driver_Manager_sqlite::dropIndex";s:8:"explicit";b:1;}s:53:"function;MDB2_Driver_Manager_sqlite::listTableIndexes";a:3:{s:4:"type";s:8:"function";s:4:"name";s:44:"MDB2_Driver_Manager_sqlite::listTableIndexes";s:8:"explicit";b:1;}s:53:"function;MDB2_Driver_Manager_sqlite::createConstraint";a:3:{s:4:"type";s:8:"function";s:4:"name";s:44:"MDB2_Driver_Manager_sqlite::createConstraint";s:8:"explicit";b:1;}s:51:"function;MDB2_Driver_Manager_sqlite::dropConstraint";a:3:{s:4:"type";s:8:"function";s:4:"name";s:42:"MDB2_Driver_Manager_sqlite::dropConstraint";s:8:"explicit";b:1;}s:57:"function;MDB2_Driver_Manager_sqlite::listTableConstraints";a:3:{s:4:"type";s:8:"function";s:4:"name";s:48:"MDB2_Driver_Manager_sqlite::listTableConstraints";s:8:"explicit";b:1;}s:51:"function;MDB2_Driver_Manager_sqlite::createSequence";a:3:{s:4:"type";s:8:"function";s:4:"name";s:42:"MDB2_Driver_Manager_sqlite::createSequence";s:8:"explicit";b:1;}s:49:"function;MDB2_Driver_Manager_sqlite::dropSequence";a:3:{s:4:"type";s:8:"function";s:4:"name";s:40:"MDB2_Driver_Manager_sqlite::dropSequence";s:8:"explicit";b:1;}s:50:"function;MDB2_Driver_Manager_sqlite::listSequences";a:3:{s:4:"type";s:8:"function";s:4:"name";s:41:"MDB2_Driver_Manager_sqlite::listSequences";s:8:"explicit";b:1;}s:31:"class;MDB2_Driver_Native_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:25:"MDB2_Driver_Native_sqlite";s:7:"extends";s:18:"MDB2_Module_Common";s:8:"explicit";b:1;}s:32:"class;MDB2_Driver_Reverse_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:26:"MDB2_Driver_Reverse_sqlite";s:7:"extends";s:26:"MDB2_Driver_Reverse_Common";s:8:"explicit";b:1;}s:60:"function;MDB2_Driver_Reverse_sqlite::getTableFieldDefinition";a:3:{s:4:"type";s:8:"function";s:4:"name";s:51:"MDB2_Driver_Reverse_sqlite::getTableFieldDefinition";s:8:"explicit";b:1;}s:60:"function;MDB2_Driver_Reverse_sqlite::getTableIndexDefinition";a:3:{s:4:"type";s:8:"function";s:4:"name";s:51:"MDB2_Driver_Reverse_sqlite::getTableIndexDefinition";s:8:"explicit";b:1;}s:65:"function;MDB2_Driver_Reverse_sqlite::getTableConstraintDefinition";a:3:{s:4:"type";s:8:"function";s:4:"name";s:56:"MDB2_Driver_Reverse_sqlite::getTableConstraintDefinition";s:8:"explicit";b:1;}s:46:"function;MDB2_Driver_Reverse_sqlite::tableInfo";a:3:{s:4:"type";s:8:"function";s:4:"name";s:37:"MDB2_Driver_Reverse_sqlite::tableInfo";s:8:"explicit";b:1;}s:24:"class;MDB2_Driver_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:18:"MDB2_Driver_sqlite";s:7:"extends";s:18:"MDB2_Driver_Common";s:8:"explicit";b:1;}s:24:"class;MDB2_Result_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:18:"MDB2_Result_sqlite";s:7:"extends";s:18:"MDB2_Result_Common";s:8:"explicit";b:1;}s:32:"class;MDB2_BufferedResult_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:26:"MDB2_BufferedResult_sqlite";s:7:"extends";s:18:"MDB2_Result_sqlite";s:8:"explicit";b:1;}s:27:"class;MDB2_Statement_sqlite";a:4:{s:4:"type";s:5:"class";s:4:"name";s:21:"MDB2_Statement_sqlite";s:7:"extends";s:21:"MDB2_Statement_Common";s:8:"explicit";b:1;}s:38:"function;MDB2_Driver_sqlite::errorInfo";a:3:{s:4:"type";s:8:"function";s:4:"name";s:29:"MDB2_Driver_sqlite::errorInfo";s:8:"explicit";b:1;}s:35:"function;MDB2_Driver_sqlite::escape";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"MDB2_Driver_sqlite::escape";s:8:"explicit";b:1;}s:45:"function;MDB2_Driver_sqlite::beginTransaction";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"MDB2_Driver_sqlite::beginTransaction";s:8:"explicit";b:1;}s:35:"function;MDB2_Driver_sqlite::commit";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"MDB2_Driver_sqlite::commit";s:8:"explicit";b:1;}s:37:"function;MDB2_Driver_sqlite::rollback";a:3:{s:4:"type";s:8:"function";s:4:"name";s:28:"MDB2_Driver_sqlite::rollback";s:8:"explicit";b:1;}s:36:"function;MDB2_Driver_sqlite::connect";a:3:{s:4:"type";s:8:"function";s:4:"name";s:27:"MDB2_Driver_sqlite::connect";s:8:"explicit";b:1;}s:39:"function;MDB2_Driver_sqlite::disconnect";a:3:{s:4:"type";s:8:"function";s:4:"name";s:30:"MDB2_Driver_sqlite::disconnect";s:8:"explicit";b:1;}s:45:"function;MDB2_Driver_sqlite::getServerVersion";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"MDB2_Driver_sqlite::getServerVersion";s:8:"explicit";b:1;}s:36:"function;MDB2_Driver_sqlite::replace";a:3:{s:4:"type";s:8:"function";s:4:"name";s:27:"MDB2_Driver_sqlite::replace";s:8:"explicit";b:1;}s:35:"function;MDB2_Driver_sqlite::nextID";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"MDB2_Driver_sqlite::nextID";s:8:"explicit";b:1;}s:41:"function;MDB2_Driver_sqlite::lastInsertID";a:3:{s:4:"type";s:8:"function";s:4:"name";s:32:"MDB2_Driver_sqlite::lastInsertID";s:8:"explicit";b:1;}s:35:"function;MDB2_Driver_sqlite::currID";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"MDB2_Driver_sqlite::currID";s:8:"explicit";b:1;}s:37:"function;MDB2_Result_sqlite::fetchRow";a:3:{s:4:"type";s:8:"function";s:4:"name";s:28:"MDB2_Result_sqlite::fetchRow";s:8:"explicit";b:1;}s:36:"function;MDB2_Result_sqlite::numCols";a:3:{s:4:"type";s:8:"function";s:4:"name";s:27:"MDB2_Result_sqlite::numCols";s:8:"explicit";b:1;}s:41:"function;MDB2_BufferedResult_sqlite::seek";a:3:{s:4:"type";s:8:"function";s:4:"name";s:32:"MDB2_BufferedResult_sqlite::seek";s:8:"explicit";b:1;}s:42:"function;MDB2_BufferedResult_sqlite::valid";a:3:{s:4:"type";s:8:"function";s:4:"name";s:33:"MDB2_BufferedResult_sqlite::valid";s:8:"explicit";b:1;}s:44:"function;MDB2_BufferedResult_sqlite::numRows";a:3:{s:4:"type";s:8:"function";s:4:"name";s:35:"MDB2_BufferedResult_sqlite::numRows";s:8:"explicit";b:1;}}s:8:"filelist";a:6:{s:31:"MDB2/Driver/Datatype/sqlite.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b4ece3c17ba25241bdb07458d6d91d21";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:68:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Datatype/sqlite.php";}s:31:"MDB2/Driver/Function/sqlite.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"9a956409442e15fcb70311ac07269c4b";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:68:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Function/sqlite.php";}s:30:"MDB2/Driver/Manager/sqlite.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e24969b9f570edf5d8b08a485447c2d5";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:67:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Manager/sqlite.php";}s:29:"MDB2/Driver/Native/sqlite.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"090ada2625f0535d33ba30ac6ab4a65b";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:66:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Native/sqlite.php";}s:30:"MDB2/Driver/Reverse/sqlite.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"651563c02dfd3545652f661446c1ec5d";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:67:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Reverse/sqlite.php";}s:22:"MDB2/Driver/sqlite.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4e338c243fb8ffbdaa4ba050a4a54654";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:59:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/sqlite.php";}}s:10:"xsdversion";s:3:"1.0";s:15:"packagerversion";s:5:"1.4.6";s:7:"package";s:18:"MDB2_Driver_sqlite";s:7:"summary";s:18:"sqlite MDB2 driver";s:11:"description";s:34:"This is the SQLite MDB2 driver.
+ 
+";s:11:"maintainers";a:1:{i:0;a:4:{s:6:"handle";s:6:"lsmith";s:4:"name";s:17:"Lukas Kahwe Smith";s:5:"email";s:20:"smith@pooteeweet.org";s:4:"role";s:4:"lead";}}s:7:"version";s:5:"0.2.3";s:12:"release_date";s:10:"2006-01-13";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:982:"- explicitly pass if the module is phptype specific in all loadModule calls (bug #6226)
+- fixed handling of autoincrement and unsigned in Reverse and Datatype module
+- tweaked handling of the native error message
+- typo fixes in error handling of nextResult() and numRows() calls
+- _fixIndexName() now just attempts to remove possible formatting
+- renamed _isSequenceName() to _fixSequenceName()
+- _fixSequenceName() now just attempts to remove possible formatting, and only
+  returns a boolean if no formatting was applied when the new "check" parameter is set to true
+- use MDB2_ERROR_ALREADY_EXISTS if the database to create already exists (bug #6481)
+
+open todo items:
+- a number of the manager test cases fail because sqlite does not support adding
+  primary keys to existing tables
+- the alter table test fails because this is unsupported in sqlite2
+- the test replace test fails because sqlite reports an incorrect affected rows
+  value when no existing data was replaced
+  
+";s:12:"release_deps";a:4:{i:1;a:4:{s:4:"type";s:3:"php";s:3:"rel";s:2:"ge";s:7:"version";s:5:"4.3.0";s:8:"optional";s:2:"no";}i:2;a:5:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"1.0b1";s:8:"optional";s:2:"no";s:4:"name";s:4:"PEAR";}i:3;a:5:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:8:"2.0.0RC4";s:8:"optional";s:2:"no";s:4:"name";s:4:"MDB2";}i:4;a:4:{s:4:"type";s:3:"ext";s:3:"rel";s:3:"has";s:8:"optional";s:2:"no";s:4:"name";s:6:"sqlite";}}s:9:"changelog";a:6:{i:0;a:5:{s:7:"version";s:5:"0.2.3";s:12:"release_date";s:10:"2006-01-13";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:984:"- explicitly pass if the module is phptype specific in all loadModule calls (bug #6226)
+- fixed handling of autoincrement and unsigned in Reverse and Datatype module
+- tweaked handling of the native error message
+- typo fixes in error handling of nextResult() and numRows() calls
+- _fixIndexName() now just attempts to remove possible formatting
+- renamed _isSequenceName() to _fixSequenceName()
+- _fixSequenceName() now just attempts to remove possible formatting, and only
+  returns a boolean if no formatting was applied when the new "check" parameter is set to true
+- use MDB2_ERROR_ALREADY_EXISTS if the database to create already exists (bug #6481)
+
+open todo items:
+- a number of the manager test cases fail because sqlite does not support adding
+  primary keys to existing tables
+- the alter table test fails because this is unsupported in sqlite2
+- the test replace test fails because sqlite reports an incorrect affected rows
+  value when no existing data was replaced
+    
+";}i:1;a:5:{s:7:"version";s:5:"0.2.2";s:12:"release_date";s:10:"2005-12-30";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:386:"- fixed handling of autoincrement in the datatype module
+
+open todo items:
+- a number of the manager test cases fail because sqlite does not support adding
+  primary keys to existing tables
+- the alter table test fails because this is unsupported in sqlite2
+- the test replace test fails because sqlite reports an incorrect affected rows
+  value when no existing data was replaced
+    
+";}i:2;a:5:{s:7:"version";s:5:"0.2.1";s:12:"release_date";s:10:"2005-12-28";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:589:"- fixed now() and substring()
+- disabled "add" and "rename" in alterTable() sqlite 2.x as they are not supported
+- fixed bug in regexp inside _getTableColumns()
+- added mapping for boolean into mapNativeDatatype()
+- proper quote new table name in alterTable()
+
+open todo items:
+- a number of the manager test cases fail because sqlite does not support adding
+  primary keys to existing tables
+- the alter table test fails because this is unsupported in sqlite2
+- the test replace test fails because sqlite reports an incorrect affected rows
+  value when no existing data was replaced
+    
+";}i:3;a:5:{s:7:"version";s:5:"0.2.0";s:12:"release_date";s:10:"2005-12-21";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:1876:"- do not fix case in listUsers()
+- unified case fixing in the list*() methods
+- support sorting order in createIndex()
+- tweaked lob and text handling in mapNativeDatatype()
+- fixed getTableFieldDefinition()
+- use getConnection() to access connection property
+- split index and constraint handling
+- quote identifiers where possible inside the manager methods depending on
+  the new 'quote_identifier' option (defaults to off)
+- refactored get*Declaration() methods to use getTypeDeclaration()
+- setting in_transaction to false on disconnect
+- added new Function modules to handle difference in SQL functions
+- force rollback() with open transactions on disconnect
+- added alterTable() (only does table name change and column adding)
+- escape floats to make sure they do not contain evil characters (bug #5608)
+- split off manipulation queries into exec() method from the query() method *BC BREAK*
+- only if result_types is set to false in prepare() method the query will be
+  handled as a DML statement *BC BREAK*
+- use a proper default value if a field is set to not null in _getDeclaration*() (bug #5930)
+- added ability to determine unsigned in mapNativeDatatype()
+  (only really implemented in the mysql(i) drivers) (bug #6054)
+- use lastInsertID() method in nextID()
+- added getServerVersion()
+- unified array structure in mapNativeDatatype() *BC BREAK*
+- added 'mdbtype' to tableInfo() output that is generated from mapNativeDatatype()
+- changed 'len' to 'length' in tableInfo() output *BC BREAK*
+
+open todo items:
+- a number of the manager test cases fail because sqlite does not support adding
+  primary keys to existing tables
+- the alter table test fails because this is unsupported in sqlite2
+- the test replace test fails because sqlite reports an incorrect affected rows
+  value when no existing data was replaced
+- the testnow and testsubstring tests fail
+    
+";}i:4;a:5:{s:7:"version";s:5:"0.1.1";s:12:"release_date";s:10:"2005-06-10";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:89:"- increased php dependency to 4.3.0 due to the usage of the streams API since beta5
+    
+";}i:5;a:5:{s:7:"version";s:5:"0.1.0";s:12:"release_date";s:10:"2005-04-29";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:472:"first unbundled release from MDB2 core
+
+- cosmetic fixes to _getDatabaseFile()
+- dont just check for isset() for boolean values in order to support
+  setting them false as well (bug #4373)
+- ensure SQL injection protection in all _quote() methods (was missing in
+  some decimal, float, time, date and timestamp implementations)
+- check if database_name is empty to determine if to connect in connect()
+- Warning: there are some serious issues on php5 HEAD on windows
+    
+";}}s:12:"_lastversion";N;s:7:"dirtree";a:7:{s:57:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Datatype";b:1;s:48:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver";b:1;s:41:"/Users/chregu/clients/bxcmsclean/inc/MDB2";b:1;s:57:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Function";b:1;s:56:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Manager";b:1;s:55:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Native";b:1;s:56:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Reverse";b:1;}s:13:"_lastmodified";i:1137995458;}

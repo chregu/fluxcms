@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<collection>
+  <uri>/webinc/kupu/common/kupudrawers/demolibrary1.xml</uri>
+  <icon>/admin/webinc/img/icons/fileicon_folder.gif</icon>
+  <title>LibraryCollection 1</title>
+  <description>FooBarCollection</description>
+  <items>
+    <resource id="res1">
+      <uri>/files/images/xml.gif</uri>
+      <icon>/admin/webinc/img/icons/text/html.gif</icon>
+      <src>/files/images/xml.gif</src>
+      <title>Res 1</title>
+      <description>Demo Resource one</description>
+    </resource>
+    <resource id="res2">
+      <uri>/files/images/lageplan.gif</uri>
+      <title>res 2</title>
+      <icon>/admin/webinc/img/icons/text/html.gif</icon>
+      <src>/files/images/lageplan.gif</src>
+      <description>Demo Resource two</description>
+    </resource>
+  </items>
+</collection>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+    <map:pipelines>
+
+        <map:pipeline>
+                <map:aggregate element="html" ns="http://www.w3.org/1999/xhtml" >
+                    <map:part src="popoon:exhibits/index.html" strip-root="true">
+                        <map:parameter type="popoonmap" name="admin" value="true"/>
+                     </map:part>
+                </map:aggregate>
+                <map:transform type="xslt" src="BX_PROJECT_DIR://themes/standard/admin/formedit.xsl"/>
+                
+                <map:serialize type="xhtml" contentType="text/html; charset=utf-8">
+                    <map:parameter name="outputErrors" value="bx_errorhandler"/>
+                </map:serialize>
+        </map:pipeline>
+
+    </map:pipelines>
+
+   
+</map:sitemap>

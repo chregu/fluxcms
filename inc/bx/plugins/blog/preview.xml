@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<bx>
+    <plugin  name="blog">
+        <html  xmlns:i18n="http://apache.org/cocoon/i18n/2.1" xmlns="http://www.w3.org/1999/xhtml">
+            <body>
+                <div class="entry" >
+                 
+                    <div class="comments">
+                        <div class="comment" id="2">
+                            <a name="comment2"/>
+                            <div class="comment_meta_data">
+                                <span class="comment_author_email">{{mail}}</span>
+                                <span class="comment_author">
+                                    <a href="{{uri}}">{{name}}</a>
+                                </span>
+                                <span class="comment_date">now</span>
+                                <span class="comment_type"/>
+                            </div>
+                            <div class="comment_content">{{text}}</div>
+                        </div>
+                      
+                    </div>
+                    
+                </div>
+            </body>
+           
+        </html>
+    </plugin>
+   
+</bx>

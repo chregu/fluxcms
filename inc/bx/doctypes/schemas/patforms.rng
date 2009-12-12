@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="http://www.w3.org/1999/xhtml"
+        xmlns="http://relaxng.org/ns/structure/1.0"
+        xmlns:forms="http://bitflux.org/forms"
+        xmlns:patForms="http://php-tools.net/patForms/1.0">
+
+    <define name="patFormsString">
+        <choice>
+            <element name="patForms:String">
+                <attribute name="description"/>
+                <attribute name="label"/>
+                <attribute name="name">
+                    <data type="NCName"/>
+                </attribute>
+                <attribute name="required">
+                    <data type="NCName"/>
+                </attribute>
+            </element>
+        </choice>
+    </define>
+    
+    <define name="patFormsText">
+        <choice>
+            <element name="patForms:Text">
+                <attribute name="accesskey">
+                    <data type="NCName"/>
+                </attribute>
+                <attribute name="cols">
+                    <data type="integer"/>
+                </attribute>
+                <attribute name="label"/>
+                <attribute name="name">
+                    <data type="NCName"/>
+                </attribute>
+                <attribute name="required">
+                    <data type="NCName"/>
+                </attribute>
+                <attribute name="rows">
+                    <data type="integer"/>
+                </attribute>
+            </element>
+        </choice>
+</define>
+<define name="patFormsSwitch">
+        <choice>
+
+ <element name="patForms:Switch">
+                            <attribute name="label"/>
+                            <attribute name="name">
+                              <data type="NCName"/>
+                            </attribute>
+                            <attribute name="required">
+                              <data type="NCName"/>
+                            </attribute>
+                            <attribute name="value">
+                              <data type="NCName"/>
+                            </attribute>
+                          </element>
+</choice>
+</define>
+        <define name="Inline.class" combine="choice">
+            <ref name="patFormsString"/>
+<ref name="patFormsText"/>
+<ref name="patFormsSwitch"/>
+        </define>
+
+    </grammar>

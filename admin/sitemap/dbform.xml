@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+    <map:pipelines>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="*">
+                <map:include label="standardPipeline"/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:include label="standardPipeline"/>
+        </map:pipeline>
+
+    </map:pipelines>
+
+    <map:include-definitions>
+        <map:include-definition label="standardPipeline">
+        <map:act type="dbform">
+            <map:parameter name="id" value="{../id}"/>
+        
+            <map:redirect-to uri="{constant(BX_WEBROOT)}forms/{table}/?id={DBid}"/>
+            
+        </map:act>    
+        </map:include-definition>
+
+    </map:include-definitions>
+</map:sitemap>

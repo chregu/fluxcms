@@ -1,0 +1,26 @@
+* {
+margin: 0px;
+padding: 0px;
+}
+
+body {
+margin: 5px;
+padding: 5px;
+overflow: hidden;
+}
+
+.textbox {
+font-family: arial, helvetica, serif;
+font-size: 14pt;
+color: #000000;
+float: left;
+width: 30px;
+height: 26px;
+border: 1px solid #a8adb4;
+margin-left: -1px;
+margin-top: -1px;
+padding-top: 4px;
+text-align: center;
+background-color: #ffffff;
+cursor: pointer;
+}

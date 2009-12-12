@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<dbform:form 
+    xmlns:dbform="http://bitflux.org/dbforms2/1.0"
+>
+
+    <dbform:fields table="newsletter_groups">
+
+        <dbform:field name="name" type="text" descr="Name"/>
+        <dbform:field name="public" type="select" descr="Public Group">
+            <dbform:value name="1">true</dbform:value>
+            <dbform:value name="0">false</dbform:value>
+        </dbform:field>
+        <dbform:field name="optin" type="select" descr="Double-Opt-In">   
+            <dbform:value name="0">false</dbform:value>
+            <dbform:value name="1">true</dbform:value>
+        </dbform:field>
+<dbform:field name="test" type="checkbox" descr="Testgroup"/>
+    </dbform:fields>    
+    <dbform:chooser namefield="concat(name,' (',id,')')" wherefields="name" limit="50"/>    
+
+</dbform:form>

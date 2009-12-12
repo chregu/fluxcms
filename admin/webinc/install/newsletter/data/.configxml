@@ -1,0 +1,17 @@
+<bxcms xmlns ="http://bitflux.org/config">
+<plugins>
+
+<parameter name ="xslt" type="pipeline" value ="newsletter.xsl"/>
+
+<plugin type ="newsletter">
+  <parameter name="sendclass" value="newsmailer"/>
+  <parameter name="activation-server" value="localhost"/>
+  <parameter name="activation-from" value="noreply@example.org"/>
+  <parameter name="activation-subject" value="Newsletter Aktivierung"/>
+  <parameter name="activation-text" value="activation-txt.de.xhtml"/>
+</plugin>
+
+<plugin type ="navitree"></plugin>
+<plugin type ="xhtml"></plugin></plugins>
+
+</bxcms>

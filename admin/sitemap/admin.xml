@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+    <map:components>
+        <map:schemes>
+            <map:scheme name="config" path="BX_PROJECT_DIR:///conf/config.inc.php" global="yes" variable="BX_config"/>
+        </map:schemes>
+    </map:components>
+
+
+    <map:pipelines>
+
+        <map:pipeline>
+            <map:match type="uri" matchtype="regex" pattern="#^/*content/(.*)$#">
+<!--            <map:match type="uri"  pattern="content/*">-->
+                <map:act uri="{1}" type="bxcmsauth">
+                    <map:parameter type="actions" name="action1" value="admin"/>
+                    <map:parameter type="actions" name="action2" value="edit"/>
+
+                    <map:parameter name="permmconfig" value="config://permm_http"/>
+                    <map:read type="webdavbx">
+                        <map:parameter name="fsroot" value="BX_OPEN_BASEDIR:///data/"/>
+                        <map:parameter name="webroot" value="content"/>
+                    </map:read>
+                </map:act>
+            </map:match>
+        </map:pipeline>
+        <map:pipeline>
+            <map:match type="uri" pattern="root/*">
+                <map:read type="webdavadmin">
+                    <map:parameter name="fsroot" value="BX_PROJECT_DIR:///"/>
+                    <map:parameter name="webroot" value="root"/>
+                </map:read>
+
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="navi/popup*">
+                <map:act uri="{1}" type="bxcmsauth">
+                    <map:parameter type="actions" name="action1" value="admin"/>
+                    <map:parameter type="actions" name="action2" value="edit"/>
+
+                    <map:read type="adminpopup"/>
+                </map:act>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="navi/tree*">
+                <map:act uri="{1}" type="bxcmsauth">
+                    <map:parameter type="actions" name="action1" value="admin"/>
+                    <map:parameter type="actions" name="action2" value="edit"/>
+
+                    <map:generate type="admintree"/>
+                    <map:serialize type="xml"/>
+                </map:act>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="navi/kupu*">
+                <map:act  uri="{1}" type="bxcmsauth">
+                    <map:parameter type="actions" name="action1" value="admin"/>
+                    <map:parameter type="actions" name="action2" value="edit"/>
+
+                    <map:generate type="admintree"/>
+
+                    <map:select type="phpglobalvars" var="GET" key="XML">
+                        <map:when test="1">
+                            <map:serialize type="xml"/>
+                        </map:when>
+                        <map:otherwise>
+                            <map:transform type="xslt"
+                                    src="BX_PROJECT_DIR://inc/bx/xsl/tree2kupulibrary.xsl">
+                                <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                            </map:transform>
+
+                            <map:serialize type="xml"/>
+                        </map:otherwise>
+                    </map:select>
+                </map:act>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="bxe/">
+                <map:mount src="admin/sitemap/bxe.xml" uri-prefix=""/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="fck/">
+                <map:mount src="admin/sitemap/fck.xml" uri-prefix=""/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="i18n/*">
+                <map:act uri="{1}" type="bxcmsauth">
+                    <map:parameter type="actions" name="action1" value="admin"/>
+                    <map:parameter type="actions" name="action2" value="edit"/>
+                    <map:act type="bxcmsadmin" uri="{../1}">
+                        <map:read type="resource" src="constant(BX_PROJECT_DIR)/admin/lang/js_{lang}.xml" mime-type="auto">
+                            <map:parameter name="src" value=""/>
+                        </map:read>
+                    </map:act>
+                </map:act>
+            </map:match>
+        </map:pipeline>
+        <map:pipeline>
+            <map:match type="uri" matchtype="regex" pattern="#^/*openid/.*$#">
+                  <map:act type="bxcmsadmin" uri="{../1}">
+
+                        <map:parameter name="editor" value="phpglobals://_GET[editor]"/>
+                        <map:select type="any" var="{pipelineName}">
+
+                            <map:when test="xrds">
+                                <map:include label="bxcmsGenerator"/>
+                                <map:transform type="xslt" src="constant(BX_THEMES_DIR)/standard/admin/{xslt}">
+                                    <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                                    <map:parameter name="requestUri" value="{requestUri}"/>
+                                    <map:parameter name="mode" value="{mode}"/>
+                                    <map:parameter type="options" name="registerPhpFunctions" value="true"/>
+                                </map:transform>
+            
+                                <map:transform type="i18n" src="constant(BX_PROJECT_DIR)/admin/lang/master">
+                                    <map:parameter name="locale" value="{locale}"/>
+                                    <map:parameter name="driver" value="xml"/>
+                                </map:transform>
+            
+                                <map:serialize type="xml" contentType="application/xrds+xml; charset=utf-8">
+                                    <map:parameter name="stripScriptCDATA" value="true"/>
+                                    <map:parameter name="outputErrors" value="bx_errorhandler"/>
+                                    <map:parameter name="stripXMLDeclaration" value="true"/>
+                                </map:serialize>
+                             </map:when>
+                            <map:when test="standard">
+                                <map:include label="bxcmsGenerator"/>
+                                <map:include label="standardOutput"/>
+                            </map:when>
+                            <map:otherwise>
+                                <map:mount src="admin/sitemap/{pipelineName}.xml" uri-prefix="edit/"/>
+                            </map:otherwise>
+                        </map:select>
+                    </map:act>
+            </map:match>
+        </map:pipeline>
+        
+        
+        
+        
+        <map:pipeline>
+            <map:match type="uri" matchtype="regex" pattern="#^/*$#">
+                <map:act uri="{1}" type="bxcmsauth">
+                    <map:parameter type="actions" name="action1" value="admin"/>
+                    <map:parameter type="actions" name="action2" value="edit"/>
+                    <map:parameter name="uri" value="phpglobals://_SERVER[REQUEST_URI]"/>
+                    <map:generate type="xmlfile" src="constant(BX_THEMES_DIR)/standard/admin/index.html"/>
+                    <map:transform type="xslt" src="constant(BX_THEMES_DIR)/standard/admin/frameset.xsl">
+                        <map:parameter name="id" value="phpglobals://_GET[id]"/>
+                        <map:parameter name="edit" value="phpglobals://_GET[edit]"/>
+                        <map:parameter name="editor" value="phpglobals://_GET[editor]"/>
+                        <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                        <map:parameter type="options" name="registerPhpFunctions" value="true"/>
+                        <map:parameter type="allowedPhpFunctions" name="one" value="config://xslt_allowed_phpfunctions"/>
+                    </map:transform>
+                    <map:serialize type="xhtml"/>
+                </map:act>
+            </map:match>
+        </map:pipeline>
+        <map:pipeline>
+            <map:match type="uri" pattern="*">
+                <map:act uri="{1}" type="bxcmsauth">
+                    <map:parameter type="actions" name="action1" value="admin"/>
+                    <map:parameter type="actions" name="action2" value="edit"/>
+                    <map:act type="bxcmsadmin" uri="{../1}">
+
+                        <map:parameter name="editor" value="phpglobals://_GET[editor]"/>
+                        <map:select type="any" var="{pipelineName}">
+
+                            <map:when test="xml">
+                                <map:include label="bxcmsGenerator"/>
+                                <map:transform type="xslt" src="constant(BX_LIBS_DIR)xsl/plugin2xml.xsl">
+                                    <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                                    <map:parameter name="requestUri" value="{requestUri}"/>
+                                    <map:parameter name="mode" value="{mode}"/>
+
+                                </map:transform>
+                                <map:serialize type="xml" contentType="text/xml; charset=utf-8">
+                                    <map:parameter name="outputErrors" value="bx_errorhandler"/>
+                                </map:serialize>
+                            </map:when>
+                            <map:when test="standard">
+                                <map:include label="bxcmsGenerator"/>
+                                <map:include label="standardOutput"/>
+                            </map:when>
+                            <map:otherwise>
+                                <map:mount src="admin/sitemap/{pipelineName}.xml" uri-prefix="edit/"/>
+                            </map:otherwise>
+                        </map:select>
+                    </map:act>
+                </map:act>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:generate type="xmlfile" src="constant(BX_THEMES_DIR)/standard/admin/login.html"/>
+            <map:transform type="phpprocessor"/>
+            <map:serialize type="xhtml">
+                <map:parameter name="stripXMLDeclaration" value="true"/>
+                <map:parameter name="stripScriptCDATA" value="true"/>
+            </map:serialize>
+        </map:pipeline>
+
+        <map:handle-errors>
+            <map:select type="exception">
+                <map:when test="BxPageNotFoundException">
+                    <map:generate type="error">
+                        <map:parameter name="exception"/>
+                    </map:generate>
+                    <map:transform type="xslt" src="BX_PROJECT_DIR://inc/popoon/xsl/error2html.xsl"/>
+                    <map:serialize type="xhtml">
+                        <map:parameter type="header" name="HTTP" value="404 Not Found"/>
+                    </map:serialize>
+                </map:when>
+                 <map:when test="BxPageNotAllowedException">
+                               <map:generate type="xmlfile" src="constant(BX_THEMES_DIR)/standard/admin/login.html"/>
+            <map:transform type="phpprocessor"/>
+            <map:serialize type="xhtml">
+                <map:parameter name="stripXMLDeclaration" value="true"/>
+                <map:parameter name="stripScriptCDATA" value="true"/>
+            </map:serialize>
+
+                </map:when>
+            </map:select>
+        </map:handle-errors>
+
+    </map:pipelines>
+
+    <map:include-definitions>
+
+        <map:include-definition label="bxcmsGenerator">
+            <map:generate type="bxcmsadmin" src="{1}">
+                <map:parameter name="type" value="content"/>
+                <map:parameter name="collection" value="{collection}"/>
+                <!--<map:parameter name="filename" value="{filename}"/>
+                <map:parameter name="ext" value="{ext}"/>-->
+                <map:parameter name="id" value="{id}"/>
+            </map:generate>
+        </map:include-definition>
+
+        <map:include-definition label="standardOutput">
+            <map:select type="phpglobalvars" var="GET" key="XML">
+                    <!-- if XML=1 as Querystring, we just show the XML before the XSL transformation
+                    very handy for debugging -->
+                <map:when test="1">
+                    <map:serialize type="xml"/>
+                </map:when>
+                <map:otherwise>
+                    <map:transform type="xslt" src="constant(BX_THEMES_DIR)/standard/admin/{xslt}">
+                        <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+                        <map:parameter name="requestUri" value="{requestUri}"/>
+                        <map:parameter name="mode" value="{mode}"/>
+                        <map:parameter type="options" name="registerPhpFunctions" value="true"/>
+                    </map:transform>
+
+                    <map:transform type="i18n" src="constant(BX_PROJECT_DIR)/admin/lang/master">
+                        <map:parameter name="locale" value="{locale}"/>
+                        <map:parameter name="driver" value="xml"/>
+<!--                        <map:parameter name="generateKeys" value="constant(BX_TEMP_DIR)/newkeys.xml"/>-->
+                    </map:transform>
+
+                    <map:serialize type="xhtml" contentType="text/html; charset=utf-8">
+                        <map:parameter name="stripScriptCDATA" value="true"/>
+                        <map:parameter name="outputErrors" value="bx_errorhandler"/>
+                        <map:parameter name="stripXMLDeclaration" value="true"/>
+                    </map:serialize>
+                </map:otherwise>
+            </map:select>
+        </map:include-definition>
+    </map:include-definitions>
+
+  <!-- standard error -->
+
+</map:sitemap>

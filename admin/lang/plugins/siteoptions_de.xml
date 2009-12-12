@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<catalogue>
+    <message key="sitename">Seiten-Name</message>
+    <message key="sitedescription">Seiten-Beschreibung</message>
+    <message key="theme">Motiv</message>
+    <message key="blogname">Blog-Name</message>
+    <message key="blogdescription">Blog-Beschreibung</message>
+    <message key="blogDefaultPostCommentMode">Grundeinstellung für Blog-Kommentare</message>
+    <message key="blogSendRejectedCommentNotification">Benachrichtigung für abgelehnte Kommentare im Blog</message>
+    <message key="copyright">Urheberrecht</message>
+    <message key="cclink">Creative Commons Lizenz</message>
+    <message key="timezoneSeconds">Zeitzone in Sekunden</message>
+    <message key="timezoneString">Zeitzone als Zeichenfolge</message>
+    <message key="ICBM">ICMB</message>
+    <message key="outputLanguages">Ausgabe-Sprache</message>
+    <message key="defaultLanguage">Standard-Sprache</message>
+    <message key="detectBrowserLanguage">Browser-Sprach erkennen</message>
+    <message key="image_allowed_sizes">Erlaubte Bildgrössen</message>
+    <!--message key="Resource /dgdfg.en.xhtml"></message-->
+    <!-- siteoptions helps-->
+    <message key="blogname_rssfeed">Blog-Name für den RSS-Feed. Falls dieses Feld leer ist wird 'Seiten-Name' verwendet</message>
+    <message key="desc_rssfeed">Beschreibung für den RSS-Feed. Falls dieses Feld leer ist wird 'Seiten-Beschreibung' verwendet</message>
+    <message key="Name of the site">Name der Seite</message>
+    <message key="Subtitle for the site">Untertitel der Seite</message>
+    <message key="motiv_help"><![CDATA[Mehr Motive sind unter <a href="http://intensivstation.ch/en/templates/bxcms/" 
+    target="_blank">intensivstation.ch</a><br/>verfügbar(Überfahren Sie die Bilder mit der Maus<br/>um eine grössere Version zu sehen)]]></message>
+    <message key="default_blogcommentmode">Grundeinstellung für den Blog-Kommentar-Modus. Sie können diesen für jeden Post später noch ändern.</message>
+    <message key="blogCaptchaAfterDays">Nach wie vielen Tagen soll Captcha-Abfrage aktiviert werden</message>
+    <message key="blogCaptchaFontPath">Der Pfad zu ihrem Schriften-Verzeichniss an</message>
+    <message key="blogCaptchaFontFile">Name des Schrift File</message>
+    <message key="help_blogAkismetKey"><![CDATA[Als zusätzlicher Kommentar-Spam-Check, kann der  <a href="http://akismet.com">akismet</a> Service benutzt werden. Dazu müssen Sie einen API key von <a href="http://wordpress.com/signup/">http://wordpress.com/signup/</a> holen und diesen hier einfügen.]]></message> 
+    
+    <message key="help_blogSendRejectedCommentNotification">Legt fest, ob E-Mail-Benachrichtigungen für abgelehnte Kommentare im Blog gesendet werden. Der Flux CMS Spam-Schutz versucht festzustellen, ob ein Kommentar 
+    Spam ist oder nicht. Wenn er einen erkennt, ist es ziemlich sicher Spam und zweifelslos 
+        möchten Sie nicht über diesen informiert werden. Wenn es nicht sicher ist, setzt Flux CMS den Post auf 'moderated' und Sie erhalten dann immer eine 
+        E-Mail und können den Kommentar freigeben.</message>
+    <message key="help_blogCaptchaAfterDays">After how many days captcha should be activated. (-1 = never)</message>
+    <message key="help_openIdEnabled">OpenID Verifikation bei Blogkommentaren.</message>
+    
+    <message key="help_copyright">Wer hat das Urheberrecht für ihren Inhalt?</message>
+    
+    <message key="help_cclink"><![CDATA[Falls Sie eine <a href='http://creativecommons.org/'>Creative Commons</a> Lizenz für ihren Blog Inhalt wollen, 
+    schreiben Sie den Link zur Lizenz hier hinein. Bsp. http://creativecommons.org/licenses/by/2.5/]]></message>
+    
+    <message key="help_timezoneseconds">Ihre Zeitzone in Sekunden (Bsp. 3600). 'servertime' nimmt die Zeitzone des Servers</message>
+    <message key="help_timezonestring">Ihre Zeitzone als Zeichenfolge (Bsp. (CET)). 'servertime' nimmt die Zeitzone des Servers</message>
+    
+    <message key="help_icbm"><![CDATA[Ihre Geolocation. Grundsätzlich ist das Format 'Breitengrad, Längengrad' (z.B.: 47.3798, 8.5275 für das Bitflux Büro). Falls Sie ihre 
+    Koordinaten nicht kennen, gehen Sie zu <a target='_new' href='http://multimap.com'>Multimap.com</a>, und suchen Sie ihren Ort.
+    Kopieren Sie die Daten aus der Box 'Map Information' in das untenstehende Textfeld.]]></message>
+    <message key="help_outputlanguages">Verfügbare Ausgabe-Sprachen (Zwei Buchstaben pro Sprache, mehrere getrennt durch Semikolons) z.B.: 'de;en'</message>
+    <message key="help_defaultlanguage">Standard-Sprache (Zwei Buchstaben aus der Liste von oben)</message>
+    <message key="help_detectbrowserlanguage">automatische Browser-Spracherkennung</message>
+    <message key="help_image_allowed_sizes">Erlaubte Bildgrössen für das dynamische Generieren von Bildern</message>
+<message key="Blog Default Editor">Wir empfehlen den WYSIWYG (what you see is what you get) Editor. Dieser hat auch mehr Möglichkeiten, als der Source Editor. Sollte Ihr Browser den WYSIWYG Modus nicht unterstützen, wird automatisch der Source Editor benutzt.</message>    
+<message key="help_blogWeblogsPing">Welche Ping Services aufgerufen werden sollen.</message>  
+<message key="help_blogShowOnlyOneLanguage">Sollen nur Blogposts in der ausgewählten Sprache angezeigt werden? No = Alle Blogposts in allen Sprachen werden angezeigt. Nicht relevant, wenn man nur in einer Sprache bloggt.</message>
+
+
+</catalogue>

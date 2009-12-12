@@ -15,11 +15,9 @@
 //
 // $Id$
 
-//define('BX_STAGE','edit');
 
 include_once("inc/bx/init.php");
 bx_init::start('conf/config.xml');
-
 
 
 $BX_config['popoon']['sm2php_xsl_dir'] = BX_POPOON_DIR.'/sitemap';

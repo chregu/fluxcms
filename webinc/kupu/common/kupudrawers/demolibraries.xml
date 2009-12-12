@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<libraries>
+
+  <library id="library1">
+    
+    <title>mylibrary</title>
+    <src>/webinc/kupu/common/kupudrawers/demolibrary1.xml</src>
+    
+    <icon>/admin/webinc/img/icons/fileicon_folder.gif</icon>
+  
+  </library>
+  
+</libraries>

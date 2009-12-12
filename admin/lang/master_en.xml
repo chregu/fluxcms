@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalogue xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <!-- include plugin language files -->
+    <!-- 
+    <xi:include href="plugins/gallery_en.xml#xpointer(//catalogue/message)" parse="xml"/>
+    -->
+    <xi:include href="plugins/blog_en.xml#xpointer(//catalogue/message)" parse="xml"/>
+    <xi:include href="plugins/siteoptions_en.xml#xpointer(//catalogue/message)" parse="xml"/>
+   <xi:include href="plugins/plugin_file_en.xml#xpointer(//catalogue/message)" parse="xml"/>
+
+    
+    <message key="Create new Collection">Create New Collection</message>
+
+    <message key="Edit in bxe">Edit in BXE</message>
+    <message key="Edit in kupu">Edit in Kupu</message>
+    <message key="Edit in fck">Edit in FCKeditor</message>
+    <message key="Edit in oneform">Edit as Text</message>
+    <message key="Properties">Edit Properties</message>
+
+    <message key="Create new xhtml">Create New XHTML</message>
+    <message key="Create new file">Create New File</message>
+    <message key="Create new archive">Create New Archive</message>
+    <message key="Create new gallery">Create New Gallery</message>
+
+    <message key="name">Name</message>
+    <message key="resource">Resource</message>
+    <message key="send">Save</message>
+
+    <message key="bxe">BXE</message>
+    <message key="kupu">Kupu</message>
+    <message key="fck">FCK</message>
+    <message key="oneform">Oneform</message>
+
+    <message key="act_newsletter-back-feed">Create newsletter from feed</message>
+    <message key="act_newsletter-back-send">Send newsletter</message>
+    <message key="act_newsletter-back-archive">View newsletter archive</message>
+    <message key="act_newsletter-back-manage">View newsletter subscribers</message>
+    
+    <message key="act_xhtml-back-edit_bxe">Edit in BXE</message>
+    <message key="act_xhtml-back-edit_fck">Edit in FCKeditor</message>
+    <message key="act_xhtml-back-edit_oneform">Edit in Oneform</message>
+    <message key="act_xhtml-back-edit_kupu">Edit in Kupu</message>
+    
+    <message key="act_gallery-back-gallery">Show gallery</message>
+    <message key="act_gallery-back-edit_image">Edit in Image</message>
+    
+    <message key="act_blog-back-post">Post blog entries</message>
+    <message key="act_blog-back-categories">Edit categories</message>
+    <message key="act_blog-back-blogroll">Edit links</message>
+    <message key="act_blog-back-gallery">Edit gallery</message>
+    <message key="act_blog-back-files">Edit files</message>
+    <message key="act_blog-back-options">Edit blog options</message>
+    <message key="act_blog-back-private">Edit private feed</message>
+    <message key="act_admin_dbforms2-back-blogcomments">Edit blog comments</message>
+    
+    <message key="act_admin_dbforms2-back-newsletter_feeds">Edit feeds</message>
+    <message key="act_admin_dbforms2-back-newsletter_from">Edit senders</message>
+    <message key="act_admin_dbforms2-back-newsletter_groups">Edit groups</message>
+    <message key="act_admin_dbforms2-back-newsletter_users">Edit users</message>
+    <message key="act_admin_dbforms2-back-newsletter_mailservers">Edit mailservers</message>
+    <message key="act_admin_dbforms2-back-users">Edit users</message>
+    <message key="act_admin_dbforms2-back-perm_groups">Edit groups</message>
+    
+    <message key="act_permissions-back-manage">Edit permissions</message>
+    <message key="act_permissions-back-admin">Access admin section</message>
+    <message key="act_permissions-back-themes">Download themes</message>
+    <message key="act_permissions-back-siteoptions">Site options</message>
+        
+    <message key="act_collection-front-read">Read collection</message>
+    <message key="act_collection-front-read_navi">Show in navigation</message>
+    <message key="act_collection-back-properties">Edit properties</message>
+    <message key="act_collection-back-configxml">Edit .configxml</message>
+    <message key="act_collection-back-create">Create resources</message>
+    <message key="act_collection-back-copy">Copy resources</message>
+    <message key="act_collection-back-delete">Delete resources</message>
+	<message key="act_collection-back-edit_file">Edit resources in File</message>
+    
+</catalogue>

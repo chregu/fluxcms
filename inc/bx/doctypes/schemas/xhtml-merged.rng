@@ -1,0 +1,874 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<grammar 
+    ns="http://www.w3.org/1999/xhtml" 
+    xmlns="http://relaxng.org/ns/structure/1.0" 
+    xmlns:dc="http://purl.org/dc/elements/1.1/" 
+    xmlns:dcterms="http://purl.org/dc/terms/" 
+    xmlns:xhtml="http://www.w3.org/1999/xhtml" 
+    xmlns:rng="http://relaxng.org/ns/structure/1.0"
+    >
+
+<define name="Length.datatype">
+<text/>
+</define><!-- space-separated list of link types --><define name="LinkTypes.datatype">
+  <ref name="NMTOKENS.datatype"/>
+</define><!-- single or comma-separated list of media descriptors --><define name="MediaDesc.datatype">
+  <text/>
+</define><!-- pixel, percentage, or relative --><define name="MultiLength.datatype">
+  <text/>
+</define><!-- one or more digits (NUMBER) --><define name="Number.datatype">
+  <text/>
+</define><!-- integer representing length in pixels --><define name="Pixels.datatype">
+  <text/>
+</define><!-- script expression --><define name="Script.datatype">
+  <text/>
+</define><!-- textual content --><define name="Text.datatype">
+  <text/>
+</define><!-- Imported Datatypes ................................ --><!-- a single character from [ISO10646] --><define name="Character.datatype">
+  <text/>
+</define><!-- a character encoding, as per [RFC2045] --><define name="Charset.datatype">
+  <text/>
+</define><!-- a space separated list of character encodings, as per [RFC2045] --><define name="Charsets.datatype">
+  <text/>
+</define><!-- media type, as per [RFC2045] --><define name="ContentType.datatype">
+  <text/>
+</define><!-- comma-separated list of media types, as per [RFC2045] --><define name="ContentTypes.datatype">
+  <text/>
+</define><!-- date and time information. ISO date format --><define name="Datetime.datatype">
+  <text/>
+</define><!-- formal public identifier, as per [ISO8879] --><define name="FPI.datatype">
+  <text/>
+</define><!-- a language code, as per [RFC1766] --><define name="LanguageCode.datatype">
+  <data type="language"/>
+</define><!-- a Uniform Resource Identifier, see [URI] --><define name="URI.datatype">
+  <data type="anyURI"/>
+</define><!-- a space-separated list of Uniform Resource Identifiers, see [URI] --><define name="URIs.datatype">
+  <text/>
+</define><define name="NMTOKEN.datatype">
+  <data type="NMTOKEN"/>
+</define><define name="NMTOKENS.datatype">
+  <data type="NMTOKENS"/>
+</define><define name="ID.datatype">
+  <data type="ID"/>
+</define><define name="IDREF.datatype">
+  <data type="IDREF"/>
+</define><define name="IDREFS.datatype">
+  <data type="IDREFS"/>
+</define><define name="id.attrib">
+  
+    <attribute name="id" type="optional">
+      <ref name="ID.datatype"/>
+    </attribute>
+  
+</define><define name="class.attrib">
+  
+    <attribute name="class" type="optional">
+      <ref name="NMTOKENS.datatype"/>
+    </attribute>
+  
+</define><define name="title.attrib">
+  
+    <attribute name="title" type="optional">
+      <ref name="Text.datatype"/>
+    </attribute>
+  
+</define><define name="Core.attrib">
+  <ref name="id.attrib"/>
+  <ref name="class.attrib"/>
+  <ref name="title.attrib"/>
+</define><define name="lang.attrib">
+  
+    <attribute name="xml:lang" type="optional">
+      <ref name="LanguageCode.datatype"/>
+    </attribute>
+  
+</define><define name="I18n.attrib">
+  <ref name="lang.attrib"/>
+</define><define name="Common.attrib">
+  <ref name="Core.attrib"/>
+  <ref name="I18n.attrib"/>
+</define><define name="CommonIdRequired.attrib">
+  <attribute name="id">
+    <ref name="ID.datatype"/>
+  </attribute>
+  <ref name="class.attrib"/>
+  <ref name="title.attrib"/>
+  <ref name="I18n.attrib"/>
+</define><start>
+  <ref name="html"/>
+</start><define name="title">
+  <element name="title">
+    <ref name="title.attlist"/>
+    <text/>
+  </element>
+</define><define name="title.attlist">
+  <ref name="I18n.attrib"/>
+</define><define name="head">
+  <element name="head">
+    <ref name="head.attlist"/>
+    <ref name="head.content"/>
+  </element>
+</define><define name="head.attlist">
+  <ref name="I18n.attrib"/>
+  <ref name="profile.attlist"/>
+</define><define name="head.content"><interleave>
+  <ref name="title"/>
+
+  <zeroOrMore>
+    <ref name="meta"/>
+  </zeroOrMore>
+
+  <zeroOrMore>
+    <ref name="link"/>
+  </zeroOrMore>
+
+  <optional>
+    <ref name="base"/>
+  </optional>
+</interleave></define><define name="profile.attlist">
+  
+    <attribute name="profile" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>     
+  
+</define><define name="body">
+  <element name="body">
+    <ref name="body.attlist"/>
+    <ref name="Block.model"/>
+  </element>
+</define><define name="body.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="html">
+  <element name="html">
+    <ref name="html.attlist"/>
+    <ref name="head"/>
+    <ref name="body"/>
+  </element>
+</define><define name="html.attlist">
+  <ref name="XHTML.version.attrib"/>
+  <ref name="I18n.attrib"/>
+</define><define name="XHTML.version.attrib">
+  
+    <attribute name="version" type="optional">
+      <ref name="FPI.datatype"/>
+    </attribute>
+  
+</define><define name="br">
+  <element name="br">
+    <ref name="br.attlist"/>
+    <empty/>
+  </element>
+</define><define name="br.attlist">
+  <ref name="Core.attrib"/>
+</define><define name="span">
+  <element name="span">
+    <ref name="span.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="span.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="abbr">
+  <element name="abbr">
+    <ref name="abbr.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="abbr.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="acronym">
+  <element name="acronym">
+    <ref name="acronym.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="acronym.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="cite">
+  <element name="cite">
+    <ref name="cite.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="cite.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="code">
+  <element name="code">
+    <ref name="code.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="code.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="dfn">
+  <element name="dfn">
+    <ref name="dfn.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="dfn.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="em">
+  <element name="em">
+    <ref name="em.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="em.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="kbd">
+  <element name="kbd">
+    <ref name="kbd.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="kbd.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="q">
+  <element name="q">
+    <ref name="q.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="q.attlist">
+  <ref name="Common.attrib"/>
+  
+    <attribute name="cite" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>
+  
+</define><define name="samp">
+  <element name="samp">
+    <ref name="samp.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="samp.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="strong">
+  <element name="strong">
+    <ref name="strong.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="strong.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="var">
+  <element name="var">
+    <ref name="var.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="var.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="div">
+  <element name="div">
+    <ref name="div.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define><define name="div.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="p">
+  <element name="p">
+    <ref name="p.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="p.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="address">
+  <element name="address">
+    <ref name="address.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="address.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="blockquote">
+  <element name="blockquote">
+    <ref name="blockquote.attlist"/>
+    <ref name="Block.model"/>
+  </element>
+</define><define name="blockquote.attlist">
+  <ref name="Common.attrib"/>
+  
+    <attribute name="cite" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>
+  
+</define><define name="pre">
+  <element name="pre">
+    <ref name="pre.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="pre.attlist">
+  <ref name="Common.attrib"/>
+  
+    <attribute name="xml:space" type="optional">
+      <value>preserve</value>
+    </attribute>
+  
+</define><define name="h1">
+  <element name="h1">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define><define name="h2">
+  <element name="h2">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define><define name="h3">
+  <element name="h3">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define><define name="h4">
+  <element name="h4">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define><define name="h5">
+  <element name="h5">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define><define name="h6">
+  <element name="h6">
+    <ref name="Heading.attrib"/>
+    <ref name="Heading.content"/>
+  </element>
+</define><define name="Heading.attrib">
+  <ref name="Common.attrib"/>
+</define><define name="Heading.content">
+  <ref name="Inline.model"/>
+</define><define name="Heading.class">
+  <choice>
+    <ref name="h1"/>
+    <ref name="h2"/>
+    <ref name="h3"/>
+    <ref name="h4"/>
+    <ref name="h5"/>
+    <ref name="h6"/>
+  </choice>
+</define><define name="Block.class">
+  <choice>
+    <ref name="address"/>
+    <ref name="blockquote"/>
+    <ref name="div"/>
+    <ref name="p"/>
+    <ref name="pre"/>
+    <ref name="Heading.class"/>
+  
+  <ref name="List.class"/>
+
+  <ref name="table"/>
+
+  <ref name="hr"/>
+</choice>
+</define><define name="Inline.class">
+  <choice>
+    <ref name="abbr"/>
+    <ref name="acronym"/>
+    <ref name="br"/>
+    <ref name="cite"/>
+    <ref name="code"/>
+    <ref name="dfn"/>
+    <ref name="em"/>
+    <ref name="kbd"/>
+    <ref name="q"/>
+    <ref name="samp"/>
+    <ref name="span"/>
+    <ref name="strong"/>
+    <ref name="var"/>
+  
+  <ref name="a"/>
+
+  <ref name="img"/>
+
+  <ref name="object"/>
+
+    <ref name="b"/>
+    <ref name="big"/>
+    <ref name="i"/>
+    <ref name="small"/>
+    <ref name="sub"/>
+    <ref name="sup"/>
+    <ref name="tt"/>
+  </choice>
+</define><define name="Inline.model">
+  <zeroOrMore>
+    <choice>
+      <text/>
+      <ref name="Inline.class"/>
+    </choice>
+  </zeroOrMore>
+</define><!-- This is redefined by the legacy module to include inlines. --><define name="Block.mix">
+  <ref name="Block.class"/>
+</define><define name="Block.model">
+  <oneOrMore>
+    <ref name="Block.mix"/>
+  </oneOrMore>
+</define><define name="Flow.model">
+  <zeroOrMore>
+    <choice>
+      <text/>
+      <ref name="Inline.class"/>
+      <ref name="Block.class"/>
+    </choice>
+  </zeroOrMore>
+</define><define name="a">
+  <element name="a">
+    <ref name="a.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="a.attlist">
+  <ref name="Common.attrib"/>
+  
+    <attribute name="href" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="charset" type="optional">
+      <ref name="Charset.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="type" type="optional">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="hreflang" type="optional">
+      <ref name="LanguageCode.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="rel" type="optional">
+      <ref name="LinkTypes.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="rev" type="optional">
+      <ref name="LinkTypes.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="accesskey" type="optional">
+      <ref name="Character.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="tabindex" type="optional">
+      <ref name="Number.datatype"/>
+    </attribute>
+  
+</define><define name="dl">
+  <element name="dl">
+    <ref name="dl.attlist"/>
+    <oneOrMore>
+      <choice>
+	<ref name="dt"/>
+	<ref name="dd"/>
+      </choice>
+    </oneOrMore>
+  </element>
+</define><define name="dl.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="dt">
+  <element name="dt">
+    <ref name="dt.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="dt.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="dd">
+  <element name="dd">
+    <ref name="dd.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define><define name="dd.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="ol">
+  <element name="ol">
+    <ref name="ol.attlist"/>
+    <oneOrMore>
+      <ref name="li"/>
+    </oneOrMore>
+  </element>
+</define><define name="ol.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="ul">
+  <element name="ul">
+    <ref name="ul.attlist"/>
+    <oneOrMore>
+      <ref name="li"/>
+    </oneOrMore>
+  </element>
+</define><define name="ul.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="li">
+  <element name="li">
+    <ref name="li.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define><define name="li.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="List.class">
+  <choice>
+    <ref name="ul"/>
+    <ref name="ol"/>
+    <ref name="dl"/>
+  </choice>
+</define><!--<include href="modules/basic-form.rng"/>--><define name="table">
+  <element name="table">
+    <ref name="table.attlist"/>
+    <optional>
+      <ref name="caption"/>
+    </optional>
+    <oneOrMore>
+      <ref name="tr"/>
+    </oneOrMore>
+  </element>
+</define><define name="table.attlist">
+  <ref name="Common.attrib"/>
+  
+    <attribute name="summary" type="optional">
+      <ref name="Text.datatype"/>
+    </attribute>
+  
+</define><define name="caption">
+  <element name="caption">
+    <ref name="caption.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="caption.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="tr">
+  <element name="tr">
+    <ref name="tr.attlist"/>
+    <oneOrMore>
+      <choice>
+        <ref name="th"/>
+        <ref name="td"/>
+      </choice>
+    </oneOrMore>
+  </element>
+</define><define name="tr.attlist">
+  <ref name="Common.attrib"/>
+  <ref name="CellHAlign.attrib"/>
+  <ref name="CellVAlign.attrib"/>
+</define><define name="th">
+  <element name="th">
+    <ref name="th.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define><define name="th.attlist">
+  <ref name="Cell.attrib"/>
+</define><define name="td">
+  <element name="td">
+    <ref name="td.attlist"/>
+    <ref name="Flow.model"/>
+  </element>
+</define><define name="td.attlist">
+  <ref name="Cell.attrib"/>
+</define><define name="Cell.attrib">
+  <ref name="Common.attrib"/>
+  
+    <attribute name="abbr" type="optional">
+      <ref name="Text.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="axis" type="optional"/>
+  
+  
+    <attribute name="headers" type="optional">
+      <ref name="IDREFS.datatype"/>
+    </attribute>
+  
+  <ref name="scope.attrib"/>
+  
+    <attribute name="rowspan" type="optional">
+      <ref name="Number.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="colspan" type="optional">
+      <ref name="Number.datatype"/>
+    </attribute>
+  
+  <ref name="CellHAlign.attrib"/>
+  <ref name="CellVAlign.attrib"/>
+</define><define name="CellHAlign.attrib">
+  
+    <attribute name="align" type="optional">
+      <choice>
+	<value>left</value>
+	<value>center</value>
+	<value>right</value>
+      </choice>
+    </attribute>
+  
+</define><define name="CellVAlign.attrib">
+  
+    <attribute name="valign" type="optional">
+      <choice>
+	<value>top</value>
+	<value>middle</value>
+	<value>bottom</value>
+      </choice>
+    </attribute>
+  
+</define><define name="scope.attrib">
+  
+    <attribute name="scope" type="optional">
+      <choice>
+	<value>row</value>
+	<value>col</value>
+      </choice>
+    </attribute>
+  
+</define><define name="img">
+  <element name="img">
+    <ref name="img.attlist"/>
+  </element>
+</define><define name="img.attlist">
+  <ref name="Common.attrib"/>
+  <attribute name="src">
+    <ref name="URI.datatype"/>
+  </attribute>
+  
+  <attribute name="alt" type="optional">
+    <ref name="Text.datatype"/>
+  </attribute>
+  
+  
+    <attribute name="longdesc" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="height" type="optional">
+      <ref name="Length.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="width" type="optional">
+      <ref name="Length.datatype"/>
+    </attribute>
+  
+</define><define name="param">
+  <element name="param">
+    <ref name="param.attlist"/>
+  </element>
+</define><define name="param.attlist">
+  <ref name="id.attrib"/>
+  <attribute name="name"/>
+  
+    <attribute name="value" type="optional"/>
+  
+  
+    <attribute name="valuetype" type="optional">
+      <choice>
+	<value>data</value>
+	<value>ref</value>
+	<value>object</value>
+      </choice>
+    </attribute>
+  
+  
+    <attribute name="type" type="optional">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  
+</define><define name="object">
+  <element name="object">
+    <ref name="object.attlist"/>
+    <!-- No restrictions on mixed content in TREX. -->
+    <zeroOrMore>
+      <ref name="param"/>
+    </zeroOrMore>
+    <ref name="Flow.model"/>
+  </element>
+</define><define name="object.attlist">
+  <ref name="Common.attrib"/>
+  
+    <attribute name="declare" type="optional">
+      <value>declare</value>
+    </attribute>
+  
+  
+    <attribute name="classid" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="codebase" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="data" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="type" type="optional">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="codetype" type="optional">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="archive" type="optional">
+      <ref name="URIs.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="standby" type="optional">
+      <ref name="Text.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="height" type="optional">
+      <ref name="Length.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="width" type="optional">
+      <ref name="Length.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="name" type="optional"/>
+  
+  
+    <attribute name="tabindex" type="optional">
+      <ref name="Number.datatype"/>
+    </attribute>
+  
+</define><define name="meta">
+  <element name="meta">
+    <ref name="meta.attlist"/>
+  </element>
+</define><define name="meta.attlist">
+  <ref name="I18n.attrib"/>
+  
+    <attribute name="http-equiv" type="optional">
+      <ref name="NMTOKEN.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="name" type="optional">
+      <ref name="NMTOKEN.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="content" type="optional"/>
+  
+  
+    <attribute name="scheme" type="optional"/>
+  
+</define><define name="link">
+  <element name="link">
+    <ref name="link.attlist"/>
+  </element>
+</define><define name="link.attlist">
+  <ref name="Common.attrib"/>
+  
+    <attribute name="charset" type="optional">
+      <ref name="Charset.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="href" type="optional">
+      <ref name="URI.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="hreflang" type="optional">
+      <ref name="LanguageCode.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="type" type="optional">
+      <ref name="ContentType.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="rel" type="optional">
+      <ref name="LinkTypes.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="rev" type="optional">
+      <ref name="LinkTypes.datatype"/>
+    </attribute>
+  
+  
+    <attribute name="media" type="optional">
+      <ref name="MediaDesc.datatype"/>
+    </attribute>
+  
+</define><define name="base">
+  <element name="base">
+    <ref name="base.attlist"/>
+  </element>
+</define><define name="base.attlist">
+  <attribute name="href">
+    <ref name="URI.datatype"/>
+  </attribute>
+</define><define name="hr">
+  <element name="hr">
+    <ref name="hr.attlist"/>
+  </element>
+</define><define name="hr.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="b">
+  <element name="b">
+    <ref name="b.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="b.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="big">
+  <element name="big">
+    <ref name="big.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="big.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="i">
+  <element name="i">
+    <ref name="i.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="i.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="small">
+  <element name="small">
+    <ref name="small.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="small.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="sub">
+  <element name="sub">
+    <ref name="sub.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="sub.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="sup">
+  <element name="sup">
+    <ref name="sup.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="sup.attlist">
+  <ref name="Common.attrib"/>
+</define><define name="tt">
+  <element name="tt">
+    <ref name="tt.attlist"/>
+    <ref name="Inline.model"/>
+  </element>
+</define><define name="tt.attlist">
+  <ref name="Common.attrib"/>
+</define> 
+<define name="Block.class" combine="choice">
+  <choice>
+  </choice>
+</define>
+
+
+</grammar>

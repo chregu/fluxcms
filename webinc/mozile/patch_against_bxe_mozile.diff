@@ -1,0 +1,570 @@
+Common subdirectories: ../bxe/mozile/.svn and ./.svn
+Only in .: LICENSEBLOCK.txt
+Only in .: LICENSESHORT.txt
+Only in ../bxe/mozile/: README.html
+diff -u ../bxe/mozile/domlevel3.js ./domlevel3.js
+--- ../bxe/mozile/domlevel3.js	Mon Sep  6 14:40:46 2004
++++ ./domlevel3.js	Wed Sep 15 13:30:44 2004
+@@ -17,7 +17,7 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+-// $Id: domlevel3.js 687 2004-04-29 08:32:39Z chregu $
++// $Id: domlevel3.js 2436 2004-09-15 11:30:41Z chregu $
+ 
+ /*************************************************************************************************************
+  * domlevel3 V0.5
+@@ -51,15 +51,6 @@
+ 	//create a new XMLSerializer
+ 	var objXMLSerializer = new XMLSerializer();
+ 	//get the XML string
+-	var ns = snode.getNamespaceDefinitions();
+-	for(var i in ns ) {
+-		if (i == "xmlns") {
+-			snode.setAttributeNS(XMLNS,"xmlns",ns[i]);
+-		} else {
+-			snode.setAttributeNS(XMLNS,"xmlns:" + i , ns[i]);
+-		}
+-	}
+-	
+ 	strXML = objXMLSerializer.serializeToString(snode);
+ 	return strXML.replace(/^(<\?xml[^>]*) encoding="[^"]+"([^>]*\?>)/,'$1 encoding="UTF-8" $2');
+ }
+diff -u ../bxe/mozile/eDOM.js ./eDOM.js
+--- ../bxe/mozile/eDOM.js	Mon Sep  6 14:40:46 2004
++++ ./eDOM.js	Wed Sep 15 13:30:44 2004
+@@ -17,7 +17,7 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+-// $Id: eDOM.js 792 2004-09-02 08:55:44Z chregu $
++// $Id: eDOM.js 2436 2004-09-15 11:30:41Z chregu $
+ 
+ /**********************************************************************************
+  * eDOM.js V0.5: editor or extended DOM
+@@ -1314,8 +1314,6 @@
+ 	if((prevResult != InsertionPoint.SAME_LINE) && (nextResult != InsertionPoint.SAME_LINE))
+ 	{
+ 		var line = this.line.deleteContents();
+-		line.container.updateXMLNode();
+-		
+ 		this.set(line.firstInsertionPoint);
+ 		return true;	
+ 	}
+@@ -1356,11 +1354,6 @@
+ 		//FIXME: HERE WILL THE NODE BE DELETED, MAKE  AN EVENT!!!!!!!!
+ 		var sC = cssr.startContainer;
+ 		cssr.deleteContents();
+-		if (sC.parentNode.userModifiable) {
+-			sC.parentNode.updateXMLNode();
+-		} else {
+-			sC.updateXMLNode();
+-		}
+ 		
+ 	}
+ 	
+@@ -1416,7 +1409,6 @@
+ 		var emptyLineToken = document.createTextNode(STRING_NBSP);
+ 		newLineContainer.appendChild(emptyLineToken);
+ 		line.container.parentNode.insertAfter(newLineContainer, line.container);
+-		eDOMEventCall("NodeInsertedBefore", line.container, newLineContainer);
+ 		var newIP = this.clone();
+ 		newIP.forwardOne();
+ 		this.set(newIP);
+@@ -1429,7 +1421,6 @@
+ 		newLineContainer.appendChild(document.createTextNode(STRING_NBSP));
+ 		line.container.parentNode.insertBefore(newLineContainer, line.container);
+ 		
+-		eDOMEventCall("NodeInsertedBefore", line.container, newLineContainer);
+ 
+ 		return;
+ 	}
+@@ -1445,7 +1436,6 @@
+ 	newLineContainer.appendChild(newLineContents);
+ 	
+ 	line.container.parentNode.insertAfter(newLineContainer, line.container);
+-	eDOMEventCall("NodeInsertedBefore", line.container, newLineContainer);
+ 	
+ 	var newLine = documentCreateCSSLine(newLineContainer.firstInsertionPoint(line.top));
+ 	newLine.normalizeWhitespace(); // takes care of rubbish at start or end ie/ part of invalid styled text
+@@ -2691,7 +2681,6 @@
+ 	var rangeToDelete = document.createRange();		
+ 	rangeToDelete.selectNode(this.topMostContainer);
+ 
+-	eDOMEventCall("NodeBeforeDelete",this.topMostContainer);
+ 	rangeToDelete.deleteContents();
+ 
+ 
+@@ -2726,7 +2715,6 @@
+ 	ret = contents.firstChild;
+ 	this.container.appendChild(contents);
+ 	
+-	eDOMEventCall("NodePositionChanged",ret);
+ 	// give back "join" point
+ 	return this.lastInsertionPoint.clone();
+ }
+diff -u ../bxe/mozile/eDOMXHTML.js ./eDOMXHTML.js
+--- ../bxe/mozile/eDOMXHTML.js	Mon Sep  6 14:40:47 2004
++++ ./eDOMXHTML.js	Wed Sep 15 14:51:17 2004
+@@ -17,7 +17,7 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+-// $Id: eDOMXHTML.js 794 2004-09-02 09:58:48Z chregu $
++// $Id: eDOMXHTML.js 2442 2004-09-15 12:51:16Z chregu $
+ 
+ /**********************************************************************************
+  * eDOMXHTML.js V0.5
+@@ -54,7 +54,7 @@
+  *****************************************************************************************/
+ 
+ // As outdent or indent lines, need to make bounded or list-item contained lines into default contained lines. Could use "p" instead.
+-var defaultContainerName = "div";
++var defaultContainerName = "p";
+ 
+ /**
+  * If one or more non list item lines in a range then turn them into list-items; if only list item lines
+@@ -544,7 +544,7 @@
+ 						else 
+ 							textContainer.parentNode.appendChild(siblingStyleHolder);
+ 						siblingStyleHolder.appendChild(textNodes[i].nextSibling);	
+-						eDOMEventCall("NodeInserted",siblingStyleHolder);
++						
+ 
+ 					}									
+ 				}
+@@ -554,35 +554,21 @@
+ 					//only works reliable for xhtml stuff right now..
+ 					
+ 					if (isClass && styleName) {
+-						if (namespaceURI != XHTMLNS) {
+-							var _node = new XMLNodeElement(namespaceURI,styleName,1,true)
+-							var styleHolder = _node._node;
+-						} else {
++						
+ 							var styleHolder = documentCreateXHTMLElement(styleName);
+-						}
++						
+ 					} else {
+-						if (namespaceURI != XHTMLNS) {
+-							var _node = new XMLNodeElement(namespaceURI,styleName,1,true)
+-							var styleHolder = _node._node;
+-						} else {
+ 							var styleHolder = documentCreateXHTMLElement("span");
+-						}
++						
+ 					}
+ 					textContainer.insertBefore(styleHolder, textNodes[i]);
+ 					styleHolder.appendChild(textNodes[i]);
+-					eDOMEventCall("NodeInserted",styleHolder);
+ 
+ 					textNodes[i] = styleHolder.firstChild;
+ 					textContainer = styleHolder;
+ 				}
+ 			}
+-			if (isClass) {
+-				if (styleValue) {
+-					textContainer.addClass(styleName);
+-				} else {
+-					textContainer.removeClass(styleName);
+-				}
+-			} else {
++			if (!isClass) {
+ 				textContainer.style.setProperty(styleName, styleValue, "");
+ 			}
+ 		}
+@@ -880,4 +866,88 @@
+ 		te.appendChild(document.createTextNode("\n"));
+ 	}
+ 	return te;
++}
++
++Element.prototype.getCStyle = function(style) {
++	return document.defaultView.getComputedStyle(this, null).getPropertyValue(style);
++}
++
++Document.prototype.createXHTMLTable = documentCreateXHTMLTable;
++
++function documentCreateXHTMLTable(noRows, noColumns)
++{
++	if((/\D+/.test(noRows)) || (/\D+/.test(noColumns)) || (noRows==0) || (noColumns==0))
++		return null; // go to exception
++
++	var te = documentCreateXHTMLElement("table");
++	for(var i=0; i<noRows; i++)
++	{
++		var tre = documentCreateXHTMLElement("tr");
++		te.appendChild(tre);
++		for(var j=0; j<noColumns;j++)
++		{
++			var tde = documentCreateXHTMLElement("td");
++			tde.appendChild(document.createTextNode(STRING_NBSP)); // POST05: CHANGE TO BR TOKEN 
++			tre.appendChild(tde);
++		}
++	}
++	return te;
++}
++
++function bxe_CleanInline(e) {
++	
++	var sel = window.getSelection();
++
++	var cssr = sel.getEditableRange();
++	if(cssr.collapsed)
++		return;
++ 
++	// go through all text nodes in the range and link to them unless already set to cssr link
++	var textNodes = cssr.textNodes;
++	for(i=0; i<textNodes.length; i++)
++	{		
++		// figure out cssr and then it's on to efficiency before subroutines ... ex of sub ... 
++		// try text nodes returning one node ie/ node itself! could cut down on normalize calls ...
++		var textContainer = textNodes[i].parentNode;
++		//if(textContainer.nodeNamed("span") && textContainer.getAttribute("class") == "a" )	{
++			if (textContainer.getCStyle("display") == "inline") {
++			if(textContainer.childNodes.length > 1)
++			{
++				var siblingHolder;
++
++				// leave any nodes before or after cssr one with their own copy of the container
++				if(textNodes[i].previousSibling)
++				{
++					var siblingHolder = textContainer.cloneNode(false);
++					textContainer.parentNode.insertBefore(siblingHolder, textContainer);
++					siblingHolder.appendChild(textNodes[i].previousSibling);	
++				}
++
++				if(textNodes[i].nextSibling)
++				{
++					var siblingHolder = textContainer.cloneNode(false);
++					if(textContainer.nextSibling)
++						textContainer.parentNode.insertBefore(siblingHolder, textContainer.nextSibling);
++					else 
++						textContainer.parentNode.appendChild(siblingHolder);
++					siblingHolder.appendChild(textNodes[i].nextSibling);	
++				}
++			}
++
++			// rename it to span and remove its href. If span is empty then delete span
++
++			textContainer.parentNode.removeChildOnly(textContainer);
++		}
++	}
++
++	// normalize A elements 
++	var normalizeRange = document.createRange();
++	normalizeRange.selectNode(cssr.commonAncestorContainer);
++	normalizeRange.normalizeElements("span");
++	normalizeRange.detach();
++
++	// now normalize text
++	cssr.commonAncestorContainer.parentElement.normalize();
++	sel.selectEditableRange(cssr);
++
+ }
+Only in ../bxe/mozile/: jsdav.js
+diff -u ../bxe/mozile/mozCE.js ./mozCE.js
+--- ../bxe/mozile/mozCE.js	Mon Sep  6 14:40:47 2004
++++ ./mozCE.js	Wed Sep 15 15:45:34 2004
+@@ -17,7 +17,7 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+-// $Id: mozCE.js 799 2004-09-03 08:09:37Z chregu $
++// $Id: mozCE.js 2448 2004-09-15 13:45:34Z chregu $
+ 
+ /* 
+  * mozCE V0.5
+@@ -340,26 +340,9 @@
+ 		// - it is a list item
+ 		//var keep = ((lines[i].lineType == CSSLine.CONTAINED_LINE) && (lines[i].containedLineType != ContainedLine.BLOCK));
+ 		var keep = false;
+-		if (namespace == XHTMLNS) {
+-			var removeClass = false;
+-			//if (lines[i].__container.getAttribute("class"));
+-			if (lines[i].__container.XMLNode) {
+-				if (lines[i].__container.XMLNode.nodeName == lines[i].__container.getAttribute("class")) {
+-					removeClass = true;
+-					
+-				}
+-			}
+-			var line = lines[i].setContainer(documentCreateXHTMLElement(containerName), !keep);
+-			if (removeClass) {
+-				line.__container.removeAttribute("class");
+-			}
+-		} else {
+-			var newNode = document.createElementNS(XHTMLNS,"div");
+-			var line = lines[i].setContainer( newNode,true);
+-			line.__container.setAttribute("class", containerName);
+-		}
+-		line.__container.setAttribute("__bxe_ns", namespace);
+-	
++		var removeClass = false;
++		
++		var line = lines[i].setContainer(documentCreateXHTMLElement(containerName), !keep);
+ 		
+ 		newContainer.push(line.__container)
+ 
+@@ -442,16 +425,6 @@
+ 	}
+ 	
+ 	var _upNode = this.getEditableRange().startContainer;
+-		
+-	if (_upNode.nodeType == 3) {
+-		_upNode = _upNode.parentNode;
+-	}
+-	while(! _upNode._XMLNode) {
+-		_upNode = _upNode.parentNode;
+-	}
+-	
+-	
+-	_upNode.updateXMLNode();
+ 
+ 	
+ 	/*cssr.selectInsertionPoint(ip);
+@@ -468,16 +441,6 @@
+ 	var checkNode = node;
+ 	if (node.nodeType == 11 ) {
+ 		checkNode = node.firstChild;
+-	}
+-	if (checkNode && checkNode.XMLNode) {
+-		if (!bxe_checkIsAllowedChild(checkNode.XMLNode.namespaceURI,checkNode.XMLNode.localName,this)) {
+-			return false;
+-		}
+-	}
+-	var cb = bxe_getCallback(node.XMLNode.localName, node.XMLNode.namespaceURI);
+-	if (cb ) {
+-		bxe_doCallback(cb, BXE_SELECTION);
+-		return;
+ 	}
+ 	return this.insertNodeRaw(node);
+ 
+Only in .: mozDataTransport.js
+diff -u ../bxe/mozile/mozWrappers.js ./mozWrappers.js
+--- ../bxe/mozile/mozWrappers.js	Mon Sep  6 14:40:46 2004
++++ ./mozWrappers.js	Wed Sep 15 13:30:44 2004
+@@ -17,7 +17,7 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+-// $Id: mozWrappers.js 695 2004-04-30 09:18:55Z chregu $
++// $Id: mozWrappers.js 2436 2004-09-15 11:30:41Z chregu $
+ 
+ /*
+  * mozWrapper.js v0.46
+Only in .: mozileConfig.xml
+Only in .: mozileLoader.js
+diff -u ../bxe/mozile/mozileSave.js ./mozileSave.js
+--- ../bxe/mozile/mozileSave.js	Mon Sep  6 14:40:47 2004
++++ ./mozileSave.js	Wed Sep 15 13:30:44 2004
+@@ -17,7 +17,7 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+-// $Id: mozileSave.js 687 2004-04-29 08:32:39Z chregu $
++// $Id: mozileSave.js 2436 2004-09-15 11:30:41Z chregu $
+ 
+ /**********************************************************************************
+  * mozileSave.js V0.5: this file implements save/post option in Mozile.
+Only in .: mozilehtmltb.js
+diff -u ../bxe/mozile/mozilekb.js ./mozilekb.js
+--- ../bxe/mozile/mozilekb.js	Mon Sep  6 14:40:47 2004
++++ ./mozilekb.js	Wed Sep 15 14:23:55 2004
+@@ -17,7 +17,7 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+-// $Id: mozilekb.js 792 2004-09-02 08:55:44Z chregu $
++// $Id: mozilekb.js 2440 2004-09-15 12:23:54Z chregu $
+ 
+ /* 
+  * mozilekb V0.46
+@@ -51,10 +51,20 @@
+  * mixed mode, then select objects too.
+  * - each editable area gets a CP? If valid (add method that checks TextNode validity?)
+  */
+-bxe_registerKeyHandlers();
+-   
++
++  document.addEventListener("keypress", keyPressHandler, true); 
+ function keyPressHandler(event)
+ {	
++		
++	if (typeof focusOnField == "undefined") {
++		return true;
++	}
++	if (!( focusOnField.getAttribute("contentEditable"))) {
++		return true;
++	}
++	if (!(window.getSelection().getEditableRange() && window.getSelection().getEditableRange().top)) {
++		return true;
++	}
+ 	var handled = false;
+ //Mac OSX standard is using the "Apple"-Key for Copy/Paste operation and not the Ctrl-Key
+ // the Apple Key is event.metaKey in JS Terms
+@@ -77,6 +87,19 @@
+ 
+ function keyDownHandler(event)
+ {	
++	
++	
++	if (typeof focusOnField == "undefined") {
++		return true;
++	}
++	if (!( focusOnField.getAttribute("contentEditable"))) {
++		return true;
++	}
++	if (!(window.getSelection().getEditableRange() && window.getSelection().getEditableRange().top)) {
++		return true;
++	}
++	
++	
+ 	var handled = false;
+ //Mac OSX standard is using the "Apple"-Key for Copy/Paste operation and not the Ctrl-Key
+ // the Apple Key is event.metaKey in JS Terms
+@@ -288,7 +311,6 @@
+ 		sel.removeAllRanges();
+ 		rng = cssr.cloneRange();
+ 		sel.addRange(rng);
+-		bxe_delayedUpdateXPath();
+ 		return true;
+ 		
+ 	}
+@@ -318,14 +340,12 @@
+ 		rng = cssr.cloneRange();
+ 		sel.addRange(rng);
+ 
+-		bxe_delayedUpdateXPath();
+ 		return true;
+ 	}
+ 
+ 	// UP/DOWN (event.DOM_VK_UP/DOWN)
+ 
+ 	if (event.keyCode == 38 || event.keyCode == 40) {
+-		bxe_delayedUpdateXPath();
+ 		return false;
+ 	}
+ 	// RETURN OR ENTER (event.DOM_VK_ENTER DOM_VK_RETURN)
+@@ -345,10 +365,7 @@
+ 		ip = documentCreateInsertionPoint(cssr.top, cssr.startContainer, cssr.startOffset);
+ 
+ 		// POST04: support concept of not splitting line if mozUserModify indicates writeText ...
+-		if (cssr.top._SourceMode) {
+-			ip.insertCharacter(10);
+-		}
+-		else {
++
+ 			td = false;
+ 			if (ip.line.container == ip.line.tableCellAncestor) {
+ 				td = true
+@@ -356,34 +373,17 @@
+ 			var _par = ip.ipNode.parentNode;
+ 			//FIXME make soft breaks configurable
+ 			if (  event.shiftKey) {
+-				if (_par.XMLNode.isAllowedChild(XHTMLNS,"br")) {
+ 					var secondTextNode = ip.ipNode.splitText(ip.ipOffset);
+ 					ip.ipNode.parentNode.insertBefore(documentCreateXHTMLElement("br"), secondTextNode);
+ 					ip.forwardOne();
+-					_par.updateXMLNode();
+-				}
+-			}
+-			else if (_par.XMLNode && _par.XMLNode.localName == "object") {
+-				
+-				var secondTextNode = ip.ipNode.splitText(ip.ipOffset);
+-				ip.ipNode.parentNode.insertBefore(documentCreateXHTMLElement("br"), secondTextNode);
+-				_par.parentNode.updateXMLNode();
+-			} else {
+-				
+-				if (_par.XMLNode.isAllowedNextSibling(_par.XMLNode.namespaceURI,_par.XMLNode.localName)) {
+-					
+-				ip.splitXHTMLLine(); // add logic to split off say a "P" after a Heading element: if at end line
+-				if (td) {
+-					ip.line.tableCellAncestor.updateXMLNode();
+-				}
+ 				}
++			else {
++				ip.splitXHTMLLine();
+ 			}
+-			bxe_history_snapshot_async();
+-		}
++		
+ 		cssr.selectInsertionPoint(ip);
+ 		sel.removeAllRanges();
+ 		sel.addRange(cssr);
+-		bxe_delayedUpdateXPath();
+ 		return true;
+ 	}
+ 
+@@ -451,14 +451,12 @@
+ 				
+ 				
+ 				bxe_deleteWholeSelection(sel,backspace);
+-				sel.anchorNode.parentNode.updateXMLNode();
+ 				sel = window.getSelection();
+ 				
+ 				ip = documentCreateInsertionPoint(cssr.top, cssr.startContainer, cssr.startOffset);
+ 				ip.insertCharacter(event.charCode);
+ 				
+ 				sel.deleteSelection(false);
+-				sel.anchorNode.updateXMLNode();
+ 				sel.collapse(ip.ipNode, ip.ipOffset);
+ 				return true;
+ 				
+@@ -466,7 +464,7 @@
+ 				sel.deleteSelection(backspace);
+ 			} else {
+ 				sel.deleteSelection(backspace);
+-				sel.anchorNode.updateXMLNode();
++				
+ 			}
+ 		}
+ 
+@@ -484,13 +482,12 @@
+ }
+ 
+ function bxe_deleteWholeSelection(sel,backspace) {
+-	bxe_history_snapshot();
+ 	var n = sel.focusNode;
+ 	var o = sel.focusOffset;
+ 	sel.collapse(sel.anchorNode,1)
+ 	sel.extend(n,o);
+ 	sel.deleteSelection(backspace);
+-	sel.anchorNode.parentNode.updateXMLNode();
++	
+ }
+ 
+ function bxe_deleteEventKey(sel, backspace) {
+@@ -512,10 +509,9 @@
+ 			bxe_deleteWholeSelection(sel,backspace);
+ 			sel = window.getSelection();
+ 			sel.deleteSelection(false);
+-			sel.anchorNode.parentNode.updateXMLNode();
++			
+ 			
+ 		} else {
+-			bxe_history_snapshot();
+ 			cssr = sel.getEditableRange();
+ 			
+ 			var _conode = cssr.commonAncestorContainer;
+@@ -526,18 +522,7 @@
+ 				var n = sel.anchorNode;
+ 			}
+ 			var i = 0;
+-			if (!cssr.top._SourceMode) {
+-				if (_conode && _conode.nodeType != 3 ) {
+-					while (n && n != _conode && !n.XMLNode.xmlBridge && i < 10) {
+-						i++;
+-						n.updateXMLNode();
+-						n = n.parentNode;
+-					}
+-					_conode.updateXMLNode();
+-				} else {
+-					n.updateXMLNode();
+-				}
+-			}
++			
+ 		}
+ 		return true;
+ }
+Only in .: patch_against_bxe_mozile.diff
+Only in ../bxe/mozile/: td

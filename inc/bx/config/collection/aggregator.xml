@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<bxcms xmlns="http://bitflux.org/config">
+
+
+<plugins inGetChildren="false">
+        <extension type="xml"/>
+        <file preg="#rss$#"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+        <parameter type="pipeline" name="xslt" value="../standard/plugins/aggregator/aggregator2rss.xsl"/>
+        <plugin type="aggregator">
+            <parameter name="mode" value="rss"/>
+        </plugin>
+    </plugins>
+<plugins>
+    
+    
+        <parameter name="xslt" type="pipeline" value="aggregator.xsl"/>
+        <plugin type="navitree">
+        </plugin>
+        <plugin type="aggregator">
+        </plugin>
+    </plugins>
+</bxcms>

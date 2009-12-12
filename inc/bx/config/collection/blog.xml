@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+
+<bxcms xmlns="http://bitflux.org/config">
+
+ <variable name="blogid" value="1"/>
+ <variable name="postsperpage" value="10"/>
+ <variable name="blogxsl" value="blog.xsl"/>
+ 
+ <plugins inGetChildren="false">
+        <extension type="xml"/>
+        <file preg="#plugin=trackback#"/>
+        <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/trackback.xsl"/>
+        <parameter type="pipeline" name="output-mimetype" value="text/xml"/>
+        <plugin type="blog">
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+    </plugins>
+
+    <plugins inGetChildren="false">
+        <extension type="xml"/>
+        <file preg="#plugin=#"/>
+
+        <plugin type="blog">
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+    </plugins>
+
+    <plugins inGetChildren="false">
+        <extension type="xml"/>
+        <file name="bloglinks"/>
+
+        <plugin type="structure2xml">
+            <parameter name="src" value="structure/bloglinks.xml"/>
+            <parameter name="secondtableprefix" value=""/>
+            <parameter name="structure2xml[blogid]" value="$blogid"/>
+        </plugin>
+
+    </plugins>
+    
+
+    
+    <plugins>
+        <extension type="html"/>
+        <parameter type="pipeline" name="xslt" value="$blogxsl"/>
+        <plugin type="blog">
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+
+        <plugin type="navitree"></plugin>
+    </plugins>
+
+    
+    <plugins inGetChildren="false">
+        <extension type="xml"/>
+        <file preg="#rss$#"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+        <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/blog2rss.xsl"/>
+        <plugin type="blog">
+            <parameter name="mode" value="rss"/>
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+    </plugins>
+    
+    
+    <plugins inGetChildren="false">
+        <extension type="xml"/>
+        <file name="atom"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+        <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/blog2atom.xsl"/>
+        <plugin type="blog">
+            <parameter name="mode" value="rss"/>
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+    </plugins>
+
+
+    <plugins>
+        <extension type="xml"/>
+        <file preg="#comments$#"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+        <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/comments2rss.xsl"/>
+        <plugin type="blog">
+            <parameter name="mode" value="latestcomments"/>
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+    </plugins>
+    
+    
+    <plugins inGetChildren="false">
+        <extension type="txt"/>
+        <file name="microsummary"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/plain"/>
+        <parameter type="pipeline" name="xslt" value="blogmicrosummary.xsl"/>
+        <plugin type="blog">
+            <parameter name="mode" value="rss"/>
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+
+    </plugins>
+    
+    <plugins inGetChildren="false">
+        <extension type="xml"/>
+        <file name="osd"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+        <parameter type="pipeline" name="xslt" value="../standard/plugins/blog/osd.xsl"/>
+        <plugin type="empty">
+            
+        </plugin>
+
+    </plugins>
+    
+    
+    <plugins inGetChildren="false">
+	    <extension type="xml"/>
+        <file name="xmlrpc"/>
+         
+        <parameter type="pipeline" name="xslt" value="../standard/copy.xsl"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+
+        <plugin type="xmlrpc_weblog">
+
+        </plugin>
+    </plugins>
+    
+   <plugins inGetChildren="false">
+	    <extension type="rsd"/>
+
+        <file name="xmlrpc"/>
+         
+        <parameter type="pipeline" name="xslt" value="../standard/copy.xsl"/>
+        <parameter name="output-mimetype" type="pipeline" value="text/xml"/>
+
+        <plugin type="xmlrpc_weblog">
+
+        </plugin>
+    </plugins>
+    
+    
+   <!-- catch all -->
+    <plugins>
+        
+        <parameter type="pipeline" name="xslt" value="$blogxsl"/>
+        <plugin type="blog">
+            <parameter name="blogid" value="$blogid"/>
+        </plugin>
+
+        <plugin type="navitree"></plugin>
+    </plugins>
+
+
+</bxcms>

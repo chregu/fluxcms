@@ -1,0 +1,422 @@
+Index: editor/dialog/fck_image/fck_image.js
+===================================================================
+--- editor/dialog/fck_image/fck_image.js	(revision 7205)
++++ editor/dialog/fck_image/fck_image.js	(working copy)
+@@ -49,6 +49,7 @@
+ }
+ 
+ // Get the selected image (if available).
++if (FCK.Selection) {
+ var oImage = FCK.Selection.GetSelectedElement() ;
+ 
+ if ( oImage && oImage.tagName != 'IMG' && !( oImage.tagName == 'INPUT' && oImage.type == 'image' ) )
+@@ -56,7 +57,9 @@
+ 
+ // Get the active link.
+ var oLink = FCK.Selection.MoveToAncestorNode( 'A' ) ;
+-
++} else {
++	oImage = null;
++}
+ var oImageOriginal ;
+ 
+ function UpdateOriginal( resetSize )
+@@ -257,6 +260,7 @@
+ {
+ 	e.src = GetE('txtUrl').value ;
+ 	SetAttribute( e, "_fcksavedurl", GetE('txtUrl').value ) ;
++	SetAttribute( e, "src", GetE('txtUrl').value );
+ 	SetAttribute( e, "alt"   , GetE('txtAlt').value ) ;
+ 	SetAttribute( e, "width" , GetE('txtWidth').value ) ;
+ 	SetAttribute( e, "height", GetE('txtHeight').value ) ;
+Index: editor/dialog/common/fck_dialog_common.css
+===================================================================
+--- editor/dialog/common/fck_dialog_common.css	(revision 7205)
++++ editor/dialog/common/fck_dialog_common.css	(working copy)
+@@ -70,10 +70,9 @@
+ {
+ 	border: 1px outset;
+ 	cursor: pointer;
+-	cursor: hand;
+ }
+ 
+ .FCK__FieldNumeric
+ {
+-	behavior: url(common/fcknumericfield.htc) ;
++/*	behavior: url(common/fcknumericfield.htc) ;*/
+ }
+\ No newline at end of file
+Index: editor/fckdialog.html
+===================================================================
+--- editor/fckdialog.html	(revision 7205)
++++ editor/fckdialog.html	(working copy)
+@@ -32,7 +32,9 @@
+ document.write( '<link href="' + window.dialogArguments.Editor.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;
+ 
+ // Sets the language direction.
+-window.document.dir = window.dialogArguments.Editor.FCKLang.Dir ;
++if ( window.dialogArguments.Editor.FCKLang) {
++    window.document.dir = window.dialogArguments.Editor.FCKLang.Dir ;
++}
+ 
+ var sTitle = window.dialogArguments.Title ;
+ document.write( '<title>' + sTitle + '<\/title>' ) ;
+@@ -46,7 +48,9 @@
+ 		window.onresize() ;
+ 
+ 	// First of all, translate the dialog box contents.
+-	window.dialogArguments.Editor.FCKLanguageManager.TranslatePage( document ) ;
++    if (window.dialogArguments.Editor.FCKLanguageManager) {
++	    window.dialogArguments.Editor.FCKLanguageManager.TranslatePage( document ) ;
++    }
+ 
+ 	window.frames["frmMain"].document.location.href = window.dialogArguments.Page ;
+ }
+@@ -56,7 +60,9 @@
+ 	var oInnerDoc = document.getElementById('frmMain').contentWindow.document ;
+ 
+ 	// Set the language direction.
+-	oInnerDoc.dir = window.dialogArguments.Editor.FCKLang.Dir ;
++    if (window.dialogArguments.Editor.FCKLang) {
++	    oInnerDoc.dir = window.dialogArguments.Editor.FCKLang.Dir ;
++    }
+ 
+ 	// Sets the Skin CSS.
+ 	oInnerDoc.write( '<link href="' + window.dialogArguments.Editor.FCKConfig.SkinPath + 'fck_dialog.css" type="text/css" rel="stylesheet">' ) ;
+Index: editor/skins/default/fck_dialog.css
+===================================================================
+--- editor/skins/default/fck_dialog.css	(revision 7205)
++++ editor/skins/default/fck_dialog.css	(working copy)
+@@ -110,7 +110,6 @@
+ 	margin-top: 1px;
+ 	border-bottom: #d5d59d 1px solid;
+ 	cursor: pointer;
+-	cursor: hand;
+ }
+ 
+ .PopupTabSelected
+@@ -127,5 +126,4 @@
+ 	border: #ff9933 1px solid;
+ 	background-color: #fffacd;
+ 	cursor: pointer;
+-	cursor: hand;
+ }
+\ No newline at end of file
+Index: editor/filemanager/browser/default/frmfolders.html
+===================================================================
+--- editor/filemanager/browser/default/frmfolders.html	(revision 7205)
++++ editor/filemanager/browser/default/frmfolders.html	(working copy)
+@@ -29,6 +29,18 @@
+ var bIsLoaded = false ;
+ var iIntervalId ;
+ 
++// copied from browser.html
++function GetUrlParam( paramName )
++{
++	var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' ) ;
++	var oMatch = oRegex.exec( window.top.location.search ) ;
++	
++	if ( oMatch && oMatch.length > 1 )
++		return oMatch[1] ;
++	else
++		return '' ;
++}
++
+ var oListManager = new Object() ;
+ 
+ oListManager.Init = function()
+@@ -130,7 +142,7 @@
+ 	// Clear the folders list.
+ 	oListManager.Clear() ;
+ 
+-	// Get the parent folder path.
++// Get the parent folder path.
+ 	var sParentFolderPath ;
+ 	if ( folderPath != '/' )
+ 		sParentFolderPath = folderPath.substring( 0, folderPath.lastIndexOf( '/', folderPath.length - 2 ) + 1 ) ;
+@@ -177,7 +189,12 @@
+ window.onload = function()
+ {
+ 	oListManager.Init() ;
+-	LoadFolders( '/' ) ;
++    var folder = '/';
++    var sRootPath = GetUrlParam('RootPath') ;
++    if ( sRootPath.length > 0 )
++            folder = sRootPath;
++
++	LoadFolders(folder) ;
+ }
+ 		</script>
+ 	</head>
+Index: editor/filemanager/browser/default/browser.css
+===================================================================
+--- editor/filemanager/browser/default/browser.css	(revision 7205)
++++ editor/filemanager/browser/default/browser.css	(working copy)
+@@ -81,4 +81,11 @@
+ .FolderListFolder img
+ {
+ 	background-image: url(images/Folder.gif);
++}
++
++.imageTooltip {
++    color: #000;
++    background-color: #fff;
++    border: solid #ddd 1px;
++    padding: 5px;
+ }
+\ No newline at end of file
+Index: editor/filemanager/browser/default/connectors/php/connector.php
+===================================================================
+--- editor/filemanager/browser/default/connectors/php/connector.php	(revision 7205)
++++ editor/filemanager/browser/default/connectors/php/connector.php	(working copy)
+@@ -66,7 +66,7 @@
+ 	$sCurrentFolder	= $_GET['CurrentFolder'] ;
+ 
+ 	// Check if it is an allowed type.
+-	if ( !in_array( $sResourceType, array('File','Image','Flash','Media') ) )
++	if ( !in_array( $sResourceType, array('files','gallery') ) )
+ 		return ;
+ 
+ 	// Check the current folder syntax (must begin and start with a slash).
+Index: editor/filemanager/browser/default/connectors/php/config.php
+===================================================================
+--- editor/filemanager/browser/default/connectors/php/config.php	(revision 7205)
++++ editor/filemanager/browser/default/connectors/php/config.php	(working copy)
+@@ -1,51 +1,70 @@
+-<?php 
+-/*
+- * FCKeditor - The text editor for internet
+- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+- * 
+- * Licensed under the terms of the GNU Lesser General Public License:
+- * 		http://www.opensource.org/licenses/lgpl-license.php
+- * 
+- * For further information visit:
+- * 		http://www.fckeditor.net/
+- * 
+- * "Support Open Source software. What about a donation today?"
+- * 
+- * File Name: config.php
+- * 	Configuration file for the File Manager Connector for PHP.
+- * 
+- * File Authors:
+- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+- */
+-
+-global $Config ;
+-
+-// SECURITY: You must explicitelly enable this "connector". (Set it to "true").
+-$Config['Enabled'] = false ;
+-
+-// Path to user files relative to the document root.
+-$Config['UserFilesPath'] = '/UserFiles/' ;
+-
+-// Fill the following value it you prefer to specify the absolute path for the
+-// user files directory. Usefull if you are using a virtual directory, symbolic
+-// link or alias. Examples: 'C:\\MySite\\UserFiles\\' or '/root/mysite/UserFiles/'.
+-// Attention: The above 'UserFilesPath' must point to the same directory.
+-$Config['UserFilesAbsolutePath'] = '' ;
+-
+-// Due to security issues with Apache modules, it is reccomended to leave the
+-// following setting enabled.
+-$Config['ForceSingleExtension'] = true ;
+-
+-$Config['AllowedExtensions']['File']	= array() ;
+-$Config['DeniedExtensions']['File']		= array('php','php2','php3','php4','php5','phtml','pwml','inc','asp','aspx','ascx','jsp','cfm','cfc','pl','bat','exe','com','dll','vbs','js','reg','cgi') ;
+-
+-$Config['AllowedExtensions']['Image']	= array('jpg','gif','jpeg','png') ;
+-$Config['DeniedExtensions']['Image']	= array() ;
+-
+-$Config['AllowedExtensions']['Flash']	= array('swf','fla') ;
+-$Config['DeniedExtensions']['Flash']	= array() ;
+-
+-$Config['AllowedExtensions']['Media']	= array('swf','fla','jpg','gif','jpeg','png','avi','mpg','mpeg') ;
+-$Config['DeniedExtensions']['Media']	= array() ;
+-
+-?>
+\ No newline at end of file
++<?php 
++/*
++ * FCKeditor - The text editor for internet
++ * Copyright (C) 2003-2005 Frederico Caldeira Knabben
++ * 
++ * Licensed under the terms of the GNU Lesser General Public License:
++ * 		http://www.opensource.org/licenses/lgpl-license.php
++ * 
++ * For further information visit:
++ * 		http://www.fckeditor.net/
++ * 
++ * "Support Open Source software. What about a donation today?"
++ * 
++ * File Name: config.php
++ * 	Configuration file for the File Manager Connector for PHP.
++ * 
++ * File Authors:
++ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
++ */
++
++global $Config ;
++
++// SECURITY: You must explicitelly enable this "connector". (Set it to "true").
++$Config['Enabled'] = true ;
++
++// Path to user files relative to the document root.
++
++// Fill the following value it you prefer to specify the absolute path for the
++// user files directory. Usefull if you are using a virtual directory, symbolic
++// link or alias. Examples: 'C:\\MySite\\UserFiles\\' or '/root/mysite/UserFiles/'.
++// Attention: The above 'UserFilesPath' must point to the same directory.
++include_once("../../../../../../../../inc/bx/init.php");
++bx_init::start('conf/config.xml', "../../../../../../../..");
++
++$conf = bx_config::getInstance();
++$confvars = $conf->getConfProperty('permm');
++$permObj = bx_permm::getInstance($confvars);
++if (!$permObj->isAllowed('/',array('admin'))) {
++     
++     print "Access denied";
++     
++     die();
++ }
++ 
++$Config['UserFilesPath'] = "/";
++$Config['UserFilesAbsolutePath'] = BX_OPEN_BASEDIR . $Config['UserFilesPath']   ;
++
++if (isset($_GET['Type']) && $_GET['Type'] == 'gallery') {
++$Config['UserFilesPath'] .= "/files/_galleries/";
++$Config['UserFilesAbsolutePath'] .= "/files/_galleries/";
++}
++
++
++$Config['AllowedExtensions']['files']	= array() ;
++$Config['DeniedExtensions']['files']		= array('php','php3','php5','phtml','asp','aspx','ascx','jsp','cfm','cfc','pl','bat','exe','dll','reg','cgi') ;
++
++/*$Config['AllowedExtensions']['gallery']	= array() ;
++$Config['DeniedExtensions']['gallery']		= array('php','php3','php5','phtml','asp','aspx','ascx','jsp','cfm','cfc','pl','bat','exe','dll','reg','cgi') ;
++*/
++/*
++$Config['AllowedExtensions']['Image']	= array('jpg','gif','jpeg','png') ;
++$Config['DeniedExtensions']['Image']	= array() ;
++
++$Config['AllowedExtensions']['Flash']	= array('swf','fla') ;
++$Config['DeniedExtensions']['Flash']	= array() ;
++
++$Config['AllowedExtensions']['Media']	= array('swf','fla','jpg','gif','jpeg','png','avi','mpg','mpeg') ;
++$Config['DeniedExtensions']['Media']	= array() ;
++*/
++?>
+Index: editor/filemanager/browser/default/frmresourceslist.html
+===================================================================
+--- editor/filemanager/browser/default/frmresourceslist.html	(revision 7205)
++++ editor/filemanager/browser/default/frmresourceslist.html	(working copy)
+@@ -21,6 +21,8 @@
+ <head>
+ 	<link href="browser.css" type="text/css" rel="stylesheet" />
+ 	<script type="text/javascript" src="js/common.js"></script>
++	<script type="text/javascript" src="../../../../../js/bx/tooltip.js"></script>
++	<script type="text/javascript" src="../../../../../plugins/dbforms2/helpers.js"></script>
+ 	<script type="text/javascript">
+ 
+ var oListManager = new Object() ;
+@@ -28,8 +30,19 @@
+ oListManager.Clear = function()
+ {
+ 	document.body.innerHTML = '' ;
++    
++    
++    // get the fluxcms webroot
++    var matches = window.document.URL.match(/(.*\/)webinc\//)
++    if(matches != null) {
++        this.BX_WEBROOT = matches[1];
++    } else {
++        this.BX_WEBROOT = '/';
++    }
++    
+ }
+ 
++
+ oListManager.GetFolderRowHtml = function( folderName, folderPath )
+ {
+ 	// Build the link to view the folder.
+@@ -49,12 +62,11 @@
+ oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
+ {
+ 	// Build the link to view the folder.
+-	var sLink = '<a href="#" onclick="OpenFile(\'' + fileUrl.replace( /'/g, '\\\'') + '\');return false;">' ;
++	var sLink = '<a href="'+fileUrl+'" onclick="OpenFile(\'' + fileUrl.replace( /'/g, '\\\'') + '\');return false;">' ;
+ 
+ 	// Get the file icon.
+ 	var sIcon = oIcons.GetIcon( fileName ) ;
+-
+-	return '<tr>' +
++    return '<tr>' +
+ 			'<td width="16">' +
+ 				sLink + 
+ 				'<img alt="" src="images/icons/' + sIcon + '.gif" width="16" height="16" border="0"></a>' +
+@@ -129,7 +141,17 @@
+ 	sHTML += '</table>' ;
+ 
+ 	document.body.innerHTML = sHTML ;
+-
++    bx_tooltip.init();
++    
++    var a = document.getElementsByTagName("a");
++    for (var i = 0; i < a.length; i++) {
++        var fileUrl =  a[i].getAttribute("href");
++        
++        if(dbforms2_helpers.isImage(fileUrl) && !a[i].onmouseover) {
++            bx_tooltip.prepare(a[i],oListManager.BX_WEBROOT + 'dynimages/200/' + fileUrl);
++        }
++    }
++    
+ //	window.top.document.title = 'Finished processing in ' + ( ( ( new Date() ) - dTimer ) / 1000 ) + ' seconds' ;
+ }
+ 
+Index: editor/js/fckeditorcode_gecko.js
+===================================================================
+--- editor/js/fckeditorcode_gecko.js	(revision 7205)
++++ editor/js/fckeditorcode_gecko.js	(working copy)
+@@ -16,7 +16,9 @@
+ String.prototype.Contains=function(A){return (this.indexOf(A)>-1);};String.prototype.Equals=function(){for (var i=0;i<arguments.length;i++) if (this==arguments[i]) return true;return false;};Array.prototype.AddItem=function(A){var i=this.length;this[i]=A;return i;};Array.prototype.indexOf=function(A){for (var i=0;i<this.length;i++){if (this[i]==A) return i;};return-1;};String.prototype.startsWith=function(A){return (this.substr(0,A.length)==A);};String.prototype.endsWith=function(A,B){var C=this.length;var D=A.length;if (D>C) return false;if (B){var E=new RegExp(A+'$','i');return E.test(this);}else return (D==0||this.substr(C-D,D)==A);};String.prototype.remove=function(A,B){var s='';if (A>0) s=this.substring(0,A);if (A+B<this.length) s+=this.substring(A+B,this.length);return s;};String.prototype.trim=function(){return this.replace(/(^\s*)|(\s*$)/g,'');};String.prototype.ltrim=function(){return this.replace(/^\s*/g,'');};String.prototype.rtrim=function(){return this.replace(/\s*$/g,'');};String.prototype.replaceNewLineChars=function(A){return this.replace(/\n/g,A);}
+ var s=navigator.userAgent.toLowerCase();var FCKBrowserInfo={IsIE:s.Contains('msie'),IsIE7:s.Contains('msie 7'),IsGecko:s.Contains('gecko/'),IsSafari:s.Contains('safari'),IsOpera:s.Contains('opera')};FCKBrowserInfo.IsGeckoLike=FCKBrowserInfo.IsGecko||FCKBrowserInfo.IsSafari||FCKBrowserInfo.IsOpera;if (FCKBrowserInfo.IsGecko){var sGeckoVersion=s.match(/gecko\/(\d+)/)[1];FCKBrowserInfo.IsGecko10=sGeckoVersion<20051111;}
+ var FCKURLParams=new Object();var aParams=document.location.search.substr(1).split('&');for (var i=0;i<aParams.length;i++){var aParam=aParams[i].split('=');var sParamName=aParam[0];var sParamValue=aParam[1];FCKURLParams[sParamName]=sParamValue;}
+-var FCK=new Object();FCK.Name=FCKURLParams['InstanceName'];FCK.Status=FCK_STATUS_NOTLOADED;FCK.EditMode=FCK_EDITMODE_WYSIWYG;FCK.LoadLinkedFile=function(){var A=window.parent.document;var B=A.getElementById(FCK.Name);var C=A.getElementsByName(FCK.Name);var i=0;while (B||i==0){if (B&&(B.tagName=='INPUT'||B.tagName=='TEXTAREA')){FCK.LinkedField=B;break;};B=C[i++];}};FCK.LoadLinkedFile();var FCKTempBin=new Object();FCKTempBin.Elements=new Array();FCKTempBin.AddElement=function(A){var B=this.Elements.length;this.Elements[B]=A;return B;};FCKTempBin.RemoveElement=function(A){var e=this.Elements[A];this.Elements[A]=null;return e;};FCKTempBin.Reset=function(){var i=0;while (i<this.Elements.length) this.Elements[i++]==null;this.Elements.length=0;}
++var FCK=new Object();
++FCK.Name=FCKURLParams['InstanceName'] || 'bx[plugins][admin_edit][content]';
++FCK.Status=FCK_STATUS_NOTLOADED;FCK.EditMode=FCK_EDITMODE_WYSIWYG;FCK.LoadLinkedFile=function(){var A=window.parent.document;var B=A.getElementById(FCK.Name);var C=A.getElementsByName(FCK.Name);var i=0;while (B||i==0){if (B&&(B.tagName=='INPUT'||B.tagName=='TEXTAREA')){FCK.LinkedField=B;break;};B=C[i++];}};FCK.LoadLinkedFile();var FCKTempBin=new Object();FCKTempBin.Elements=new Array();FCKTempBin.AddElement=function(A){var B=this.Elements.length;this.Elements[B]=A;return B;};FCKTempBin.RemoveElement=function(A){var e=this.Elements[A];this.Elements[A]=null;return e;};FCKTempBin.Reset=function(){var i=0;while (i<this.Elements.length) this.Elements[i++]==null;this.Elements.length=0;}
+ var FCKConfig=FCK.Config=new Object();if (document.location.protocol=='file:'){FCKConfig.BasePath=unescape(document.location.pathname.substr(1));FCKConfig.BasePath=FCKConfig.BasePath.replace(/\\/gi, '/');FCKConfig.BasePath='file://'+FCKConfig.BasePath.substring(0,FCKConfig.BasePath.lastIndexOf('/')+1);FCKConfig.FullBasePath=FCKConfig.BasePath;}else{FCKConfig.BasePath=document.location.pathname.substring(0,document.location.pathname.lastIndexOf('/')+1);FCKConfig.FullBasePath=document.location.protocol+'//'+document.location.host+FCKConfig.BasePath;};FCKConfig.EditorPath=FCKConfig.BasePath.replace(/editor\/$/,'');try{FCKConfig.ScreenWidth=screen.width;FCKConfig.ScreenHeight=screen.height;}catch (e){FCKConfig.ScreenWidth=800;FCKConfig.ScreenHeight=600;};FCKConfig.ProcessHiddenField=function(){this.PageConfig=new Object();var A=window.parent.document.getElementById(FCK.Name+'___Config');if (!A) return;var B=A.value.split('&');for (var i=0;i<B.length;i++){if (B[i].length==0) continue;var C=B[i].split('=');var D=unescape(C[0]);var E=unescape(C[1]);if (D=='CustomConfigurationsPath') FCKConfig[D]=E;else if (E.toLowerCase()=="true") this.PageConfig[D]=true;else if (E.toLowerCase()=="false") this.PageConfig[D]=false;else if (!isNaN(E)) this.PageConfig[D]=parseInt(E);else this.PageConfig[D]=E;}};function FCKConfig_LoadPageConfig(){var oPageConfig=FCKConfig.PageConfig;for (var sKey in oPageConfig) FCKConfig[sKey]=oPageConfig[sKey];};function FCKConfig_PreProcess(){var oConfig=FCKConfig;if (oConfig.AllowQueryStringDebug&&(/fckdebug=true/i).test(window.top.location.search)) oConfig.Debug=true;if (!oConfig.PluginsPath.endsWith('/')) oConfig.PluginsPath+='/';if (typeof(oConfig.EditorAreaCSS)=='string') oConfig.EditorAreaCSS=[oConfig.EditorAreaCSS];};FCKConfig.ToolbarSets=new Object();FCKConfig.Plugins=new Object();FCKConfig.Plugins.Items=new Array();FCKConfig.Plugins.Add=function(A,B,C){FCKConfig.Plugins.Items.AddItem([A,B,C]);};FCKConfig.ProtectedSource=new Object();FCKConfig.ProtectedSource.RegexEntries=new Array();FCKConfig.ProtectedSource.Add=function(A){this.RegexEntries.AddItem(A);};FCKConfig.ProtectedSource.Protect=function(A){function _Replace(protectedSource){var B=FCKTempBin.AddElement(protectedSource);return '<!--{PS..'+B+'}-->';};for (var i=0;i<this.RegexEntries.length;i++){A=A.replace(this.RegexEntries[i],_Replace);};return A;};FCKConfig.ProtectedSource.Revert=function(A,B){function _Replace(m,opener,index){var C=B?FCKTempBin.RemoveElement(index):FCKTempBin.Elements[index];return FCKConfig.ProtectedSource.Revert(C,B);};return A.replace(/(<|&lt;)!--\{PS..(\d+)\}--(>|&gt;)/g,_Replace);};FCKConfig.ProtectedSource.Add(/<!--[\s\S]*?-->/g);
+ var FCKeditorAPI;function InitializeAPI(){var oAPI;if (!(oAPI=FCKeditorAPI=window.parent.FCKeditorAPI)){oAPI=FCKeditorAPI=window.parent.FCKeditorAPI=new Object();oAPI.Version='2.3';oAPI.VersionBuild='1054';oAPI.__Instances=new Object();oAPI.GetInstance=FCKeditorAPI_GetInstance;var oQueue=oAPI._FunctionQueue=new Object();oQueue.Functions=new Array();oQueue.IsRunning=false;oQueue.Add=FCKeditorAPI_FunctionQueue_Add;oQueue.StartNext=FCKeditorAPI_FunctionQueue_StartNext;oQueue.Remove=FCKeditorAPI_FunctionQueue_Remove;};oAPI.__Instances[FCK.Name]=FCK;};function FCKeditorAPI_GetInstance(instanceName){return this.__Instances[instanceName];};function FCKeditorAPI_FunctionQueue_Add(functionToAdd){this.Functions.push(functionToAdd);if (!this.IsRunning) this.StartNext();};function FCKeditorAPI_FunctionQueue_StartNext(){var aQueue=this.Functions;if (aQueue.length>0){this.IsRunning=true;FCKTools.RunFunction(aQueue[0]);}else this.IsRunning=false;};function FCKeditorAPI_FunctionQueue_Remove(func){var aQueue=this.Functions;var i=0,fFunc;while(fFunc=aQueue[i]){if (fFunc==func) aQueue.splice(i,1);i++;};this.StartNext();}
+ var FCKDebug=new Object();FCKDebug.Output=function(A,B,C){if (!FCKConfig.Debug) return;if (!C&&A!=null&&isNaN(A)) A=A.replace(/</g,"&lt;");if (!this.DebugWindow||this.DebugWindow.closed) this.DebugWindow=window.open(FCKConfig.BasePath+'fckdebug.html','FCKeditorDebug','menubar=no,scrollbars=no,resizable=yes,location=no,toolbar=no,width=600,height=500',true);if (this.DebugWindow&&this.DebugWindow.Output){try{this.DebugWindow.Output(A,B);}catch (e) {}}};FCKDebug.OutputObject=function(A,B){if (!FCKConfig.Debug) return;var C;if (A!=null){C='Properties of: '+A+'</b><blockquote>';for (var D in A){try{var E=A[D]?A[D]+'':'[null]';C+='<b>'+D+'</b> : '+E.replace(/</g,'&lt;')+'<br>';}catch (e){try{C+='<b>'+D+'</b> : ['+typeof(A[D])+']<br>';}catch (e){C+='<b>'+D+'</b> : [-error-]<br>';}}};C+='</blockquote><b>';} else C='OutputObject : Object is "null".';FCKDebug.Output(C,B,true);}
+Index: editor/js/fckeditorcode_ie.js
+===================================================================
+--- editor/js/fckeditorcode_ie.js	(revision 7205)
++++ editor/js/fckeditorcode_ie.js	(working copy)
+@@ -17,7 +17,9 @@
+ var	FCKIECleanup=function(A){this.Items=new Array();A._FCKCleanupObj=this;A.attachEvent('onunload',FCKIECleanup_Cleanup);};FCKIECleanup.prototype.AddItem=function(A,B){this.Items.push([A,B]);};function FCKIECleanup_Cleanup(){var aItems=this._FCKCleanupObj.Items;var iLenght=aItems.length;for (var i=0;i<iLenght;i++){var oItem=aItems[i];oItem[1].call(oItem[0]);aItems[i]=null;};this._FCKCleanupObj=null;if (CollectGarbage) CollectGarbage();}
+ var s=navigator.userAgent.toLowerCase();var FCKBrowserInfo={IsIE:s.Contains('msie'),IsIE7:s.Contains('msie 7'),IsGecko:s.Contains('gecko/'),IsSafari:s.Contains('safari'),IsOpera:s.Contains('opera')};FCKBrowserInfo.IsGeckoLike=FCKBrowserInfo.IsGecko||FCKBrowserInfo.IsSafari||FCKBrowserInfo.IsOpera;if (FCKBrowserInfo.IsGecko){var sGeckoVersion=s.match(/gecko\/(\d+)/)[1];FCKBrowserInfo.IsGecko10=sGeckoVersion<20051111;}
+ var FCKURLParams=new Object();var aParams=document.location.search.substr(1).split('&');for (var i=0;i<aParams.length;i++){var aParam=aParams[i].split('=');var sParamName=aParam[0];var sParamValue=aParam[1];FCKURLParams[sParamName]=sParamValue;}
+-var FCK=new Object();FCK.Name=FCKURLParams['InstanceName'];FCK.Status=FCK_STATUS_NOTLOADED;FCK.EditMode=FCK_EDITMODE_WYSIWYG;FCK.LoadLinkedFile=function(){var A=window.parent.document;var B=A.getElementById(FCK.Name);var C=A.getElementsByName(FCK.Name);var i=0;while (B||i==0){if (B&&(B.tagName=='INPUT'||B.tagName=='TEXTAREA')){FCK.LinkedField=B;break;};B=C[i++];}};FCK.LoadLinkedFile();var FCKTempBin=new Object();FCKTempBin.Elements=new Array();FCKTempBin.AddElement=function(A){var B=this.Elements.length;this.Elements[B]=A;return B;};FCKTempBin.RemoveElement=function(A){var e=this.Elements[A];this.Elements[A]=null;return e;};FCKTempBin.Reset=function(){var i=0;while (i<this.Elements.length) this.Elements[i++]==null;this.Elements.length=0;}
++var FCK=new Object();
++FCK.Name=FCKURLParams['InstanceName'] || 'bx[plugins][admin_edit][content]';
++FCK.Status=FCK_STATUS_NOTLOADED;FCK.EditMode=FCK_EDITMODE_WYSIWYG;FCK.LoadLinkedFile=function(){var A=window.parent.document;var B=A.getElementById(FCK.Name);var C=A.getElementsByName(FCK.Name);var i=0;while (B||i==0){if (B&&(B.tagName=='INPUT'||B.tagName=='TEXTAREA')){FCK.LinkedField=B;break;};B=C[i++];}};FCK.LoadLinkedFile();var FCKTempBin=new Object();FCKTempBin.Elements=new Array();FCKTempBin.AddElement=function(A){var B=this.Elements.length;this.Elements[B]=A;return B;};FCKTempBin.RemoveElement=function(A){var e=this.Elements[A];this.Elements[A]=null;return e;};FCKTempBin.Reset=function(){var i=0;while (i<this.Elements.length) this.Elements[i++]==null;this.Elements.length=0;}
+ var FCKConfig=FCK.Config=new Object();if (document.location.protocol=='file:'){FCKConfig.BasePath=unescape(document.location.pathname.substr(1));FCKConfig.BasePath=FCKConfig.BasePath.replace(/\\/gi, '/');FCKConfig.BasePath='file://'+FCKConfig.BasePath.substring(0,FCKConfig.BasePath.lastIndexOf('/')+1);FCKConfig.FullBasePath=FCKConfig.BasePath;}else{FCKConfig.BasePath=document.location.pathname.substring(0,document.location.pathname.lastIndexOf('/')+1);FCKConfig.FullBasePath=document.location.protocol+'//'+document.location.host+FCKConfig.BasePath;};FCKConfig.EditorPath=FCKConfig.BasePath.replace(/editor\/$/,'');try{FCKConfig.ScreenWidth=screen.width;FCKConfig.ScreenHeight=screen.height;}catch (e){FCKConfig.ScreenWidth=800;FCKConfig.ScreenHeight=600;};FCKConfig.ProcessHiddenField=function(){this.PageConfig=new Object();var A=window.parent.document.getElementById(FCK.Name+'___Config');if (!A) return;var B=A.value.split('&');for (var i=0;i<B.length;i++){if (B[i].length==0) continue;var C=B[i].split('=');var D=unescape(C[0]);var E=unescape(C[1]);if (D=='CustomConfigurationsPath') FCKConfig[D]=E;else if (E.toLowerCase()=="true") this.PageConfig[D]=true;else if (E.toLowerCase()=="false") this.PageConfig[D]=false;else if (!isNaN(E)) this.PageConfig[D]=parseInt(E);else this.PageConfig[D]=E;}};function FCKConfig_LoadPageConfig(){var oPageConfig=FCKConfig.PageConfig;for (var sKey in oPageConfig) FCKConfig[sKey]=oPageConfig[sKey];};function FCKConfig_PreProcess(){var oConfig=FCKConfig;if (oConfig.AllowQueryStringDebug&&(/fckdebug=true/i).test(window.top.location.search)) oConfig.Debug=true;if (!oConfig.PluginsPath.endsWith('/')) oConfig.PluginsPath+='/';if (typeof(oConfig.EditorAreaCSS)=='string') oConfig.EditorAreaCSS=[oConfig.EditorAreaCSS];};FCKConfig.ToolbarSets=new Object();FCKConfig.Plugins=new Object();FCKConfig.Plugins.Items=new Array();FCKConfig.Plugins.Add=function(A,B,C){FCKConfig.Plugins.Items.AddItem([A,B,C]);};FCKConfig.ProtectedSource=new Object();FCKConfig.ProtectedSource.RegexEntries=new Array();FCKConfig.ProtectedSource.Add=function(A){this.RegexEntries.AddItem(A);};FCKConfig.ProtectedSource.Protect=function(A){function _Replace(protectedSource){var B=FCKTempBin.AddElement(protectedSource);return '<!--{PS..'+B+'}-->';};for (var i=0;i<this.RegexEntries.length;i++){A=A.replace(this.RegexEntries[i],_Replace);};return A;};FCKConfig.ProtectedSource.Revert=function(A,B){function _Replace(m,opener,index){var C=B?FCKTempBin.RemoveElement(index):FCKTempBin.Elements[index];return FCKConfig.ProtectedSource.Revert(C,B);};return A.replace(/(<|&lt;)!--\{PS..(\d+)\}--(>|&gt;)/g,_Replace);};FCKConfig.ProtectedSource.Add(/<!--[\s\S]*?-->/g);
+ var FCKeditorAPI;function InitializeAPI(){var oAPI;if (!(oAPI=FCKeditorAPI=window.parent.FCKeditorAPI)){oAPI=FCKeditorAPI=window.parent.FCKeditorAPI=new Object();oAPI.Version='2.3';oAPI.VersionBuild='1054';oAPI.__Instances=new Object();oAPI.GetInstance=FCKeditorAPI_GetInstance;var oQueue=oAPI._FunctionQueue=new Object();oQueue.Functions=new Array();oQueue.IsRunning=false;oQueue.Add=FCKeditorAPI_FunctionQueue_Add;oQueue.StartNext=FCKeditorAPI_FunctionQueue_StartNext;oQueue.Remove=FCKeditorAPI_FunctionQueue_Remove;};oAPI.__Instances[FCK.Name]=FCK;};function FCKeditorAPI_GetInstance(instanceName){return this.__Instances[instanceName];};function FCKeditorAPI_FunctionQueue_Add(functionToAdd){this.Functions.push(functionToAdd);if (!this.IsRunning) this.StartNext();};function FCKeditorAPI_FunctionQueue_StartNext(){var aQueue=this.Functions;if (aQueue.length>0){this.IsRunning=true;FCKTools.RunFunction(aQueue[0]);}else this.IsRunning=false;};function FCKeditorAPI_FunctionQueue_Remove(func){var aQueue=this.Functions;var i=0,fFunc;while(fFunc=aQueue[i]){if (fFunc==func) aQueue.splice(i,1);i++;};this.StartNext();}
+ var FCKDebug=new Object();FCKDebug.Output=function(A,B,C){if (!FCKConfig.Debug) return;if (!C&&A!=null&&isNaN(A)) A=A.replace(/</g,"&lt;");if (!this.DebugWindow||this.DebugWindow.closed) this.DebugWindow=window.open(FCKConfig.BasePath+'fckdebug.html','FCKeditorDebug','menubar=no,scrollbars=no,resizable=yes,location=no,toolbar=no,width=600,height=500',true);if (this.DebugWindow&&this.DebugWindow.Output){try{this.DebugWindow.Output(A,B);}catch (e) {}}};FCKDebug.OutputObject=function(A,B){if (!FCKConfig.Debug) return;var C;if (A!=null){C='Properties of: '+A+'</b><blockquote>';for (var D in A){try{var E=A[D]?A[D]+'':'[null]';C+='<b>'+D+'</b> : '+E.replace(/</g,'&lt;')+'<br>';}catch (e){try{C+='<b>'+D+'</b> : ['+typeof(A[D])+']<br>';}catch (e){C+='<b>'+D+'</b> : [-error-]<br>';}}};C+='</blockquote><b>';} else C='OutputObject : Object is "null".';FCKDebug.Output(C,B,true);}
+Index: editor/filemanager/browser/default/connectors/php/commands.php
+===================================================================
+--- editor/filemanager/browser/default/connectors/php/commands.php      (revision 7925)
++++ editor/filemanager/browser/default/connectors/php/commands.php      (working copy)
+@@ -197,6 +197,7 @@
+                                                $oldumask = umask(0) ;
+                                                chmod( $sFilePath, 0777 ) ;
+                                                umask( $oldumask ) ;
++                         bx_metaindex::callIndexerFromFilename($sFilePath,str_replace(BX_OPEN_BASEDIR,'/',$sFilePath));
+                                        }
+ 
+                                        break ;
+@@ -215,4 +216,5 @@
+ 
+        exit ;
+ }
++
+ ?>

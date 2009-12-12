@@ -1,0 +1,99 @@
+a:18:{s:8:"provides";a:53:{s:32:"class;MDB2_Driver_Datatype_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:26:"MDB2_Driver_Datatype_mysql";s:7:"extends";s:27:"MDB2_Driver_Datatype_Common";s:8:"explicit";b:1;}s:55:"function;MDB2_Driver_Datatype_mysql::getTypeDeclaration";a:3:{s:4:"type";s:8:"function";s:4:"name";s:46:"MDB2_Driver_Datatype_mysql::getTypeDeclaration";s:8:"explicit";b:1;}s:54:"function;MDB2_Driver_Datatype_mysql::mapNativeDatatype";a:3:{s:4:"type";s:8:"function";s:4:"name";s:45:"MDB2_Driver_Datatype_mysql::mapNativeDatatype";s:8:"explicit";b:1;}s:32:"class;MDB2_Driver_Function_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:26:"MDB2_Driver_Function_mysql";s:7:"extends";s:27:"MDB2_Driver_Function_Common";s:8:"explicit";b:1;}s:54:"function;MDB2_Driver_Function_mysql::executeStoredProc";a:3:{s:4:"type";s:8:"function";s:4:"name";s:45:"MDB2_Driver_Function_mysql::executeStoredProc";s:8:"explicit";b:1;}s:43:"function;MDB2_Driver_Function_mysql::concat";a:3:{s:4:"type";s:8:"function";s:4:"name";s:34:"MDB2_Driver_Function_mysql::concat";s:8:"explicit";b:1;}s:31:"class;MDB2_Driver_Manager_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:25:"MDB2_Driver_Manager_mysql";s:7:"extends";s:26:"MDB2_Driver_Manager_Common";s:8:"explicit";b:1;}s:50:"function;MDB2_Driver_Manager_mysql::createDatabase";a:3:{s:4:"type";s:8:"function";s:4:"name";s:41:"MDB2_Driver_Manager_mysql::createDatabase";s:8:"explicit";b:1;}s:48:"function;MDB2_Driver_Manager_mysql::dropDatabase";a:3:{s:4:"type";s:8:"function";s:4:"name";s:39:"MDB2_Driver_Manager_mysql::dropDatabase";s:8:"explicit";b:1;}s:47:"function;MDB2_Driver_Manager_mysql::createTable";a:3:{s:4:"type";s:8:"function";s:4:"name";s:38:"MDB2_Driver_Manager_mysql::createTable";s:8:"explicit";b:1;}s:46:"function;MDB2_Driver_Manager_mysql::alterTable";a:3:{s:4:"type";s:8:"function";s:4:"name";s:37:"MDB2_Driver_Manager_mysql::alterTable";s:8:"explicit";b:1;}s:49:"function;MDB2_Driver_Manager_mysql::listDatabases";a:3:{s:4:"type";s:8:"function";s:4:"name";s:40:"MDB2_Driver_Manager_mysql::listDatabases";s:8:"explicit";b:1;}s:45:"function;MDB2_Driver_Manager_mysql::listUsers";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"MDB2_Driver_Manager_mysql::listUsers";s:8:"explicit";b:1;}s:46:"function;MDB2_Driver_Manager_mysql::listTables";a:3:{s:4:"type";s:8:"function";s:4:"name";s:37:"MDB2_Driver_Manager_mysql::listTables";s:8:"explicit";b:1;}s:51:"function;MDB2_Driver_Manager_mysql::listTableFields";a:3:{s:4:"type";s:8:"function";s:4:"name";s:42:"MDB2_Driver_Manager_mysql::listTableFields";s:8:"explicit";b:1;}s:47:"function;MDB2_Driver_Manager_mysql::createIndex";a:3:{s:4:"type";s:8:"function";s:4:"name";s:38:"MDB2_Driver_Manager_mysql::createIndex";s:8:"explicit";b:1;}s:45:"function;MDB2_Driver_Manager_mysql::dropIndex";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"MDB2_Driver_Manager_mysql::dropIndex";s:8:"explicit";b:1;}s:52:"function;MDB2_Driver_Manager_mysql::listTableIndexes";a:3:{s:4:"type";s:8:"function";s:4:"name";s:43:"MDB2_Driver_Manager_mysql::listTableIndexes";s:8:"explicit";b:1;}s:52:"function;MDB2_Driver_Manager_mysql::createConstraint";a:3:{s:4:"type";s:8:"function";s:4:"name";s:43:"MDB2_Driver_Manager_mysql::createConstraint";s:8:"explicit";b:1;}s:50:"function;MDB2_Driver_Manager_mysql::dropConstraint";a:3:{s:4:"type";s:8:"function";s:4:"name";s:41:"MDB2_Driver_Manager_mysql::dropConstraint";s:8:"explicit";b:1;}s:56:"function;MDB2_Driver_Manager_mysql::listTableConstraints";a:3:{s:4:"type";s:8:"function";s:4:"name";s:47:"MDB2_Driver_Manager_mysql::listTableConstraints";s:8:"explicit";b:1;}s:50:"function;MDB2_Driver_Manager_mysql::createSequence";a:3:{s:4:"type";s:8:"function";s:4:"name";s:41:"MDB2_Driver_Manager_mysql::createSequence";s:8:"explicit";b:1;}s:48:"function;MDB2_Driver_Manager_mysql::dropSequence";a:3:{s:4:"type";s:8:"function";s:4:"name";s:39:"MDB2_Driver_Manager_mysql::dropSequence";s:8:"explicit";b:1;}s:49:"function;MDB2_Driver_Manager_mysql::listSequences";a:3:{s:4:"type";s:8:"function";s:4:"name";s:40:"MDB2_Driver_Manager_mysql::listSequences";s:8:"explicit";b:1;}s:30:"class;MDB2_Driver_Native_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:24:"MDB2_Driver_Native_mysql";s:7:"extends";s:18:"MDB2_Module_Common";s:8:"explicit";b:1;}s:31:"class;MDB2_Driver_Reverse_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:25:"MDB2_Driver_Reverse_mysql";s:7:"extends";s:26:"MDB2_Driver_Reverse_Common";s:8:"explicit";b:1;}s:59:"function;MDB2_Driver_Reverse_mysql::getTableFieldDefinition";a:3:{s:4:"type";s:8:"function";s:4:"name";s:50:"MDB2_Driver_Reverse_mysql::getTableFieldDefinition";s:8:"explicit";b:1;}s:59:"function;MDB2_Driver_Reverse_mysql::getTableIndexDefinition";a:3:{s:4:"type";s:8:"function";s:4:"name";s:50:"MDB2_Driver_Reverse_mysql::getTableIndexDefinition";s:8:"explicit";b:1;}s:64:"function;MDB2_Driver_Reverse_mysql::getTableConstraintDefinition";a:3:{s:4:"type";s:8:"function";s:4:"name";s:55:"MDB2_Driver_Reverse_mysql::getTableConstraintDefinition";s:8:"explicit";b:1;}s:45:"function;MDB2_Driver_Reverse_mysql::tableInfo";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"MDB2_Driver_Reverse_mysql::tableInfo";s:8:"explicit";b:1;}s:23:"class;MDB2_Driver_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:17:"MDB2_Driver_mysql";s:7:"extends";s:18:"MDB2_Driver_Common";s:8:"explicit";b:1;}s:23:"class;MDB2_Result_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:17:"MDB2_Result_mysql";s:7:"extends";s:18:"MDB2_Result_Common";s:8:"explicit";b:1;}s:31:"class;MDB2_BufferedResult_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:25:"MDB2_BufferedResult_mysql";s:7:"extends";s:17:"MDB2_Result_mysql";s:8:"explicit";b:1;}s:26:"class;MDB2_Statement_mysql";a:4:{s:4:"type";s:5:"class";s:4:"name";s:20:"MDB2_Statement_mysql";s:7:"extends";s:21:"MDB2_Statement_Common";s:8:"explicit";b:1;}s:37:"function;MDB2_Driver_mysql::errorInfo";a:3:{s:4:"type";s:8:"function";s:4:"name";s:28:"MDB2_Driver_mysql::errorInfo";s:8:"explicit";b:1;}s:34:"function;MDB2_Driver_mysql::escape";a:3:{s:4:"type";s:8:"function";s:4:"name";s:25:"MDB2_Driver_mysql::escape";s:8:"explicit";b:1;}s:43:"function;MDB2_Driver_mysql::quoteIdentifier";a:3:{s:4:"type";s:8:"function";s:4:"name";s:34:"MDB2_Driver_mysql::quoteIdentifier";s:8:"explicit";b:1;}s:44:"function;MDB2_Driver_mysql::beginTransaction";a:3:{s:4:"type";s:8:"function";s:4:"name";s:35:"MDB2_Driver_mysql::beginTransaction";s:8:"explicit";b:1;}s:34:"function;MDB2_Driver_mysql::commit";a:3:{s:4:"type";s:8:"function";s:4:"name";s:25:"MDB2_Driver_mysql::commit";s:8:"explicit";b:1;}s:36:"function;MDB2_Driver_mysql::rollback";a:3:{s:4:"type";s:8:"function";s:4:"name";s:27:"MDB2_Driver_mysql::rollback";s:8:"explicit";b:1;}s:35:"function;MDB2_Driver_mysql::connect";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"MDB2_Driver_mysql::connect";s:8:"explicit";b:1;}s:38:"function;MDB2_Driver_mysql::disconnect";a:3:{s:4:"type";s:8:"function";s:4:"name";s:29:"MDB2_Driver_mysql::disconnect";s:8:"explicit";b:1;}s:44:"function;MDB2_Driver_mysql::getServerVersion";a:3:{s:4:"type";s:8:"function";s:4:"name";s:35:"MDB2_Driver_mysql::getServerVersion";s:8:"explicit";b:1;}s:35:"function;MDB2_Driver_mysql::replace";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"MDB2_Driver_mysql::replace";s:8:"explicit";b:1;}s:34:"function;MDB2_Driver_mysql::nextID";a:3:{s:4:"type";s:8:"function";s:4:"name";s:25:"MDB2_Driver_mysql::nextID";s:8:"explicit";b:1;}s:40:"function;MDB2_Driver_mysql::lastInsertID";a:3:{s:4:"type";s:8:"function";s:4:"name";s:31:"MDB2_Driver_mysql::lastInsertID";s:8:"explicit";b:1;}s:34:"function;MDB2_Driver_mysql::currID";a:3:{s:4:"type";s:8:"function";s:4:"name";s:25:"MDB2_Driver_mysql::currID";s:8:"explicit";b:1;}s:36:"function;MDB2_Result_mysql::fetchRow";a:3:{s:4:"type";s:8:"function";s:4:"name";s:27:"MDB2_Result_mysql::fetchRow";s:8:"explicit";b:1;}s:35:"function;MDB2_Result_mysql::numCols";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"MDB2_Result_mysql::numCols";s:8:"explicit";b:1;}s:32:"function;MDB2_Result_mysql::free";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"MDB2_Result_mysql::free";s:8:"explicit";b:1;}s:40:"function;MDB2_BufferedResult_mysql::seek";a:3:{s:4:"type";s:8:"function";s:4:"name";s:31:"MDB2_BufferedResult_mysql::seek";s:8:"explicit";b:1;}s:41:"function;MDB2_BufferedResult_mysql::valid";a:3:{s:4:"type";s:8:"function";s:4:"name";s:32:"MDB2_BufferedResult_mysql::valid";s:8:"explicit";b:1;}s:43:"function;MDB2_BufferedResult_mysql::numRows";a:3:{s:4:"type";s:8:"function";s:4:"name";s:34:"MDB2_BufferedResult_mysql::numRows";s:8:"explicit";b:1;}}s:8:"filelist";a:6:{s:30:"MDB2/Driver/Datatype/mysql.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"63b472ff399dcf149bd595cfd6e371d3";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:67:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Datatype/mysql.php";}s:30:"MDB2/Driver/Function/mysql.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"782f7cb41a8fd89cfff52a57434dc131";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:67:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Function/mysql.php";}s:29:"MDB2/Driver/Manager/mysql.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"537cc4dda3c97f7a9768cdf2f4e7cae5";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:66:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Manager/mysql.php";}s:28:"MDB2/Driver/Native/mysql.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"819d6678ed957a67176be694d35b9964";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:65:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Native/mysql.php";}s:29:"MDB2/Driver/Reverse/mysql.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"60a4a3d1f1e861314e28b582c867e62c";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:66:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Reverse/mysql.php";}s:21:"MDB2/Driver/mysql.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"be4aa2003f03acc3bc6ecd3026557fc0";s:12:"replacements";a:1:{i:0;a:3:{s:4:"type";s:12:"package-info";s:4:"from";s:17:"@package_version@";s:2:"to";s:7:"version";}}s:12:"installed_as";s:58:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/mysql.php";}}s:10:"xsdversion";s:3:"1.0";s:15:"packagerversion";s:5:"1.4.6";s:7:"package";s:17:"MDB2_Driver_mysql";s:7:"summary";s:17:"mysql MDB2 driver";s:11:"description";s:33:"This is the MySQL MDB2 driver.
+ 
+";s:11:"maintainers";a:1:{i:0;a:4:{s:6:"handle";s:6:"lsmith";s:4:"name";s:17:"Lukas Kahwe Smith";s:5:"email";s:20:"smith@pooteeweet.org";s:4:"role";s:4:"lead";}}s:7:"version";s:5:"0.2.3";s:12:"release_date";s:10:"2006-01-13";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:692:"- explicitly pass if the module is phptype specific in all loadModule calls (bug #6226)
+- properly handle PRIMARY keys in listTableConstraints()
+- apply _isIndexName() on non primary keys in getTableConstraintDefinition()
+- fixed signature of quoteIdentifier() to make second param optional
+- fixed signature of executeStoredProc()
+- typo fixes in error handling of nextResult() and numRows() calls
+- _fixIndexName() now just attempts to remove possible formatting
+- renamed _isSequenceName() to _fixSequenceName()
+- _fixSequenceName() now just attempts to remove possible formatting, and only
+  returns a boolean if no formatting was applied when the new "check" parameter is set to true
+  
+";s:12:"release_deps";a:4:{i:1;a:4:{s:4:"type";s:3:"php";s:3:"rel";s:2:"ge";s:7:"version";s:5:"4.3.0";s:8:"optional";s:2:"no";}i:2;a:5:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"1.0b1";s:8:"optional";s:2:"no";s:4:"name";s:4:"PEAR";}i:3;a:5:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:8:"2.0.0RC4";s:8:"optional";s:2:"no";s:4:"name";s:4:"MDB2";}i:4;a:4:{s:4:"type";s:3:"ext";s:3:"rel";s:3:"has";s:8:"optional";s:2:"no";s:4:"name";s:5:"mysql";}}s:9:"changelog";a:6:{i:0;a:5:{s:7:"version";s:5:"0.2.3";s:12:"release_date";s:10:"2006-01-13";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:694:"- explicitly pass if the module is phptype specific in all loadModule calls (bug #6226)
+- properly handle PRIMARY keys in listTableConstraints()
+- apply _isIndexName() on non primary keys in getTableConstraintDefinition()
+- fixed signature of quoteIdentifier() to make second param optional
+- fixed signature of executeStoredProc()
+- typo fixes in error handling of nextResult() and numRows() calls
+- _fixIndexName() now just attempts to remove possible formatting
+- renamed _isSequenceName() to _fixSequenceName()
+- _fixSequenceName() now just attempts to remove possible formatting, and only
+  returns a boolean if no formatting was applied when the new "check" parameter is set to true
+    
+";}i:1;a:5:{s:7:"version";s:5:"0.2.2";s:12:"release_date";s:10:"2005-12-30";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:42:"- fixed typo in sub select detection
+    
+";}i:2;a:5:{s:7:"version";s:5:"0.2.1";s:12:"release_date";s:10:"2005-12-28";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:51:"- proper quote new table name in alterTable()
+    
+";}i:3;a:5:{s:7:"version";s:5:"0.2.0";s:12:"release_date";s:10:"2005-12-21";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:1868:"- do not fix case in listUsers()
+- unified case fixing in the list*() methods
+- fixed change and rename in alterTable()
+- primary key must be called primary
+- use getConnection() to access connection property
+- split index and constraint handling
+- quote identifiers where possible inside the manager methods depending on
+  the new 'quote_identifier' option (defaults to off)
+- refactored get*Declaration() methods to use getTypeDeclaration()
+- setting in_transaction to false on disconnect
+- hide constraints from indexes and vice versa in the list methods
+- added new Function modules to handle difference in SQL functions
+- force rollback() with open transactions on disconnect
+- fixed table renaming
+- escape floats to make sure they do not contain evil characters (bug #5608)
+- support column length in create index (mysql only feature, but a nice touch,
+  emulating it with substring is not feasible though)
+- ensure that there is a connection in the escape() method
+- split off manipulation queries into exec() method from the query() method *BC BREAK*
+- only if result_types is set to false in prepare() method the query will be
+  handled as a DML statement *BC BREAK*
+- use a proper default value if a field is set to not null in _getDeclaration*() (bug #5930)
+- added ability to determine unsigned in mapNativeDatatype()
+  (only really implemented in the mysql(i) drivers) (bug #6054)
+- use MDB2_ERROR_NOT_FOUND in getTableConstraintDefinition() and getTableIndexDefinition() (bug #6055)
+- Sync lastInsertID with the mysqli implementation
+- use lastInsertID() method in nextID()
+- added getServerVersion() and use it to determine sub select support
+- unified array structure in mapNativeDatatype() *BC BREAK*
+- added 'mdbtype' to tableInfo() output that is generated from mapNativeDatatype()
+- changed 'len' to 'length' in tableInfo() output *BC BREAK*
+    
+";}i:4;a:5:{s:7:"version";s:5:"0.1.1";s:12:"release_date";s:10:"2005-10-16";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:1883:"Warning: this release features numerous BC breaks!
+
+There have been considerable improvements to the datatype, manager and reverse
+modules. Furthermore preliminary support for auto increment and primary keys
+has been added. Please note that making a field auto increment implies a single
+column primary key on this field.
+
+- increased php dependency to 4.3.0 due to the usage of the streams API since beta5
+- ensure that instance is connected before using connection property in tableInfo()
+- added support for auto increment and primary key in schema.
+- alterTable now needs the full definition to work (use getTableFieldDefinition
+ from Reverse module if you do not have a definition at hand) this eliminates the need
+ of the declaration part in the alterTable array.
+- ensure that instance is connected before using connection property in tableInfo()
+- removed support for dummy_primary_key
+- fix PHP4.4 breakage
+- moved getInsertID() into core as lastInsertID()
+- use !empty() instead of isset() in fetchRow to determine if result cols were bound or result types were set
+- moved all private fetch mode fix methods into _fixResultArrayValues() for performance reasons
+- renamed MDB2_PORTABILITY_LOWERCASE to MDB2_PORTABILITY_FIX_CASE and use 'field_case' option to determine if to upper- or lowercase (CASE_LOWER/CASE_UPPER)
+- count() -> !empty() where possible
+- use array_map() instead of array_flip(array_change_key_case(array_flip())) to fix case of array values
+- use array_key_exists() instead of isset() where possible
+- changed structure of field add/remove/change in alterTable() to match MDB2_Schema
+- removed subSelect() implementation (now in already included in common)
+- return 0 for manipulation queries when disable_query is enabled
+- tweaked handling of notnull and default in field reverse engineering
+- tweaked getTableFieldDefinition() in reverse module
+    
+";}i:5;a:5:{s:7:"version";s:5:"0.1.0";s:12:"release_date";s:10:"2005-04-29";s:15:"release_license";s:11:"BSD License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:419:"first unbundled release from MDB2 core
+
+- fixed new_link support (bug #4308)
+- dont just check for isset() for boolean values in order to support
+  setting them false as well (bug #4373)
+- ensure SQL injection protection in all _quote() methods (was missing in
+  some decimal, float, time, date and timestamp implementations)
+- dont inherite from the mysqli driver anymore to prevent indirect dependency on mysqli
+    
+";}}s:12:"_lastversion";N;s:7:"dirtree";a:7:{s:57:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Datatype";b:1;s:48:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver";b:1;s:41:"/Users/chregu/clients/bxcmsclean/inc/MDB2";b:1;s:57:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Function";b:1;s:56:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Manager";b:1;s:55:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Native";b:1;s:56:"/Users/chregu/clients/bxcmsclean/inc/MDB2/Driver/Reverse";b:1;}s:13:"_lastmodified";i:1137995414;}

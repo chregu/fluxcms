@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+    <map:pipelines>
+
+        <map:pipeline>
+            <map:match type="uri" pattern="*">
+                <map:include label="standardPipeline"/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:include label="standardPipeline"/>
+        </map:pipeline>
+
+    </map:pipelines>
+
+    <map:include-definitions>
+
+       
+           <map:include-definition label="standardPipeline">
+           <!-- this is a supercheap solution... it actually also fetches the navitree
+                    the proper way would be to make a stream for links and to fetch that..
+           -->
+           <map:generate type="bxcmsadmin" src="{1}">
+                <map:parameter name="type" value="content"/>
+                <map:parameter name="collection" value="{../collection}"/>
+                <map:parameter name="id" value="{../id}"/>
+            </map:generate>
+            
+			<!-- this turn on the ?XML=1 Ability in the admin to debug -->
+            <map:select type="phpglobalvars" var="GET" key="XML">
+                <map:when test="1">
+                    <map:serialize type="xml">
+                        <map:parameter name="trickMozillaDisplay" value="true"/>
+                    </map:serialize>
+
+                </map:when>
+                <map:otherwise>   
+            
+            
+	         <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/linklog/linklog.xsl">
+	               <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
+	                <map:parameter name="url" value="{1}"/>
+	                <map:parameter name="dataUri" value="{../dataUri}"/>
+	                <map:parameter name="updateTree" value="phpglobalsclean://_GET[updateTree]"/>
+	                <map:parameter type="options" name="registerPhpFunctions" value="true"/>
+	            </map:transform>
+	            
+	            
+	            <map:serialize type="html"/>
+
+                </map:otherwise>
+            </map:select>
+	        </map:include-definition>
+
+
+    </map:include-definitions>
+
+</map:sitemap>

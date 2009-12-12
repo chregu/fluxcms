@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<catalogue>
+    <message key="Gallery">Galerie</message>
+    <message key="Upload single image">Einzelnes Bild hinzufügen</message>
+    <message key="Upload multiple images in a zip">Bilder aus einem ZIP-Archiv hinzufügen</message>
+    
+    <message key="Operations">Operationen</message>
+    
+</catalogue>

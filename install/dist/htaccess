@@ -1,0 +1,138 @@
+AddDefaultCharset utf-8
+php_value default_charset utf-8
+AddType text/xml rng
+
+# Some people need this (the swiss provider hostpoint for example)
+# the installer should take care of it, if not uncomment it
+#AddHandler application/x-httpd-php5 .php
+
+# The following php_* instruction only work, if you're running
+# php as apache-module, not as cgi.
+# They are not really needed, the CMS works also without them,
+# But we added them here to ensure some reasonable default values
+
+#  set this to 6143 for public website.. (or even less)
+#E_STRICT | E_ALL
+#php_value error_reporting 16383
+#(E_STRICT | E_ALL) & ~E_DEPRECATED 
+#php_value error_reporting 8191
+#E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT
+php_value error_reporting 6135
+
+
+#security stuff
+# If you need to fopen http:// files, use something else than fopen (curl, pear class, whatever)
+#  a lot of remote code injections happens through this php feature
+php_flag register_globals Off
+php_flag allow_url_fopen Off
+php_flag zend.ze1_compatibility_mode Off
+php_flag allow_call_time_pass_reference  On
+
+#Remove the comment, if you're allowed, to set new "Options"
+#Options -Indexes
+
+RewriteEngine On
+#Minify all js and css files, disable by default
+#RewriteCond  %{REQUEST_URI} !^/*##DIR##admin/
+#RewriteRule ^(.*\.(css|js))$ /inc/minify/minify.php?files=$1 [L,NC]
+
+
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##themes/standard/.*
+RewriteRule ^/*themes/admin/(.+)$ ./themes/standard/admin/$1 [L]
+
+#some readers from the sitemap, it's much faster to do with mod_rewrite
+RewriteRule  ^/*admin/bxe/doctypes/(.*)$   ./inc/bx/doctypes/$1  [L]
+RewriteRule  ^/*livesearch.php  ./inc/bx/php/livesearch.php [L]
+
+RewriteRule ^/*webdav/.*\.cvsignore$ - [F]
+RewriteRule ^/*webdav/.*CVS$ - [F]
+
+
+RewriteRule ^/*##DIR##webdav(.*)$  ./index.php?path=/admin/content/$1 [QSA]
+RewriteRule ^/*##DIR##WEBDAV(.*)$  ./index.php?path=/admin/content/$1 [QSA]
+
+
+RewriteRule ^/*##DIR##admin/content/.*\.hidden$ - [F]
+RewriteRule ^/*##DIR##admin/content/.*\.DS_Store$ - [F]
+RewriteRule ^/*##DIR##admin/content/.*\._.*$ - [F]
+RewriteRule ^/*##DIR##admin/content/.*%23.* - [F]
+
+#prevent prefetch in the admin area (bad google web accelerator)
+RewriteCond %{HTTP:x-moz} ^prefetch
+RewriteRule ^/*##DIR##admin/.* - [F,L]
+
+#prevent some php execution
+RewriteRule ^/*##DIR##files/.*php$ - [F]
+RewriteRule ^/*##DIR##themes/.*php$ - [F]
+RewriteRule ^/*##DIR##themes/.*xsl$ - [F]
+RewriteRule ^/*##DIR##files/.*/$ - [F]           
+RewriteRule ^/*##DIR##themes/.*/$ - [F]  
+RewriteRule ^/*##DIR##files/+$ - [F]
+RewriteRule ^/*##DIR##themes/+$ - [F]
+
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##inc/bx/doctypes/.*
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##themes/.*
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##webdav/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##forms/.*/$
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##forms/.*/index.php$
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##index.php
+RewriteCond     %{REQUEST_URI}  !^/*robots.txt
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##webalizer
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##dynimages/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##files/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##install/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##_hosts/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##inc/minify/minify.php
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##admin/form/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##admin/webinc/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##favicon
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##webinc/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##weblocal/
+RewriteCond     %{REQUEST_URI}  !^/*##DIR##inc/bx/php/.*\.php
+
+RewriteRule ^/*(.+)$ ./index.php?path=$1 [QSA]
+
+
+#RewriteCond %{REQUEST_URI}  /*files/       
+#RewriteCond ${HTTP_HOST} ^edit         
+#RewriteRule ^/*files/(.+)$  ./_hosts/edit/files/$1 [L]       
+
+#RewriteCond %{REQUEST_URI}  /*files/       
+#RewriteRule ^/*files/(.+)$  ./_hosts/live/files/$1 [L]       
+
+#RewriteCond %{REQUEST_URI}  /*themes/       
+#RewriteCond %{HTTP_HOST} ^edit         
+#RewriteRule ^/*themes/(.+)$  ./_hosts/edit/themes/$1 [L]       
+
+#RewriteCond %{REQUEST_URI}  /*themes/       
+#RewriteCond %{HTTP_HOST}  !^edit.*         
+#RewriteRule ^/*themes/(.+)$  ./_hosts/live/themes/$1 [L]       
+
+
+
+
+RewriteCond  %{REQUEST_URI}  ^/*##DIR##dynimages/
+RewriteRule ^(.*)$ ./inc/bx/php/ResizeImageDynamic.php
+
+RewriteCond  %{REQUEST_URI}  ^/*##DIR##admin/webinc/img/icons/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ ./admin/webinc/img/icons/unknown.gif [L]
+
+ErrorDocument 403 /index.php?path=/__forbidden/
+ErrorDocument 404 /index.php?path=/__notfound/
+
+
+# To improve frontend performance decomment and adjust the following
+
+#ExpiresActive On
+#ExpiresByType text/css "access plus 3 days"
+#ExpiresByType application/x-javascript "access plus 3 days"
+#ExpiresByType image/gif "access plus 3 days"
+#ExpiresByType image/jpeg "access plus 3 days"
+#ExpiresByType image/png "access plus 3 days" 
+#ExpiresByType image/x-icon "access plus 3 days" 
+
+#SetOutputFilter DEFLATE
+#FileETag none
+
+#SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|pdf|ico)$ no-gzip dont-vary
