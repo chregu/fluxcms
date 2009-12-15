@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<catalogue xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="contact.xml#xpointer(//catalogue/message)" parse="xml"/>
+    
+    <!-- gallery stuff -->
+     <message key="next picture">next picture</message>
+     <message key="previous picture">previous</message>
+     <message key="next page">next page</message>
+     <message key="previous page">previous</message>
+     <message key="of"> of </message>
+     <message key="Back to overview">Overview</message>
+     
+     <message key="blogGravatarEnabled" asXML="yes"><![CDATA[This blog is <a href="http://www.gravatar.com/">gravatar</a> enabled.]]></message>
+    
+    <message key="SUB_THANKS">Thank you.</message>
+    <message key="SUB_UNSUB_SUCCESS">Unsubscription successfull.</message>
+    <message key="SUB_OK">Your address has been added.</message>
+    <message key="SUB_CANCELED">Your address has been removed.</message>
+    <message key="SUB_ACT_OK">Your subscripton has been activated successfully.</message>
+    <message key="SUB_ACT_ID_NOTFOUND">No valid activation id found.</message>
+    <message key="SUB_EMAIL_INVAL">The supplied email adress is invalid.</message>
+    <message key="SUB_EMAIL_INUSE">The supplied email address is already in use.</message>
+    <message key="SUB_NOT_FOUND">There is no entry for the supplied email address.</message>
+    <message key="SUB_UNSUB_CONFIRM">Bitte bestfütigen Sie die Abmeldung vom Newsletter</message>
+<message key="SUB_UNSUB_CONFIRM_LINK">Ja, ich will mich abmelden vom Newsletter</message>      
+</catalogue>
+
