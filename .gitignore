@@ -1,2 +1,5 @@
 .project
 .svn
+*.orig
+*.rej
+.DS_Store
