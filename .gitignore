@@ -3,3 +3,5 @@
 *.orig
 *.rej
 .DS_Store
+tmp/
+dynimages/
