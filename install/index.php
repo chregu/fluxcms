@@ -296,6 +296,12 @@ function getMysqlVersion() {
             $mysql_version = @mysql_get_client_info();
         }
     }
+
+    if (strpos($mysql_version, "mysqlnd") === 0) {
+        $arr = explode(" ", $mysql_version);
+        $mysql_version = $arr[1];
+    }
+
     return $mysql_version;
 }
 

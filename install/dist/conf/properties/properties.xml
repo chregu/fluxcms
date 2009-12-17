@@ -195,7 +195,6 @@
             <metadata type="text_textfield"/>
             <validate type="nonempty"/>
         </property>
-¨
         <property id="read" name="read" ns="bx:">
             <metadata type="text_textfield"/>
             <validate type="nonempty"/>
