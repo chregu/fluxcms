@@ -145,26 +145,26 @@ class popoon_classes_browser {
             $bd['platform'] = "Unknown";
             $bd['browser'] = "Unknown";
             $bd['version'] = "Unknown";
-            
-            
+
             // find operating system
-            if (eregi("win", $agent)) {
-                $bd['platform'] = "windows";
-            } elseif (eregi("mac", $agent)) {
-                $bd['platform'] = "macintosh";
-            } elseif (eregi("linux", $agent)) {
-                $bd['platform'] = "linux";
-            } elseif (eregi("OS/2", $agent)) {
-                $bd['platform'] = "os/2";
-            } elseif (eregi("BeOS", $agent)) {
-                $bd['platform'] = "beos";
-            } elseif (stripos($agent,'PalmOS') !== false) {
-                $bd['platform'] = "palm";
+            $OSs = array(
+                'win' => 'windows',
+                'mac' => 'macintosh',
+                'linux' => 'linux',
+                'os/2' => 'os/2',
+                'beos' => 'beos',
+                'palm' => 'palm',
+            );
+            foreach ($OSs as $OS => $OSname) {
+                if (stripos($agent, $OS) !== false) {
+                    $bd['platform'] = $OSname;
+                    break;
+                }
             }
-            // test for Opera		
-            if (eregi("opera",$agent)){
-                $val = stristr($agent, "opera");
-                if (eregi("/", $val)){
+
+            // test for Opera
+            if ($val = stristr($agent, "opera")) {
+                if (stripos($val, '/') !== false) {
                     $val = explode("/",$val);
                     $bd['browser'] = $val[0];
                     $val = explode(" ",$val[1]);
@@ -174,76 +174,75 @@ class popoon_classes_browser {
                     $bd['browser'] = $val[0];
                     $bd['version'] = $val[1];
                 }
-                
+
                 // test for WebTV
-            }elseif(eregi("msie",$agent) ){
+            }elseif(stripos($agent, 'msie') !== false){
                 $val = explode(" ",stristr($agent,"msie"));
                 $bd['browser'] = $val[0];
                 $bd['version'] = $val[1];
-                
-            }
-            elseif(eregi("galeon",$agent)){
+
+            }elseif(stripos($agent, 'galeon') !== false){
                 $val = explode(" ",stristr($agent,"galeon"));
                 $val = explode("/",$val[0]);
                 $bd['browser'] = "Mozilla";
                 $bd['version'] = $val[1];
                 $bd['subbrowser']=$val[0];
-                
+
                 // test for Konqueror
-            }elseif(eregi("Konqueror",$agent)){
+            }elseif(stripos($agent, 'konqueror') !== false){
                 $val = explode(" ",stristr($agent,"Konqueror"));
                 $val = explode("/",$val[0]);
                 $bd['browser'] = $val[0];
                 $bd['version'] = $val[1];
-                
-            }elseif(eregi("firebird", $agent)){
+
+            }elseif(stripos($agent, 'firebird') !== false){
                 $bd['browser']="Mozilla";
                 $bd['subbrowser']="Firefox";
                 $val = stristr($agent, "Firebird");
                 $val = explode("/",$val);
                 $bd['version'] = $val[1];
-                
+
                 // test for Firefox
-            }elseif(eregi("Firefox", $agent)){
+            }elseif(stripos($agent, 'firefox') !== false){
                 $bd['browser']="Mozilla";
                 $bd['subbrowser'] = "Firefox";
                 $val = stristr($agent, "Firefox");
-                
+
                 $val = explode("/",$val);
                 $bd['version'] = $val[1];
-            } elseif(eregi("mozilla",$agent) && eregi("rv:[0-9]\.[0-9]",$agent) && !eregi("netscape",$agent)){
+            }elseif(stripos($agent, 'mozilla') !== false && preg_match('/rv:[0-9]\.[0-9]/i', $agent) && stripos($agent, 'netscape' === false)){
                 $bd['browser'] = "Mozilla";
                 $bd['subbrowser'] = "Mozilla";
                 $val = explode(" ",stristr($agent,"rv:"));
-                eregi("rv:[0-9]\.[0-9]\.[0-9]",$agent,$val);
+                preg_match('/rv:[0-9]\.[0-9]\.[0-9]/i',$agent, $val);
                 $bd['version'] = str_replace("rv:","",$val[0]);
-                
-            }elseif(eregi("safari", $agent)){
+
+            }elseif(stripos($agent, 'safari') !== false){
                 $bd['browser'] = "Safari";
                 $val = substr($agent,strpos($agent,"Safari/") + 7);
                 $bd['version'] = $val;
-                
+
                 // remaining two tests are for Netscape
-            }elseif(eregi("netscape",$agent)){
+            }elseif(stripos($agent, 'netscape') !== false){
                 $val = explode(" ",stristr($agent,"netscape"));
                 $val = explode("/",$val[0]);
                 $bd['browser'] = $val[0];
                 $bd['version'] = $val[1];
-                
-            }elseif(eregi("mozilla",$agent) && !eregi("rv:[0-9]\.[0-9]\.[0-9]",$agent)){
+
+            }elseif(stripos($agent, 'mozilla') !== false && !preg_match('/rv:[0-9]\.[0-9]\.[0-9]/i', $agent)){
                 $val = explode(" ",stristr($agent,"mozilla"));
                 $val = explode("/",$val[0]);
                 $bd['browser'] = "Mozilla";
                 $bd['subbrowser'] = "Netscape";
-		if (isset($val[1])) {
-	                $bd['version'] = $val[1];
-		}
+                if (isset($val[1])) {
+                    $bd['version'] = $val[1];
+                }
             }
-            
+
             // clean up extraneous garbage that may be in the name
-            $bd['browser'] = ereg_replace("[^a-z,A-Z]", "", $bd['browser']);
-            // clean up extraneous garbage that may be in the version		
-            $bd['version'] = ereg_replace("[^0-9,.,a-z,A-Z]", "", $bd['version']);
+            $bd['browser'] = preg_replace('/[^a-zA-Z]/', '', $bd['browser']);
+            // clean up extraneous garbage that may be in the version
+            $bd['version'] = preg_replace('/[^0-9.a-zA-Z]/', '', $bd['version']);
 
             // finally assign our properties
             self::$BrowserName = strtolower($bd['browser']);

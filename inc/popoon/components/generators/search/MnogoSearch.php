@@ -172,7 +172,7 @@ Class MnogoSearch  {
 				$this->set_DBAddr($match[1]);
 			}
 
-			if(ereg("(single|multi|crc|crc-multi)",$match[3])) {
+			if(preg_match("/(single|multi|crc|crc-multi)/",$match[3])) {
 				$this->set_DBMode($match[3]);
 			}
 		}
