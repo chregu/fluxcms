@@ -5,7 +5,7 @@
 see 
 BX_LIBS_DIR://config/collection/blog.xml
 or
-http://svn.bitflux.ch/repos/public/bxcmsng/trunk/inc/bx/config/collection/blog.xml
+http://svn.bitflux.ch/repos/public/fluxcms/trunk/inc/bx/config/collection/blog.xml
  for the details.
  
  You can copy that into here, if you want to change it. Or just parts of, but then be sure to
