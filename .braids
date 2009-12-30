@@ -1,0 +1,7 @@
+--- 
+webinc/bxe: 
+  squashed: true
+  url: https://svn.liip.ch/repos/bxe/trunk
+  type: svn
+  revision: 1851
+  remote: braid/webinc/bxe
