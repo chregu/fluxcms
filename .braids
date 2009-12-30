@@ -11,3 +11,9 @@ webinc/bxe:
   type: svn
   revision: 1851
   remote: braid/webinc/bxe
+inc/lx/externalinput: 
+  squashed: true
+  url: https://svn.liip.ch/repos/public/ext/externalinput/trunk/lx/externalinput
+  type: svn
+  revision: 10768
+  remote: braid/inc/lx/externalinput
