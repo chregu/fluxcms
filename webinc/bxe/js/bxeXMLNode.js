@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: bxeXMLNode.js 1411 2005-10-06 18:52:18Z chregu $
+// $Id$
 
 function bxe_XMLNodeInit (nodein, localName, nodeType, autocreate) {
 	if (nodein.nodeType == 1 || typeof nodein == "string") {

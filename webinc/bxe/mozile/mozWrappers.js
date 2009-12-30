@@ -17,7 +17,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// $Id: mozWrappers.js 1504 2006-09-07 13:49:51Z chregu $
+// $Id$
 
 /*
  * mozWrapper.js v0.46

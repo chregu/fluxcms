@@ -17,13 +17,13 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: xml.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * Outputs the XML-Document as XML
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: xml.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_serializers_xml extends popoon_components_serializer {

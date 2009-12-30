@@ -17,14 +17,14 @@
 // | Author: Christian Stocker <chregu@liip.ch>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: uri.php 10865 2008-10-15 12:02:15Z chregu $
+// $Id$
 
 
 /**
  * Matches an  uri
  *
  * @author   Christian Stocker <chregu@liip.ch>
- * @version  $Id: uri.php 10865 2008-10-15 12:02:15Z chregu $
+ * @version  $Id$
  * @package  popoon
  */
 class popoon_components_matchers_uri extends popoon_components_matcher {

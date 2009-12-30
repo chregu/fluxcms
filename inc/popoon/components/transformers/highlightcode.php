@@ -17,7 +17,7 @@
 // | Author: Hannes Gassert <hannes@mediagonal.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: highlightcode.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * Highlights any kind of code highlightable bei PEAR::Text_Highlight
@@ -32,7 +32,7 @@
 http://pear.php.net/package/Text_Highlighter/docs/0.4.1/Text_Highlighter/tutorial_using.pkg.html 
 * 
 * @author   Hannes Gassert <hannes@mediagonal.ch>  
-* @version  $Id: highlightcode.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_transformers_highlightcode extends popoon_components_transformer  {

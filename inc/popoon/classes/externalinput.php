@@ -18,7 +18,7 @@
 // | Author: Christian Stocker <christian.stocker@liip.ch>                |
 // +----------------------------------------------------------------------+
 //
-// $Id: externalinput.php 10742 2008-09-10 19:05:49Z chregu $
+// $Id$
 
 class popoon_classes_externalinput {
     

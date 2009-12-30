@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: bxeXMLDocument.js 938 2004-11-24 21:17:32Z chregu $
+// $Id$
 
 
 XMLDocument.prototype.init = function (startNode) {

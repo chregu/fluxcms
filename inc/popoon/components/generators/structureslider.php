@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: structureslider.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 include_once("popoon/components/generators/structure2xml.php");
 
@@ -25,7 +25,7 @@ include_once("popoon/components/generators/structure2xml.php");
 *
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: structureslider.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class generator_structureslider extends generator_structure2xml {

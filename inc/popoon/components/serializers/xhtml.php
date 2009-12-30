@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: xhtml.php 8703 2007-05-25 11:52:53Z chregu $
+// $Id$
 
 include_once("popoon/components/serializer.php");
 
@@ -25,7 +25,7 @@ include_once("popoon/components/serializer.php");
 * Documentation is missing at the moment...
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: xhtml.php 8703 2007-05-25 11:52:53Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_serializers_xhtml extends popoon_components_serializer {

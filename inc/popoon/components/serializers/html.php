@@ -17,14 +17,14 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: html.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 
 /**
 * Documentation is missing at the moment...
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: html.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_serializers_html extends popoon_components_serializer {

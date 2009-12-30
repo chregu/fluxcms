@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: NodeVDOM.js 938 2004-11-24 21:17:32Z chregu $
+// $Id$
 
 function NodeVDOM (node) {
 	this.node = node;

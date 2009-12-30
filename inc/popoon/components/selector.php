@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: selector.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * This is the Base-Class for all selectors
@@ -28,7 +28,7 @@
 *   they don't return the hits, but nevermind :)
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: selector.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 * @module	selectors
 */

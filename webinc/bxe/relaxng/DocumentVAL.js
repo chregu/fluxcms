@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: DocumentVAL.js 938 2004-11-24 21:17:32Z chregu $
+// $Id$
 
 XMLNodeDocument.prototype.loadSchema = function(file ,callback) {
 	this._vdom = new DocumentVDOM();

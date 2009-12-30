@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: libxslt.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 
 /**
@@ -31,7 +31,7 @@
 *  it's said to be much faster than sablotron.
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: libxslt.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_transformers_libxslt extends popoon_components_transformers_xslt {

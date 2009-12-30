@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: searchhighlighter.php 8486 2007-02-26 16:36:48Z chregu $
+// $Id$
 
 include_once("popoon/components/transformer.php");
 
@@ -30,7 +30,7 @@ include_once("popoon/components/transformer.php");
 * listed in $tabooTagNames.
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: searchhighlighter.php 8486 2007-02-26 16:36:48Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_transformers_searchhighlighter extends popoon_components_transformer {

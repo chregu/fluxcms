@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: i18n.php 10278 2008-04-25 11:42:26Z chregu $
+// $Id$
 
 /**
 * A translator, which tries to implement the i18n transformer from cocoon.
@@ -40,7 +40,7 @@
 *  
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: i18n.php 10278 2008-04-25 11:42:26Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_transformers_i18n extends popoon_components_transformer  {

@@ -17,12 +17,12 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: httpauth.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: httpauth.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 

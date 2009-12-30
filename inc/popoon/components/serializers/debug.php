@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: debug.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 include_once("popoon/components/serializer.php");
 
@@ -25,7 +25,7 @@ include_once("popoon/components/serializer.php");
 * Outputs the content of the debug stack
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: debug.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class serializer_debug extends serializer {

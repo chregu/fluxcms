@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: phpprocessor.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * Evaluates php code in form of processing instructions
@@ -28,7 +28,7 @@
 * Warning: No checking about security risks is done at the moment!
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: phpprocessor.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_transformers_phpprocessor extends popoon_components_transformer  {

@@ -17,14 +17,14 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: sessionstorer.php 1255 2004-04-22 17:15:25Z chregu $
+// $Id$
 
 include_once("popoon/components/action.php");
 /**
 * Class for storing sessions in db
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: sessionstorer.php 1255 2004-04-22 17:15:25Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 

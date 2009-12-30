@@ -17,14 +17,14 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: config.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * Reads Options/Values from a config file. can be accessed via
 *  config://foobar in sitemap
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: config.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 * @module   schemes_config
 */

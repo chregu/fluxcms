@@ -17,14 +17,14 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: sitemap.php 10871 2008-10-15 14:47:15Z bitflux $
+// $Id$
 
 
 /**
  * Class for doing the sitemap parsing stuff
  *
  * @author   Christian Stocker <chregu@bitflux.ch>
- * @version  $Id: sitemap.php 10871 2008-10-15 14:47:15Z bitflux $
+ * @version  $Id$
  * @package  popoon
  */
 

@@ -20,7 +20,7 @@
 // |         Iván Montes <imontes@imaginocreativa.com>                    |
 // +----------------------------------------------------------------------+
 //
-// $Id: directory.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 include_once('popoon/components/generator.php');
 
@@ -30,7 +30,7 @@ include_once('popoon/components/generator.php');
 * The "dateFormat" parameter should be a suitable format string for strftime()
 *
 * @author   Mike Hommey <mh@glandium.org>
-* @version  $Id: directory.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 * @note     Reversed sorting using 'directory' is somewhat broken :(
 *           include and exclude patterns are a bit limited in my opinion, although I'm not

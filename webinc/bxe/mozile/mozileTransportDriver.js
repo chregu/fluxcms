@@ -1,4 +1,4 @@
-// $Id: mozileTransportDriver.js 1050 2005-01-20 17:02:49Z chregu $
+// $Id$
 
 function mozileTransportDriver (container) {
 	this.container = eval(" new mozileTransportDriver_"+container);

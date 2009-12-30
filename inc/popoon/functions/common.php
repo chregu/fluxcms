@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: common.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 /**
 * this file contains a set of function which are used in
 *    different classes/files.
@@ -26,7 +26,7 @@
 *       Documentation, Error Checking, Examples
 *
 *    @author   Christian Stocker <chregu@bitflux.ch>
-*    @version  $Id: common.php 6188 2006-01-03 10:09:08Z chregu $
+*    @version  $Id$
 *    @package  functions
 *    @access   public
 */

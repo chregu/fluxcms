@@ -17,11 +17,11 @@
 // | Author: Philipp Stucki <philipp@bitflux.ch>                          |
 // +----------------------------------------------------------------------+
 //
-// $Id: driver.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * @author   Philipp Stucki <philipp@bitflux.ch>
-* @version  $Id: driver.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 

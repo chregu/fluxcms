@@ -17,13 +17,13 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: component.php 6481 2006-02-13 08:59:39Z chregu $
+// $Id$
 
 /**
 * Documentation is missing at the moment...
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: component.php 6481 2006-02-13 08:59:39Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 

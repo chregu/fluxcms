@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: xml.php 7826 2006-08-28 07:16:19Z chregu $
+// $Id$
 
 /**
 * This is a driver for the i18n tranformer
@@ -35,7 +35,7 @@
 * </catalogue>
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: xml.php 7826 2006-08-28 07:16:19Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 

@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: RelaxNG.js 1413 2005-12-06 13:13:45Z chregu $
+// $Id$
 
 
 const RELAXNGNS= "http://relaxng.org/ns/structure/1.0";

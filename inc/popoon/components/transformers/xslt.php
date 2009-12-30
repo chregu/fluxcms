@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: xslt.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 
 /**
@@ -25,7 +25,7 @@
 *
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: xslt.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_transformers_xslt extends popoon_components_transformer {

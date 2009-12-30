@@ -17,14 +17,14 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: textfile.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * This class reads an text-file from the filesystem
 *
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: textfile.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_generators_textfile extends popoon_components_generator {

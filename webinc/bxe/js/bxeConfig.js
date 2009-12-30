@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: bxeConfig.js 1440 2006-01-03 16:40:18Z chregu $
+// $Id$
 
 const OPTION_DEFAULTTABLECLASS = "defaultTableClass";
 const MATHMLNS = "http://www.w3.org/1998/Math/MathML";

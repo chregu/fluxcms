@@ -17,12 +17,12 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: error.php 8084 2006-09-25 10:22:22Z chregu $
+// $Id$
 
 /**
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: error.php 8084 2006-09-25 10:22:22Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_generators_error extends popoon_components_generator {

@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: structure2xml.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 
 /**
@@ -30,7 +30,7 @@
 *   the examples in the popoon      Distribution)
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: structure2xml.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_generators_structure2xml extends popoon_components_generator {

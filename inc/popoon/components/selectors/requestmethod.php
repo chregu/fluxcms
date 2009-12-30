@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: requestmethod.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 include_once("popoon/components/selector.php");
 
@@ -25,7 +25,7 @@ include_once("popoon/components/selector.php");
 * Matches an  uri 
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: requestmethod.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class selector_requestmethod extends selector

@@ -17,13 +17,13 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: phpglobals.php 5093 2005-07-20 10:25:57Z silvan $
+// $Id$
 
 /**
 * Return a phpglobals 
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: phpglobals.php 5093 2005-07-20 10:25:57Z silvan $
+* @version  $Id$
 * @package  popoon
 * @module   schemes_phpglobals
 */

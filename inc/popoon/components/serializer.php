@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: serializer.php 10871 2008-10-15 14:47:15Z bitflux $
+// $Id$
 
 
 /**
@@ -26,7 +26,7 @@
  *	Serializers are used for outputting the actual data with <map:serializer>
  *
  * @author   Christian Stocker <chregu@bitflux.ch>
- * @version  $Id: serializer.php 10871 2008-10-15 14:47:15Z bitflux $
+ * @version  $Id$
  * @package  popoon
  */
 

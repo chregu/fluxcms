@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: table.js 1369 2005-09-02 14:53:45Z chregu $
+// $Id$
 
 
 Element.prototype.TableRemoveRow = function() {
@@ -237,7 +237,7 @@ Element.prototype.findCellPosition = function(pos) {
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: table.js 1369 2005-09-02 14:53:45Z chregu $
+// $Id$
 /**
 * @file
 * Implements the table plugin

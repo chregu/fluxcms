@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: tidy.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 include_once("popoon/components/transformer.php");
 
@@ -25,7 +25,7 @@ include_once("popoon/components/transformer.php");
 * Transforms an XML-Document with the help of libxslt out of domxml
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: tidy.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_transformers_tidy extends popoon_components_transformer {

@@ -17,13 +17,13 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: aggregator.php 6809 2006-05-04 14:39:11Z chregu $
+// $Id$
 
 /**
 * Class for aggregating content
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: aggregator.php 6809 2006-05-04 14:39:11Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_aggregator extends popoon_component {

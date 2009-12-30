@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: NodeVAL.js 1411 2005-10-06 18:52:18Z chregu $
+// $Id$
 
 const BXE_VALID_NOMESSAGE = 1;
 

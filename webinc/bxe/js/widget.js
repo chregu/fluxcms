@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: widget.js 1514 2006-09-27 13:04:35Z chregu $
+// $Id$
 
 function Widget () {}
 

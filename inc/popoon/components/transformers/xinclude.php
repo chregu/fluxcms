@@ -17,14 +17,14 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: xinclude.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 
 /**
 * Transforms an XML-Document with the help of libxslt out of domxml
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: xinclude.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class popoon_components_transformers_xinclude extends popoon_components_transformer {

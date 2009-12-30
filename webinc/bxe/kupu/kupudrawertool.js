@@ -8,7 +8,7 @@
  *
  *****************************************************************************/
 
-// $Id: kupudrawertool.js 778 2004-08-31 15:32:22Z silvan $
+// $Id$
 
 function DrawerTool() {
     /* a tool to open and fill drawers

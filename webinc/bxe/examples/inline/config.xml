@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<!-- $Id: config.xml 1039 2004-12-15 13:48:11Z chregu $ -->
+<!-- $Id$ -->
 <config>
     <files>
     <!-- the following file definitions are presumably the most important

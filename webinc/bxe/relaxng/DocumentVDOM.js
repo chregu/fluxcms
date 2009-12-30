@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: DocumentVDOM.js 1836 2008-05-21 15:02:18Z chregu $
+// $Id$
 
 
 function DocumentVDOM() {} 

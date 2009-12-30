@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: textsource.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 include_once("popoon/components/reader.php");
 
@@ -30,7 +30,7 @@ include_once("popoon/components/reader.php");
 * could be a solution for 4.3
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: textsource.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 class reader_textsource extends reader {

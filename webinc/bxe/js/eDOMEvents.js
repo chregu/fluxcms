@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: eDOMEvents.js 938 2004-11-24 21:17:32Z chregu $
+// $Id$
 
 Node.prototype.eDOMaddEventListener = function (eventType, func, captures) {
 	if (!this._events) {

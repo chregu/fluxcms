@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: matcher.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * This is the Base-Class for all matchers
@@ -25,7 +25,7 @@
 * Matchers are used in <map:match> in sitemap.xml
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: matcher.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 * @module	matchers
 */

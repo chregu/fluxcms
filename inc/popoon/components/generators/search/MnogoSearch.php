@@ -23,7 +23,7 @@
  * ( http://search.mnogo.ru/ )
  *
  * @author: silvan zurbruegg <silvan@bitflux.ch>
- * @version: $Id: MnogoSearch.php 9088 2007-09-25 15:33:02Z gassi $
+ * @version: $Id$
  * @package  popoon
  */
 
@@ -172,7 +172,7 @@ Class MnogoSearch  {
 				$this->set_DBAddr($match[1]);
 			}
 
-			if(ereg("(single|multi|crc|crc-multi)",$match[3])) {
+			if(preg_match("/(single|multi|crc|crc-multi)/",$match[3])) {
 				$this->set_DBMode($match[3]);
 			}
 		}

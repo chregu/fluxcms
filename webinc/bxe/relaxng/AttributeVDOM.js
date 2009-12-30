@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: AttributeVDOM.js 938 2004-11-24 21:17:32Z chregu $
+// $Id$
 
 function AttributeVDOM(node, option) {
 	this.type = "RELAXNG_ATTRIBUTE";

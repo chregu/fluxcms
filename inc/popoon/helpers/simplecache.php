@@ -13,13 +13,13 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: simplecache.php 12266 2009-08-31 13:21:39Z chregu $
+// $Id$
 
 /**
 * api functions. to be used in admin modules
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: simplecache.php 12266 2009-08-31 13:21:39Z chregu $
+* @version  $Id$
 * @package  admin
 *
 */
@@ -30,7 +30,7 @@ class popoon_helpers_simplecache {
     private $bxst = array();
     private $db = null;
     private $idField = "ID";
-    public $userAgent = 'Popoon HTTP Fetcher+Cacher $Rev: 12266 $ (http://liip.to/popoon)';
+    public $userAgent = 'Popoon HTTP Fetcher+Cacher $Rev$ (http://liip.to/popoon)';
 
     static function &getInstance()
     {

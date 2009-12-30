@@ -17,7 +17,7 @@
 // | Author: Hannes Gassert <hannes.gassert@unifr.ch>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: cache.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
  
 
 require_once('Cache.php'); 

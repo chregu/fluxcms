@@ -17,13 +17,13 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: resource.php 10599 2008-08-06 09:41:03Z chregu $
+// $Id$
 
 include_once("popoon/components/reader.php");
 
 /**
  * @author   Christian Stocker <chregu@bitflux.ch>
- * @version  $Id: resource.php 10599 2008-08-06 09:41:03Z chregu $
+ * @version  $Id$
  * @package  popoon
  */
 class popoon_components_readers_resource extends popoon_components_reader {

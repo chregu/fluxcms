@@ -17,7 +17,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// $Id: mozCE.js 1374 2005-09-03 11:29:39Z chregu $
+// $Id$
 
 /* 
  * mozCE V0.5

@@ -16,7 +16,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                            |
 // +--------------------------------------------------------------------------+
 //
-// $Id: ElementVAL.js 1410 2005-10-06 18:13:19Z chregu $
+// $Id$
 
 
 XMLNodeElement.prototype.__defineGetter__(

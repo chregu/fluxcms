@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: i18n.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 class popoon_classes_i18n {
 

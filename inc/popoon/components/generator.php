@@ -17,7 +17,7 @@
 // | Author: Christian Stocker <chregu@bitflux.ch>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: generator.php 6188 2006-01-03 10:09:08Z chregu $
+// $Id$
 
 /**
 * Class for generating xml document
@@ -27,7 +27,7 @@
 *  I'm not sure, if we really need this 
 *
 * @author   Christian Stocker <chregu@bitflux.ch>
-* @version  $Id: generator.php 6188 2006-01-03 10:09:08Z chregu $
+* @version  $Id$
 * @package  popoon
 */
 abstract class popoon_components_generator extends popoon_component {
