@@ -184,7 +184,7 @@ xmlns:media="http://search.yahoo.com/mrss/"
     </xsl:template>
     
     <xsl:template name="shorturl">
-        <xsl:value-of select="concat($webroot,'.',php:functionString('bx_helpers_shorturl::getCode',concat($collectionUri,'archive/',@blog:post_uri,'.html')))"/>
+        <xsl:value-of select="concat($webroot,'~',php:functionString('bx_helpers_shorturl::getCode',concat($collectionUri,'archive/',@blog:post_uri,'.html')))"/>
     </xsl:template>
     <xsl:template match="*" mode="xhtml">&lt;<xsl:value-of select="local-name()"/>
         <xsl:apply-templates select="@*" mode="xhtml"/>&gt;<xsl:apply-templates mode="xhtml"/>&lt;/<xsl:value-of select="local-name()"/>&gt;</xsl:template>

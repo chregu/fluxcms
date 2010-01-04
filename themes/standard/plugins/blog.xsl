@@ -557,7 +557,7 @@
    
     <xsl:template name="html_head_revcanonical">
         <xsl:if test="$singlePost = 'true'">
-           <link rel="shortlink" href="{$webroot}.{php:functionString('bx_helpers_shorturl::getCode',concat($collectionUri,'archive/',$entries/@blog:post_uri,'.html'))}"/>
+           <link rel="shortlink" href="{$webroot}~{php:functionString('bx_helpers_shorturl::getCode',concat($collectionUri,'archive/',$entries/@blog:post_uri,'.html'))}"/>
         </xsl:if>
     </xsl:template>
     
