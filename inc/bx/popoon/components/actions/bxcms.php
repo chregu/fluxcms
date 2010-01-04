@@ -66,8 +66,9 @@ class popoon_components_actions_bxcms extends popoon_components_action {
 
             $fulluri = "/".$this->getAttrib("uri");
 
-            //shorturl if it starts with a .
-            if (substr($fulluri,0,2) == '/.') {
+            //shorturl if it starts with a . or ~
+            $firstChar = substr($fulluri,0,2);
+            if ($firstChar == '/.' || $firstChar == '/~') {
 
                 $sh = new bx_helpers_shorturl();
                 $url = $sh->getUrlFromCode(substr($fulluri,2));
