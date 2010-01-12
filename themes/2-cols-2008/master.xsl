@@ -273,18 +273,36 @@
     <xsl:template name="html_head">
         <link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="{$webroot}blog/rss.xml"/>
     </xsl:template>
+    
     <xsl:template name="html_head_title">
-        <xsl:value-of select="$sitename"/>
-        <xsl:for-each select="$navitreePlugin/collection/items//*[@selected='selected']">
-                :: <xsl:value-of select="title"/>
-                <!-- resource do not have selected -> search them with the filename -->
-            <xsl:if test="position() = last() and $filename != 'index'">
-                :: <xsl:value-of select="items/*[filename=$filename]/title"/>
-            </xsl:if>
+    
+        <xsl:variable name="lastnode">
+            <xsl:value-of select="$navitreePlugin/collection/items//*[@selected='selected'][last()]" />
+        </xsl:variable>
+        
+        <xsl:choose>
+            <xsl:when test="$lastnode/pagetitle != ''">
             
-            
-            
-        </xsl:for-each>
+                <xsl:value-of select="$lastnode/pagetitle" />
+           
+            </xsl:when>       
+            <xsl:otherwise>
+               
+                <xsl:value-of select="$sitename" />
+                <xsl:for-each
+                    select="$navitreePlugin/collection/items//*[@selected='selected']">
+                    ::
+                    <xsl:value-of select="title" />
+                    <!-- resource do not have selected -> search them with the filename -->
+                    <xsl:if test="position() = last() and $filename != 'index'">
+                        ::
+                        <xsl:value-of select="items/*[filename=$filename]/title" />
+                    </xsl:if>
+                </xsl:for-each>
+                
+            </xsl:otherwise>
+        </xsl:choose>
+
         <xsl:call-template name="html_head_title_end"/>
     </xsl:template>
     
