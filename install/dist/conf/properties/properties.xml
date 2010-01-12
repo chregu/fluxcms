@@ -25,7 +25,6 @@
             
            <!--
               Uncomment this, if you want to use the (override)pagetitle properties
-            <property id="pagetitle-multilang"/>
             <property id="pagetitle"/>
             -->
             
@@ -110,7 +109,6 @@
             <property id="display-name-multilang"/>
             <property id="dc_subject"/>
             <property id="dc_description"/>
-            <property id="pagetitle"/>  
             
             <!--
               Uncomment this, if you want to use the simple-perm properties
@@ -210,11 +208,6 @@
         
         <property id="unique-id" name="unique-id" ns="bx:">
             <metadata type="text_readonly"/>
-            <validate type="nonempty"/>
-        </property>
-    
-        <property id="pagetitle-multilang" name="pagetitle" ns="bx:" multilang="true">
-            <metadata type="text_textfield"/>
             <validate type="nonempty"/>
         </property>
         

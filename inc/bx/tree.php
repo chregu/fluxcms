@@ -118,11 +118,6 @@ class bx_tree {
                     $displayNameNode = $this->dom->createElement('display-name');
 		            $displayNameNode->appendChild($this->dom->createTextNode(html_entity_decode($displayName, ENT_NOQUOTES, 'UTF-8')));
                     $el->appendChild($displayNameNode);
-                    
-                    $pageTitle = $entry->getProperty('pagetitle', $displayNamePropertyNS);
-                    $pageTitleNode = $this->dom->createElement('pagetitle');
-                    $pageTitleNode->appendChild($this->dom->createTextNode(html_entity_decode($pageTitle, ENT_NOQUOTES, 'UTF-8')));
-                    $el->appendChild($pageTitleNode);
 
                 } elseif (in_array($mt, $this->mimetypes)) {
                    $el = $this->dom->createElement("resource");
@@ -229,9 +224,7 @@ class bx_tree {
         }
         
         $pageTitle = $entry->getProperty('pagetitle', 'bx:');
-        if ($pageTitle !== NULL) {
-            $el->appendChild($this->dom->createElement('pagetitle', $pageTitle));
-        }
+        $el->appendChild($this->dom->createElement('pagetitle', $pageTitle));
         
         $propNode = $this->getPropertiesNode($entry->getAllProperties());
         if($propNode->hasChildNodes()) {
