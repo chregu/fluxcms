@@ -276,14 +276,22 @@
     
     <xsl:template name="html_head_title">
     
-        <xsl:variable name="lastnode">
-            <xsl:value-of select="$navitreePlugin/collection/items//*[@selected='selected'][last()]" />
+        <xsl:variable name="matcher">
+            <xsl:value-of select="$collectionUri" />
+            <xsl:value-of select="$filename" />
+            <xsl:value-of select="'.'" />
+            <xsl:value-of select="$lang" />
+            <xsl:value-of select="'.xhtml'" />
+        </xsl:variable>
+        
+        <xsl:variable name="pagetitle">
+            <xsl:value-of select="$navitreePlugin/collection/items//*[uri = $matcher]/pagetitle" />
         </xsl:variable>
         
         <xsl:choose>
-            <xsl:when test="$lastnode/pagetitle != ''">
+            <xsl:when test="$pagetitle != ''">
             
-                <xsl:value-of select="$lastnode/pagetitle" />
+                <xsl:value-of select="$pagetitle" />
            
             </xsl:when>       
             <xsl:otherwise>
