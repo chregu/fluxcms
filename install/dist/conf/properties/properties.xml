@@ -22,6 +22,13 @@
             <property id="kMDItem_AudioBitRate"/>
             <property id="dc_creator"/>
             <property id="dc_date"/>
+            
+           <!--
+              Uncomment this, if you want to use the (override)pagetitle properties
+            <property id="pagetitle-multilang"/>
+            <property id="pagetitle"/>
+            -->
+            
         </category>
           
         <category name="permission" >
@@ -69,7 +76,7 @@
             <property id="parent-uri"/>
             <property id="title"/>
             <property id="dc_subject"/>
-            
+            <property id="pagetitle"/>  
 
         </propertyset>
         
@@ -103,6 +110,7 @@
             <property id="display-name-multilang"/>
             <property id="dc_subject"/>
             <property id="dc_description"/>
+            <property id="pagetitle"/>  
             
             <!--
               Uncomment this, if you want to use the simple-perm properties
@@ -204,7 +212,17 @@
             <metadata type="text_readonly"/>
             <validate type="nonempty"/>
         </property>
+    
+        <property id="pagetitle-multilang" name="pagetitle" ns="bx:" multilang="true">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
         
+        <property id="pagetitle" name="pagetitle" ns="bx:">
+            <metadata type="text_textfield"/>
+            <validate type="nonempty"/>
+        </property>
+            
           <property id="read_navi" name="read_navi" ns="bx:">
             <metadata type="text_textfield"/>
             <validate type="nonempty"/>
