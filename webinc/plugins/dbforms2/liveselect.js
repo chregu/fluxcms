@@ -71,15 +71,24 @@ function dbforms2_liveselect() {
         uri = uri + get;
         
         this.data = Sarissa.getDomDocument();
-        var thisObject = this;
         this.dataLoaded = false;
-      
-        // Create a YUI instance using io-base module.
-        YUI().use("io-base", function(Y) {
-            Y.on('io:complete', thisObject._YUIOnLoadCallback , thisObject, []);
-            var request = Y.io(uri);
-            }
-        );
+        //IE has some problems with YUI.io (no idea why), so we
+        // use the old sarissa if IE.
+        if (typeof this.data.onreadystatechange == "unknown") {
+            var wrappedCallback = new ContextFixer(this._sarissaOnLoadCallback, this);
+            this.data.onreadystatechange = wrappedCallback.execute;
+            this.data.load(uri);
+        } else {
+        
+            var thisObject = this;
+            
+            // Create a YUI instance using io-base module.
+            YUI().use("io-base", function(Y) {
+                Y.on('io:complete', thisObject._YUIOnLoadCallback , thisObject, []);
+                var request = Y.io(uri);
+                }
+            );
+        }
 
     }
     
@@ -525,7 +534,9 @@ function dbforms2_liveselect_entry() {
     var results = null;
     
     this.e_onMouseDown = function(e) {
-        e.preventDefault();
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
         this.results.chooser.onChoose(this);
     }
     
