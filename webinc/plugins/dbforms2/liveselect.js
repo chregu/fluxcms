@@ -525,7 +525,9 @@ function dbforms2_liveselect_entry() {
     var results = null;
     
     this.e_onMouseDown = function(e) {
-        e.preventDefault();
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
         this.results.chooser.onChoose(this);
     }
     
