@@ -42,7 +42,7 @@ class bx_dbforms2_fields_password_md5 extends bx_dbforms2_fields_password {
      *  @access public
      *  @return type descr
      */
-    public function getSQLName($type) {
+    public function getSQLName($type = null) {
         //bx_helpers_debug::webdump($this->parentForm->queryMode);
         $type = $this->parentForm->queryMode;
         if ($type  == bx_dbforms2::QUERYMODE_SELECT) {
