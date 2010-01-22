@@ -34,6 +34,12 @@
 
                 <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/js/sarissa_0.9.9.4.js'"/></xsl:call-template>
 
+                <!-- JS -->
+                <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.0.0/build/yui/yui-min.js&amp;3.0.0/build/oop/oop-min.js&amp;3.0.0/build/event-custom/event-custom-base-min.js&amp;3.0.0/build/io/io-base-min.js">
+                </script>
+
+
+
                 <xsl:if test="/form/fields//textarea[@type='text_wysiwyg']">
                     <xsl:call-template name="importJs"><xsl:with-param name="href" select="'webinc/fck/fckeditor.js'"/></xsl:call-template>
                     <script type="text/javascript">

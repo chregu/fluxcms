@@ -71,16 +71,22 @@ function dbforms2_liveselect() {
         uri = uri + get;
         
         this.data = Sarissa.getDomDocument();
-        var wrappedCallback = new ContextFixer(this._sarissaOnLoadCallback, this);
-        this.data.onreadystatechange = wrappedCallback.execute;
-        
+        var thisObject = this;
         this.dataLoaded = false;
-        
-        this.data.load(uri);
+      
+        // Create a YUI instance using io-base module.
+        YUI().use("io-base", function(Y) {
+            Y.on('io:complete', thisObject._YUIOnLoadCallback , thisObject, []);
+            var request = Y.io(uri);
+            }
+        );
+
     }
     
-    this.loadEntriesFromXML = function() {
-       this.data = Sarissa.fixFirefox3Permissions(this.data);
+    this.loadEntriesFromXML = function(isYui) {
+       if (!isYui) {
+           this.data = Sarissa.fixFirefox3Permissions(this.data);
+       }
        var entry = this.data.documentElement.firstChild.firstChild;
         
         this.results.removeAllEntries();
@@ -141,6 +147,14 @@ function dbforms2_liveselect() {
         }
     }
     
+    this._YUIOnLoadCallback = function(a,xhr,options) {
+        if(xhr.readyState == 4 && !this.dataLoaded && xhr.responseXML && xhr.responseXML.documentElement) {
+            this.dataLoaded = true;
+            this.data = xhr.responseXML;
+            this.loadEntriesFromXML(true);
+        }
+    }
+
     this.onChoose = function(entry) {
         this.results.hide();
         this.currentEntry = entry;
