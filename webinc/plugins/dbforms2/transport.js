@@ -9,18 +9,27 @@ function dbforms2_transport() {
     this.loadXML = function(dataURI) {
         this.data = Sarissa.getDomDocument();
     
-        var thisObject = this;
-
+       
         
         
         dbforms2_log.log('loading ' + dataURI + '...')
         this.dataLoaded = false;
-        // Create a YUI instance using io-base module.
-        YUI().use("io-base", function(Y) {
-            Y.on('io:complete', thisObject._YUIOnLoadCallback , thisObject, []);
-            var request = Y.io(dataURI);
-            }
-        );
+         //IE has some problems with YUI.io (no idea why), so we
+        // use the old sarissa if IE.
+        if (typeof this.data.onreadystatechange == "unknown") {
+            var wrappedCallback = new ContextFixer(this._sarissaOnLoadCallback, this);
+            this.data.onreadystatechange = wrappedCallback.execute;
+            this.data.load(dataURI);
+        } else {
+            var thisObject = this;
+    
+            // Create a YUI instance using io-base module.
+            YUI().use("io-base", function(Y) {
+                Y.on('io:complete', thisObject._YUIOnLoadCallback , thisObject, []);
+                var request = Y.io(dataURI);
+                }
+            );
+        }
     }
     
     this.loadXMLSync = function(dataURI) {
@@ -75,6 +84,19 @@ function dbforms2_transport() {
             dbforms2_log.log('data loaded');
             this.dataLoaded = true;
             this.data = xhr.responseXML;
+            // call document ready callback when the document has been loaded
+            if (this.onLoadCallback != null && typeof this.onLoadCallback == "function")
+                this.onLoadCallback();
+        }
+    }
+        
+    this._sarissaOnLoadCallback = function() {
+        //dbforms2_log.log('dbforms2_loader::_sarissaOnLoadCallback');
+
+        if(this.data.readyState == 4 && !this.dataLoaded && this.data.documentElement) {
+            dbforms2_log.log('data loaded');
+            this.dataLoaded = true;
+
             // call document ready callback when the document has been loaded
             if (this.onLoadCallback != null && typeof this.onLoadCallback == "function")
                 this.onLoadCallback();
