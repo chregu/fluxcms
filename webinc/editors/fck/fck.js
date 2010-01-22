@@ -136,7 +136,44 @@ loadContent = function() {
     request.send(null);
 }
 
+saveContent_window = false;
+
 saveContent = function() {
+	
+    liveSaveSetStatus("Checking for login...");
+    var request = new XMLHttpRequest();
+    var checkurl = bx_webroot + '/webinc/php/isloggedin.php';
+    var loginurl = bx_webroot + '/webinc/php/littlelogin.php';
+
+    request.open('GET', checkurl, true);
+    request.onreadystatechange = saveContent_callback;
+    request.send();
+    
+    function saveContent_callback() {
+        if(request.readyState == 4) {
+        	 
+            if (request.status != '200' && request.status != '204'  && request.status != '1223'  && request.status != '201'){
+               alert('Error saving your data.\nResponse status: ' + request.status + '.\nCheck your server log for more information.');
+               liveSaveSetStatus( "Error saving the document.");
+            } else {
+               var state = request.responseText; 
+               if(state == 'true') {
+            	   saveDocument();
+            	   return;
+               }
+               liveSaveSetStatus("Please login!");
+               if(saveContent_window) {
+            	   saveContent_window.close();
+               }
+               saveContent_window = window.open(loginurl, "Login", "width=300,height=200,scrollbars=no,top=300,left=300,location=no");
+
+            }
+        }
+    }
+    
+}
+
+saveDocument = function() {
     liveSaveSetStatus("Parsing the document...");
     var oEditor = FCKeditorAPI.GetInstance("fluxfck") ;
     var xml = oEditor.GetXHTML(true);
@@ -167,7 +204,7 @@ saveContent = function() {
     }
     
 
-    function saveContent_callback() {
+    function saveDocument_callback() {
         if(request.readyState == 4) {
             if (request.status != '200' && request.status != '204'  && request.status != '1223'  && request.status != '201'){
                 alert('Error saving your data.\nResponse status: ' + request.status + '.\nCheck your server log for more information.');
@@ -181,7 +218,7 @@ saveContent = function() {
     }
 
     request.open('PUT', contentURI, true);
-    request.onreadystatechange = saveContent_callback;
+    request.onreadystatechange = saveDocument_callback;
     liveSaveSetStatus("Saving the document...");
     var serializer = new XMLSerializer();
     request.send(serializer.serializeToString(contentDOM));
