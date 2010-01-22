@@ -9,12 +9,18 @@ function dbforms2_transport() {
     this.loadXML = function(dataURI) {
         this.data = Sarissa.getDomDocument();
     
-        var wrappedCallback = new ContextFixer(this._sarissaOnLoadCallback, this);
-        this.data.onreadystatechange = wrappedCallback.execute;
+        var thisObject = this;
+
+        
         
         dbforms2_log.log('loading ' + dataURI + '...')
         this.dataLoaded = false;
-        this.data.load(dataURI);
+        // Create a YUI instance using io-base module.
+        YUI().use("io-base", function(Y) {
+            Y.on('io:complete', thisObject._YUIOnLoadCallback , thisObject, []);
+            var request = Y.io(dataURI);
+            }
+        );
     }
     
     this.loadXMLSync = function(dataURI) {
@@ -64,13 +70,11 @@ function dbforms2_transport() {
         
     }
     
-    this._sarissaOnLoadCallback = function() {
-        //dbforms2_log.log('dbforms2_loader::_sarissaOnLoadCallback');
-
-        if(this.data.readyState == 4 && !this.dataLoaded && this.data.documentElement) {
+    this._YUIOnLoadCallback = function(a,xhr,options) {
+        if(xhr.readyState == 4 && !this.dataLoaded && xhr.responseXML && xhr.responseXML.documentElement) {
             dbforms2_log.log('data loaded');
             this.dataLoaded = true;
-
+            this.data = xhr.responseXML;
             // call document ready callback when the document has been loaded
             if (this.onLoadCallback != null && typeof this.onLoadCallback == "function")
                 this.onLoadCallback();
