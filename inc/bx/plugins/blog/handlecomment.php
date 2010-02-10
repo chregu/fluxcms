@@ -238,23 +238,28 @@ class bx_plugins_blog_handlecomment {
             
             $akismetkey = $GLOBALS['POOL']->config->blogAkismetKey;
             if ($akismetkey) {
-                include_once(BX_LIBS_DIR.'plugins/blog/akismet.php');
-                
-                $akismet = new Akismet(BX_WEBROOT.$path,$akismetkey);
-                $akismet->setCommentAuthor($data['name']);
-                $akismet->setCommentAuthorEmail($data['email']);
-                $akismet->setCommentAuthorURL($data['openid_url']);
-                $akismet->setCommentContent($data['comments']);
-                $akismet->setPermalink(BX_WEBROOT.$path.$id);
-                if($akismet->isCommentSpam()) {
-                    $commentRejected .= "* akismet.com thinks, this is spam";
-                    $deleteIt = true;
-                    if (!empty($urls) && ( count($urls) > 0)) {
-                        $simplecache = popoon_helpers_simplecache::getInstance();
-                        $simplecache->cacheDir = BX_TEMP_DIR;
-                        $_u = "?from=".urlencode(BX_WEBROOT) ."&urls=".urlencode(implode(";",$urls));
-                        $simplecache->simpleCacheHttpRead('http://www.bitflux.org/download/antispam/blockedurls.php'.$_u,3600);
+                try {                
+                    include_once(BX_LIBS_DIR.'plugins/blog/akismet.php');
+                    
+                    $akismet = new Akismet(BX_WEBROOT.$path,$akismetkey);
+                    $akismet->setCommentAuthor($data['name']);
+                    $akismet->setCommentAuthorEmail($data['email']);
+                    $akismet->setCommentAuthorURL($data['openid_url']);
+                    $akismet->setCommentContent($data['comments']);
+                    $akismet->setPermalink(BX_WEBROOT.$path.$id);
+                    if($akismet->isCommentSpam()) {
+                        $commentRejected .= "* akismet.com thinks, this is spam";
+                        $deleteIt = true;
+                        if (!empty($urls) && ( count($urls) > 0)) {
+                            $simplecache = popoon_helpers_simplecache::getInstance();
+                            $simplecache->cacheDir = BX_TEMP_DIR;
+                            $_u = "?from=".urlencode(BX_WEBROOT) ."&urls=".urlencode(implode(";",$urls));
+                            $simplecache->simpleCacheHttpRead('http://www.bitflux.org/download/antispam/blockedurls.php'.$_u,3600);
+                        }
                     }
+                    
+                } catch (Exception $e) {
+                    error_log("Akismet Exception " . $e->getMessage());
                 }
             }
         }
