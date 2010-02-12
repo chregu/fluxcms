@@ -112,37 +112,34 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     // return the newly created id
                     $dom = $this->createResponse(0, $newId);
                     $dom->documentElement->setAttribute('id', $newId);
-                    //bx_log::log($dom->saveXML());
                     return $dom;
 
-                } else
-                    if ($xmlData->documentElement->getAttribute("delete") == "true" && $form->currentID != 0) {
-                        // delete an existing entry
-                        $form->queryMode = bx_dbforms2::QUERYMODE_DELETE;
-                        $query = bx_dbforms2_sql::getDeleteQueryByForm($form);
-                        $form->callEventHandlers(bx_dbforms2::EVENT_DELETE_PRE);
+                } else if ($xmlData->documentElement->getAttribute("delete") == "true" && $form->currentID != 0) {
+                    // delete an existing entry
+                    $form->queryMode = bx_dbforms2::QUERYMODE_DELETE;
+                    $query = bx_dbforms2_sql::getDeleteQueryByForm($form);
+                    $form->callEventHandlers(bx_dbforms2::EVENT_DELETE_PRE);
 
-                    } else
-                        if ($form->currentID == 0) {
-                            // create a new entry
-                            $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
-                            
-                            $insertid = $xmlData->documentElement->getAttribute('insertid');
-                            if (!empty($insertid)) {
-                                $form->currentID = $insertid;
-                            } else {
-                                $form->currentID = $db->nextID($form->tablePrefix . '_sequences');
-                            }
+                } else if ($form->currentID == 0) {
+                    // create a new entry
+                    $form->queryMode = bx_dbforms2::QUERYMODE_INSERT;
+                    
+                    $insertid = $xmlData->documentElement->getAttribute('insertid');
+                    if (!empty($insertid)) {
+                        $form->currentID = $insertid;
+                    } else {
+                        $form->currentID = $db->nextID($form->tablePrefix . '_sequences');
+                    }
 
-                            $form->callEventHandlers(bx_dbforms2::EVENT_INSERT_PRE);
-                            $query = bx_dbforms2_sql::getInsertQueryByForm($form);
+                    $form->callEventHandlers(bx_dbforms2::EVENT_INSERT_PRE);
+                    $query = bx_dbforms2_sql::getInsertQueryByForm($form);
 
-                        } else {
-                            // update an existing entry
-                            $form->queryMode = bx_dbforms2::QUERYMODE_UPDATE;
-                            $form->callEventHandlers(bx_dbforms2::EVENT_UPDATE_PRE);
-                            $query = bx_dbforms2_sql::getUpdateQueryByForm($form);
-                        }
+                } else {
+                    // update an existing entry
+                    $form->queryMode = bx_dbforms2::QUERYMODE_UPDATE;
+                    $form->callEventHandlers(bx_dbforms2::EVENT_UPDATE_PRE);
+                    $query = bx_dbforms2_sql::getUpdateQueryByForm($form);
+                }
 
                 // give it a go
                 $res = $db->query($query);
@@ -209,120 +206,110 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
 
             return $this->getDataByForm($form);
 
-        } else
-            if ($mode == 'form') {
+        } else if ($mode == 'form') {
+    
+            $dom = $form->serializeToDOMObject();
+            if (isset($_GET['XML']) && $_GET['XML'] == 1.1) {
+                return $dom;
+            }
+    
+            // default form-xsl
+            $xslfile = BX_LIBS_DIR . 'dbforms2/xsl/dbforms2.xsl';
+    
+            // check for userspace form-xsl in local include dir
+            if (isset($form->attributes['xsl']) && !empty($form->attributes['xsl'])) {
+                $userxslf = BX_LOCAL_INCLUDE_DIR . "dbforms2/xsl/" . $form->attributes['xsl'];
+                if (file_exists($userxslf)) {
+                    $xslfile = $userxslf;
+                }
+            }
+    
+            return bx_dbforms2_common::transformFormXML($dom, $form->tablePrefix, $xslfile);
 
-                $dom = $form->serializeToDOMObject();
-                if (isset($_GET['XML']) && $_GET['XML'] == 1.1) {
-                    return $dom;
+        } else if ($mode == 'chooser') {
+
+            if (!$form->chooser instanceof bx_dbforms2_liveselect) {
+                throw new Exception('No chooser has been defined for this form.');
+            }
+
+            if (isset($_GET['q'])) {
+                $form->chooser->query = $_GET['q'];
+
+                if (isset($_GET['p'])) {
+                    $form->chooser->currentPage = $_GET['p'];
+                    $xml = bx_helpers_db2xml::getXMLByQuery($form->chooser->getSelectQuery());
+                    $form->chooser->appendPagerNode($xml);
+                } else {
+                    $xml = bx_helpers_db2xml::getXMLByQuery($form->chooser->getSelectQuery());
                 }
 
-                // default form-xsl
-                $xslfile = BX_LIBS_DIR . 'dbforms2/xsl/dbforms2.xsl';
+                return $xml;
+            }
 
-                // check for userspace form-xsl in local include dir
-                if (isset($form->attributes['xsl']) && !empty($form->attributes['xsl'])) {
-                    $userxslf = BX_LOCAL_INCLUDE_DIR . "dbforms2/xsl/" . $form->attributes['xsl'];
-                    if (file_exists($userxslf)) {
-                        $xslfile = $userxslf;
-                    }
-                }
+        } else if ($mode == 'listview') {
+                
+            $thisid = '';
+            $thatid = '';
+            if (isset($_GET['thisid'])) {
+                $thisid = $_GET['thisid'];
+            }
+            if (isset($_GET['thatid'])) {
+                $thatid = $_GET['thatid'];
+            }
 
-                return bx_dbforms2_common::transformFormXML($dom, $form->tablePrefix, $xslfile);
+            $parts = explode('/', $id);
+            $fieldName = $parts[sizeof($parts) - 1];
+            $field = $form->getFieldByName($fieldName);
 
-            } else
-                if ($mode == 'chooser') {
+            if ($field instanceof bx_dbforms2_fields_listview_12n) {
+                $query = $field->getSelectQuery(array(
+                        'thatid' => $thatid
+                ));
+            } else if ($field instanceof bx_dbforms2_fields_listview_n21) {
+                $query = $field->getSelectQuery(array(
+                        'thisid' => $thisid
+                ));
+            } else if ($field instanceof bx_dbforms2_fields_listview_n2m) {
+                $query = $field->getSelectQuery(array(
+                        'thatid' => $thatid,
+                        'thisid' => $thisid
+                ));
+            } else if ($field instanceof bx_dbforms2_fields_listview) {
+                $query = $field->getSelectQuery();
+            }
 
-                    if (!$form->chooser instanceof bx_dbforms2_liveselect) {
-                        throw new Exception('No chooser has been defined for this form.');
-                    }
+            if ($field instanceof bx_dbforms2_fields_listview) {
+                return bx_helpers_db2xml::getXMLByQuery($query);
+            }
 
-                    if (isset($_GET['q'])) {
-                        $form->chooser->query = $_GET['q'];
-
+        } else if ($mode == 'liveselect') {
+                if (isset($_GET['q'])) {
+                    $parts = explode('/', $id);
+                    $fieldName = empty($parts[sizeof($parts) - 1]) ? $parts[sizeof($parts) - 2] : $parts[sizeof($parts) - 1];
+                    $field = $form->getFieldByName($fieldName);
+                    if ($field->liveSelect instanceof bx_dbforms2_liveselect) {
+                        $field->liveSelect->query = $_GET['q'];
+                        $field->liveSelect->tablePrefix = $form->tablePrefix;
                         if (isset($_GET['p'])) {
-                            $form->chooser->currentPage = $_GET['p'];
-                            $xml = bx_helpers_db2xml::getXMLByQuery($form->chooser->getSelectQuery());
-                            $form->chooser->appendPagerNode($xml);
-                        } else {
-                            $xml = bx_helpers_db2xml::getXMLByQuery($form->chooser->getSelectQuery());
+                            $field->liveSelect->currentPage = $_GET['p'];
                         }
 
+                        $xml = bx_helpers_db2xml::getXMLByQuery($field->liveSelect->getSelectQuery());
+                        $field->liveSelect->appendPagerNode($xml);
                         return $xml;
                     }
+                }
 
-                } else
-                    if ($mode == 'listview') {
-                        $thisid = '';
-                        $thatid = '';
-                        if (isset($_GET['thisid'])) {
-                            $thisid = $_GET['thisid'];
-                        }
-                        if (isset($_GET['thatid'])) {
-                            $thatid = $_GET['thatid'];
-                        }
+        } else if ($mode == 'upload') {
+            $fObj = $form->fields[$_POST['fieldname']];
+            if (isset($_FILES['file']) && $fObj instanceof bx_dbforms2_fields_file) {
+                $xml = $fObj->moveUploadedFile($_FILES['file']);
+                $dom = new DomDocument();
+                $dom->loadXML($xml);
 
-                        $parts = explode('/', $id);
-                        $fieldName = $parts[sizeof($parts) - 1];
-                        $field = $form->getFieldByName($fieldName);
-
-                        if ($field instanceof bx_dbforms2_fields_listview_12n) {
-                            $query = $field->getSelectQuery(array(
-                                    'thatid' => $thatid
-                            ));
-                        } else
-                            if ($field instanceof bx_dbforms2_fields_listview_n21) {
-                                $query = $field->getSelectQuery(array(
-                                        'thisid' => $thisid
-                                ));
-                            } else
-                                if ($field instanceof bx_dbforms2_fields_listview_n2m) {
-                                    $query = $field->getSelectQuery(array(
-                                            'thatid' => $thatid,
-                                            'thisid' => $thisid
-                                    ));
-                                } else
-                                    if ($field instanceof bx_dbforms2_fields_listview) {
-                                        $query = $field->getSelectQuery();
-                                    }
-
-                        if ($field instanceof bx_dbforms2_fields_listview) {
-                            return bx_helpers_db2xml::getXMLByQuery($query);
-                        }
-
-                    } else
-                        if ($mode == 'liveselect') {
-                            if (isset($_GET['q'])) {
-                                $parts = explode('/', $id);
-                                $fieldName = empty($parts[sizeof($parts) - 1]) ? $parts[sizeof($parts) - 2] : $parts[sizeof($parts) - 1];
-                                $field = $form->getFieldByName($fieldName);
-                                if ($field->liveSelect instanceof bx_dbforms2_liveselect) {
-                                    $field->liveSelect->query = $_GET['q'];
-                                    $field->liveSelect->tablePrefix = $form->tablePrefix;
-                                    if (isset($_GET['p'])) {
-                                        $field->liveSelect->currentPage = $_GET['p'];
-                                    }
-
-                                    $xml = bx_helpers_db2xml::getXMLByQuery($field->liveSelect->getSelectQuery());
-                                    $field->liveSelect->appendPagerNode($xml);
-                                    return $xml;
-                                }
-
-                            }
-
-                        } else
-                            if ($mode == 'upload') {
-
-                                $fObj = $form->fields[$_POST['fieldname']];
-                                if (isset($_FILES['file']) && $fObj instanceof bx_dbforms2_fields_file) {
-                                    $xml = $fObj->moveUploadedFile($_FILES['file']);
-                                    $dom = new DomDocument();
-                                    $dom->loadXML($xml);
-
-                                    return $dom;
-                                }
-                            }
-
+                return $dom;
+            }
+        }
     }
 
     /**
