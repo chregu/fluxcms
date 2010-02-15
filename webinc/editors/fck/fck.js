@@ -207,7 +207,7 @@ saveDocument = function() {
     function saveDocument_callback() {
         if(request.readyState == 4) {
             if (request.status != '200' && request.status != '204'  && request.status != '1223'  && request.status != '201'){
-               alert('Error saving your data.\nResponse status: ' + request.status + '.\nCheck your server log for more information.');
+                alert('Error saving your data.\nResponse status: ' + request.status + '.\nCheck your server log for more information.');
                liveSaveSetStatus( "Error saving the document.");
             } else {
                liveSaveSetStatus("Document saved");
@@ -219,19 +219,9 @@ saveDocument = function() {
 
     request.open('PUT', contentURI, true);
     request.onreadystatechange = saveDocument_callback;
-    
+    liveSaveSetStatus("Saving the document...");
     var serializer = new XMLSerializer();
-    
-    var parseErrorStart = serializer.serializeToString(fckDOM).match(/^\<parsererror/);
-    var parseErrorEnd = serializer.serializeToString(fckDOM).match(/parsererror\>$/);
-    
-    if(parseErrorStart == null && parseErrorEnd == null) {
-        liveSaveSetStatus("Saving the document...");
-        request.send(serializer.serializeToString(contentDOM));
-    } else {
-        alert('Error saving your data.\nYou most likely got a Parseerror.\n');
-        liveSaveSetStatus( "Error saving the document.");
-    }
+    request.send(serializer.serializeToString(contentDOM));
 }
 
 function liveSaveSetStatus (text) {
