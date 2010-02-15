@@ -11,6 +11,11 @@ function checkCategories() {
     }
 }
 
+function setDraft() {
+    var form = document.getElementById('status');
+    form.value = '4';
+}
+
 function checkTitle() {
     
     var form = document.getElementById('title');
@@ -45,7 +50,6 @@ function reallyDelete() {
 
 
 function formCheck(form, preview) {
-    
     if (!checkTitle()) {
         alert("You did not provide a title, but you have to.");
         return false;
@@ -54,6 +58,10 @@ function formCheck(form, preview) {
     fixEntities();
     if (! checkValidXML(form)){
         return false;
+    }
+    
+    if(form == 'draft') {
+        setDraft();
     }
     
     if(typeof preview != "undefined") {
@@ -99,9 +107,6 @@ function blogPost(draft) {
             } else {
                 if(form.elements[i].name == 'bx[plugins][admin_edit][uri]') {
                     var uri = form.elements[i].value;
-                }
-                if(form.elements[i].name == 'bx[plugins][admin_edit][status]' && draft == 'draft') {
-                    form.elements[i].value = 4;
                 }
                 
                 postString += form.elements[i].name;
