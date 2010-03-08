@@ -28,28 +28,87 @@ function dbforms2_listview() {
         
         dbforms2_log.log('loading ' + uri + '...')
         this.dataLoaded = false;
-        this.data.load(uri);
+         //IE has some problems with YUI.io (no idea why), so we
+        // use the old sarissa if IE.
+        if (typeof this.data.onreadystatechange == "unknown") {
+            var wrappedCallback = new ContextFixer(this._sarissaOnLoadCallback, this);
+            this.data.onreadystatechange = wrappedCallback.execute;
+            this.data.load(uri);
+        } else {
+        
+            var thisObject = this;
+            
+            // Create a YUI instance using io-base module.
+            YUI().use("io-base", function(Y) {
+                Y.on('io:complete', thisObject._YUIOnLoadCallback , thisObject, []);
+                var request = Y.io(uri);
+                }
+            );
+        }
     }
 
-    this.loadEntriesFromXML = function() {
-        var entry = this.data.documentElement.firstChild.firstChild;
+    this.loadEntriesFromXML = function(isYui) {
+       if (!isYui) {
+           this.data = Sarissa.fixFirefox3Permissions(this.data);
+       }
+       var entry = this.data.documentElement.firstChild.firstChild;
+        
         this.results.removeAllEntries();
         while(entry) {
             idNS = entry.getElementsByTagName('_id');
             titleNS = entry.getElementsByTagName('_title');
             
-            title = 'Parse Error';
             id = 0;
 
-            if(titleNS.length > 0 && titleNS.item(0).childNodes[0])
-                title = titleNS.item(0).childNodes[0].data
-
-            if(idNS.length > 0 && idNS.item(0).childNodes[0])
-                id = idNS.item(0).childNodes[0].data;
             
+            if(idNS.length > 0 && idNS.item(0).childNodes[0]) {
+                id = idNS.item(0).childNodes[0].data;
+            }
+
+            title = '#Empty Field# ('+ id +')';
+            
+			if(titleNS.length > 0 && titleNS.item(0).childNodes[0]) {
+                title = titleNS.item(0).childNodes[0].data
+            } 
+
             this.results.addEntry(id, title);
             
             entry = entry.nextSibling;
+        }
+        
+        if(this.enablePager) {
+            var numPagesNS = this.data.getElementsByTagName('numpages');
+            var numPages = 0;
+            if(numPagesNS.length > 0) {
+                numPages = numPagesNS.item(0).childNodes[0].data;
+            }
+            
+            if(numPages > 1) {
+                if(numPages != this.numPages) {
+                    this.resetPager(numPages);
+                } else {
+                    this.updatePagerDisplay();
+                }
+            } else {
+                this.hidePagerDisplay();
+            }
+               
+        }
+        
+    }
+    
+    this._sarissaOnLoadCallback = function() {
+        if(this.data.readyState == 4 && !this.dataLoaded && this.data.documentElement) {
+            this.dataLoaded = true;
+            this.loadEntriesFromXML();
+        }
+    }
+    
+    this._YUIOnLoadCallback = function(a,xhr,options) {
+        if(xhr.readyState == 4 && !this.dataLoaded && xhr.responseXML && xhr.responseXML.documentElement) {
+            this.dataLoaded = true;
+            this.data = xhr.responseXML;
+            this.loadEntriesFromXML(true);
         }
     }
 
@@ -59,13 +118,6 @@ function dbforms2_listview() {
     
     this.onDelete = function(entry) {
         this.onDeleteAction(entry);
-    }
-    
-    this._sarissaOnLoadCallback = function() {
-        if(this.data.readyState == 4 && !this.dataLoaded && this.data.documentElement) {
-            this.dataLoaded = true;
-            this.loadEntriesFromXML();
-        }
     }
     
 }
