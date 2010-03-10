@@ -194,6 +194,34 @@
             </td>
         </tr>
     </xsl:template>
+    
+    
+    <xsl:template match="*[@type='checkbox']" mode="propertyfields">
+        <tr>
+            <td>
+                <div class="blackH5" title="{concat(../@namespace, ':', ../@name)}">
+                    <xsl:choose>
+                        <xsl:when test="../@niceName">
+                            <xsl:value-of select="../@niceName"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat(../@namespace, ':', ../@name)"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </div>
+            </td>
+            <td class="blackH5">
+                <input type="checkbox" name="bx[plugins][{../../../@name}][{../../@path}][{../@fieldname}]"  value="1">
+                    <xsl:if test="../@value = '1'">
+                        <xsl:attribute name="checked">
+                            <xsl:value-of select="checked" />
+                        </xsl:attribute>
+                    </xsl:if>
+                </input>
+            </td>
+        </tr>
+    </xsl:template>
+    
 
     <xsl:template match="*[@type='textfield' and tags/tag]" mode="propertyfields">
         <tr>
