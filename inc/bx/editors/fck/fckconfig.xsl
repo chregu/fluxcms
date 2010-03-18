@@ -65,6 +65,8 @@ FCKConfig.ToolbarLocation = 'In' ;
 var sOtherPluginPath = '/webinc/editors/fck/plugins/' ;
 FCKConfig.Plugins.Add( 'test', '', sOtherPluginPath ) ;
 */
+FCKConfig.Plugins.Add( 'insertExcelData' ) ;
+
 FCKConfig.ToolbarSets["Default2"] = [
 	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
@@ -86,14 +88,14 @@ FCKConfig.ToolbarSets["Basic"] = [
 
 
 FCKConfig.ToolbarSets["patforms"] = [
-	['Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','Table','Source']
+	['Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','Table','insertExcelData','Source']
 ] ;
 
 
 
 FCKConfig.ToolbarSets["fluxfck"] = [
 	['Source'],
-	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
+	['Cut','Copy','Paste','PasteText','PasteWord','insertExcelData','-','Print','SpellCheck'],
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
 	['Link','Unlink','Anchor'],
