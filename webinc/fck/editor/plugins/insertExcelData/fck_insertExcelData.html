@@ -37,9 +37,10 @@ function Ok()
 
 		</script>
 	</head>
-	<body style="OVERFLOW: hidden" scroll="no">
-		<textarea id="insCode_area" cols="40" rows="15" style="width:100%;height:180px;"></textarea>
-		<input type="button" value="Browse Server" fcklang="DlgBtnBrowseServer" onclick="xpOpenWindow('/webinc/fck/editor/plugins/insertExcelData/popup/excel.php');" />
+	<body style="overflow: hidden" scroll="no">
+		<textarea style="display: none" id="insCode_area" cols="0" rows="0"></textarea>
+		<p style="margin:10px;color:red;display: none" id="insCode_Message">Click OK to insert</p>
+		<input align="right" style="margin:10px;" type="button" id="insCode_Button" value="Load Excel File"  onclick="xpOpenWindow('/webinc/fck/editor/plugins/insertExcelData/popup/excel.php');" />
 		<script type="text/javascript" src="excel.js"></script>
 	</body>
 </html>
