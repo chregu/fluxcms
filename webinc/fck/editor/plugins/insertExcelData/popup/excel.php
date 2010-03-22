@@ -31,7 +31,7 @@ $xls = new xls2html();
 
 
 if(isset($_POST['xls2html_import'])){	
-	$xls->import('test.xls');
+	$xls->import($_POST['xls2html_xslFilename']);
 	exit();
 }
 else if($excelFile != ''){
