@@ -67,6 +67,8 @@ class xls2html extends Spreadsheet_Excel_Reader{
 
 		echo '<script language="JavaScript" type="text/javascript">'."\n";
         echo "        window.opener.document.getElementById( 'insCode_area' ).value = '$html'\n";
+        echo "        window.opener.document.getElementById( 'insCode_Message' ).style.display = 'block'\n";
+        echo "        window.opener.document.getElementById( 'insCode_Button' ).style.display = 'none'\n";
         echo "        self.close()\n";
         echo '</script>'."\n";
 		
@@ -114,8 +116,8 @@ class xls2html extends Spreadsheet_Excel_Reader{
 
 			
 			echo $this->tableGet();
-			echo '<br /><input type="checkbox" name="xls2html_ignore_first" value="xls2html_ignore_first"  style="width: auto;" />Erste Zeile nicht importieren<br />';
-			echo '<br /><input type="submit" name="xls2html_import" value="importieren" onclick="return sicher();" />';
+			echo '<br /><input type="checkbox" name="xls2html_ignore_first" value="xls2html_ignore_first"  style="width: auto;" />Skip first line<br />';
+			echo '<br /><input type="submit" name="xls2html_import" value="Create HTML" />';
 			
 		echo '</form>';
 	}
