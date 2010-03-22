@@ -53,14 +53,14 @@ class xls2html extends Spreadsheet_Excel_Reader{
 
 		$count = 0;
 		for ($i = $startRow; $i <= $this->sheets[0]['numRows']; $i++) {
-			$html .= '<tr>';
+			$html .= ($i == 1)?'<th>':'<tr>';
 			for ($j = 1; $j <= $this->sheets[0]['numCols']; $j++) {
 				//do we have to import this col?
 				if( in_array($j,$usedCols) ){
 					$html .= '<td>'.@utf8_encode( $this->sheets[0]['cells'][$i][$j] ).'</td>';
 				}
 			}
-			$html .= '</tr>';
+			$html .= ($i == 1)?'</th>':'</tr>';
 		}	
 		$html .= '</table>';
 		
