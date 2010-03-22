@@ -1,0 +1,31 @@
+
+
+
+body {
+	background-color: #ffffff;
+	font-size: 12px;
+	font-family:  Arial,Verdana, SunSans-Regular, Sans-Serif;
+	color: #000000;  
+	padding:0px;
+	margin: 10px;
+}
+
+td {
+	font-size: 12px;
+	padding: 1px;
+	margin: 0px;
+}
+
+.odd {
+	background-color: #cfcfcf;
+}
+
+.even {
+	background-color: #eeeeee;
+}
+
+select .selected {
+	font-weight: bold;
+	color: #ff0000;
+}
+
