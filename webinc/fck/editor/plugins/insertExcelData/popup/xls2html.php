@@ -57,7 +57,9 @@ class xls2html extends Spreadsheet_Excel_Reader{
 			for ($j = 1; $j <= $this->sheets[0]['numCols']; $j++) {
 				//do we have to import this col?
 				if( in_array($j,$usedCols) ){
-					$html .= '<td>'.@utf8_encode( $this->sheets[0]['cells'][$i][$j] ).'</td>';
+				    $html .= ($i == 1)?'<th>':'<td>';
+					$html .= @utf8_encode( $this->sheets[0]['cells'][$i][$j] );
+					$html .= ($i == 1)?'</th>':'</td>';
 				}
 			}
 			$html .= '</tr>';
