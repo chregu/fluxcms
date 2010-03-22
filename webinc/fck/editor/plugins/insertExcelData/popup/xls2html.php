@@ -12,7 +12,7 @@ class xls2html extends Spreadsheet_Excel_Reader{
 	private $dbHandle 		= null;
 	private $fieldNames		= false;
 	private $tableRow		= array();
-	
+	private $filename       = '';
 	
 	function __construct(){
 		parent::Spreadsheet_Excel_Reader();
@@ -20,6 +20,7 @@ class xls2html extends Spreadsheet_Excel_Reader{
 
 	function importForm($file){
 		$this->read($file);
+		$this->filename = $file;
 		$this->formShow();
 	}
 	
@@ -117,6 +118,7 @@ class xls2html extends Spreadsheet_Excel_Reader{
 			
 			echo $this->tableGet();
 			echo '<br /><input type="checkbox" name="xls2html_ignore_first" value="xls2html_ignore_first"  style="width: auto;" />Skip first line<br />';
+			echo '<input type="hidden" name="xls2html_xslFilename" value="'.$this->filename.'"  />';
 			echo '<br /><input type="submit" name="xls2html_import" value="Create HTML" />';
 			
 		echo '</form>';
