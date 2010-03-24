@@ -1,12 +1,12 @@
-﻿/*
+/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2008 Frederico Caldeira Knabben
- * 
+ * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ *
  * == BEGIN LICENSE ==
- * 
+ *
  * Licensed under the terms of any of the following licenses at your
  * choice:
- * 
+ *
  *  - GNU General Public License Version 2 or later (the "GPL")
  *    http://www.gnu.org/licenses/gpl.html
  *
@@ -17,12 +17,12 @@
  *    http://www.mozilla.org/MPL/MPL-1.1.html
  *
  * == END LICENSE ==
- * 
- * 	This is the integration file for JavaScript.
- * 
- * 	It defines the FCKeditor class that can be used to create editor
- * 	instances in a HTML page in the client side. For server side
- * 	operations, use the specific integration system.
+ *
+ * This is the integration file for JavaScript.
+ *
+ * It defines the FCKeditor class that can be used to create editor
+ * instances in a HTML page in the client side. For server side
+ * operations, use the specific integration system.
  */
 
 // FCKeditor Class
@@ -59,8 +59,8 @@ FCKeditor.MinHeight = 200 ;
  */
 FCKeditor.MinWidth = 750 ;
 
-FCKeditor.prototype.Version			= '2.6.4' ;
-FCKeditor.prototype.VersionBuild	= '21629' ;
+FCKeditor.prototype.Version			= '2.6.6' ;
+FCKeditor.prototype.VersionBuild	= '25427' ;
 
 FCKeditor.prototype.Create = function()
 {
@@ -120,7 +120,7 @@ FCKeditor.prototype.ReplaceTextarea = function()
 				break ;
 			oTextarea = colElementsByName[i++] ;
 		}
-		
+
 		if ( !oTextarea )
 		{
 			alert( 'Error: The TEXTAREA with id or name set to "' + this.InstanceName + '" was not found' ) ;
@@ -170,13 +170,13 @@ FCKeditor.prototype._GetIFrameHtml = function()
 	{
 		if ( (/fcksource=true/i).test( window.top.location.search ) )
 			sFile = 'fckeditor.original.html' ;
-}
+	}
 	catch (e) { /* Ignore it. Much probably we are inside a FRAME where the "top" is in another domain (security error). */ }
 
 	var sLink = this.BasePath + 'editor/' + sFile + '?InstanceName=' + encodeURIComponent( this.InstanceName ) ;
 	if (this.ToolbarSet)
 		sLink += '&amp;Toolbar=' + this.ToolbarSet ;
-	
+
 	var html = '<iframe id="' + this.InstanceName +
 		'___Frame" src="' + sLink +
 		'" width="' + this.Width +
@@ -189,7 +189,7 @@ FCKeditor.prototype._GetIFrameHtml = function()
 
 	return html ;
 }
-	
+
 FCKeditor.prototype._IsCompatibleBrowser = function()
 {
 	return FCKeditor_IsCompatibleBrowser() ;
