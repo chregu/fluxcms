@@ -61,6 +61,9 @@ FCKConfig.UseBROnCarriageReturn	= false ;
 FCKConfig.ToolbarStartExpanded	= true ;
 FCKConfig.ToolbarCanCollapse	= true ;
 FCKConfig.ToolbarLocation = 'In' ;
+
+FCKConfig.Plugins.Add( 'insertExcelData' );
+
 FCKConfig.ToolbarSets["Default"] = [
 	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
@@ -77,7 +80,7 @@ FCKConfig.ToolbarSets["Default"] = [
 	['About']
 ] ;
 FCKConfig.ToolbarSets["BxCMS"] = [
-	['Bold','Italic','Subscript','Superscript','-','OrderedList','UnorderedList','-','Link','Unlink','-','Source','-','Cut','Copy','Paste','PasteText','PasteWord','-','Image','Table','Rule','SpecialChar']
+	['Bold','Italic','Subscript','Superscript','-','OrderedList','UnorderedList','-','Link','Unlink','-','Source','-','Cut','Copy','Paste','PasteText','PasteWord','insertExcelData','-','Image','Table','Rule','SpecialChar']
 ] ;
 
 
