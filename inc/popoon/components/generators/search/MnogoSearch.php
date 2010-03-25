@@ -456,22 +456,41 @@ Class MnogoSearch  {
 	}
 
 
-	/**
-	* apply search parameters to Mnogosearch ressource
-	* @param int $key
-	* @param mixed $val
-	* @return bool true
-	* @access public
-	*/
-	function set_AgentParam($key,$val) {
-		if(is_numeric($key) && !empty($val)) {
-			if(is_resource($this->MRes)) {
-				udm_set_agent_param($this->MRes,$key,$val);
-			}
-		}
+    /**
+    * apply search parameters to Mnogosearch ressource
+    * @param int $key
+    * @param mixed $val
+    * @return bool true
+    * @access public
+    */
+    function set_AgentParam($key,$val) {
+        if(is_numeric($key) && !empty($val)) {
+            if(is_resource($this->MRes)) {
+                udm_set_agent_param($this->MRes,$key,$val);
+            }
+        }
 
-		return TRUE;
-	}
+        return TRUE;
+    }
+    
+    /**
+    * apply search limits to Mnogosearch ressource
+    * @param int $key  
+    * @param mixed $val
+    * @return bool true
+    * @access public
+    * 
+    * possible keys: UDM_LIMIT_UR UDM_LIMIT_TAG UDM_LIMIT_LANG UDM_LIMIT_CAT UDM_LIMIT_DATE
+    */
+    function set_SearchLimit($key,$val) {
+        if(is_numeric($key) && !empty($val)) {
+            if(is_resource($this->MRes)) {
+                udm_add_search_limit($this->MRes,$key,$val);
+            }
+        }
+
+        return TRUE;
+    }
 
 
 	/**
