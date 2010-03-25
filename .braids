@@ -3,7 +3,7 @@ inc/popoon:
   squashed: true
   url: https://svn.liip.ch/repos/public/popoon/trunk
   type: svn
-  revision: 12873
+  revision: 13208
   remote: braid/inc/popoon
 webinc/bxe: 
   squashed: true
