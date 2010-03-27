@@ -49,7 +49,7 @@ class xls2html extends Spreadsheet_Excel_Reader{
 			$startRow = 2;
 		}
 		
-		$html = '<table border="0" cellpading="0" cellspacing="0>';
+		$html = '<table border="0" cellpadding="0" cellspacing="0">';
 
 		$count = 0;
 		for ($i = $startRow; $i <= $this->sheets[0]['numRows']; $i++) {
