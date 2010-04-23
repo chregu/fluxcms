@@ -3,4 +3,5 @@ Disallow: /stats/
 Disallow: /webalizer/
 Disallow: /admin/
 Disallow: /mo/
-
+Disallow: /themes/
+Disallow: /webinc/
