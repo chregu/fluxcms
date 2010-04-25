@@ -1,16 +1,16 @@
 --- 
+webinc/bxe: 
+  squashed: true
+  url: https://svn.liip.ch/repos/bxe/trunk
+  type: svn
+  revision: 1856
+  remote: braid/webinc/bxe
 inc/popoon: 
   squashed: true
   url: https://svn.liip.ch/repos/public/popoon/trunk
   type: svn
   revision: 13208
   remote: braid/inc/popoon
-webinc/bxe: 
-  squashed: true
-  url: https://svn.liip.ch/repos/bxe/trunk
-  type: svn
-  revision: 1851
-  remote: braid/webinc/bxe
 inc/lx/externalinput: 
   squashed: true
   url: https://svn.liip.ch/repos/public/ext/externalinput/trunk/lx/externalinput
