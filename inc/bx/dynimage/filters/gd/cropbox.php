@@ -33,7 +33,7 @@ usage example:
 </pipeline>
 
  */
-class bx_dynimage_filters_gd_resizeebp extends bx_dynimage_filters_gd {
+class bx_dynimage_filters_gd_cropbox extends bx_dynimage_filters_gd {
 
     public function start($imgIn) {
 
