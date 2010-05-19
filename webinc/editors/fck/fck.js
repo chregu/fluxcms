@@ -221,7 +221,19 @@ saveDocument = function() {
     request.onreadystatechange = saveDocument_callback;
     liveSaveSetStatus("Saving the document...");
     var serializer = new XMLSerializer();
-    request.send(serializer.serializeToString(contentDOM));
+
+    /*
+     * Check for a Parsererror
+     */
+    var parseErrorStart = serializer.serializeToString(fckDOM).match(/\<parsererror/);
+    var parseErrorEnd = serializer.serializeToString(fckDOM).match(/parsererror\>$/);
+    if(parseErrorStart === null && parseErrorEnd === null) {
+        liveSaveSetStatus("Saving the document...");
+        request.send(serializer.serializeToString(contentDOM));
+    } else {
+        alert('Error saving your data.\nYou most likely got a Parsererror.\n');
+        liveSaveSetStatus( "Error saving the document.");
+    }
 }
 
 function liveSaveSetStatus (text) {
