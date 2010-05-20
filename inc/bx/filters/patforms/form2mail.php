@@ -18,6 +18,34 @@ class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
         if (strpos($from, "\n") !== FALSE or strpos($from, "\r") !== FALSE) {
             return FALSE;
         }
+        
+     
+        $to = array();
+        if (!empty($params['emailToField']) && !empty($fields[$params['emailToField']])) {
+            $toField = $fields[$params['emailToField']];
+            # only spammers use newlines
+            if (strpos($toField, "\n") !== FALSE or strpos($toField, "\r") !== FALSE) {
+                return FALSE;
+            }
+            # not more than 5 rcpt's per request
+            else if( substr_count($toField, "," ) > 4) {
+                return FALSE;
+            }
+            # at least one @ please
+            else if( substr_count($toField, "@" ) == 0) {
+                $toField = '';
+            }
+            else {
+                $to[] = $toField;
+            }
+        } 
+
+        if (!empty($params['emailTo'])) {
+            $to[] = $params['emailTo'];
+        }       
+        $to = implode(',', $to);
+        
+
 
         $emailSubject = !empty($params['subjectTemplateKey']) ? $this->getText($params['subjectTemplateKey']) : '';
 
@@ -40,9 +68,9 @@ class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
         $emailSubject = bx_helpers_string::replaceTextFields($emailSubject, $fields);
         $emailBody = bx_helpers_string::replaceTextFields($emailBody, $fields);
 
-        if (!empty($params['emailTo'])) {
+        if (!empty($to)) {
             $n = bx_notificationmanager::getInstance("mail");
-            return $n->send($params['emailTo'], $emailSubject, $emailBody, $from, null, $options);
+            return $n->send($to, $emailSubject, $emailBody, $from, null, $options);
         }
         return FALSE;
     }
