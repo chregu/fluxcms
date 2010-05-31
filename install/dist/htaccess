@@ -27,6 +27,7 @@ php_flag register_globals Off
 php_flag allow_url_fopen Off
 php_flag zend.ze1_compatibility_mode Off
 php_flag allow_call_time_pass_reference  On
+php_flag display_errors Off
 
 #Remove the comment, if you're allowed, to set new "Options"
 #Options -Indexes
