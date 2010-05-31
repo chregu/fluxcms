@@ -100,6 +100,11 @@ class bx_errorhandler {
     public function hasErrors() {
         return count($this->reports) > 0;
     }
+    
+    public function displayErrors() {
+    	return (bool) ini_get('display_errors');
+    }
+    
 
 }
 
