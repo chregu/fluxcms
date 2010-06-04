@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+error_reporting(E_ALL);
+$basedir = realpath( dirname(__FILE__) . "/../");
+include_once($basedir."/inc/bx/init.php");
+bx_init::start($basedir.'/conf/config.xml');
+
+if (!isset($GLOBALS['POOL']->config->dsn)) {
+    print "Could not get dsn from config!\n";
+    exit(-1);
+}
+
+$mysqldump=trim(`which mysqldump`);
+if (empty($mysqldump)) {
+    print "mysqldump not found!\n";
+    exit(-1);
+}
+
+
+$dsn = $GLOBALS['POOL']->config->dsn;
+
+$outfile = "$basedir/div/db/mysqldump-".$dsn['database']."-".date('Ymd-Hi').".sql";
+
+$cmd = "$mysqldump -u " . $dsn['username'] . " -p".$dsn['password'] . " " . $dsn['database'];
+$cmd.= " --add-drop-table --opt --extended-insert=false -Ccan --default-character-set=utf8 > $outfile";
+
+exec($cmd, $out, $ret);
+if ($ret !== 0) {
+   print "mysqldump error: \n";
+   print_r($out);
+   exit(-1);
+}
+
+exit(0);
