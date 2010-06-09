@@ -640,8 +640,10 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
     }
 
     public function getDisplayImage() {
+        if (!$lang) {
+            $lang = $this->outputLanguage;
+        }
         if (($o = $this->getProperty('display-image', sprintf("bx:%2s", $lang))) !== NULL) {
-
             return $o;
         }
     }
