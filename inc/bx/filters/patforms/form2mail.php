@@ -44,7 +44,12 @@ class bx_filters_patforms_form2mail extends bx_filters_patforms_formhandler {
             $to[] = $params['emailTo'];
         }       
         $to = implode(',', $to);
-        
+
+        // option for bcc
+        if (!empty($params['emailBcc'])) {
+            $options['bcc'] = $params['emailBcc'];
+        }
+
 
 
         $emailSubject = !empty($params['subjectTemplateKey']) ? $this->getText($params['subjectTemplateKey']) : '';
