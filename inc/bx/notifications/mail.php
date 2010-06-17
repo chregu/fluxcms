@@ -107,27 +107,39 @@ class bx_notifications_mail extends bx_notification {
         $cs = strtoupper($options['charset']);   
         //make correct 7bit header for the subject
         $subject = '=?'.$cs.'?B?'.base64_encode($subject).'?=';
+
+        $headers['Subject'] = $subject;
+        $headers['To'] = $to;
+        // check if there are smtp options
+        if(($smtpoptions = $this->getSMTPOptions())) {
+            $transport = 'smtp';
+            // smtp ignores email addresses that are only in the headers.
+            // Recipients should be in To and the headers define how they are
+            // handled.
+            if(!empty($options['cc'])) {
+                $to .= ", ".$options['cc'];
+            }
+            if(!empty($options['bcc'])) {
+                $to .= ", ".$options['bcc'];
+                unset($headers['Bcc']);
+            }
+            $options = $smtpoptions;
+        } else {
+            $transport = 'mail';
+            unset($headers['To']); // remove this, otherwise the recipient will appear twice
+        }
         if ($GLOBALS['POOL']->config->logMails == 'true') {
             foreach($headers as $key=>$row) {
                 $logHeaders .= "$key: $row".PHP_EOL;
             }
             file_put_contents(BX_DATA_DIR.'/mail.log',"****\nDate: ". date("c")."\nTo: " . $to . "\n"."Subject: " . $subject . "\n"."Headers:\n" . $logHeaders . "\n"."Message: " . $message . "\n",FILE_APPEND);
         }
-
-        $headers['Subject'] = $subject;
-        $headers['To'] = $to;
-        // check if there are smtp options
-        if(($options = $this->getSMTPOptions())) {
-            $transport = 'smtp';
-        } else {
-            $transport = 'mail';
-            unset($headers['To']); // remove this, otherwise the recipient will appear twice
-        }
         $mail =& Mail::factory($transport, $options);
         if(PEAR::isError($mail)) {
             bx_log::log($mail->getMessage());
             return false;
         }
+        
         $ret = $mail->send($to, $headers, $message);
         if(PEAR::isError($ret)) {
             bx_log::log($ret->getMessage());
