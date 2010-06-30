@@ -8,7 +8,7 @@ class bx_helpers_collection {
             $lastModified = $collection->getLastModifiedResource();
             return $lastModified;        
         }
-        return now();   
+        return "";   
     }
     
     public static function getLastModifiedGM($collectionUri, $mode="output") {
@@ -24,7 +24,7 @@ class bx_helpers_collection {
         if ($lastModTs) {
             return date($format,$lastModTs);
         }
-        return "";
+        return date($format);
     }
     
 }
