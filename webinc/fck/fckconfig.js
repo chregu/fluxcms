@@ -202,7 +202,7 @@ FCKConfig.RemoveAttributes = 'class,style,lang,width,height,align,hspace,valign'
 
 FCKConfig.CustomStyles =
 {
-	'Red vanessa Title'	: { Element : 'h3', Styles : { 'color' : 'Red' } },
+	'Red Title'	: { Element : 'h3', Styles : { 'color' : 'Red' } },
 	'Liste hoch setzen'	: { Element : 'p', Styles : { 'margin-bottom' : '0' } }
 };
 
