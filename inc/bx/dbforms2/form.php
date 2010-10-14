@@ -192,6 +192,22 @@ class bx_dbforms2_form {
     }
     
     /**
+     *  Get all subforms
+     *
+     *  @access public
+     *  @return object field
+     */
+    public function getSubForms() {
+        $forms = null;
+        foreach($this->fields as $field) {
+            if($field instanceof bx_dbforms2_form) {
+                $forms[] = $field;
+            }
+        }
+        return $forms;
+    }
+    
+    /**
      *  Sets the values of all fields the form has.
      *
      *  @param  type  $var descr

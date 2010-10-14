@@ -287,6 +287,18 @@ class bx_plugins_admin_dbforms2 extends bx_plugins_admin implements bxIplugin {
                     $parts = explode('/', $id);
                     $fieldName = empty($parts[sizeof($parts) - 1]) ? $parts[sizeof($parts) - 2] : $parts[sizeof($parts) - 1];
                     $field = $form->getFieldByName($fieldName);
+                    
+                    if($field === null) {
+                        //search in subforms
+                        $forms = $mainForm->getSubForms();
+                        foreach($forms as $tmpForm) {
+                            $field = $tmpForm->getFieldByName($fieldName);
+                            if($field !== null) {
+                                break;
+                            }
+                        }
+                    }
+                    
                     if ($field->liveSelect instanceof bx_dbforms2_liveselect) {
                         $field->liveSelect->query = $_GET['q'];
                         $field->liveSelect->tablePrefix = $form->tablePrefix;

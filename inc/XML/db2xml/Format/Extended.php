@@ -71,6 +71,9 @@ Class XML_db2xml_Format_Extended extends XML_db2xml_Format {
 
     function insertNewRow ($parent_row, $res, $key, &$tableInfo)
     {
+        if(!$parent_row) {
+               return null;
+       }
         if (!isset($tableInfo[$key]['table']) || !$tableInfo[$key]['table'] ) {
             $tableInfo[$key]['table'] = $this->parent->tagNameResult;
         }

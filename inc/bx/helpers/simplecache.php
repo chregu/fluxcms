@@ -344,13 +344,8 @@ class bx_helpers_simplecache {
    /** creates a full path...
     */
    function mkpath($path) {
-        $dirs = explode("/",$path);
-        $path = $dirs[0];
-        for($i = 1;$i < count($dirs);$i++) {
-            $path .= "/".$dirs[$i];
-            if(!is_dir($path)) {
-                mkdir($path);
-            }
+        if(!is_dir($path)) {
+            mkdir($path,0777,true);
         }
    }
 
