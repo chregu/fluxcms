@@ -14,6 +14,11 @@ function bx_cachecallback() {
     if ($default === false) {
         return false;
     }
+
+    //do not cache if SSL is on
+    if(!empty($_SERVER['HTTPS'])) {
+        return false;
+    } 
     
     //do not cache, if in admin section
     if (strpos($_GET['path'],"admin/") !== false) {
