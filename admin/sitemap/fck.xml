@@ -5,7 +5,8 @@
         <map:pipeline>
             <map:match type="uri" pattern="fck/fckconfig.js*">
                 <map:generate type="xmlfile" src="constant(BX_LIBS_DIR)editors/fck/fckconfig.xml"/>
-                <map:transform type="xslt" src="constant(BX_LIBS_DIR)editors/fck/fckconfig.xsl">
+                <map:transform type="xslt" src="constant(BX_LOCAL_INCLUDE_DIR)bx/editors/fck/fckconfig.xsl" 
+                    fallback="constant(BX_LIBS_DIR)editors/fck/fckconfig.xsl">
                     <map:parameter name="webroot" value="constant(BX_WEBROOT)"/>
                     <map:parameter name="dataUri" value="phpglobals://_GET[uri]"/>
                     <map:parameter type="options" name="registerPhpFunctions" value="true"/>
