@@ -639,7 +639,7 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
         }
     }
 
-    public function getDisplayImage() {
+    public function getDisplayImage($lang = null) {
         if (!$lang) {
             $lang = $this->outputLanguage;
         }
