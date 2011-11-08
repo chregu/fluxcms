@@ -137,8 +137,8 @@ function liveSearchDoSearch() {
 	} else if (window.ActiveXObject) {
 		liveSearchReq = new ActiveXObject("Microsoft.XMLHTTP");
 	}
-	liveSearchReq.onreadystatechange= liveSearchProcessReqChange;
 	liveSearchReq.open("GET", liveSearchRoot + "/livesearch.php?q=" + document.forms.searchform.q.value + liveSearchParams2);
+	liveSearchReq.onreadystatechange= liveSearchProcessReqChange;
 	liveSearchLast = document.forms.searchform.q.value;
 	liveSearchReq.send(null);
 	}
