@@ -42,6 +42,9 @@ class Auth_Container_confluence extends Auth_Container_MDB2
     {
         try {
             if (!$this->token && class_exists('SoapClient')) {
+                // apparently confluence returns the user data as iso-8859-1 so
+                // so we need to make the soap client aware of that.
+                $this->client = new  SoapClient($this->wsdlurl, array('encoding'=>'iso-8859-1'));
                 $this->client = new  SoapClient($this->wsdlurl);
                 $this->token  = $this->client->login($username,$password);
             }
