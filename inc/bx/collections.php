@@ -45,6 +45,7 @@ class bx_collections {
         $p = array();
         $p['coll'] = bx_collections::getCollection($url, $mode);
         $p['rawname'] = preg_replace("#^".$p['coll']->uri."#","",$url);
+	$p['rawname'] = str_replace('%20', ' ', $p['rawname']);
         $qpos = strpos($p['rawname'],"?");
         if ($qpos !== false) {
                  $p['rawname'] = substr($p['rawname'],0,$qpos );
