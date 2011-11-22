@@ -103,6 +103,17 @@ loadContent = function() {
                     
                     // removes all namespace declarations
                     //xml = xml.replace(/xmlns(:.+)*="[^"]*"/g, "");
+                    
+                    usesNonHTML = false;
+                    if(xml.search(/<patForms:/) != -1) {
+                    	usesNonHTML = true;
+                    }
+                    if(xml.search(/<xi:include/) != -1) {
+                    	usesNonHTML = true;
+                    }
+					if (usesNonHTML == true) {
+						alert("This document contains non-HTML elements, please consider using the oneform editor.\nSaving here will remove those elements and lead to unexpected results.\n\n PLEASE DO NOT SAVE, unless you know what you are doing.");
+					}
 
                     var oEditor = FCKeditorAPI.GetInstance("fluxfck");
                     oEditor.SetHTML(xml);
@@ -113,6 +124,8 @@ loadContent = function() {
 							alert("This document contains non-HTML elements, please consider using the oneform or BXE editor.\nSaving here will remove those elements and lead to unexpected results.\n\n PLEASE DO NOT SAVE, unless you know what you are doing.");
 						}
 					}
+					
+					
 					
                     window.status = "Document loaded.";
                     
