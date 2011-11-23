@@ -31,20 +31,20 @@ if (isset($_SESSION['_authsession']) && isset($_SESSION['_authsession']['registe
 if (empty($_GET['blogid'])) {
     $blogid = 1;
 } else {
-    $blogid = (int) $_GET['blogid'];
+    $blogid = (int) $db->escape( $_GET['blogid'] );
 }
     
 if (strlen($search) > 3) {
-     $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and  MATCH (post_content,post_title) AGAINST (".$db->quote( $search) .")  LIMIT 20");
+     $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and  MATCH (post_content,post_title) AGAINST (".$db->escape( $search) .")  LIMIT 20");
      if ($res->numRows() == 0) {
-      $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and  post_title like '%" . $search . "%' order by post_date DESC LIMIT 20");
+      $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and  post_title like '%".$db->escape( $search ) ."%' order by post_date DESC LIMIT 20");
      }
      
      if ($res->numRows() == 0 ) {
-      $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and post_content like '%" . $search . "%' order by post_date DESC LIMIT 20");
+      $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and post_content like '%".$db->escape( $search ) ."%' order by post_date DESC LIMIT 20");
      }
 } else {
-    $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where post_status & $perm and blog_id = $blogid   and post_title like '%" . $search . "%' order by post_date DESC LIMIT 20");
+    $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where post_status & $perm and blog_id = $blogid   and post_title like '%".$db->escape( $search ) ."%' order by post_date DESC LIMIT 20");
     
 }
 $ret = "<?xml version='1.0' encoding='utf-8'  ?><ul class='LSRes'>";
