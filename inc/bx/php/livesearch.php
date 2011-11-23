@@ -35,7 +35,7 @@ if (empty($_GET['blogid'])) {
 }
     
 if (strlen($search) > 3) {
-     $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and  MATCH (post_content,post_title) AGAINST (".$db->escape( $search) .")  LIMIT 20");
+     $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and  MATCH (post_content,post_title) AGAINST (".$db->quote( $search) .")  LIMIT 20");
      if ($res->numRows() == 0) {
       $res = $db->query("select post_uri, post_title from ".$prefix."blogposts as  blogposts where  post_status & $perm and blog_id = $blogid and  post_title like '%".$db->escape( $search ) ."%' order by post_date DESC LIMIT 20");
      }
