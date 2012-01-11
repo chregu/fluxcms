@@ -58,14 +58,23 @@ function liveSearchHide() {
 	}
 }
 
+// get first child, save with all browser
+function getFirstChild(n) {
+    validChild = n.firstChild;
+    while (validChild.nodeType != 1) {
+        validChild = validChild.nextSibling;
+    }
+    return validChild;
+}
+
 function liveSearchKeyPress(event) {
-	
+
 	if (event.keyCode == 40 )
 	//KEY DOWN
 	{
 		highlight = document.getElementById("LSHighlight");
 		if (!highlight) {
-			highlight = document.getElementById("LSShadow").firstChild.firstChild;
+			highlight = getFirstChild(getFirstChild(document.getElementById("LSShadow")));
 		} else {
 			highlight.removeAttribute("id");
 			highlight = highlight.nextSibling;
@@ -76,10 +85,10 @@ function liveSearchKeyPress(event) {
 		if (!isIE) { event.preventDefault(); }
 	} 
 	//KEY UP
-	else if (event.keyCode == 38 ) {
+	else if (event.keyCode == 38) {
 		highlight = document.getElementById("LSHighlight");
 		if (!highlight) {
-			highlight = document.getElementById("LSResult").firstChild.firstChild.lastChild;
+			highlight = getFirstChild(getFirstChild(document.getElementById("LSShadow")));
 		} 
 		else {
 			highlight.removeAttribute("id");
@@ -102,7 +111,12 @@ function liveSearchKeyPress(event) {
 	else if (event.keyCode == 8 && isIE) {
 		liveSearchStart();
 	}
+	//RETURN
+	else if (event.keyCode == 13 ) {
+		return liveSearchSubmit();
+	}
 }
+
 function liveSearchStart() {
 	if (t) {
 		window.clearTimeout(t);
@@ -159,7 +173,7 @@ function liveSearchProcessReqChange() {
 function liveSearchSubmit() {
 	var highlight = document.getElementById("LSHighlight");
 	if (highlight && highlight.firstChild) {
-		window.location = liveSearchRoot + liveSearchRootSubDir + highlight.firstChild.nextSibling.getAttribute("href");
+		window.location = highlight.firstChild.nextSibling.getAttribute("href");
 		return false;
 	} 
 	else {
