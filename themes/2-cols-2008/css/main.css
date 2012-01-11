@@ -353,7 +353,7 @@ text-indent: -1em;
 }
 
 #livesearch {
-margin: 0px 15px 15px 25px;
+margin: 0px 15px 9px 25px;
 padding: 0;
 display: block;
 }
@@ -380,3 +380,28 @@ border: 1px solid #aaaaaa;
 }
 
 #littleLogin { margin-left: 25px; }
+
+#LSResult {
+    padding: 1px;
+    width: 148px;
+    margin-top: 3px;
+}
+
+.LSRes {
+    position: relative;
+    bottom: 1px;
+    right: 1px;
+}
+
+#LSHighlight {
+    color: #564b47;
+    background-color: #CCC;
+}
+
+
+#right input#livesearch  {
+    padding:1px;
+    width: 120px;
+    border: 1px solid #aaaaaa;
+}
+
