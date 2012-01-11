@@ -15,7 +15,7 @@ if (isset($_GET['q'])) {
 $targetRoot = !empty($_GET['blogadmin']) ? '' : 'archive/';
 if (isset($_GET['root'])) {
     $targetRoot = $_GET['root'] . $targetRoot;
-}elseif(isset($_GET['amp;root'])){
+} elseif (isset($_GET['amp;root'])) {
     $targetRoot = $_GET['amp;root'] . $targetRoot;
 }
 
