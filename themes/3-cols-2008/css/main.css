@@ -372,7 +372,7 @@ h3.blog, #right  h3.blog {
     text-indent: -1em;
 }
 #livesearch {
-    margin: 0px 15px 15px 15px;
+    margin: 0px 15px 9px 15px;
     padding:0px;
     width: 140px;
     display: block;
@@ -420,7 +420,6 @@ pre {
     font-size: 11px;
     background-color: #f3f3f3;
     border: 1px solid #555555;
-    margin-top: 3px;
 }
 
 #littleLogin label {
@@ -432,4 +431,26 @@ pre {
 
 #littleLogin {
     margin-left: 15px;
+}
+
+#LSResult {
+    padding: 1px;
+    width: 148px;
+    margin-top: 3px;
+}
+.LSRes {
+    position: relative;
+    bottom: 1px;
+    right: 1px;
+}
+
+#LSHighlight {
+    color: #564b47;
+    background-color: #CCC;
+}
+
+#right input#livesearch  {
+    padding:1px;
+    width: 120px;
+    border: 1px solid #aaaaaa;
 }
