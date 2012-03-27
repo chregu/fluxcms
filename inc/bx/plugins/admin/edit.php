@@ -1,23 +1,23 @@
 <?php
 
 class bx_plugins_admin_edit extends bx_component implements bxIplugin {
-    
+
     static private $instance = null;
     protected $editor  = array();
     protected $res = array();
-    
+
     public static function getInstance($mode) {
-        
+
         if (!bx_plugins_admin_edit::$instance) {
             bx_plugins_admin_edit::$instance = new bx_plugins_admin_edit($mode);
-        } 
-        
+        }
+
         return bx_plugins_admin_edit::$instance;
     }
-    
+
     private function __construct ($mode) {
-        
-         $this->mode = $mode;
+
+        $this->mode = $mode;
     }
 
     protected function getFullPath($path, $name, $ext) {
@@ -25,7 +25,7 @@ class bx_plugins_admin_edit extends bx_component implements bxIplugin {
         $path = str_replace('admin/edit/', '', $path);
         return $path.$name.'.'.$ext;
     }
-    
+
     public function getContentById($path, $id) {
         $editor = $this->getEditorById($id);
         if ($editor) {
@@ -36,7 +36,7 @@ class bx_plugins_admin_edit extends bx_component implements bxIplugin {
     }
 
     protected function getEditorById( $id) {
-        
+
         if (!isset($this->editor[$id])) {
             $parts = bx_collections::getCollectionAndFileParts($id,$this->mode);
             $ps = $parts['coll']->getEditorsById($parts['rawname']);
@@ -59,10 +59,20 @@ class bx_plugins_admin_edit extends bx_component implements bxIplugin {
             }
         }
         
-        return $this->editor[$id];
+        if($_GET['editor'] == 'fck') {
+            $filename = BX_DATA_DIR.$id;
+            $tmp = implode(file($filename));
+            if (preg_match('/patForms/', $tmp) && !preg_match('/xi:include/', $tmp) ) {
+                //redirect to the oneform editor
+                header ("Location: ".BX_WEBROOT."admin/edit$id?editor=oneform");
+                die();
+            }
+        }
         
+        return $this->editor[$id];
+
     }
-    
+
     public function handlePOST($path, $id, $data) {
         // get editor for this request
         $e = $this->getEditorById( $id);
@@ -70,7 +80,7 @@ class bx_plugins_admin_edit extends bx_component implements bxIplugin {
             // if we have files to upload, we call the corresponding editors uploadFile method
             // FIXME: this should probably be moved to it's own method handleFileupload (invoked by the collection)
             /*if(!empty($_FILES)) {
-                $e->uploadFile($path, $id, $_FILES);
+            $e->uploadFile($path, $id, $_FILES);
             }*/
             $ret = $e->handlePOST($path, $id, $data);
         }
@@ -79,48 +89,48 @@ class bx_plugins_admin_edit extends bx_component implements bxIplugin {
 
 
     public function getIdByRequest($path, $name=NULL, $ext=NULL) {
-        
+
         if (substr($name,0,1) == "/") {
             $id = "$name.$ext";
         } else {
             $id = "/$name.$ext";
         }
         return $id;
-    } 
-		/** bx_plugin::getPipelineParametersById */
-		public function getPipelineParametersById($path, $id) {
-			$params = array();
-      $editor = $this->getEditorById( $id);
-      if(!empty($editor) ) {
-				$params = $editor->getPipelineParametersById($path, $id);
-				}
-			return $params;
-			}
-		
+    }
+    /** bx_plugin::getPipelineParametersById */
+    public function getPipelineParametersById($path, $id) {
+        $params = array();
+        $editor = $this->getEditorById( $id);
+        if(!empty($editor) ) {
+            $params = $editor->getPipelineParametersById($path, $id);
+        }
+        return $params;
+    }
+
     public function isRealResource($path, $id) {
         return false;
     }
-    
+
     public function getResourceById($path,$id) {
         return false;
     }
-    
+
     public function getContentUriById($path, $id, $sample = false) {
          
         $parts = bx_collections::getCollectionAndFileParts($id,$this->mode);
-        return $parts['coll']->getContentUriById($parts['rawname'],$sample);   
+        return $parts['coll']->getContentUriById($parts['rawname'],$sample);
          
     }
-    
+
     public function adminResourceExists($path, $id, $ext=null, $sample = false) {
-        
+
         $parts = bx_collections::getCollectionAndFileParts($id,$this->mode);
         return $parts['coll']->getPluginById($parts['rawname'].".".$ext,$sample);
          
     }
-    
+
     public function stripRoot() {
-        return false;   
+        return false;
     }
 }
 ?>
