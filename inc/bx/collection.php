@@ -496,7 +496,12 @@ array_merge($javascripts,$p['plugin']->getJavaScriptSources());
         */
         new bx_collection($to, $this->mode, true);
         foreach (bx_resourcemanager::getAllProperties($this->uri) as $key => $value) {
-            if ($value['name'] != 'parent-uri' AND $value['name'] != 'unique-id') {
+            // do not copy the unique-id
+            // when copying a collection
+            if(!$move AND $value['name'] == 'unique-id') {
+                $value['value'] = bx_helpers_sql::nextSequence();
+            }
+            if ($value['name'] != 'parent-uri') {
                 bx_resourcemanager::setProperty($to,$value['name'],$value['value'],$value['namespace']);
             }
         }
