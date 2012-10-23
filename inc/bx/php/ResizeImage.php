@@ -459,7 +459,9 @@ $fd = fopen ($this->endImgFile,"w");
        }
    }
    function gravatar() {
-        $grav_url = 'http://www.gravatar.com/avatar.php?'.$_SERVER['QUERY_STRING'];
+        parse_str($_SERVER['QUERY_STRING'], $query);
+        $grav_url = 'http://www.gravatar.com/avatar/'.$query['gravatar_id'];
+        $grav_url .= '?size='.$query['size'];
         $grav_url .=   "&default=".BX_WEBROOT.'webinc/images/blind.gif';
         $imageName = $this->endImgFile;
         $imageDir = $this->endImgPath;
